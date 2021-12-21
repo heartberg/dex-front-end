@@ -1,0 +1,114 @@
+<div class="header-sticky">
+  <div class="header-content" [ngClass]="{'menu-respo-restyle': isMenuRespoOpened}">
+    <div class="wrapper">
+      <div class="left-content">
+        <div class="logo" routerLink="/home">
+          <img src="assets/img/header/logo.svg" alt="" *ngIf="!isDarkModeChanged">
+          <ng-container *ngIf="isDarkModeChanged">
+            <img src="assets/img/header/logo-white.svg" alt="">
+          </ng-container>
+        </div>
+      </div>
+      <div class="navbar-section left-m" [ngClass]="{'menu-respo-opened': isMenuRespoOpened}">
+        <ul [ngClass]="{'clicked': isMenuRespoOpened}">
+          <ng-container *ngIf="!changeRespoNavAndProfileIcons">
+            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLink="/trade">Trade</li>
+            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLink="/launchpad">Launchpad</li>
+            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLink="/send">Send</li>
+          </ng-container>
+<!--          <ng-container *ngIf="changeRespoNavAndProfileIcons">-->
+<!--            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLink="/profile">Profile</li>-->
+<!--            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}">Items</li>-->
+<!--            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}"  routerLink="/create-offer">Create Offer</li>-->
+<!--            <li [ngClass]="{'menuRespoAnimationFourth': isMenuRespoOpened}" routerLink="/collection">Collections</li>-->
+<!--            <li [ngClass]="{'menuRespoAnimationFifth': isMenuRespoOpened}" routerLink="/notification-center">Notifications</li>-->
+<!--            <li [ngClass]="{'menuRespoAnimationSixth': isMenuRespoOpened}">Log Out</li>-->
+<!--          </ng-container>-->
+        </ul>
+      </div>
+    </div>
+    <div class="wrapper-profile">
+      <div class="profile-section navbar-section">
+        <ul>
+          <li routerLink="/deploy">
+            Deploy
+          </li>
+          <li>
+            About
+          </li>
+        </ul>
+        <ng-container *ngIf="isLoggedIn">
+          <button (click)="connectWalletPopUp()" class="btn-default btn-primary-costum"
+                  [ngClass]="{'hideUntilMenuRespoClicked': !isMenuRespoOpened}"
+          >
+                  Connect Wallet
+          </button>
+        </ng-container>
+        <div class="search-respo" *ngIf="!isMenuRespoOpened" [ngClass]="{'m-l_0': isLoggedIn}">
+          <ng-container *ngIf="SearchRespoOpened" (click)="closeSearchRespo()">
+            <div class="search-section second_one" [ngClass]="{'search-respo-x-button': SearchRespoOpened}">
+              <div class="search">
+                <input type="text" placeholder="Collection, items...">
+              </div>
+              <div class="search-btn btn-icon-round specific-size" (click)="closeSearchRespo()">
+                <svg viewBox="0 0 16 16" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN jZIhBR"
+                >
+                  <path d="M4 12L12 4" stroke="currentColor" stroke-width="2"></path><path d="M12 12L4 4" stroke="currentColor" stroke-width="2"></path>
+                </svg>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <ng-container *ngIf="isLoggedIn">
+          <div class="avatar btn-icon-round specific-size"  (click)="openAvatar()" [ngClass]="{'hideUntilMenuRespoClicked': !isMenuRespoOpened, 'm-l_10': isMenuRespoOpened}">
+            <i class="fa fa-user" aria-hidden="true" *ngIf="!changeRespoNavAndProfileIcons"></i>
+            <ng-container *ngIf="changeRespoNavAndProfileIcons">
+              <svg viewBox="0 0 18 8" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN jZIhBR">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M1 0C0.447715 0 0 0.447715 0 1C0 1.55228 0.447716 2 1 2H17C17.5523 2 18 1.55228 18 1C18 0.447715 17.5523 0 17 0H1ZM4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H14C14.5523 8 15 7.55228 15 7C15 6.44772 14.5523 6 14 6H4Z" fill="currentColor"></path>
+              </svg>
+            </ng-container>
+            <div class="dropDown" *ngIf="isProfileOpened">
+              <ul class="d-flex flex-column">
+                <li routerLink="/my-deploy">My Deploys</li>
+                <li routerLink="/launchpad">Entries</li>
+                <li routerLink="/track">Track</li>
+                <li (click)="disconnect()">Disconnect</li>
+              </ul>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!isMenuRespoOpened">
+          <div class="dark-light-mode">
+            <button class="btn-default btn-icon-round" (click)="changeDarkMode()">
+              <ng-container *ngIf="!isDarkModeChanged">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN mKksV">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M5.75788 17.4844C5.07158 16.7559 6.12135 15.7797 7.1112 15.928C7.42793 15.9754 7.75214 16 8.08209 16C11.6719 16 14.5821 13.0899 14.5821 9.5C14.5821 8.42871 14.3302 7.41794 13.8791 6.52697C13.4263 5.63282 14.0229 4.31312 14.9328 4.73338C17.6775 6.00109 19.5821 8.77812 19.5821 12C19.5821 16.4183 16.0004 20 11.5821 20C9.28652 20 7.21678 19.0331 5.75788 17.4844Z" fill="currentColor"></path>
+                </svg>
+              </ng-container>
+              <ng-container *ngIf="isDarkModeChanged">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN mKksV">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M11.25 4.75C11.25 4.33579 11.5858 4 12 4C12.4142 4 12.75 4.33579 12.75 4.75V6.25C12.75 6.66421 12.4142 7 12 7C11.5858 7 11.25 6.66421 11.25 6.25V4.75ZM16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12ZM12 17C11.5858 17 11.25 17.3358 11.25 17.75V19.25C11.25 19.6642 11.5858 20 12 20C12.4142 20 12.75 19.6642 12.75 19.25V17.75C12.75 17.3358 12.4142 17 12 17ZM19.25 11.25C19.6642 11.25 20 11.5858 20 12C20 12.4142 19.6642 12.75 19.25 12.75H17.75C17.3358 12.75 17 12.4142 17 12C17 11.5858 17.3358 11.25 17.75 11.25H19.25ZM7 12C7 11.5858 6.66421 11.25 6.25 11.25H4.75C4.33579 11.25 4 11.5858 4 12C4 12.4142 4.33579 12.75 4.75 12.75H6.25C6.66421 12.75 7 12.4142 7 12ZM16.5962 6.34314C16.8891 6.05024 17.364 6.05024 17.6569 6.34314C17.9497 6.63603 17.9497 7.1109 17.6569 7.4038L16.5962 8.46446C16.3033 8.75735 15.8284 8.75735 15.5355 8.46446C15.2426 8.17156 15.2426 7.69669 15.5355 7.4038L16.5962 6.34314ZM8.46447 15.5355C8.17158 15.2426 7.69671 15.2426 7.40381 15.5355L6.34315 16.5962C6.05026 16.8891 6.05026 17.3639 6.34315 17.6568C6.63605 17.9497 7.11092 17.9497 7.40381 17.6568L8.46447 16.5962C8.75737 16.3033 8.75737 15.8284 8.46447 15.5355ZM17.6569 16.5962C17.9498 16.8891 17.9498 17.364 17.6569 17.6569C17.364 17.9497 16.8891 17.9497 16.5962 17.6569L15.5355 16.5962C15.2427 16.3033 15.2427 15.8284 15.5355 15.5355C15.8284 15.2426 16.3033 15.2426 16.5962 15.5355L17.6569 16.5962ZM8.46448 8.46447C8.75738 8.17158 8.75738 7.69671 8.46448 7.40381L7.40382 6.34315C7.11093 6.05026 6.63605 6.05026 6.34316 6.34315C6.05027 6.63605 6.05027 7.11092 6.34316 7.40381L7.40382 8.46447C7.69671 8.75737 8.17159 8.75737 8.46448 8.46447Z" fill="currentColor"></path>
+                </svg>
+              </ng-container>
+            </button>
+          </div>
+        </ng-container>
+        <ng-container>
+          <button class="search-btn btn-default btn-icon-round" (click)="showMenuRespo()">
+            <ng-container *ngIf="!isMenuRespoOpened">
+              <svg viewBox="0 0 18 8" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN jZIhBR">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M1 0C0.447715 0 0 0.447715 0 1C0 1.55228 0.447716 2 1 2H17C17.5523 2 18 1.55228 18 1C18 0.447715 17.5523 0 17 0H1ZM4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H14C14.5523 8 15 7.55228 15 7C15 6.44772 14.5523 6 14 6H4Z" fill="currentColor"></path>
+              </svg>
+            </ng-container>
+            <ng-container *ngIf="isMenuRespoOpened">
+              <svg viewBox="0 0 16 16" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN jZIhBR">
+                <path d="M4 12L12 4" stroke="currentColor" stroke-width="2"></path><path d="M12 12L4 4" stroke="currentColor" stroke-width="2"></path>
+              </svg>
+            </ng-container>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+<app-pop-up [openWallet]="true" *ngIf="isPopUpOpened" (isClosed)="closePopUp($event)" (isConnectedToWallet)="connect($event)" (logInValue)="loginIn($event)"></app-pop-up>

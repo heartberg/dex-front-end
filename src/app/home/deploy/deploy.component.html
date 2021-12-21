@@ -1,0 +1,225 @@
+<div class="wrapper wrapper-border mainDiv">
+  <div class="whole wrapper-border">
+    <div class="row" style="width: 100%">
+      <div class="col-md-6 scrollable-section-first">
+        <form>
+          <div class="inside wrapper-border">
+            <div class="header">
+              <h3>Deploy</h3>
+            </div>
+            <div class="metaheader">
+              <h6 class="color-violet">Token Information</h6>
+            </div>
+            <div class="royalties wrapper-border">
+              <div class="royal height-_10">
+                <div class="row d-flex align-items-center" style="width: 100%">
+                  <div class="col-md-5">
+                    <h4>Token Name</h4>
+                  </div>
+                  <div class="col-md-7 restyle-col">
+                    <input type="text" class="input-costum" placeholder="10"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="royalties wrapper-border">
+              <div class="royal height-_10">
+                <div class="row d-flex align-items-center" style="width: 100%">
+                  <div class="col-md-5">
+                    <h4 >Unit Name</h4>
+                  </div>
+                  <div class="col-md-7 restyle-col">
+                    <input type="text" class="input-costum" placeholder="10"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="royalties wrapper-border">
+              <div class="royal height-_10">
+                <div class="row d-flex align-items-center" style="width: 100%">
+                  <div class="col-md-5">
+                    <h4>Total Supply</h4>
+                  </div>
+                  <div class="col-md-7 restyle-col">
+                    <input type="text" class="input-costum" placeholder="10"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="royalties wrapper-border">
+              <div class="royal height-_10">
+                <div class="row d-flex align-items-center" style="width: 100%">
+                  <div class="col-md-5">
+                    <h4>Decimals</h4>
+                  </div>
+                  <div class="col-md-7 restyle-col">
+                    <input type="text" class="input-costum" placeholder="10"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="royalties wrapper-border">
+              <div class="royal height-_10">
+                <div class="row d-flex align-items-center" style="width: 100%">
+                  <div class="col-md-5">
+                    <h4>URL</h4>
+                  </div>
+                  <div class="col-md-7 restyle-col">
+                    <input type="text" class="input-costum" placeholder="10"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="royalties wrapper-border">
+              <div class="royal height-_10">
+                <div class="row d-flex align-items-center" style="width: 100%">
+                  <div class="col-md-5">
+                    <h4>Max Buy</h4>
+                  </div>
+                  <div class="col-md-7 restyle-col">
+                    <input type="text" class="input-costum" placeholder="10"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="metaheader">
+              <h6 class="color-violet">Fees</h6>
+            </div>
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Rising pricefloor</h4>
+              <input type="text" placeholder="Max is Supply" class="input-costum"
+                     >
+            </div>
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Backing</h4>
+              <input type="text" placeholder="Max is Supply" class="input-costum"
+              >
+            </div>
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Burn</h4>
+              <input type="text" placeholder="Max is Supply" class="input-costum"
+              >
+            </div>
+<!--            <mat-checkbox class="example-margin"> <h4>Open for offers</h4> </mat-checkbox>-->
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Purpose</h4>
+              <input type="text" placeholder="Max is Supply" class="input-costum"
+              >
+            </div>
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Fee</h4>
+              <input type="text" placeholder="Max is Supply" class="input-costum"
+              >
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6 second-half">
+        <div class="wrapper-section d-flex flex-column">
+          <div class="wrapper-border">
+            <h3 class="color-violet title">
+              Project Description
+            </h3>
+            <div class="desc">
+              <textarea></textarea>
+            </div>
+          </div>
+          <div class="presale-section">
+            <div class="wrapper-border">
+              <h3>Presale Settings</h3>
+              <div class="inputs">
+                <div class="d-flex align-items-center">
+                  <h4>Start</h4>
+                  <input type="text" class="input-costum">
+                </div>
+                <div class="d-flex align-items-center">
+                  <h4>End</h4>
+                  <input type="text" class="input-costum">
+                </div>
+                <div class="d-flex align-items-center">
+                  <h4>Soft Cap</h4>
+                  <input type="text" class="input-costum">
+                </div>
+                <div class="d-flex align-items-center">
+                  <h4>Hard Cap</h4>
+                  <input type="text" class="input-costum">
+                </div>
+                <div class="d-flex align-items-center">
+                  <h4>Presale founds to liquidity</h4>
+                  <input type="text" class="input-costum">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="down-checkbox" (click)="check()" [ngClass]="{'wrapper-border': isCheckedRoadMap, 'top': !isCheckedRoadMap}">
+            <input type="checkbox" #checkbox name="check" id="check">
+            <label for="check">Add Roadmap</label>
+            <div class="desc" *ngIf="isCheckedRoadMap">
+              <textarea></textarea>
+            </div>
+          </div>
+          <hr *ngIf="!isCheckedRoadMap || !isCheckedTeamInfo">
+          <div class="down-checkbox" (click)="checkSecond()" [ngClass]="{'wrapper-border': isCheckedTeamInfo, 'top': !isCheckedTeamInfo}">
+            <input type="checkbox" #checkboxSecond name="check" id="checkSecond">
+            <label for="checkSecond">Add Team Info</label>
+            <ng-container  *ngFor="let item of extraFieldsArr; let i = index;">
+              <div class="desc overflow" *ngIf="isCheckedTeamInfo">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="image-place d-flex flex-column">
+                    <img style="width: 100%; height: 100%" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png" alt="">
+                    <div class="d-flex flex-column align-items-center">
+                      <span>Name</span>
+                      <span>Position</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 desc-middle">
+                  <div class="d-flex flex-column">
+                    <div class="d-flex align-items-start">
+                      <span>Name</span>
+                      <input type="text" class="input-costum">
+                    </div>
+                    <div class="d-flex align-items-start">
+                      <span>Position</span>
+                      <input type="text" class="input-costum">
+                    </div>
+                    <div class="d-flex justify-content-end">
+                      <button class="btn-primary-costum">
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="upload-btn">
+                    <button class="btn-primary-costum upload">
+                      Upload Member
+                      <input type="file" id="myFile" name="filename" formControlName="icon">
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-2 plus_icon" (click)="addExtraFields(i)">
+                  <img src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg" alt="" style="width: 30px; height: 30px" *ngIf="i === 0">
+                  <img *ngIf="i !== 0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU" alt="" style="height: 30px; width: 30px;">
+                </div>
+              </div>
+            </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="deploy">
+    <button class="btn-secondary-costum" type="submit" style="width: unset">
+      Deploy
+    </button>
+  </div>
+</div>

@@ -1,0 +1,461 @@
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+//@import '~bootstrap/dist/css/bootstrap.min.css';
+//@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+// bootstrap unset default styles
+body {
+  font-family: unset;
+  line-height: unset;
+  font-size: unset;
+  text-align: unset;
+  background-color: unset;
+}
+h1,h2,h3,h4,h5,h6,p,ul,input,select,textarea {
+  margin: 0px;
+}
+button  {
+  line-height: unset;
+  margin: 0px;
+
+  &:focus {
+    outline: unset;
+  }
+}
+// bootstrap unset default styles
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+@font-face {
+  font-family: secondary;
+  src: url("assets/font/Stem-Bold.ttf");
+}
+
+@font-face {
+  font-family: primary;
+  src: url("assets/font/Baltore.otf");
+}
+html {
+  scroll-behavior: smooth !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: secondary;
+}
+li,a,p,span,button,input, ::placeholder {
+  font-family: primary;
+}
+h1,h2,h3 {
+  font-size: 22px;
+  color: #040405;
+}
+
+h4, h6, label {
+  font-size: 18px;
+  color: #040405;
+}
+
+li,a {
+  font-size: 18px;
+  color: #1c1c1e;
+}
+span,p {
+  font-size: 18px;
+  color: #1c1c1e;
+}
+button {
+  font-size: 18px;
+}
+input, textarea {
+  font-size: 18px;
+  color: #1c1c1e;
+}
+.color-violet {
+  color: #81007F !important;
+}
+// costum styles
+.btn-default {
+  outline: none;
+  border: none;
+  background: none;
+  padding: 0px;
+  cursor: pointer;
+}
+html {
+  scroll-behavior: smooth !important;
+}
+.btn-primary-costum {
+  padding: 8px 15px;
+  border-radius: 24px;
+  color: #81007F;
+  font-family: secondary;
+  cursor: pointer;
+  box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%);
+  border: 1px solid rgb(129, 0, 127, 15%);
+  transition: 0.3s;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.btn-secondary-costum {
+  padding: 8px 15px;
+  color: #e8e8e9;
+  background: #81007F;
+  border-radius: 24px;
+  font-family: 'secondary';
+  outline: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: 0.3s;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+.skeleton-relative {
+  position: relative !important;
+  overflow: hidden !important;
+}
+.btn-icon-round {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%);
+  border: 1px solid rgb(129, 0, 127, 15%);
+  cursor: pointer;
+
+  svg {
+
+    path {
+      color: rgba(4, 4, 5, 0.8);
+    }
+  }
+
+  &.specific-size {
+    height: 38px;
+    width: 38px;
+  }
+}
+
+.letter-spacing-restyle {
+  letter-spacing: 1.2px;
+}
+
+.dark-mode {
+  .dark-mode-icon {
+    color: rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+  }
+  .wrapper_popUp {
+    background: #1c1c1e !important;
+  }
+  app-pop-up {
+    .main {
+      .wrapper {
+        background: #1c1c1e !important;
+      }
+    }
+  }
+  app-swap-card {
+    .img {
+      img {
+        filter: opacity(0.2);
+      }
+    }
+  }
+  .input-costum {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: rgb(255, 255, 255, 0.8) !important;
+    &::placeholder {
+      color: rgb(255, 255, 255, 0.8) !important;
+    }
+    &:focus {
+      background: rgba(255, 255, 255, 0) !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+      box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
+    }
+  }
+
+  textarea {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    &::placeholder {
+      color: rgb(255, 255, 255, 0.8) !important;
+    }
+    &:focus {
+      background: rgba(255, 255, 255, 0) !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+      box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
+    }
+  }
+
+  i {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .fa-star {
+    color: rgb(254, 218, 3) !important;
+  }
+
+  .color-violet {
+    color: #81007F !important;
+  }
+
+  &.main-wrapper {
+    background: #1c1c1e;
+  }
+
+  .header-sticky {
+    .header-content {
+      background: rgba(18, 18, 18, 0.7) !important;
+      .navbar-section {
+        ul {
+          li {
+            color: rgba(255, 255, 255, 0.5) !important;
+            &:hover {
+              color: white !important;
+            }
+          }
+        }
+      }
+      .search-section {
+        input {
+          background: rgba(255, 255, 255, 0.07) !important;
+          color: rgb(128, 128, 128) !important;
+          &::placeholder {
+            color: rgb(128, 128, 128) !important;
+          }
+          &:focus {
+            background: rgba(255, 255, 255, 0) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
+          }
+        }
+      }
+      .profile-section {
+        .avatar {
+          .dropDown {
+            box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%) !important;
+            background: #1c1c1e !important;
+            li {
+              color: rgba(255, 255, 255, 0.8) !important;
+              transition: 0.3s;
+              &:hover {
+                background: rgba(129, 0, 127, 0.8) !important;
+              }
+            }
+          }
+        }
+      }
+      path {
+        color: rgb(128, 128, 128) !important;
+      }
+      .btn-icon-round {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        background: transparent !important;
+        svg {
+          path {
+            color: rgba(255, 255, 255, 0.8) !important;
+          }
+        }
+      }
+    }
+  }
+  .MAIN {
+    background: #1c1c1e;
+  }
+
+  .btn-primary-costum {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  h3,h4,h5,h6,h1,h2,span,p,{
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  .unset-dm-style {
+    color: #81007F !important;
+  }
+  .wrapper-border {
+    border: 1px solid rgba(129, 0, 127, 1) !important;
+  }
+
+  .wrapper-card {
+    border: 1px solid rgba(129, 0, 127, 1) !important;
+
+  }
+
+  .drop-down {
+    .valueCatcher {
+      border: 1px solid rgba(129, 0, 127, 1) !important;
+      button {
+        color: rgba(255, 255, 255, 0.8) !important;
+      }
+    }
+    .dropDown {
+      background: #1c1c1e !important;
+      .section {
+        border: 1px solid rgba(129, 0, 127, 0.8) !important;
+        &.no-border {
+          border: unset !important;
+          &:hover {
+            button {
+              color: #81007F !important;
+            }
+          }
+        }
+        button {
+          color: rgba(255, 255, 255, 0.8) !important;
+        }
+      }
+    }
+  }
+}
+
+.MAIN {
+  margin-top: -80px !important;
+  padding-top: 100px !important;
+}
+
+.wrapper-border {
+  box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%) !important;
+  border: 1px solid rgba(129, 0, 127, 0.15) !important;
+  border-radius: 12px !important;
+  padding: 20px 20px !important;
+}
+
+.wrapper-card {
+  box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%) !important;
+  border: 1px solid rgba(129, 0, 127, 0.15) !important;
+  border-radius: 12px !important;
+  padding: 20px 20px !important;
+  cursor: pointer;
+  transition: 0.3s;
+  &:hover {
+    transform: scale(1.03);
+    border: 1px solid rgba(129, 0, 127, 0.4) !important;
+  }
+  img {
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 580px) {
+  span,p {
+    font-size: 16px;
+  }
+  .wrapper-border {
+    padding: 20px 15px !important;
+  }
+}
+
+.input-costum {
+  outline: none;
+  border: none;
+  border-radius: 24px;
+  height: 50px;
+  background: rgba(4, 4, 5, 0.07);
+  color: rgb(128, 128, 128) !important;
+  padding-left: 15px;
+
+  &::placeholder {
+    color: rgba(4, 4, 5, 0.5);
+  }
+  &:hover {
+    border: 1px solid rgba(4, 4, 5, 0.1);
+  }
+  &:focus {
+    background: rgba(4, 4, 5, 0);
+    border: 1px solid rgba(4, 4, 5, 0.3);
+    box-shadow: rgb(4 4 5 / 6%) 0px 0px 0px 4px;
+  }
+
+}
+textarea {
+  color: rgb(128, 128, 128) !important;
+  outline: none;
+  background: rgba(4, 4, 5, 0.07);
+  resize: none;
+  border: transparent;
+  border-radius: 12px;
+
+  &::placeholder {
+    color: rgba(4, 4, 5, 0.5);
+  }
+  &:hover {
+    border: 1px solid rgba(4, 4, 5, 0.1);
+  }
+  &:focus {
+    background: rgba(4, 4, 5, 0);
+    border: 1px solid rgba(4, 4, 5, 0.3);
+    box-shadow: rgb(4 4 5 / 6%) 0px 0px 0px 4px;
+  }
+}
+// disable mat button styles
+.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background: rgba(129, 0, 127, 0.7);
+  background: #4AD662;
+}
+.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background: rgba(129, 0, 127, 0.7);
+  background: white;
+}
+.mat-slide-toggle.mat-checked .mat-ripple-element {
+  background: rgba(129, 0, 127, 0.7);
+  background: #4AD662;
+}
+.mat-slide-toggle-thumb {
+
+}
+// check box
+.mat-checkbox-checked:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element {
+  background: #81007F !important;
+}
+.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: #81007F !important;
+}
+// # check box
+
+// bootstrap restyle
+
+.row {
+  margin: 0px -10px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+
+  .col, .col-1, .col-10, .col-11, .col-12, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-auto, .col-lg, .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-auto, .col-md, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-auto, .col-sm, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-auto, .col-xl, .col-xl-1, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-auto {
+    padding: 0px 10px 20px 10px;
+    position: relative;
+    width: 100%;
+  }
+
+}
+.owl-theme {
+  .owl-nav {
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    z-index: 999;
+    transform: translateY(-50%);
+    display: flex;
+    margin-top: -5px !important;
+    button {
+      &:hover {
+        background: rgba(0,0,0,0.1) !important;
+      }
+      span {
+        font-size: 50px;
+      }
+    }
+  }
+}

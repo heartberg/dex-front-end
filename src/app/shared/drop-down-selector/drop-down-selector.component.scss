@@ -1,0 +1,182 @@
+.drop-down {
+  position: relative;
+
+  .btn {
+    padding: 0px;
+    border: none;
+    outline: none;
+    background: transparent;
+  }
+
+  .valueCatcher {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%);
+    border: 1px solid rgba(129, 0, 127, 0.15);
+    width: 100%;
+    justify-content: space-between;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &.no-border {
+      border: none !important;
+    }
+
+    .dotes {
+      display: flex;
+      align-items: center;
+
+      div {
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+        background: #666666;
+        margin-left: 10px;
+        &:first-child {
+          margin-left: 0px;
+        }
+      }
+    }
+
+    &.border-bottom-none {
+      border-bottom: none;
+      border-radius: 5px 5px 0px 0px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+  .dropDown {
+    box-shadow: 0px 0px 1px 1px rgb(129 0 127 / 5%);
+    border: 1px solid rgba(129, 0, 127, 0.15);
+    border-radius: 0px 0px 5px 5px;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    z-index: 999;
+    background: white;
+    &.left-0 {
+      left: unset !important;
+    }
+
+    &.marketplace-w_position-unset {
+      width: 100%;
+      position: unset;
+    }
+
+    .section {
+      cursor: pointer;
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(129, 0, 127, 0.15);
+      transition: 0.3s;
+
+      &.profileunHover {
+        &:hover {
+          background: unset !important;
+        }
+      }
+
+      &:hover {
+        background: rgba(129, 0, 127, 0.8);
+        button {
+          color: #e8e8e9;
+        }
+      }
+      &.border-none {
+        border: unset;
+      }
+      button {
+        cursor: pointer;
+      }
+    }
+  }
+}
+.isTree {
+  padding-left: 25px !important;
+  box-shadow: unset !important;
+  border: none !important;
+  cursor: unset;
+  .section {
+    &:hover {
+      color: unset !important;
+      background: unset !important;
+      button {
+        color: black;
+      }
+    }
+  }
+}
+.rotate {
+  transform: rotate(90deg);
+}
+.collection {
+  margin: 3px 8px;
+  span {
+    margin-top: 5px;
+  }
+}
+.isProfile {
+  display: flex;
+  justify-content: space-between !important;
+}
+.last {
+  .title {
+    margin-right: 30px;
+  }
+  .action-btns {
+    img {
+      margin: 3px 5px;
+    }
+  }
+}
+.dropDownWrapper {
+  img {
+    width: 100%;
+    height: 100%;
+  }
+  .info {
+    height: 120px;
+    overflow-y: scroll;
+  }
+}
+.unHover {
+  &:hover {
+    background: unset !important;
+  }
+}
+@media (max-width: 1067px) {
+  .isProfile {
+    flex-direction: column-reverse !important;
+    align-items: baseline !important;
+    .collection-details {
+      margin: 10px 0px !important;
+    }
+  }
+}
+// on marketplace dropdown of artist and collection
+.specific-button {
+  text-overflow: ellipsis;
+  display: inline-block;
+  text-align: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 83%;
+  overflow: hidden;
+}
+.specific-button-viewer {
+  text-overflow: ellipsis;
+  display: inline-block;
+  text-align: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 85%;
+  overflow: hidden;
+}

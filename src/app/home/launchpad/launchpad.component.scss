@@ -1,0 +1,55 @@
+.main {
+  .card {
+    padding: 10px 20px !important;
+    .date {
+      align-items: center;
+      span {
+        margin-left: 10px;
+      }
+    }
+    h6 {
+      padding: 10px 0px;
+    }
+    .progress-bar-costum {
+      span {
+        &:last-child {
+          margin-left: 10px;
+        }
+      }
+      .progress-progress-bar {
+        margin-bottom: 0px;
+      }
+    }
+    .progress-bar-right,
+    .progress-bar-left {
+      align-items: center;
+      display: flex;
+    }
+  }
+}
+.search-section {
+  position: relative;
+  input {
+    &::placeholder {
+      padding-left: 25px;
+    }
+  }
+  .search-btn {
+    position: absolute;
+    left: 12px;
+    top: 10px;
+  }
+}
+input {
+  width: 240px;
+  height: 100%;
+}
+.header {
+  margin-bottom: 10px;
+}
+.main {
+  margin-top: 15px;
+}
+.wrapper-border {
+  min-height: calc(100vh - 200px);
+}

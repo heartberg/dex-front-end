@@ -1,0 +1,357 @@
+.imgborder{
+  height: 35px;
+  width: 35px;
+
+  img{
+    width: 35px;
+    height: 35px;
+  }
+}
+
+.backArrow{
+  margin-bottom: 20px;
+}
+
+.header{
+  margin-bottom: 15px;
+  margin-left: 5px;
+}
+.dropdownborder {
+  h4 {
+    margin-bottom: -2px;
+    margin-left: 5px;
+  }
+}
+.whole{
+  display: flex;
+}
+
+
+.dropdown{
+  .AssetsList{
+    margin-top: 10px;
+
+  }
+}
+
+.inside .preview{
+  display: flex;
+}
+
+.whole {
+  height: calc(100vh - 180px);
+  overflow-y: overlay;
+
+  .metaheader{
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding-left: 5px;
+  }
+  .assetsList{
+    display: flex;
+    align-items: center;
+  }
+  .assetdescription{
+    margin-left: 20px;
+    height: 100px;
+    overflow-y: overlay;
+  }
+
+  .royalties{
+    margin-bottom: 20px;
+
+    .royal{
+      display: flex;
+      align-items: center;
+    }
+    .royaldescr{
+      margin-left: 93px;
+      width: 100%;
+    }
+  }
+
+  .collectionborder{
+    margin-bottom: 20px;
+
+    .collections{
+      align-items: center;
+      display: flex;
+      span{
+        margin-left: 10px;
+        color: violet;
+      }
+    }
+  }
+
+  .properties{
+    margin-left: 15px;
+    margin-bottom: 10px;
+  }
+
+  .left .right{
+    display: flex;
+    flex-direction: column;
+
+  }
+
+  .propertiesborder{
+    margin-bottom: 20px;
+  }
+
+  .createoffer{
+    margin-bottom: 20px;
+    .amountheader{
+      margin-left: 15px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .typeoffer{
+    margin-bottom: 20px;
+    .typeheader{
+      margin-left: 15px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .duration{
+    margin-bottom: 20px;
+    .durationheader{
+      margin-left: 15px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .price{
+    margin-bottom: 20px;
+    .priceheader{
+      margin-left: 15px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .btn-secondary-costum {
+    margin: auto;
+    width: 130px;
+    height: 40px;
+    display: block;
+    text-align: center;
+  }
+
+  .assets{
+    margin-bottom: 20px;
+
+  }
+}
+.input-costum {
+  width: 100%;
+}
+// added
+.preview {
+  position: sticky;
+  top: 0px;
+}
+
+.previewheader {
+  padding-bottom: 10px;
+  padding-left: 5px;
+}
+
+.restyle-wrapper {
+  padding: 10px !important;
+}
+
+input[type=date] {
+  padding-right: 15px;
+}
+.restyle-col {
+  padding-bottom: 0px;
+  padding-right: 0px;
+}
+.restyle-col-bottom {
+  padding-bottom: 0px;
+}
+.height-_10 {
+  margin-right: -10px;
+}
+
+@media (max-width: 768px) {
+
+  .assetdescription {
+    margin: 0px !important;
+  }
+
+  .whole{
+    border: none !important;
+    outline: none;
+    padding: 0px !important;
+
+    .collectionborder {
+      .collections {
+        span {
+          margin: 0px;
+        }
+      }
+    }
+  }
+  .collections {
+    h4 {
+      margin-bottom: 10px;
+    }
+  }
+  .propertiesborder {
+    .p-b-10 {
+      padding-bottom: 10px !important;
+    }
+  }
+  .royal {
+    h4 {
+      margin-left: 8px;
+      line-height: 0px;
+      margin-top: 10px;
+    }
+  }
+}
+.extra-field {
+  span {
+    font-size: 16px;
+    margin-left: 15px;
+    line-height: 30px;
+  }
+}
+.second-half {
+  .title {
+    margin-bottom: 15px;
+  }
+}
+.description {
+}
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 15px;
+}
+input[type = checkbox] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+.down-checkbox {
+  cursor: pointer;
+  label {
+    cursor: pointer;
+    margin-left: 5px;
+    font-weight: 600;
+    color: #81007F;
+  }
+}
+.presale-section {
+  h3 {
+    margin-bottom: 15px;
+  }
+  .inputs {
+    width: 80%;
+    div {
+      width: 100%;
+      margin: 15px 0px;
+      align-items: start !important;
+      justify-content: space-between !important;
+    }
+
+    input {
+      width: 80%;
+    }
+  }
+}
+.wrapper-border {
+  margin-bottom: 20px;
+}
+.top {
+  margin-top: 10px;
+}
+.image-place {
+  width: fit-content;
+  div {
+    margin-top: -5px;
+  }
+  span {
+    font-size: 14px;
+  }
+}
+.desc-middle {
+  // sanam iconi ar daemateba
+  margin-top: 6px;
+  button {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+  span {
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  input {
+    height: 30px;
+    font-size: 16px;
+  }
+  div {
+    margin-bottom: 15px;
+  }
+}
+.upload-btn {
+  height: 57%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload {
+  position: relative;
+  cursor: pointer;
+  font-size: 16px;
+  input {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+    opacity: 0;
+  }
+}
+.overflow {
+  overflow: hidden;
+  .plus_icon {
+    img {
+      margin-left: 25px;
+      margin-top: 25px;
+    }
+  }
+}
+.deploy {
+  display: flex;
+  justify-content: center;
+  button {
+    width: 150px !important;
+  }
+}
+.whole {
+  height: calc(100vh - 190px) !important;
+  overflow: hidden;
+  margin-bottom: 0px !important;
+}
+.scrollable-section-first {
+  height: calc(100vh - 210px);
+  overflow-Y: scroll;
+}
+.second-half {
+  height: calc(100vh - 210px) !important;
+  overflow-Y: scroll;
+  margin-bottom: 0px !important;
+}
+.deploy {
+  align-items: center;
+  margin-top: 0px;
+  padding: 14px 0px;
+}
+.mainDiv {
+  padding-bottom: 0px !important;
+}

@@ -1,0 +1,44 @@
+<div class="main">
+  <div class="wrapper wrapper-border">
+    <button class="btn-default btn-default close" (click)="closePopUp(false)">
+      <i class="fa fa-close"></i>
+    </button>
+    <div class="top-side">
+      <div class="title">
+        <h3 *ngIf="openWallet">Connect your Wallet</h3>
+        <h3 *ngIf="!openWallet">Project Name Pre-sale</h3>
+      </div>
+      <div class="pre-title isNotWallet">
+        <span *ngIf="openWallet">Choose your preferred method to connect to the Algoverse Marketplace</span>
+        <div class="input-section" *ngIf="!openWallet">
+          <span>Amount</span>
+          <input type="text" class="input-costum">
+          <div class="d-flex buttons">
+            <button class="btn-primary-costum">
+              Buy
+            </button>
+            <button class="btn-secondary-costum">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wallet-side">
+      <div class="row" style="width: 100%">
+        <div class="col-md-6">
+          <div class="wallet-section">
+            <img src="https://walletconnect.org/walletconnect-logo.svg" alt="">
+            <span>WalletConnect</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="wallet-section" (click)="setelectWalletConnect('MyAlgoWallet')">
+            <img src="https://wallet.myalgo.com/images/MyAlgoBlue.svg" alt="">
+            <span>MyAlgoWallet</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

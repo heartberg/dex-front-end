@@ -1,0 +1,52 @@
+.main {
+  .header-title {
+    h3 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    span {
+      color: #81007F;
+      margin-bottom: 20px;
+    }
+  }
+  .track-image {
+    h3 {
+      margin-left: 12px;
+      margin-bottom: 5px;
+    }
+  }
+  input {
+    width: 100%;
+  }
+}
+.card {
+  padding: 20px 10px 0px 10px;
+  margin-bottom: 20px;
+}
+.track-section {
+  .track-info-left,
+  .track-info-left-right,
+  .track-info-middle {
+   div {
+     &:first-child {
+       padding-top: 0px !important;
+     }
+     padding: 10px 0px;
+     h4 {
+       color: #81007F;
+     }
+   }
+  }
+}
+.row {
+  .unset-pd {
+    padding-bottom: 0px !important;
+  }
+}
+.scrollable-section {
+  height: calc(100vh - 240px);
+  overflow-y: scroll;
+}
+.pd_t-55 {
+  padding-top: 55px;
+}
