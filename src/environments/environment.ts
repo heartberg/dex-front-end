@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://algoverse.azurewebsites.net',
+  baseUrl: 'https://versepad.azurewebsites.net',
 };
 
 /*

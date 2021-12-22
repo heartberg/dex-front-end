@@ -37,7 +37,7 @@
             About
           </li>
         </ul>
-        <ng-container *ngIf="isLoggedIn">
+        <ng-container *ngIf="!isLoggedIn">
           <button (click)="connectWalletPopUp()" class="btn-default btn-primary-costum"
                   [ngClass]="{'hideUntilMenuRespoClicked': !isMenuRespoOpened}"
           >

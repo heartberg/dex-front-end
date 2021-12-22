@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
   // @ts-ignore
   // $isLoggedIn: Observable<AuthState>;
   // permanent
-  public isLoggedIn: boolean = true;
+  public isLoggedIn: boolean = false;
   @Output() themeWasChanged = new EventEmitter<boolean>();
 
   constructor(
@@ -31,6 +31,9 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): any {
+    if (localStorage.getItem('wallet')) {
+      this.isLoggedIn = true;
+    }
   }
 
   openAvatar() {
@@ -95,11 +98,14 @@ export class HeaderComponent implements OnInit {
       .subscribe(
         (user: User) => {
           console.log(user);
+          this.isLoggedIn = true;
+          this.isPopUpOpened = false;
         }
       )
   }
 
   disconnect() {
     this.isLoggedIn = false;
+    localStorage.removeItem('wallet');
   }
 }
