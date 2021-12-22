@@ -13,6 +13,7 @@ import { DeployComponent } from './home/deploy/deploy.component';
 import {HttpClientModule} from "@angular/common/http";
 import { TrackComponent } from './home/track/track.component';
 import { MyDeployComponent } from './home/my-deploy/my-deploy.component';
+import { MyPresaleComponent } from './home/my-presale/my-presale.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { MyDeployComponent } from './home/my-deploy/my-deploy.component';
     LaunchDetailComponent,
     DeployComponent,
     TrackComponent,
-    MyDeployComponent
+    MyDeployComponent,
+    MyPresaleComponent
   ],
   imports: [
     BrowserModule,

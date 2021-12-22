@@ -8,6 +8,7 @@ import {LaunchDetailComponent} from "./home/launch-detail/launch-detail.componen
 import {DeployComponent} from "./home/deploy/deploy.component";
 import {TrackComponent} from "./home/track/track.component";
 import {MyDeployComponent} from "./home/my-deploy/my-deploy.component";
+import {MyPresaleComponent} from "./home/my-presale/my-presale.component";
 
 const routes: Routes = [
   {
@@ -46,6 +47,10 @@ const routes: Routes = [
   {
     path: 'my-deploy',
     component: MyDeployComponent
+  },
+  {
+    path: 'my-presale',
+    component: MyPresaleComponent
   }
 ];
 
