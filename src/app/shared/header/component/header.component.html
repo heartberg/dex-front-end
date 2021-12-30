@@ -69,10 +69,16 @@
             </ng-container>
             <div class="dropDown" *ngIf="isProfileOpened">
               <ul class="d-flex flex-column">
+                <li routerLink="/wallet">Wallet</li>
                 <li routerLink="/my-deploy">My Deploys</li>
-                <li routerLink="/my-presale">My Presales</li>
-                <li routerLink="/launchpad">Entries</li>
-                <li routerLink="/track">Track</li>
+                <li routerLink="/my-presale" style="position: relative">
+                  My Presales
+                  <span style="color: #81007F; position: absolute; top: 4px; font-size: 14px; right: 4px;">
+                    9
+                  </span>
+                </li>
+<!--                <li routerLink="/launchpad">Entries</li>-->
+<!--                <li routerLink="/track">Track</li>-->
                 <li (click)="disconnect()">Disconnect</li>
               </ul>
             </div>

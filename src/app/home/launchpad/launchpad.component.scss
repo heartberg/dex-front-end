@@ -30,9 +30,9 @@
 .search-section {
   position: relative;
   input {
-    &::placeholder {
-      padding-left: 25px;
-    }
+      //&::placeholder {
+      //  padding-left: 25px;
+      //}
   }
   .search-btn {
     position: absolute;
@@ -40,9 +40,14 @@
     top: 10px;
   }
 }
+.main {
+  height: calc(100vh - 210px);
+  overflow: hidden;
+}
 input {
   width: 240px;
   height: 100%;
+  padding-left: 35PX;
 }
 .header {
   margin-bottom: 10px;

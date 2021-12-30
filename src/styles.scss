@@ -45,7 +45,7 @@ html {
 h1,h2,h3,h4,h5,h6 {
   font-family: secondary;
 }
-li,a,p,span,button,input, ::placeholder {
+li,a,p,span,button,input,label ::placeholder {
   font-family: primary;
 }
 h1,h2,h3 {

@@ -5,26 +5,37 @@
     </button>
     <div class="top-side">
       <div class="title">
-        <h3 *ngIf="openWallet">Connect your Wallet</h3>
+        <h3 *ngIf="openWallet && !isDeploy">Connect your Wallet</h3>
         <h3 *ngIf="!openWallet">Project Name Pre-sale</h3>
+        <h3 *ngIf="isDeploy">are you sure one time only?</h3>
       </div>
       <div class="pre-title isNotWallet">
-        <span *ngIf="openWallet">Choose your preferred method to connect to the Algoverse Marketplace</span>
+        <span *ngIf="openWallet && !isDeploy">Choose your preferred method to connect to the Algoverse Marketplace</span>
         <div class="input-section" *ngIf="!openWallet">
-          <span>Amount</span>
+          <span >Amount</span >
           <input type="text" class="input-costum">
           <div class="d-flex buttons">
-            <button class="btn-primary-costum">
-              Buy
+            <button class="btn-primary-costum"  (click)="closePopUp(false)">
+              Cancel
             </button>
             <button class="btn-secondary-costum">
+              Buy
+            </button>
+          </div>
+        </div>
+        <div class="input-section" *ngIf="isDeploy">
+          <div class="d-flex buttons"  [class.deploy-width]="isDeploy">
+            <button class="btn-primary-costum"  (click)="closePopUp(false)">
               Cancel
+            </button>
+            <button class="btn-secondary-costum" (click)="triggetLiquidity()">
+              Init liquidity
             </button>
           </div>
         </div>
       </div>
     </div>
-    <div class="wallet-side">
+    <div class="wallet-side" *ngIf="openWallet && !isDeploy">
       <div class="row" style="width: 100%">
         <div class="col-md-6">
           <div class="wallet-section">

@@ -1,0 +1,22 @@
+<div class="main">
+  <div class="wrapper-border">
+    <div class="header-title d-flex flex-column">
+      <h3>Wallet</h3>
+    </div>
+    <div class="choise d-flex" style="margin-top: 5px; margin-bottom: 10px;">
+      <div class="section" (click)="activeFirst()">
+        <button class="btn-primary-costum" style="border-radius: 4px; margin-right: 10px;">
+          Tokens
+        </button>
+      </div>
+      <div class="section" (click)="activeSecond()">
+        <button class="btn-secondary-costum" style="border-radius: 4px">
+
+          My Entries
+        </button>
+      </div>
+    </div>
+    <app-track *ngIf="isActiveFirst"></app-track>
+    <app-launchpad *ngIf="isActiveSecond"></app-launchpad>
+  </div>
+</div>

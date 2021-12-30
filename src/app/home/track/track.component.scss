@@ -1,4 +1,6 @@
 .main {
+  height: calc(100vh - 210px);
+  overflow: hidden;
   .header-title {
     h3 {
       margin-top: 10px;
@@ -44,7 +46,7 @@
   }
 }
 .scrollable-section {
-  height: calc(100vh - 240px);
+  height: calc(100vh - 360px);
   overflow-y: scroll;
 }
 .pd_t-55 {

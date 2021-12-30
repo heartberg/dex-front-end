@@ -13,8 +13,10 @@ export class PopUpComponent implements OnInit {
   @Output() isConnectedToWallet = new EventEmitter<boolean>();
   @Output() isClosed = new EventEmitter<boolean>();
   @Output() logInValue = new EventEmitter<string | null>();
+  @Output() isLiquiditied = new EventEmitter<boolean>();
 
   @Input() openWallet: boolean = false;
+  @Input() isDeploy: boolean = false;
 
   constructor(
     private _walletsConnectService: WalletsConnectService,
@@ -67,4 +69,7 @@ export class PopUpComponent implements OnInit {
     }
   }
 
+  triggetLiquidity() {
+    this.isLiquiditied.emit(true);
+  }
 }

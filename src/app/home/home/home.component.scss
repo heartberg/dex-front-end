@@ -1,4 +1,6 @@
 .main {
+  height: calc(100vh + 184px);
+  overflow: hidden;
   h1 {
     text-align: center;
     margin-top: 10px;
@@ -52,4 +54,8 @@
   &:last-child {
     margin-top: 15px;
   }
+}
+.scroll {
+  height: calc(80vh - 10px);
+  overflow: scroll;
 }

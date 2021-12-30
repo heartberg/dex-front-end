@@ -14,6 +14,7 @@ import {HttpClientModule} from "@angular/common/http";
 import { TrackComponent } from './home/track/track.component';
 import { MyDeployComponent } from './home/my-deploy/my-deploy.component';
 import { MyPresaleComponent } from './home/my-presale/my-presale.component';
+import { WalletComponent } from './home/wallet/wallet.component';
 
 @NgModule({
   declarations: [
@@ -26,13 +27,15 @@ import { MyPresaleComponent } from './home/my-presale/my-presale.component';
     DeployComponent,
     TrackComponent,
     MyDeployComponent,
-    MyPresaleComponent
+    MyPresaleComponent,
+    WalletComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     SharedModule,
-    HttpClientModule
+    HttpClientModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -9,6 +9,9 @@ export class DeployComponent implements OnInit {
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
   extraFieldsArr: number[] = [1];
+  purposeIsChecked: boolean = false;
+  presaleIsChecked: boolean = false;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -21,6 +24,14 @@ export class DeployComponent implements OnInit {
   @ViewChild('checkboxSecond', {static: false})
   // @ts-ignore
   private checkboxSecond: ElementRef;
+
+  @ViewChild('checkboxPurpose', {static: false})
+  // @ts-ignore
+  private checkboxPurpose: ElementRef;
+
+  @ViewChild('checkPresale', {static: false})
+  // @ts-ignore
+  private checkPresale: ElementRef;
 
   check() {
     if (this.checkbox.nativeElement.checked) {
@@ -43,6 +54,22 @@ export class DeployComponent implements OnInit {
       this.extraFieldsArr.push(1);
     } else {
       this.extraFieldsArr.pop()
+    }
+  }
+
+  activatePurposeSection() {
+    if (this.checkboxPurpose.nativeElement.checked) {
+      this.purposeIsChecked = true
+    } else  {
+      this.purposeIsChecked = false;
+    }
+  }
+
+  activatePresaleSection() {
+    if (this.checkPresale.nativeElement.checked) {
+      this.presaleIsChecked = true;
+    } else {
+      this.presaleIsChecked = false;
     }
   }
 }

@@ -24,9 +24,15 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   // marketplace artists and collections
   @Output() dropDownValue = new EventEmitter<string>();
 
+  @Input() public widthPX: any = '';
+  @Input() public extraDropDown: boolean = false;
+
   public isDropDownOpened = false;
   public isDropDownOpenedCounter = 1;
   public showDropDownSelected: string = '';
+
+  //  for while
+  publicTradeIsAdded: boolean = false;
 
   // default values for marketplace collection and artists
 
@@ -43,6 +49,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
 
   ngOnInit(): void {
+
   }
 
   ngDoCheck() {
@@ -62,7 +69,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     }
   }
 
-  selectValue(value: string) {
+  selectValue(value: string, i?: any) {
     this.isDropDownOpenedCounter +=1;
     this.showDropDownSelected = value
     this.isDropDownOpened = false;
@@ -77,4 +84,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     this.dropDownValue.emit(collectionId);
   }
 
+  getElement(i: any) {
+    console.log(i)
+  }
 }

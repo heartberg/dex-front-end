@@ -3,7 +3,7 @@
     <div class="header d-flex justify-content-between">
       <div class="search-section hide-respo">
         <div class="search">
-          <input type="text" placeholder="Collection, items..." class="input-costum">
+          <input type="text" placeholder="Collection, items..." class="input-costum" style="color: #040405 !important;">
         </div>
         <div class="search-btn search_btn">
           <svg viewBox="0 0 16 16" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg" class="sc-bdnxRM sc-hKFxyN hOiKLt">
@@ -14,6 +14,7 @@
       <app-drop-down-selector
         [isNotAccordion]="false"
         [dropDownValues]="['Starting Soon', 'Ending Soon', 'Participated', 'Finished']"
+        [widthPX]="'160px'"
       >
       </app-drop-down-selector>
     </div>
@@ -65,9 +66,11 @@
           </div>
           <div class="col-6">
             <h6>Description</h6>
-            <span>
+            <div class="desc" style="height: 19.3vh; overflow-y: scroll; margin-top: 10px">
+                          <span>
                 Aenean auctor dictum purus, et sollicitudin leo ornare sed. Morbi suscipit ut orci eget varius. Sed ut sollicitudin dui, ac viverra nulla. Proin rutrum, mi vehicula ornare sodales, nisi augue venenatis urna, a dignissim mauris elit non lectus. Cras posuere urna vel purus elementum elementum. Praesent mollis, ipsum vel malesuada tincidunt, turpis tortor finibus nulla, id laoreet neque quam vel massa. Curabitur non ullamcorper nibh. Maecenas venenatis viverra est, id porta arcu. Curabitur a iaculis orci, non iaculis urna. Maecenas ut maximus nibh, in tincidunt urna. Proin ullamcorper malesuada libero at posuere. Suspendisse posuere, turpis id tempus vehicula, neque velit fermentum nibh, vitae consectetur metus metus sed nisi. Aenean sed orci et ipsum malesuada volutpat.
               </span>
+            </div>
           </div>
         </div>
       </div

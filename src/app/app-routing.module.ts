@@ -9,6 +9,7 @@ import {DeployComponent} from "./home/deploy/deploy.component";
 import {TrackComponent} from "./home/track/track.component";
 import {MyDeployComponent} from "./home/my-deploy/my-deploy.component";
 import {MyPresaleComponent} from "./home/my-presale/my-presale.component";
+import {WalletComponent} from "./home/wallet/wallet.component";
 
 const routes: Routes = [
   {
@@ -51,6 +52,10 @@ const routes: Routes = [
   {
     path: 'my-presale',
     component: MyPresaleComponent
+  },
+  {
+    path: 'wallet',
+    component: WalletComponent
   }
 ];
 

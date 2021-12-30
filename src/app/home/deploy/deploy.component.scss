@@ -254,7 +254,6 @@ input[type = checkbox] {
     div {
       width: 100%;
       margin: 15px 0px;
-      align-items: start !important;
       justify-content: space-between !important;
     }
 
@@ -276,6 +275,11 @@ input[type = checkbox] {
   }
   span {
     font-size: 14px;
+  }
+}
+.desc {
+  textarea {
+    height: 70px;
   }
 }
 .desc-middle {
@@ -354,4 +358,10 @@ input[type = checkbox] {
 }
 .mainDiv {
   padding-bottom: 0px !important;
+}
+h4 {
+  span {
+    font-size: 10px;
+    position: absolute;
+  }
 }
