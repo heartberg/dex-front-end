@@ -12,7 +12,10 @@
       <div class="pre-title isNotWallet">
         <span *ngIf="openWallet && !isDeploy">Choose your preferred method to connect to the Algoverse Marketplace</span>
         <div class="input-section" *ngIf="!openWallet">
-          <span >Amount</span >
+          <div class="d-flex align-items-center justify-content-between">
+            <span >Algo Amount</span >
+            <span style="color: #81007F; margin-right: 8px">200</span>
+          </div>
           <input type="text" class="input-costum">
           <div class="d-flex buttons">
             <button class="btn-primary-costum"  (click)="closePopUp(false)">

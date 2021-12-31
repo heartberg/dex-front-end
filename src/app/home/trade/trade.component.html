@@ -4,11 +4,31 @@
     <div class="d-flex flex-column" [class.flex-column-reverse]="rotate">
       <div class="d-flex top">
         <app-drop-down-selector [dropDownValues]="firstDropValues" [isNotAccordion]="false"
-                                [widthPX]="'130px'"
+                                [widthPX]="'160px'"
                                 (dropDownValue)="getValueFromDropDown($event, 1)"
-                                [extraDropDown]="true"></app-drop-down-selector>
-        <div class="input">
-          <input type="text" class="input-costum" placeholder="Blockchain to change">
+                                [extraDropDown]="true"
+                                [notCloseOnClick]="true"
+                                class="first-drop-down"></app-drop-down-selector>
+        <div class="input d-flex flex-column">
+          <div class="input-field d-flex flex-column align-items-end">
+            <span class="amount">{{ '2000' }}</span>
+            <input type="text" class="input-costum" [value]="'0'" [class.d-none]="isClickedOnBtn">
+            <input type="text" class="input-costum" [value]="this.algoAmount" [class.d-none]="!isClickedOnBtn">
+          </div>
+          <div class="d-flex align-items-center wrapper-for-btns">
+            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(1)" [class.btn-secondary-costum]="btnFirst">
+              25%
+            </button>
+            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(2)" [class.btn-secondary-costum]="btnSecond">
+              50%
+            </button>
+            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(3)" [class.btn-secondary-costum]="btnThird">
+              75%
+            </button>
+            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(4)" [class.btn-secondary-costum]="btnFourth">
+              100%
+            </button>
+          </div>
         </div>
       </div>
       <div class="reverse" style="
@@ -29,11 +49,12 @@
       </div>
       <div class="d-flex">
         <app-drop-down-selector [dropDownValues]="secondDropValues" [isNotAccordion]="false"
-                                [widthPX]="'130px'"
+                                [widthPX]="'160px'"
                                 [extraDropDown]="true"
-                                (dropDownValue)="getValueFromDropDown($event, 2)"></app-drop-down-selector>
+                                (dropDownValue)="getValueFromDropDown($event, 2)"
+                                [notCloseOnClick]="true"></app-drop-down-selector>
         <div class="input">
-          <input type="text" class="input-costum" placeholder="Blockchain to be changed">
+          <input type="text" class="input-costum">
         </div>
       </div>
     </div>
@@ -42,7 +63,8 @@
       style="width: 100%; justify-content: space-around;">
         <div class="d-flex align-items-center">
           <span>Slippage:</span>
-          <input type="text" class="" style="width: 70px; margin-left: 5px; margin-right: 5px; color: #040405; padding-left: 5px;">
+          <input type="text" class="" style="width: 70px; margin-left: 5px; margin-right: 5px; color: #040405; padding-left: 5px;"
+                 >
           <span style="color: #81007F">%</span>
         </div>
         <div class="d-flex">

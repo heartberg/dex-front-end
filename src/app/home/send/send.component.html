@@ -4,13 +4,16 @@
     <div class="d-flex top flex-column">
       <h4>Send token</h4>
       <div class="d-flex">
-        <app-drop-down-selector [isNotAccordion]="false" [dropDownValues]="['Algo', 'Token a', 'Token b', 'Token c']" [widthPX]="'130px'" [extraDropDown]="true"></app-drop-down-selector>
-        <div class="input">
-          <input type="text" class="input-costum" placeholder="Enter...">
+        <app-drop-down-selector [isNotAccordion]="false" [dropDownValues]="['Token a', 'Token b', 'Token c']" [widthPX]="'170px'" [extraDropDown]="true"></app-drop-down-selector>
+        <div class="d-flex flex-column align-items-end">
+          <span style="color: #81007F; margin-right: 17px; font-size: 13px; margin-bottom: 3px"> 2000</span>
+          <div class="input">
+            <input type="text" class="input-costum" placeholder="Enter...">
+          </div>
         </div>
       </div>
     </div>
-    <h6> Address To</h6>
+    <h6> To Address </h6>
     <div class="d-flex">
       <input type="text" class="input-costum">
     </div>

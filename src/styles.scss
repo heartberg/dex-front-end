@@ -99,6 +99,10 @@ html {
   &:hover {
     transform: scale(1.05);
   }
+
+}
+.btn-extra {
+  border-radius: 4px !important;
 }
 
 .btn-secondary-costum {
@@ -172,14 +176,14 @@ html {
   .input-costum {
     background: rgba(255, 255, 255, 0.07) !important;
     color: rgb(255, 255, 255, 0.8) !important;
-    &::placeholder {
-      color: rgb(255, 255, 255, 0.8) !important;
-    }
-    &:focus {
-      background: rgba(255, 255, 255, 0) !important;
-      border-color: rgba(255, 255, 255, 0.3) !important;
-      box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
-    }
+    //&::placeholder {
+    //  color: rgb(255, 255, 255, 0.8) !important;
+    //}
+    //&:focus {
+    //  background: rgba(255, 255, 255, 0) !important;
+    //  border-color: rgba(255, 255, 255, 0.3) !important;
+    //  box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
+    //}
   }
 
   textarea {
@@ -369,11 +373,12 @@ html {
     color: rgba(4, 4, 5, 0.5);
   }
   &:hover {
-    border: 1px solid rgba(4, 4, 5, 0.1);
+    outline: 1px solid rgba(4, 4, 5, 0.1);
   }
+
   &:focus {
     background: rgba(4, 4, 5, 0);
-    border: 1px solid rgba(4, 4, 5, 0.3);
+    outline: 1px solid rgba(4, 4, 5, 0.3);
     box-shadow: rgb(4 4 5 / 6%) 0px 0px 0px 4px;
   }
 

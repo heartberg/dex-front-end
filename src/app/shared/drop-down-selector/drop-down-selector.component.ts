@@ -26,6 +26,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   @Input() public widthPX: any = '';
   @Input() public extraDropDown: boolean = false;
+  @Input() public notCloseOnClick: boolean = false;
 
   public isDropDownOpened = false;
   public isDropDownOpenedCounter = 1;
@@ -70,10 +71,17 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   selectValue(value: string, i?: any) {
-    this.isDropDownOpenedCounter +=1;
-    this.showDropDownSelected = value
-    this.isDropDownOpened = false;
-    this.dropDownValue.emit(value);
+    if (this.notCloseOnClick) {
+      this.isDropDownOpenedCounter +=1;
+      this.showDropDownSelected = value;
+      this.dropDownValue.emit(value);
+      this.publicTradeIsAdded = !this.publicTradeIsAdded;
+    } else {
+      this.isDropDownOpenedCounter +=1;
+      this.showDropDownSelected = value;
+      this.dropDownValue.emit(value);
+      this.isDropDownOpened = false;
+    }
   }
 
   emitCollectionIdAndWallet(value: string, collectionId: string, wallet: string): void {

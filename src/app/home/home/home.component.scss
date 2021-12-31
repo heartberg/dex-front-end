@@ -23,6 +23,7 @@
     }
     .card {
       padding: 10px 20px !important;
+      cursor: pointer;
       .date {
         align-items: center;
         span {
@@ -51,11 +52,12 @@
   }
 }
 .card {
-  &:last-child {
     margin-top: 15px;
+  &:first-child {
+    margin-top: 0px !important;
   }
 }
 .scroll {
   height: calc(80vh - 10px);
-  overflow: scroll;
+  overflow-Y: scroll;
 }

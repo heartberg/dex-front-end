@@ -26,3 +26,21 @@
   align-items: center;
   width: 100%;
 }
+.wrapper-for-btns {
+  margin-top: 10px;
+  justify-content: space-evenly;
+}
+app-drop-down-selector {
+  margin-top: 5px;
+}
+.input-field {
+  .amount {
+    font-size: 13px;
+    color: #81007F;
+    margin-bottom: 3px;
+    margin-right: 17px;
+  }
+}
+.first-drop-down {
+  margin-top: 23px;
+}

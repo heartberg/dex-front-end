@@ -115,7 +115,7 @@
             <div class="wrapper-border">
               <div class="d-flex align-items-center"  (click)="activatePurposeSection()"   [ngStyle]="{'margin-bottom': purposeIsChecked ? '8px' : '0px'}">
                 <input type="checkbox" name="checkPurpose" id="checkPurpose" #checkboxPurpose >
-                <label for="checkPurpose" style="color: #81007F; font-weight: 700;margin-left: 5px; cursor: pointer; margin-bottom: 0px;">Purpose</label>
+                <label for="checkPurpose" style="color: #81007F; font-weight: 700;margin-left: 5px; cursor: pointer; margin-bottom: 0px;">Additional Fee</label>
               </div>
               <ng-container *ngIf="purposeIsChecked">
                 <div class="createoffer">
@@ -140,14 +140,14 @@
       </div>
       <div class="col-md-6 second-half">
         <div class="wrapper-section d-flex flex-column">
-          <div class="wrapper-border">
-            <h3 class="color-violet title">
-              Project Description
-            </h3>
-            <div class="desc">
-              <textarea></textarea>
-            </div>
-          </div>
+<!--          <div class="wrapper-border">-->
+<!--            <h3 class="color-violet title">-->
+<!--              Project Description-->
+<!--            </h3>-->
+<!--            <div class="desc">-->
+<!--              <textarea></textarea>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="presale-section">
             <div class="wrapper-border">
               <div class="d-flex align-items-center"
@@ -155,6 +155,14 @@
                    (click)="activatePresaleSection()">
                 <input type="checkbox" name="checkPurpose" id="checkPresale" #checkPresale >
                 <label for="checkPresale" style="color: #81007F; font-weight: 700;margin-left: 5px; cursor: pointer; margin-bottom: 0px;">Create Presale</label>
+              </div>
+              <div class="wrapper-border" *ngIf="presaleIsChecked">
+                <h3 class="color-violet title">
+                  Project Description
+                </h3>
+                <div class="desc">
+                  <textarea></textarea>
+                </div>
               </div>
               <ng-container *ngIf="presaleIsChecked">
                 <h3>Presale Settings</h3>
@@ -181,35 +189,34 @@
                   </div>
                 </div>
               </ng-container>
-            </div>
-          </div>
-          <div class="down-checkbox" (click)="check()" [ngClass]="{'wrapper-border': isCheckedRoadMap, 'top': !isCheckedRoadMap}">
-            <input type="checkbox" #checkbox name="check" id="check">
-            <label for="check">Add Roadmap</label>
-            <div class="desc" *ngIf="isCheckedRoadMap">
-              <textarea></textarea>
-              <button class="btn-primary-costum upload" style="margin-top: 10px">
-                Upload Image
-                <input type="file" id="myFile" name="filename" formControlName="icon">
-              </button>
-            </div>
-          </div>
-          <hr *ngIf="!isCheckedRoadMap || !isCheckedTeamInfo">
-          <div class="down-checkbox" (click)="checkSecond()" [ngClass]="{'wrapper-border': isCheckedTeamInfo, 'top': !isCheckedTeamInfo}">
-            <input type="checkbox" #checkboxSecond name="check" id="checkSecond">
-            <label for="checkSecond">Add Team Info</label>
-            <ng-container  *ngFor="let item of extraFieldsArr; let i = index;">
-              <div class="desc overflow" *ngIf="isCheckedTeamInfo">
-              <div class="row" style="position: relative;"
-                   [ngStyle]="{'margin-top': i !== 0 ? '12px' : '0px'}">
-                <div class="col-md-6">
-                  <div class="image-place d-flex flex-column"
-                       style="justify-content: center;
+              <hr *ngIf="presaleIsChecked">
+              <div *ngIf="presaleIsChecked" class="down-checkbox" (click)="check()" [ngClass]="{'wrapper-border': isCheckedRoadMap, 'top': !isCheckedRoadMap}" [class.label-last]="!isCheckedRoadMap">
+                <input type="checkbox" #checkbox name="check" id="check">
+                <label for="check">Add Roadmap</label>
+                <div class="desc" *ngIf="isCheckedRoadMap">
+                  <textarea></textarea>
+                  <button class="btn-primary-costum upload" style="margin-top: 10px">
+                    Upload Image
+                    <input type="file" id="myFile" name="filename" formControlName="icon">
+                  </button>
+                </div>
+              </div>
+              <hr *ngIf="presaleIsChecked">
+              <div *ngIf="presaleIsChecked" class="down-checkbox label-last" (click)="checkSecond()" [ngClass]="{'wrapper-border': isCheckedTeamInfo, 'top': !isCheckedTeamInfo}" [class.label-last]="!isCheckedTeamInfo">
+                <input type="checkbox" #checkboxSecond name="check" id="checkSecond">
+                <label for="checkSecond">Add Team Info</label>
+                <ng-container  *ngFor="let item of extraFieldsArr; let i = index;">
+                  <div class="desc overflow" *ngIf="isCheckedTeamInfo">
+                    <div class="row" style="position: relative;"
+                         [ngStyle]="{'margin-top': i !== 0 ? '12px' : '0px'}">
+                      <div class="col-md-6">
+                        <div class="image-place d-flex flex-column"
+                             style="justify-content: center;
                               align-items: center;
                               width: 100%;
                               margin-top: 30px;"
-                  >
-                    <input type="file" id="myFile" name="filename" formControlName="icon" style="
+                        >
+                          <input type="file" id="myFile" name="filename" formControlName="icon" style="
                       position: absolute;
                       height: 60px;
                       background: red;
@@ -217,39 +224,41 @@
                       width: 100%;
                       opacity: 0;
                       cursor: pointer"
-                    >
-                    <i aria-hidden="true" class="fa fa-user" style="font-size: 70px; cursor: pointer"></i>
-                  </div>
-                </div>
-                <div class="col-md-6 desc-middle">
-                  <div class="d-flex flex-column">
-                    <div class="d-flex align-items-center">
-                      <span>Name</span>
-                      <input type="text" class="input-costum">
-                    </div>
-                    <div class="d-flex align-items-center">
-                      <span>Position</span>
-                      <input type="text" class="input-costum">
-                    </div>
-                    <div class="d-flex align-items-center">
-                      <span>Social</span>
-                      <input type="text" class="input-costum">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-2 plus_icon" (click)="addExtraFields(i)"
-                style="left: 0px;
+                          >
+                          <i aria-hidden="true" class="fa fa-user" style="font-size: 70px; cursor: pointer"></i>
+                        </div>
+                      </div>
+                      <div class="col-md-6 desc-middle">
+                        <div class="d-flex flex-column">
+                          <div class="d-flex align-items-center">
+                            <span>Name</span>
+                            <input type="text" class="input-costum">
+                          </div>
+                          <div class="d-flex align-items-center">
+                            <span>Position</span>
+                            <input type="text" class="input-costum">
+                          </div>
+                          <div class="d-flex align-items-center">
+                            <span>Social</span>
+                            <input type="text" class="input-costum">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-2 plus_icon" (click)="addExtraFields(i)"
+                           style="left: 0px;
                        right: 0px;
                        bottom: -20px;
                        margin: auto;
                        position: absolute;
 ">
-                  <img src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg" alt="" style="width: 30px; height: 30px" *ngIf="i === 0">
-                  <img *ngIf="i !== 0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU" alt="" style="height: 30px; width: 30px;">
-                </div>
+                        <img src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg" alt="" style="width: 30px; height: 30px" *ngIf="i === 0">
+                        <img *ngIf="i !== 0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU" alt="" style="height: 30px; width: 30px;">
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
               </div>
             </div>
-            </ng-container>
           </div>
         </div>
       </div>
