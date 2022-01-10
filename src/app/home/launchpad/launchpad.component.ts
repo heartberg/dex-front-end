@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LaunchpadComponent implements OnInit {
 
+  array = [1,32,53,64,58]
+
   constructor() { }
 
   ngOnInit(): void {

@@ -4,18 +4,22 @@
   }
 }
 .card {
-  padding: 20px 10px 0px 10px;
+  margin: 27px 5px;
+  padding: 20px 10px;
   margin-bottom: 20px;
 }
 .main {
-  height: calc(100vh - 80px);
+  height: calc(100vh - 90px);
   overflow: hidden;
   .scrollable-content {
-    height: calc(100vh - 190px);
+    height: calc(100vh - 247px);
     overflow-y: scroll;
   }
 }
 .avatar-section {
+
+  border-right: 1px solid rgba(0,0,0,.125);
+
   h4 {
     margin-left: 10px;
     color: #81007F;
@@ -34,6 +38,14 @@ h3 {
 .content {
   .row {
     height: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-around;
+
+    p {
+      max-width: 350px;
+    }
   }
   .section {
     span {
@@ -50,11 +62,9 @@ h3 {
   }
   .aligner-of-content {
     justify-content: space-between !important;
-    padding-bottom: 13px !important;
-    padding-top: 16px !important;
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
   }
   .extra-content {
     justify-content: space-between !important;
@@ -66,6 +76,7 @@ h3 {
     justify-content: center;
     align-items: center;
     font-size: 16px;
+    margin: 0;
   }
 }
 .detail-btn {
@@ -90,7 +101,3 @@ h3 {
     }
   }
 }
-//.main {
-//  height: calc(100vh - 80px);
-//  overflow: hidden;
-//}

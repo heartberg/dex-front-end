@@ -24,6 +24,7 @@
 }
 .whole{
   display: flex;
+  // overflow-y: scroll;
 }
 
 
@@ -339,16 +340,10 @@ input[type = checkbox] {
 }
 .whole {
   height: calc(100vh - 190px) !important;
-  overflow: hidden;
   margin-bottom: 0px !important;
 }
-.scrollable-section-first {
-  height: calc(100vh - 210px);
-  overflow-Y: scroll;
-}
+
 .second-half {
-  height: calc(100vh - 210px) !important;
-  overflow-Y: scroll;
   margin-bottom: 0px !important;
 }
 .deploy {
@@ -370,3 +365,18 @@ h4 {
     margin-bottom: 0px;
   }
 }
+
+.info-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  h6 {
+    font-size: 16px;
+    margin: 0 4px;
+  }
+}
+
+// .relative-position-bottom {
+//   position: relative;
+// }

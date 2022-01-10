@@ -6,64 +6,121 @@
     </div>
     <div class="scrollable-section">
       <div class="track-section">
-        <ng-container *ngFor="let item of arr">
-          <div class="card">
-            <div class="row">
-              <div class="col-md-2 unset-pd">
-                <div class="track-image d-flex align-items-start justify-content-end flex-column">
-                  <h3>Token</h3>
-                  <img style="width: 100%;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png" alt="">
+        <ng-container *ngFor="let item of arr; let i = index;">
+          <div class="card" [style.margin-bottom]="item.open ? 0 : ''" [style.border-radius]="item.open? '0.25rem 0.25rem 0 0' : ''">
+            <!-- <div class="row"> -->
+            <!-- LEFT SIDE -->
+            <div class="col-md-2 unset-pd left-wrapper">
+              <div class="left-container">
+                <div class="left-texts-container">
+                  <span class="left-text">Token</span>
                 </div>
-              </div>
-              <div class="col-md-10 unset-pd pd_t-55">
-                <div class="row">
-                  <div class="col-md-4 unset-pd track-info-left">
-                    <div class="d-flex justify-content-between">
-                      <h4>Price:</h4>
-                      <span>Markecap</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                      <h4>XY/Algo Token:</h4>
-                      <span>XY Algo</span>
-                    </div>
-                    <div class="d-flex justify-content-between flex-column">
-                      <h4 style="color: #040405">Your Holding</h4>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <h4>XY Token</h4>
-                        <div class="d-flex align-items-cetner">
-                          <h4 style="margin-right: 5px">Value:</h4>
-                          <span>XY Algo</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-4 unset-pd track-info-left-right">
-                    <div class="d-flex justify-content-between">
-                      <h4>Fully Diluted Marketcap:</h4>
-                      <span>Holders</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                      <h4>XY Algo:</h4>
-                      <span>XY Addresses</span>
-                    </div>
-                  </div>
-                  <div class="col-md-4 unset-pd track-info-middle">
-                    <div class="last-section">
-                      <h3>Liquidity</h3>
-                      <div class="d-flex align-items-center">
-                        <span style="color: #81007F">Token Amount</span>
-                        <input type="text" class="input-costum">
-                      </div>
-                      <div class="d-flex align-items-center">
-                        <span style="color: #81007F">Algo Amount</span>
-                        <input type="text" class="input-costum">
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <img style="width: 65%;"
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                  alt="">
               </div>
             </div>
+            <!-- LEFT SIDE -->
+            <!-- RIGHT SIDE -->
+            <div class="columns-container">
+              <div class="column">
+                <div class="data-box">
+                  <span class="property">Price</span>
+                  <span class="value">XY Algo/Token</span>
+                </div>
+                <div class="data-box">
+                  <span class="property">Your Holding</span>
+                  <span class="value">XY Token</span>
+                </div>
+              </div>
+              <div class="column">
+                <div class="data-box">
+                  <span class="property">Entry Price</span>
+                  <span class="value">X Algo/Token (+X%)</span>
+                </div>
+                <div class="data-box">
+                  <span class="property">Value</span>
+                  <span class="value">XY Algo</span>
+                </div>
+              </div>
+              <div class="column">
+                <div class="data-box">
+                  <span class="property">Marketcap</span>
+                  <span class="value">XY Algo</span>
+                </div>
+                <div class="data-box">
+                  <span class="property">Backing</span>
+                  <span class="value">XY Algo/Token</span>
+                </div>
+              </div>
+              <!-- RIGHT SIDE -->
+              <i *ngIf="!item.open" (click)="dropDownToggle(i)" class="fas fa-caret-down arrow"></i>
+            </div>
+            <!-- </div> -->
           </div>
+          <ng-container *ngIf="item.open">
+            <div class="card card-details card-open" style="border-radius: 0 0 0.25rem 0.25rem; border-top: none;">
+              <!-- <div class="row"> -->
+              <!-- LEFT SIDE -->
+              <div class="col-md-2 unset-pd left-wrapper">
+                <div class="left-container">
+                  <h1>Details</h1>
+                </div>
+              </div>
+              <!-- LEFT SIDE -->
+              <!-- RIGHT SIDE -->
+              <div class="columns-container">
+                <div class="column">
+                  <div class="data-box">
+                    <span class="property">Remaining Supply</span>
+                    <span class="value">X Token</span>
+                  </div>
+                  <div class="data-box">
+                    <span class="property">Burned</span>
+                    <span class="value">X Token</span>
+                    <span class="value">Value: X Algo</span>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="data-box">
+                    <span class="property">holders</span>
+                    <span class="value">XY Address</span>
+                  </div>
+                  <div class="data-box">
+                    <div>
+                        <span class="property">Liquidity</span>
+                        <span style="margin-left: 10px;">X% of marketcap</span>
+                    </div>
+                    <span class="value">Token: amount</span>
+                    <span class="value">Algo: amount</span>
+                </div>
+                </div>
+                <div class="column">
+                  <div class="data-box">
+                    <span class="property">Date Creation</span>
+                    <span class="value">Date</span>
+                  </div>
+                  <div class="data-box">
+                    <span class="property">ASA URL</span>
+                    <span class="value">Link</span>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="data-box">
+                    <span class="property">Transactions</span>
+                    <span class="value">X Buy Transactions</span>
+                    <span class="value">X Sell Transactions</span>
+                    <span class="value">X Send Transactions</span>
+                    <span class="value">X Total Transactions</span>
+                  </div>
+                </div>
+                <!-- RIGHT SIDE -->
+                <i (click)="dropDownToggle(i)" class="fas fa-caret-up arrow"></i>
+              </div>
+              <!-- </div> -->
+            </div>
+          </ng-container>
+          
         </ng-container>
       </div>
     </div>

@@ -15,6 +15,8 @@ import { TrackComponent } from './home/track/track.component';
 import { MyDeployComponent } from './home/my-deploy/my-deploy.component';
 import { MyPresaleComponent } from './home/my-presale/my-presale.component';
 import { WalletComponent } from './home/wallet/wallet.component';
+import { TokensComponent } from './home/tokens/tokens.component';
+import { TokenDetailComponent } from './home/token-detail/token-detail.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { WalletComponent } from './home/wallet/wallet.component';
     TrackComponent,
     MyDeployComponent,
     MyPresaleComponent,
-    WalletComponent
+    WalletComponent,
+    TokensComponent,
+    TokenDetailComponent,
   ],
   imports: [
     BrowserModule,

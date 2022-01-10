@@ -1,7 +1,7 @@
 <div class="wrapper wrapper-border mainDiv">
   <div class="whole wrapper-border">
     <div class="row" style="width: 100%">
-      <div class="col-md-6 scrollable-section-first">
+      <div class="col-md-12 scrollable-section-first">
         <form>
           <div class="inside wrapper-border">
             <div class="header">
@@ -95,7 +95,7 @@
               </div>
             </div>
             <div class="metaheader">
-              <h6 class="color-violet">Fees</h6>
+              <h6 class="color-violet">Fees (in %)</h6>
             </div>
             <div class="createoffer wrapper-border">
               <h4 class="amountheader">Rising pricefloor</h4>
@@ -108,7 +108,17 @@
               >
             </div>
             <div class="createoffer wrapper-border">
-              <h4 class="amountheader">Burn</h4>
+              <h4 class="amountheader">Buy Burn</h4>
+              <input type="text" placeholder="3" class="input-costum"
+              >
+            </div>
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Sell Burn</h4>
+              <input type="text" placeholder="3" class="input-costum"
+              >
+            </div>
+            <div class="createoffer wrapper-border">
+              <h4 class="amountheader">Send Burn</h4>
               <input type="text" placeholder="3" class="input-costum"
               >
             </div>
@@ -124,7 +134,7 @@
                   >
                 </div>
                 <div class="createoffer">
-                  <h4 class="amountheader">Fee Address</h4>
+                  <h4 class="amountheader">Address</h4>
                   <input type="text" placeholder="address" class="input-costum"
                   >
                 </div>
@@ -138,7 +148,7 @@
           </div>
         </form>
       </div>
-      <div class="col-md-6 second-half">
+      <div class="col-md-12 second-half">
         <div class="wrapper-section d-flex flex-column">
 <!--          <div class="wrapper-border">-->
 <!--            <h3 class="color-violet title">-->
@@ -165,14 +175,15 @@
                 </div>
               </div>
               <ng-container *ngIf="presaleIsChecked">
-                <h3>Presale Settings</h3>
+                <div class="wrapper-border">
+                <h3 class="color-violet">Presale Settings</h3>
                 <div class="inputs">
                   <div class="d-flex align-items-center">
-                    <h4>Start</h4>
+                    <h4>Presale Start</h4>
                     <input type="date" class="input-costum">
                   </div>
                   <div class="d-flex align-items-center">
-                    <h4>End</h4>
+                    <h4>Presale End</h4>
                     <input type="date" class="input-costum">
                   </div>
                   <div class="d-flex align-items-center">
@@ -184,13 +195,89 @@
                     <input type="text" class="input-costum">
                   </div>
                   <div class="d-flex align-items-center">
+                    <h4>Wallet Cap</h4>
+                    <input type="text" class="input-costum">
+                  </div>
+                  <!-- <div class="d-flex align-items-center">
                     <h4>Presale founds to liquidity</h4>
+                    <input type="text" class="input-costum">
+                  </div> -->
+                </div>
+                </div>
+                <div class="wrapper-border">
+                  <h3 class="color-violet">Presale Liquidity</h3>
+                  <div class="inputs">
+                    <div class="d-flex align-items-center">
+                      <h4>Tokens in Presale</h4>
+                      <input type="text" class="input-costum">
+                      <h4 class="color-violet" style="padding-left: 10px; font-size: 14px;">X% of total supply</h4>
+                    </div>
+                </div>
+                  <div class="inputs">
+                    <div class="d-flex align-items-center">
+                      <h4>Tokens in liquidity</h4>
+                      <input type="text" class="input-costum">
+                      <h4 class="color-violet" style="padding-left: 10px; font-size: 14px;">X% of total supply</h4>
+                    </div>
+                </div>
+                  <div class="inputs">
+                    <div class="d-flex align-items-center">
+                      <h4>Algo to liquidity</h4>
+                      <input type="text" class="input-costum">
+                    </div>
+                </div>
+                  <div class="inputs">
+                    <div class="d-flex align-items-center">
+                      <h4>Presale funds to liquidity (in %)</h4>
+                      <input type="number" class="input-costum">
+                    </div>
+                </div>
+              </div>
+              <div class="info-box">
+                <h6 class="color-violet">Presale Price:</h6>
+                <h6>X Algo/Token</h6>
+              </div>
+              <div class="info-box">
+                <h6 class="color-violet">Initial Price:</h6>
+                <h6>X Algo/Token</h6>
+              </div>
+                
+              </ng-container>
+              <hr>
+              <ng-container *ngIf="!presaleIsChecked">
+                <div class="wrapper-border">
+                  <h3 class="color-violet title">Liquidity</h3>
+                <div class="inputs">
+                  <div class="d-flex align-items-center">
+                    <h4>Tokens to liquidity</h4>
+                    <input type="text" class="input-costum">
+                    <h4 class="color-violet" style="padding-left: 10px; font-size: 14px;">X% of total supply</h4>
+                  </div>
+                </div>
+                
+                <div class="inputs">
+                  <div class="d-flex align-items-center">
+                    <h4>Algo to liquidity</h4>
                     <input type="text" class="input-costum">
                   </div>
                 </div>
+                </div>
+                <div class="info-box">
+                  <h6 class="color-violet">Initial Price:</h6>
+                  <h6>X Algo/Token</h6>
+                </div>
+                <div class="wrapper-border">
+                <h3 class="color-violet title">Trading Start</h3>
+                <div class="inputs">
+                  <div class="d-flex align-items-center">
+                    <h4>Date and Time</h4>
+                    <input type="date" class="input-costum">
+                  </div>
+                  </div>
+                </div>
               </ng-container>
-              <hr *ngIf="presaleIsChecked">
-              <div *ngIf="presaleIsChecked" class="down-checkbox" (click)="check()" [ngClass]="{'wrapper-border': isCheckedRoadMap, 'top': !isCheckedRoadMap}" [class.label-last]="!isCheckedRoadMap">
+              <hr *ngIf="!presaleIsChecked">
+              <div  class="down-checkbox" (click)="check()" [ngClass]="{'wrapper-border': isCheckedRoadMap, 'top': !isCheckedRoadMap}" [class.label-last]="!isCheckedRoadMap">
                 <input type="checkbox" #checkbox name="check" id="check">
                 <label for="check">Add Roadmap</label>
                 <div class="desc" *ngIf="isCheckedRoadMap">
@@ -201,8 +288,8 @@
                   </button>
                 </div>
               </div>
-              <hr *ngIf="presaleIsChecked">
-              <div *ngIf="presaleIsChecked" class="down-checkbox label-last" (click)="checkSecond()" [ngClass]="{'wrapper-border': isCheckedTeamInfo, 'top': !isCheckedTeamInfo}" [class.label-last]="!isCheckedTeamInfo">
+              <hr>
+              <div  class="down-checkbox label-last" (click)="checkSecond()" [ngClass]="{'wrapper-border': isCheckedTeamInfo, 'top': !isCheckedTeamInfo}" [class.label-last]="!isCheckedTeamInfo">
                 <input type="checkbox" #checkboxSecond name="check" id="checkSecond">
                 <label for="checkSecond">Add Team Info</label>
                 <ng-container  *ngFor="let item of extraFieldsArr; let i = index;">

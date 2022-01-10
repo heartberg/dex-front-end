@@ -1,5 +1,5 @@
 .main {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 243px);
   overflow: hidden;
   .header-title {
     h3 {
@@ -10,6 +10,22 @@
       color: #81007F;
       margin-bottom: 20px;
     }
+
+    .search-bar {
+      max-width: 244px;
+      padding: 10px 5px 10px 35px;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+  }
+
+  i {
+      position: relative;
+      width: 17px;
+      bottom: 30px;
+      left: 10px;
+  }
+
   }
   .track-image {
     h3 {
@@ -22,8 +38,11 @@
   }
 }
 .card {
-  padding: 20px 10px 0px 10px;
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px 20px !important;
+  margin: 0 0 20px 0;
 }
 .track-section {
   .track-info-left,
@@ -40,15 +59,87 @@
    }
   }
 }
-.row {
-  .unset-pd {
-    padding-bottom: 0px !important;
+
+// .search-bar {
+//     max-width: 244px;
+//     padding: 10px 5px 10px 1px;
+//     border-radius: 25px;
+// }
+
+.columns-container {
+  border-left: 1px solid rgba(0,0,0,.125);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 10px 0;
+
+  width: 100%;
+  // border: 1px solid green;
+  
+  .column {
+      display: flex;
+      // justify-content: space-between;
+      flex-direction: column;
+
+      .data-box {
+          margin: 25px 0;
+          display: flex;
+          flex-direction: column;
+          
+          span {
+              font-size: 16px;
+          }
+
+          .property {
+              color: #81007F;
+              margin-bottom: 5px;
+          }
+
+          .value {
+              margin: 2px 0;
+          }
+      }
   }
 }
+
+
 .scrollable-section {
-  height: calc(100vh - 360px);
+  height: calc(100vh - 393px);
   overflow-y: scroll;
 }
 .pd_t-55 {
   padding-top: 55px;
+}
+
+.left-wrapper {
+  align-self: center;
+  padding: 20px 20px 20px 0px;
+  .left-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .left-texts-container {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+          .left-text {
+              font-size: 20px;
+              margin: 5px 0;
+          }
+      }
+  }
+}
+
+.arrow {
+  position: absolute;
+  bottom: 15px;
+  right: 25px;
+  font-size: 40px;
+  cursor: pointer;
+}
+
+.card-details {
+  margin-top: 0;
 }

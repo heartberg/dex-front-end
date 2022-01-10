@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-trade',
@@ -6,11 +6,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./trade.component.scss']
 })
 export class TradeComponent implements OnInit {
-  rotate: boolean = false;
   algoAmount: number = 2000;
 
   firstDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
   secondDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
+
+  algoArr: string[] = ['Algo'];
+  tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
+
+  selectedOptionA: string = '';
+  selectedOptionB: string = '';
 
   btnFirst: boolean = false;
   btnSecond: boolean = false;
@@ -24,9 +29,34 @@ export class TradeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  makeReverse() {
-    this.rotate = !this.rotate
+  onUserInput(input: HTMLInputElement) {
+    this.btnFirst = false;
+    this.btnSecond = false;
+    this.btnThird = false;
+    this.btnFourth = false;
+  }
 
+  dropdownSelected(value: string, index: number) {
+
+    if (index === 1) {
+      this.selectedOptionA = value;
+      if (value === 'Algo') {
+        this.secondDropValues = this.tokenArr;
+      } else if (value.includes('Token')) {
+        this.secondDropValues = this.algoArr;
+      }
+    } else if (index === 2) {
+      this.selectedOptionB = value;
+      if (value === 'Algo') {
+        this.firstDropValues = this.tokenArr;
+      } else if (value.includes('Token')) {
+        this.firstDropValues = this.algoArr;
+      }
+    }
+  }
+  
+  test() {
+    console.log('win')
   }
 
   getValueFromDropDown($event: any, index: number) {
@@ -58,26 +88,26 @@ export class TradeComponent implements OnInit {
         this.btnFourth = false;
         this.algoAmount = 2000 / 2;
       } else
-        if ( index === 3) {
+        if (index === 3) {
           this.btnThird = true;
           this.btnFirst = false;
           this.btnSecond = false;
           this.btnFourth = false;
           this.algoAmount = 2000 / 4 * 3;
         } else
-            if (index === 4) {
-              this.btnFourth = true;
-              this.btnFirst = false;
-              this.btnSecond = false;
-              this.btnThird = false;
-              this.algoAmount = 2000;
-            }
-            // if (this.clickCounter % 2 === 0) {
-            //   this.btnFourth = false;
-            //   this.btnFirst = false;
-            //   this.btnSecond = false;
-            //   this.btnThird = false;
-            //   this.algoAmount = 0;
-            // }
+          if (index === 4) {
+            this.btnFourth = true;
+            this.btnFirst = false;
+            this.btnSecond = false;
+            this.btnThird = false;
+            this.algoAmount = 2000;
+          }
+    // if (this.clickCounter % 2 === 0) {
+    //   this.btnFourth = false;
+    //   this.btnFirst = false;
+    //   this.btnSecond = false;
+    //   this.btnThird = false;
+    //   this.algoAmount = 0;
+    // }
   }
 }

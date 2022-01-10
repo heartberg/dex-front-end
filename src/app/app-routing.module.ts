@@ -10,6 +10,8 @@ import {TrackComponent} from "./home/track/track.component";
 import {MyDeployComponent} from "./home/my-deploy/my-deploy.component";
 import {MyPresaleComponent} from "./home/my-presale/my-presale.component";
 import {WalletComponent} from "./home/wallet/wallet.component";
+import { TokensComponent } from './home/tokens/tokens.component';
+import { TokenDetailComponent } from './home/token-detail/token-detail.component';
 
 const routes: Routes = [
   {
@@ -56,6 +58,14 @@ const routes: Routes = [
   {
     path: 'wallet',
     component: WalletComponent
+  },
+  {
+    path: 'tokens',
+    component: TokensComponent
+  },
+  {
+    path: 'token-detail',
+    component: TokenDetailComponent
   }
 ];
 

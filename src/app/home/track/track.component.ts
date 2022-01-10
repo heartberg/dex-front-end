@@ -6,10 +6,36 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./track.component.scss']
 })
 export class TrackComponent implements OnInit {
-  arr = [1,23,5,56,6]
+  dropDownOpen = false;
+
+  arr = [
+    {
+      number: 1,
+      open: false
+    },
+    {
+      number: 23,
+      open: false
+    },
+    {
+      number: 5,
+      open: false
+    },
+    {
+      number: 56,
+      open: false
+    },
+    {
+      number: 6,
+      open: false
+    }
+  ];
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void { }
+
+  dropDownToggle(i: number) {
+    this.arr[i].open = !this.arr[i].open;
   }
 
 }

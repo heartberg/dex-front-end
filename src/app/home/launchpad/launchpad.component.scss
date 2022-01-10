@@ -1,6 +1,7 @@
 .main {
   .card {
     padding: 10px 20px !important;
+    margin: 0 0 20px 0;
     .date {
       align-items: center;
       span {
@@ -41,7 +42,7 @@
   }
 }
 .main {
-  height: calc(100vh - 210px);
+  height: calc(100vh - 100px);
   overflow: hidden;
 }
 input {
@@ -56,5 +57,12 @@ input {
   margin-top: 15px;
 }
 .wrapper-border {
-  min-height: calc(100vh - 200px);
+  // overflow-y: scroll;
+  min-height: calc(100vh - 210px);
+}
+
+
+.scrollable-content {
+  height: calc(100vh - 210px);
+  overflow-y: scroll;
 }

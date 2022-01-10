@@ -33,6 +33,17 @@
 app-drop-down-selector {
   margin-top: 5px;
 }
+
+.wrapper-for-btns {
+  align-items: center;
+  justify-content: center;
+
+  .btn-extra {
+    padding: 5px 12px;
+    font-size: 16px;
+  }
+}
+
 .input-field {
   .amount {
     font-size: 13px;
@@ -43,4 +54,68 @@ app-drop-down-selector {
 }
 .first-drop-down {
   margin-top: 23px;
+}
+
+.spillage-checkbox {
+  margin: 5px 0;
+
+  input {
+    margin-right: 8px;
+  }
+
+  label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.last-text {
+  max-width: 240px;
+  text-align: center;
+  align-self: center;
+}
+
+// Floating selection div styles
+
+.position-left {
+  left: 10vw;
+}
+
+.position-right {
+  right: 10vw;
+}
+
+.selected-option {
+  position: absolute;
+  top: 32vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border: #81007F 2px solid;
+  border-radius: 10px;
+  padding: 15px 25px 15px 25px;
+  width: 200px;
+
+    h4 {
+      font-size: 16px;
+      font-weight: 700;
+      padding-bottom: 10px;
+      color: #81007F;
+      margin-right: 8px;
+    }
+
+
+  .selection-data {
+    display: flex;
+    flex-direction: column;
+
+    .propery-pair {
+      padding: 5px 0;
+      
+      span {
+        font-size: 15px;
+        margin: 0 2px;
+      }
+    }
+  }
 }

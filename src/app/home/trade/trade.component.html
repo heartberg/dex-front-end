@@ -1,19 +1,26 @@
 <div class="main">
   <div class="wrapper-border">
     <div class="exchanger">
-    <div class="d-flex flex-column" [class.flex-column-reverse]="rotate">
+    <div class="d-flex flex-column">
       <div class="d-flex top">
-        <app-drop-down-selector [dropDownValues]="firstDropValues" [isNotAccordion]="false"
+        <app-drop-down-selector (focusOut)="test()" 
+                                (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
+                                [dropDownValues]="firstDropValues" [isNotAccordion]="false"
                                 [widthPX]="'160px'"
                                 (dropDownValue)="getValueFromDropDown($event, 1)"
                                 [extraDropDown]="true"
                                 [notCloseOnClick]="true"
-                                class="first-drop-down"></app-drop-down-selector>
+                                class="first-drop-down" 
+                                #componentRefA></app-drop-down-selector>
         <div class="input d-flex flex-column">
           <div class="input-field d-flex flex-column align-items-end">
-            <span class="amount">{{ '2000' }}</span>
+            <div>
+              <span class="thin-gray-text">Available:</span>
+              <span style="margin-left: 4px;" class="amount">{{ '2000' }}</span>
+            </div>
+
             <input type="text" class="input-costum" [value]="'0'" [class.d-none]="isClickedOnBtn">
-            <input type="text" class="input-costum" [value]="this.algoAmount" [class.d-none]="!isClickedOnBtn">
+            <input type="text" (change)="onUserInput(inputRef)" class="input-costum" [value]="this.algoAmount" [class.d-none]="!isClickedOnBtn" #inputRef>
           </div>
           <div class="d-flex align-items-center wrapper-for-btns">
             <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(1)" [class.btn-secondary-costum]="btnFirst">
@@ -45,14 +52,16 @@
             height: 60px;
             transform: rotate(90deg);
             margin: auto;
-            " (click)="makeReverse()">
+            ">
       </div>
       <div class="d-flex">
-        <app-drop-down-selector [dropDownValues]="secondDropValues" [isNotAccordion]="false"
+        <app-drop-down-selector (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
+                                [dropDownValues]="secondDropValues" [isNotAccordion]="false"
                                 [widthPX]="'160px'"
                                 [extraDropDown]="true"
                                 (dropDownValue)="getValueFromDropDown($event, 2)"
-                                [notCloseOnClick]="true"></app-drop-down-selector>
+                                [notCloseOnClick]="true"
+                                #componentRefB></app-drop-down-selector>
         <div class="input">
           <input type="text" class="input-costum">
         </div>
@@ -61,15 +70,27 @@
     <div class="d-flex align-items-center justify-content-around margin-t flex-column">
       <div class="d-flex"
       style="width: 100%; justify-content: space-around;">
+      <div>
         <div class="d-flex align-items-center">
           <span>Slippage:</span>
           <input type="text" class="" style="width: 70px; margin-left: 5px; margin-right: 5px; color: #040405; padding-left: 5px;"
-                 >
+          >
           <span style="color: #81007F">%</span>
         </div>
-        <div class="d-flex">
-          <span>Minimum Output:</span>
-          <span style="margin-left: 10px">10$</span>
+        <div class="spillage-checkbox">
+          <input id="spillageCheckBox" type="checkbox">
+          <label for="spillageCheckBox">Auto Slippage</label>
+        </div>
+      </div>
+        <div style="flex-direction: column;" class="d-flex">
+          <div>
+            <span>Minimum Output:</span>
+            <span style="margin-left: 10px">10$</span>
+          </div>
+          <div>
+            <span style="position: relative;
+            left: 3vw;" class="thin-gray-text">Unit name of lower token selected</span>
+          </div>
         </div>
       </div>
       <div class="d-flex" style="margin-top: 20px">
@@ -77,9 +98,66 @@
         <span style="color: #81007F; margin-left: 10px">XY %</span>
       </div>
     </div>
-      <button class="btn-secondary-costum unHover " style="margin: 25px auto; width: 160px; font-size: 20px;">
+      <button class="btn-secondary-costum unHover " style="margin: 25px auto; margin-bottom: 12px; width: 160px; font-size: 20px;">
         Swap
       </button>
+      <span class="thin-gray-text last-text">Check Blockchain, if User has not opted in to second token selected, show Opt-in Button</span>
   </div>
+  </div>
+  <div *ngIf="selectedOptionA" class="selected-option position-left">
+    <h4>{{selectedOptionA}} Information</h4>
+    <div class="selection-data">
+      <div class="propery-pair">
+        <span>Marketcap:</span>
+        <span class="thin-gray-text">999</span>
+      </div>
+      <div class="propery-pair">
+        <span>Total Supply:</span>
+        <span class="thin-gray-text">459</span>
+      </div>
+      <div class="propery-pair">
+        <span>Liquidity:</span>
+        <span class="thin-gray-text">High</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing:</span>
+        <span class="thin-gray-text">Yes</span>
+      </div>
+      <div class="propery-pair">
+        <span>Max Buy:</span>
+        <span class="thin-gray-text">450</span>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="selectedOptionB" class="selected-option position-right">
+    <h4>{{selectedOptionB}} Fees</h4>
+    <div class="selection-data">
+      <div class="propery-pair">
+        <span>Buy Tax:</span>
+        <span class="thin-gray-text">$200</span>
+      </div>
+      <div class="propery-pair">
+        <span>Sell Tax:</span>
+        <span class="thin-gray-text">2%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing Tax:</span>
+        <span class="thin-gray-text">12%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Send Tax:</span>
+        <span class="thin-gray-text">$250</span>
+      </div>
+      <div class="propery-pair">
+        <span>Additional Tax:</span>
+        <span class="thin-gray-text">$25</span>
+      </div>
+      <div class="propery-pair">
+        <span>(Purpose)</span>
+        <span class="thin-gray-text">Resale</span>
+      </div>
+
+    </div>
   </div>
 </div>
