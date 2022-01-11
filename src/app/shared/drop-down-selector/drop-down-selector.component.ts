@@ -72,12 +72,14 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   selectValue(value: string, i?: any) {
     if (this.notCloseOnClick) {
-      this.isDropDownOpenedCounter +=1;
+      // this.isDropDownOpenedCounter +=1;
+      this.openDropDown()
       this.showDropDownSelected = value;
       this.dropDownValue.emit(value);
       this.publicTradeIsAdded = !this.publicTradeIsAdded;
     } else {
-      this.isDropDownOpenedCounter +=1;
+      // this.isDropDownOpenedCounter +=1;
+      this.openDropDown()
       this.showDropDownSelected = value;
       this.dropDownValue.emit(value);
       this.isDropDownOpened = false;

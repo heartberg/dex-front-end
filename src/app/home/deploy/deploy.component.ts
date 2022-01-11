@@ -33,6 +33,8 @@ export class DeployComponent implements OnInit {
   // @ts-ignore
   private checkPresale: ElementRef;
 
+  imageURL: string = ''
+
   check() {
     if (this.checkbox.nativeElement.checked) {
       this.isCheckedRoadMap = true;
@@ -71,5 +73,14 @@ export class DeployComponent implements OnInit {
     } else {
       this.presaleIsChecked = false;
     }
+  }
+
+  onImageUpload(event: any) {
+    let imageFile = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageURL = reader.result as string;
+    }
+    reader.readAsDataURL(imageFile);
   }
 }

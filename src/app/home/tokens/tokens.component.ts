@@ -28,4 +28,8 @@ export class TokensComponent implements OnInit {
     this.isActiveFirst = false;
   }
 
+  copyContentToClipboard(content: HTMLElement) {
+    navigator.clipboard.writeText(content.innerText);
+  }
+
 }

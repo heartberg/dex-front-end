@@ -271,7 +271,7 @@
                 <div class="inputs">
                   <div class="d-flex align-items-center">
                     <h4>Date and Time</h4>
-                    <input type="date" class="input-costum">
+                    <input type="datetime-local" class="input-costum">
                   </div>
                   </div>
                 </div>
@@ -282,11 +282,14 @@
                 <label for="check">Add Roadmap</label>
                 <div class="desc" *ngIf="isCheckedRoadMap">
                   <textarea></textarea>
-                  <button class="btn-primary-costum upload" style="margin-top: 10px">
-                    Upload Image
-                    <input type="file" id="myFile" name="filename" formControlName="icon">
-                  </button>
-                </div>
+                  <div class="image-area">
+                    <button class="btn-primary-costum upload" style="margin-top: 10px">
+                      Upload Image
+                      <input accept=".png, .jpg, .jpeg" (change)="onImageUpload($event)" type="file" id="myFile" name="filename" formControlName="icon">
+                    </button>
+                    <img class="uploaded-image-preview wrapper-border" *ngIf="imageURL" [src]="imageURL" alt="">
+                  </div>
+                  </div>
               </div>
               <hr>
               <div  class="down-checkbox label-last" (click)="checkSecond()" [ngClass]="{'wrapper-border': isCheckedTeamInfo, 'top': !isCheckedTeamInfo}" [class.label-last]="!isCheckedTeamInfo">
