@@ -1,10 +1,6 @@
 <div class="main">
   <div class="wrapper-border">
-    <div class="header-title d-flex flex-column">
-      <h3>Track</h3>
-      <span>Add Tokens on the Trade tab to your <br> Favorites to track them here</span>
-    </div>
-    <div class="scrollable-section">
+    <div style="margin-top: 20px" class="scrollable-section">
       <div class="track-section">
         <ng-container *ngFor="let item of arr; let i = index;">
           <div class="card" [style.margin-bottom]="item.open ? 0 : ''" [style.border-radius]="item.open? '0.25rem 0.25rem 0 0' : ''">

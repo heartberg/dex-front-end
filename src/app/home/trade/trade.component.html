@@ -1,108 +1,105 @@
 <div class="main">
   <div class="wrapper-border">
     <div class="exchanger">
-    <div class="d-flex flex-column">
-      <div class="d-flex top">
-        <app-drop-down-selector (focusOut)="test()" 
-                                (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
-                                [dropDownValues]="firstDropValues" [isNotAccordion]="false"
-                                [widthPX]="'160px'"
-                                (dropDownValue)="getValueFromDropDown($event, 1)"
-                                [extraDropDown]="true"
-                                [notCloseOnClick]="true"
-                                class="first-drop-down" 
-                                #componentRefA></app-drop-down-selector>
-        <div class="input d-flex flex-column">
-          <div class="input-field d-flex flex-column align-items-end">
-            <div>
-              <span class="thin-gray-text">Available:</span>
-              <span style="margin-left: 4px;" class="amount">{{ '2000' }}</span>
-            </div>
+      <div class="d-flex align-items-center wrapper-for-btns" [ngStyle]="{'top': rotate ? '90px' : '110px'}">
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(1)"
+          [class.btn-secondary-costum]="btnFirst">
+          25%
+        </button>
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(2)"
+          [class.btn-secondary-costum]="btnSecond">
+          50%
+        </button>
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(3)"
+          [class.btn-secondary-costum]="btnThird">
+          75%
+        </button>
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(4)"
+          [class.btn-secondary-costum]="btnFourth">
+          100%
+        </button>
+      </div>
+      <div class="d-flex flex-column" [class.flex-column-reverse]="rotate">
+        <div class="d-flex top" [ngStyle]="{'margin-bottom': !rotate ? '32px' : '0px'}">
+          <app-drop-down-selector (focusOut)="test()" (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
+            [dropDownValues]="firstDropValues" [isNotAccordion]="false" [widthPX]="'160px'"
+            (dropDownValue)="getValueFromDropDown($event, 1)" [extraDropDown]="true" [notCloseOnClick]="true"
+            class="first-drop-down" #componentRefA></app-drop-down-selector>
+          <div class="input d-flex flex-column">
+            <div class="input-field d-flex flex-column align-items-end">
+              <div>
+                <span class="thin-gray-text">Available:</span>
+                <span style="margin-left: 4px;" class="amount">{{ '2000' }}</span>
+              </div>
 
-            <input type="text" class="input-costum" [value]="'0'" [class.d-none]="isClickedOnBtn">
-            <input type="text" (change)="onUserInput(inputRef)" class="input-costum" [value]="this.algoAmount" [class.d-none]="!isClickedOnBtn" #inputRef>
-          </div>
-          <div class="d-flex align-items-center wrapper-for-btns">
-            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(1)" [class.btn-secondary-costum]="btnFirst">
-              25%
-            </button>
-            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(2)" [class.btn-secondary-costum]="btnSecond">
-              50%
-            </button>
-            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(3)" [class.btn-secondary-costum]="btnThird">
-              75%
-            </button>
-            <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(4)" [class.btn-secondary-costum]="btnFourth">
-              100%
-            </button>
+              <input type="text" class="input-costum" [value]="'0'" [class.d-none]="isClickedOnBtn">
+              <input type="text" (change)="onUserInput(inputRef)" class="input-costum" [value]="this.algoAmount"
+                [class.d-none]="!isClickedOnBtn" #inputRef>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="reverse" style="
+        <div (click)="makeReverse()" class="reverse" style="
         padding-bottom: 20px;
         display: flex;
         animation: c;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        padding-top: 20px;" >
-        <img src="https://www.pngrepo.com/download/253436/reverse.png" alt=""
-             style="
+        padding-top: 20px;">
+          <img src="https://www.pngrepo.com/download/253436/reverse.png" alt="" style="
             width: 60px;
             height: 60px;
             transform: rotate(90deg);
             margin: auto;
             ">
-      </div>
-      <div class="d-flex">
-        <app-drop-down-selector (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
-                                [dropDownValues]="secondDropValues" [isNotAccordion]="false"
-                                [widthPX]="'160px'"
-                                [extraDropDown]="true"
-                                (dropDownValue)="getValueFromDropDown($event, 2)"
-                                [notCloseOnClick]="true"
-                                #componentRefB></app-drop-down-selector>
-        <div class="input">
-          <input type="text" class="input-costum">
         </div>
-      </div>
-    </div>
-    <div class="d-flex align-items-center justify-content-around margin-t flex-column">
-      <div class="d-flex"
-      style="width: 100%; justify-content: space-around;">
-      <div>
-        <div class="d-flex align-items-center">
-          <span>Slippage:</span>
-          <input type="text" class="" style="width: 70px; margin-left: 5px; margin-right: 5px; color: #040405; padding-left: 5px;"
-          >
-          <span style="color: #81007F">%</span>
-        </div>
-        <div class="spillage-checkbox">
-          <input id="spillageCheckBox" type="checkbox">
-          <label for="spillageCheckBox">Auto Slippage</label>
-        </div>
-      </div>
-        <div style="flex-direction: column;" class="d-flex">
-          <div>
-            <span>Minimum Output:</span>
-            <span style="margin-left: 10px">10$</span>
+        <div class="d-flex" [ngStyle]="{'margin-bottom': rotate ? '32px' : '0px'}">
+          <app-drop-down-selector (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
+            [dropDownValues]="secondDropValues" [isNotAccordion]="false" [widthPX]="'160px'" [extraDropDown]="true"
+            (dropDownValue)="getValueFromDropDown($event, 2)" [notCloseOnClick]="true" #componentRefB>
+          </app-drop-down-selector>
+          <div class="input">
+            <input type="text" class="input-costum">
           </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-around margin-t flex-column">
+        <div class="d-flex" style="width: 100%; justify-content: space-around;">
           <div>
-            <span style="position: relative;
+            <div class="d-flex align-items-center">
+              <span>Slippage:</span>
+              <input type="text" class=""
+                style="width: 70px; margin-left: 5px; margin-right: 5px; color: #040405; padding-left: 5px;">
+              <span style="color: #81007F">%</span>
+            </div>
+            <div class="spillage-checkbox">
+              <input id="spillageCheckBox" type="checkbox">
+              <label for="spillageCheckBox">Auto Slippage</label>
+            </div>
+          </div>
+          <div style="flex-direction: column;" class="d-flex">
+            <div>
+              <span>Minimum Output:</span>
+              <span style="margin-left: 10px">10$</span>
+            </div>
+            <div>
+              <span style="position: relative;
             left: 3vw;" class="thin-gray-text">Unit name of lower token selected</span>
+            </div>
           </div>
         </div>
+        <div class="d-flex" style="margin-top: 20px">
+          <span>Price Impact:</span>
+          <span style="color: #81007F; margin-left: 10px">XY %</span>
+        </div>
       </div>
-      <div class="d-flex" style="margin-top: 20px">
-        <span>Price Impact:</span>
-        <span style="color: #81007F; margin-left: 10px">XY %</span>
-      </div>
-    </div>
-      <button class="btn-secondary-costum unHover " style="margin: 25px auto; margin-bottom: 12px; width: 160px; font-size: 20px;">
+      <button class="btn-secondary-costum unHover "
+        style="margin: 25px auto; margin-bottom: 12px; width: 160px; font-size: 20px;">
         Swap
       </button>
-      <span class="thin-gray-text last-text">Check Blockchain, if User has not opted in to second token selected, show Opt-in Button</span>
-  </div>
+      <span class="thin-gray-text last-text">Check Blockchain, if User has not opted in to second token selected, show
+        Opt-in Button</span>
+    </div>
   </div>
   <div *ngIf="selectedOptionA" class="selected-option position-left">
     <h4>{{selectedOptionA}} Information</h4>
@@ -129,7 +126,7 @@
       </div>
     </div>
   </div>
-  
+
   <div *ngIf="selectedOptionB" class="selected-option position-right">
     <h4>{{selectedOptionB}} Fees</h4>
     <div class="selection-data">

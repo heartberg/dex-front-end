@@ -4,12 +4,14 @@ import {RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {DropDownSelectorComponent} from "./drop-down-selector/drop-down-selector.component";
 import {PopUpComponent} from "./pop-up/component/pop-up.component";
+import { CardComponent } from './card/card.component';
 
 @NgModule({
   declarations: [
     HeaderComponent,
     DropDownSelectorComponent,
-    PopUpComponent
+    PopUpComponent,
+    CardComponent
   ],
   imports: [
     RouterModule,
@@ -19,7 +21,8 @@ import {PopUpComponent} from "./pop-up/component/pop-up.component";
   exports: [
     HeaderComponent,
     DropDownSelectorComponent,
-    PopUpComponent
+    PopUpComponent,
+    CardComponent
   ]
 
 })

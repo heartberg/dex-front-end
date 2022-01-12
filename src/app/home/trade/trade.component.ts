@@ -7,6 +7,7 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 })
 export class TradeComponent implements OnInit {
   algoAmount: number = 2000;
+  rotate: boolean = false;
 
   firstDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
   secondDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
@@ -27,6 +28,10 @@ export class TradeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  makeReverse() {
+    this.rotate = !this.rotate
   }
 
   onUserInput(input: HTMLInputElement) {
