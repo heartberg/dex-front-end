@@ -8,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 export class MyPresaleComponent implements OnInit {
   arr: number[] = [1,2, 3];
 
+  isPresaleEnded: boolean = true;
+
   constructor() { }
 
   ngOnInit(): void {

@@ -14,6 +14,7 @@
                 <img style="width: 65%;"
                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
                   alt="">
+                  <span *ngIf="isPresaleEnded" class="ended-mark color-violet">ENDED</span>
               </div>
             </div>
             <div class="right-container">
@@ -75,17 +76,22 @@
                           </span>
                         </div>
                       </div>
-                      <h3>Presale Ended</h3>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="text-area">
-                <p>
-                  Your Presale ended.
-                  You can start going through the following steps to make your token tradable on the Verse Pad.
-                  As admin now you finish the Presale.
-                </p>
+                <ng-container *ngIf="isPresaleEnded">
+                  <p>
+                    Your Presale ended.
+                  </p>
+                  <p>
+                    You can start going through the following steps to make your token tradable on the Verse Pad.
+                  </p>
+                  <p>
+                    As admin now you finish the Presale.
+                  </p>
+                </ng-container>
               </div>
               <div class="unset-pd">
                 <button class="bottom-btn btn-secondary-costum">
