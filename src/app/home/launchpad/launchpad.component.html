@@ -3,7 +3,7 @@
     <div class="header d-flex justify-content-between">
       <div class="search-section hide-respo">
         <div class="search">
-          <input type="text" placeholder="Collection, items..." class="input-costum" style="color: #040405 !important;">
+          <input type="text" placeholder="Token, Project..." class="input-costum" style="color: #040405 !important;">
         </div>
         <div class="search-btn search_btn">
           <svg viewBox="0 0 16 16" fill="none" width="16" height="16" xlmns="http://www.w3.org/2000/svg"
@@ -15,10 +15,10 @@
         </div>
       </div>
       <app-drop-down-selector [isNotAccordion]="false"
-        [dropDownValues]="['Ending Soon', 'Finished']" [widthPX]="'160px'">
+        [dropDownValues]="['Ending Soon', 'Finished', 'Subscription: High to low', 'Subscription: Low to high']" [widthPX]="'160px'">
       </app-drop-down-selector>
     </div>
-    <div style="padding-bottom: 200px;" class="wrapper-border scrollable-content">
+    <div class="scrollable-content">
     <app-card *ngFor="let item of array;"></app-card>
     </div>
   </div>

@@ -94,6 +94,70 @@
     }
   }
 }
+// isTrade Styles
+
+.paragraph {
+  margin-top: 40px;
+  max-width: 400px;
+
+  p {
+    &:last-child {
+      margin-top: 20px;
+    }
+  }
+}
+
+  .data-box {
+    margin: 2px 0;
+    display: flex;
+    flex-direction: row;
+
+    .property {
+      color: #81007F;
+      margin-bottom: 5px;
+    }
+    .value {
+        margin-left: 4px;
+    }
+  }
+
+  .isTrade-buttons {
+    align-items: center;
+    justify-content: flex-end;
+
+    button {
+      margin: 2px 5px;
+    }
+  }
+// isTrade Styles
+
+// isRestart Styles
+
+  // .inputs-container {
+    // margin: 20px 0;
+  // }
+
+  .input-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    input {
+      max-width: 200px;
+      margin: 5px 0 5px 15px;
+      border: 1px solid #81007F;
+      border-radius: 5px;
+      height: 28px;
+    }
+    
+    label {
+      margin-bottom: unset;
+    }
+
+  }
+
+// isRestart Styles
+
+
 .wallet-side {
   img {
     width: 100%;

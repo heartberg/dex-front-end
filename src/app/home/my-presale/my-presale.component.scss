@@ -152,9 +152,14 @@ h3 {
   font-size: 22px;
   background-color: rgba(white , .8);
 
-
   position: absolute;
   bottom: 3%;
   right: 10%;
   transform: rotate(320deg);
+}
+
+.btn-container {
+  button {
+    margin: 5px 0;
+  }
 }

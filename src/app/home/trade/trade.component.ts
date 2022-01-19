@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-trade',
@@ -17,6 +17,13 @@ export class TradeComponent implements OnInit {
 
   selectedOptionA: string = '';
   selectedOptionB: string = '';
+  blockchainChecked: boolean = true;
+
+  isPopUpOpen: boolean = false;
+
+  @ViewChild('checkBox', { static: false })
+  // @ts-ignore
+  private checkBox: ElementRef;
 
   btnFirst: boolean = false;
   btnSecond: boolean = false;
@@ -28,6 +35,9 @@ export class TradeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.secondDropValues = this.tokenArr;
+    this.selectedOptionA = this.tokenArr[0];
+    this.selectedOptionB = this.tokenArr[0];
   }
 
   makeReverse() {
@@ -44,24 +54,32 @@ export class TradeComponent implements OnInit {
   dropdownSelected(value: string, index: number) {
 
     if (index === 1) {
-      this.selectedOptionA = value;
       if (value === 'Algo') {
         this.secondDropValues = this.tokenArr;
       } else if (value.includes('Token')) {
         this.secondDropValues = this.algoArr;
+        this.selectedOptionA = value;
+        this.selectedOptionB = value;
       }
     } else if (index === 2) {
-      this.selectedOptionB = value;
       if (value === 'Algo') {
         this.firstDropValues = this.tokenArr;
       } else if (value.includes('Token')) {
         this.firstDropValues = this.algoArr;
+        this.selectedOptionA = value;
+        this.selectedOptionB = value;
       }
     }
   }
-  
-  test() {
-    console.log('win')
+
+  checkBoxClicked() { }
+
+  openPopUp() {
+    this.isPopUpOpen = true;
+  }
+
+  closePopUp(event: boolean) {
+    this.isPopUpOpen = event;
   }
 
   getValueFromDropDown($event: any, index: number) {

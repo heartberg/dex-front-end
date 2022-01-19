@@ -17,6 +17,11 @@ export class PopUpComponent implements OnInit {
 
   @Input() openWallet: boolean = false;
   @Input() isDeploy: boolean = false;
+  @Input() isTrade: boolean = false;
+  
+  
+  @Input() isRestart: boolean = false;
+  @Input() isFair: boolean = false;
 
   constructor(
     private _walletsConnectService: WalletsConnectService,

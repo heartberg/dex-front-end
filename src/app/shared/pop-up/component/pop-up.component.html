@@ -5,18 +5,22 @@
     </button>
     <div class="top-side">
       <div class="title">
+        <h3 class="color-violet" *ngIf="isTrade">Get Backing for Token Name</h3>
+        <h3 style="text-align: unset;" class="color-violet" *ngIf="isRestart">Restart Presale</h3>
+        <h3 style="text-align: unset;" class="color-violet" *ngIf="isFair">Fair Launch</h3>
         <h3 *ngIf="openWallet && !isDeploy">Connect your Wallet</h3>
-        <div class="launch-detail-version" *ngIf="!openWallet">
-          <h3 >Participate</h3>
-          <h3 >Project Name Pre-sale</h3>
+        <div class="launch-detail-version" *ngIf="!openWallet &&!isTrade && !isFair && !isRestart">
+          <h3>Participate</h3>
+          <h3>Project Name Pre-sale</h3>
         </div>
         <h3 *ngIf="isDeploy">are you sure one time only?</h3>
       </div>
       <div class="pre-title isNotWallet">
-        <span *ngIf="openWallet && !isDeploy">Choose your preferred method to connect to the Algoverse Marketplace</span>
-        <div class="input-section" *ngIf="!openWallet">
+        <span *ngIf="openWallet && !isDeploy">Choose your preferred method to connect to the Algoverse
+          Marketplace</span>
+        <div class="input-section" *ngIf="!openWallet && !isTrade && !isFair && !isRestart">
           <div class="d-flex align-items-center justify-content-between">
-            <span >Amount</span >
+            <span>Amount</span>
             <!-- <span style="color: #81007F; margin-right: 8px">200</span> -->
           </div>
           <div>
@@ -24,7 +28,7 @@
             <span class="color-violet">Algo</span>
           </div>
           <div class="d-flex buttons">
-            <button class="btn-primary-costum"  (click)="closePopUp(false)">
+            <button class="btn-primary-costum" (click)="closePopUp(false)">
               Cancel
             </button>
             <button class="btn-secondary-costum">
@@ -33,8 +37,8 @@
           </div>
         </div>
         <div class="input-section" *ngIf="isDeploy">
-          <div class="d-flex buttons"  [class.deploy-width]="isDeploy">
-            <button class="btn-primary-costum"  (click)="closePopUp(false)">
+          <div class="d-flex buttons" [class.deploy-width]="isDeploy">
+            <button class="btn-primary-costum" (click)="closePopUp(false)">
               Cancel
             </button>
             <button class="btn-secondary-costum" (click)="triggetLiquidity()">
@@ -60,5 +64,133 @@
         </div>
       </div>
     </div>
+    <!-- isTrade container -->
+    <ng-container *ngIf="isTrade">
+      <div class="paragraph">
+        <p>To get the backing for an amount of Tokens, they must be burned. They will be permanently removed from your
+          wallet and from circulating supply.</p>
+        <p>Careful! This is not revertable!</p>
+      </div>
+      <div style="margin: 50px 0 30px 0;">
+        <div class="data-box">
+          <span class="property">Total Backing:</span>
+          <span class="value">Y Algo</span>
+        </div>
+        <div class="data-box">
+          <span class="property">Backing per token</span>
+          <span class="value">X Algo</span>
+        </div>
+      </div>
+      <div class="input-section">
+        <div class="d-flex align-items-center justify-content-between">
+          <span>Amount</span>
+          <div>
+            <span class="color-violet">Available:</span>
+            <span style="margin-left: 4px;">1000</span>
+          </div>
+        </div>
+        <div>
+          <input type="text" class="input-costum">
+        </div>
+      </div>
+      <div class="data-box" style="margin: 40px 0 20px 0;">
+        <span class="property">Output:</span>
+        <span class="value">Y Algo</span>
+      </div>
+      <div class="d-flex buttons isTrade-buttons">
+        <button class="btn-primary-costum" (click)="closePopUp(false)">
+          Cancel
+        </button>
+        <button class="btn-secondary-costum">
+          Burn Tokens
+        </button>
+      </div>
+    </ng-container>
+    <!-- isTrade container -->
+
+    <!-- isRestart container -->
+
+    <ng-container *ngIf="isRestart">
+      <div style="max-width: 700px;">
+        <p>Restart your Presale with same or better conditions for your users. Hover over the info icons to see
+          requirements for an updated presale.</p>
+      </div>
+      <div style="margin-top: 25px;" class="d-flex justify-content-between">
+        <div class="d-flex flex-column">
+          <!-- left inputs -->
+          <div class="input-box">
+            <label for="presale-start">Presale Start</label>
+            <input id="presale-start" type="text">
+          </div>
+          <div class="input-box">
+            <label for="presale-end">Presale End</label>
+            <input id="presale-end" type="text">
+          </div>
+          <div class="input-box">
+            <label for="trading-start">Trading Start</label>
+            <input id="trading-start" type="text">
+          </div>
+        </div>
+        <div class="d-flex flex-column">
+          <div class="input-box">
+            <label for="soft-cap">Soft Cap</label>
+            <input id="soft-cap" type="text">
+          </div>
+          <div class="input-box">
+            <label for="hard-cap">Hard Cap</label>
+            <input id="hard-cap" type="text">
+          </div>
+          <div class="input-box">
+            <label for="wallet-cap">Wallet Cap</label>
+            <input id="wallet-cap" type="text">
+          </div>
+          <div class="input-box">
+            <label for="to-liquidity">To Liquidity</label>
+            <input id="to-liquidity" type="text">
+          </div>
+          <!-- right inputs -->
+        </div>
+      </div>
+      <div style="margin-top: 25px;" class="d-flex buttons isTrade-buttons">
+        <button class="btn-primary-costum" (click)="closePopUp(false)">
+          Cancel
+        </button>
+        <button class="btn-secondary-costum">
+          Restart
+        </button>
+      </div>
+    </ng-container>
+    <!-- isRestart container -->
+
+    <!-- isFair container -->
+
+    <ng-container *ngIf="isFair">
+
+      <div style="max-width: 700px;">
+        <p>Restart your Presale with same or better conditions for your users. Hover over the info icons to see
+          requirements for an updated presale.</p>
+      </div>
+      <div style="margin-top: 50px;" class="d-flex justify-content-between">
+        <div class="d-flex flex-column">
+          <!-- left inputs -->
+          <div class="input-box">
+            <label for="trading-start">Trading Start</label>
+            <input id="trading-start" type="text">
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 25px;" class="d-flex buttons isTrade-buttons">
+        <button class="btn-primary-costum" (click)="closePopUp(false)">
+          Cancel
+        </button>
+        <button class="btn-secondary-costum">
+          Launch
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- isFair container -->
+
   </div>
 </div>

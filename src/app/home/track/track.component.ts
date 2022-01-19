@@ -38,4 +38,8 @@ export class TrackComponent implements OnInit {
     this.arr[i].open = !this.arr[i].open;
   }
 
+  copyContentToClipboard(content: HTMLElement) {
+    navigator.clipboard.writeText(content.innerText);
+  }
+
 }
