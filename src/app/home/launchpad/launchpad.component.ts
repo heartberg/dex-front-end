@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-launchpad',
@@ -7,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LaunchpadComponent implements OnInit {
 
-  array = [1,32,53,64,58]
+  array = [1, 32, 53, 64, 58]
+
+  @Input() isWallet: boolean = false;
 
   constructor() { }
 

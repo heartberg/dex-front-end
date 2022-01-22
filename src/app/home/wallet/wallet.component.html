@@ -7,19 +7,18 @@
     <div class="choise d-flex" style="margin-top: 5px; margin-bottom: 10px;">
       <div class="section" (click)="activeFirst()">
         <button [ngClass]="{'btn-secondary-costum': isActiveFirst, 'btn-primary-costum': isActiveSecond }"
-          style="border-radius: 4px; margin-right: 10px;">
+          style="border-radius: 4px; margin-right: 10px;" routerLink="/wallet">
           Tokens
         </button>
       </div>
       <div class="section" (click)="activeSecond()">
         <button [ngClass]="{'btn-secondary-costum': isActiveSecond, 'btn-primary-costum': isActiveFirst }"
-          class="btn-primary-costum" style="border-radius: 4px">
-
+          class="btn-primary-costum" style="border-radius: 4px" routerLink="/wallet/entries">
           My Entries
         </button>
       </div>
     </div>
     <app-track *ngIf="isActiveFirst"></app-track>
-    <app-launchpad *ngIf="isActiveSecond"></app-launchpad>
+    <app-launchpad [isWallet]="true" *ngIf="isActiveSecond"></app-launchpad>
   </div>
 </div>

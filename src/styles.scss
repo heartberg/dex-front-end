@@ -73,6 +73,12 @@ input, textarea {
   font-size: 18px;
   color: #1c1c1e;
 }
+
+label {
+  margin-bottom: unset;
+  font-family: 'primary';
+}
+
 .color-violet {
   color: #81007F !important;
 }

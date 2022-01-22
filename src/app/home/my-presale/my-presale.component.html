@@ -1,319 +1,318 @@
 <div class="main">
   <div class="wrapper-border">
-    <div class="wrapper-border">
-      <h3>My Presales</h3>
-      <div class="scrollable-content">
-        <div *ngFor="let item of arr">
-          <ng-container *ngIf="item === 'ended'">
-            <div class="card">
-              <div class="row">
-                <div class="col-md-2 unset-pd avatar-section">
-                  <div class="headings">
-                    <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
-                    <h4 style="color: #1c1c1e;">Token</h4>
-                  </div>
-                  <div class="track-image d-flex align-items-center justify-content-end flex-column">
-                    <img style="width: 65%;"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
-                      alt="">
-                    <span *ngIf="isPresaleEnded" class="ended-mark color-violet">ENDED</span>
-                  </div>
+    <h3>My Presales</h3>
+    <div class="scrollable-content">
+      <div *ngFor="let item of arr">
+        <ng-container *ngIf="item === 'ended'">
+          <div class="card">
+            <div class="row">
+              <div class="col-md-2 unset-pd avatar-section">
+                <div class="headings">
+                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
+                  <h4 style="color: #1c1c1e;">Token</h4>
                 </div>
-                <div class="right-container">
-                  <div class="col-md-3 unset-pd" style="line-height: normal;">
-                    <div class="admin-content-extra-last">
-                      <div class="admin-header d-flex align-items-center">
-                        <h4>Admin Functions</h4>
-                      </div>
-                      <div class="admin-bottom">
-                        <div class="left-values">
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                            <span>Date</span>
-                          </div>
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                            <span>Date</span>
-                          </div>
+                <div class="track-image d-flex align-items-center justify-content-end flex-column">
+                  <img style="width: 65%;"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                    alt="">
+                  <span *ngIf="isPresaleEnded" class="ended-mark color-violet">ENDED</span>
+                </div>
+              </div>
+              <div class="right-container">
+                <div class="col-md-3 unset-pd" style="line-height: normal;">
+                  <div class="admin-content-extra-last">
+                    <div class="admin-header d-flex align-items-center">
+                      <h4>Admin Functions</h4>
+                    </div>
+                    <div class="admin-bottom">
+                      <div class="left-values">
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
+                          <span>Date</span>
                         </div>
-                        <div class="d-flex flex-column align-items-start right-values">
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
-                            <span>Value</span>
-                          </div>
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
-                            <span>Value</span>
-                          </div>
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
+                          <span>Date</span>
                         </div>
                       </div>
-                      <div class="admin-bottom-last">
-                        <div class="d-flex align-items-start flex-column">
-                          <div class="subscr">
-                            <span>
-                              Subscribed
+                      <div class="d-flex flex-column align-items-start right-values">
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
+                          <span>Value</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
+                          <span>Value</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="admin-bottom-last">
+                      <div class="d-flex align-items-start flex-column">
+                        <div class="subscr">
+                          <span>
+                            Subscribed
+                          </span>
+                        </div>
+                        <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
+                          <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%"
+                              aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between" style="width: 100%">
+                          <div class="d-flex align-items-center">
+                            <h6 class="color-violet">
+                              Raised:
+                            </h6>
+                            <span style="margin-left: 6px">
+                              Algo
                             </span>
                           </div>
-                          <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
-                            <div class="progress">
-                              <div class="progress-bar progress-bar-striped bg-info" role="progressbar"
-                                style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </div>
-                          <div class="d-flex align-items-center justify-content-between" style="width: 100%">
-                            <div class="d-flex align-items-center">
-                              <h6 class="color-violet">
-                                Raised:
-                              </h6>
-                              <span style="margin-left: 6px">
-                                Algo
-                              </span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                              <h6 class="color-violet">
-                                Max:
-                              </h6>
-                              <span style="margin-left: 6px">
-                                Algo
-                              </span>
-                            </div>
+                          <div class="d-flex align-items-center">
+                            <h6 class="color-violet">
+                              Max:
+                            </h6>
+                            <span style="margin-left: 6px">
+                              Algo
+                            </span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class="text-area">
-                    <ng-container *ngIf="isPresaleEnded">
-                      <p>
-                        Your Presale ended.
-                      </p>
-                      <p>
-                        You can start going through the following steps to make your token tradable on the Verse Pad.
-                      </p>
-                      <p>
-                        As admin now you finish the Presale.
-                      </p>
-                    </ng-container>
+                </div>
+                <div class="text-area">
+                  <ng-container *ngIf="isPresaleEnded">
+                    <p>
+                      Your Presale ended.
+                    </p>
+                    <p>
+                      You can start going through the following steps to make your token tradable on the Verse Pad.
+                    </p>
+                    <p>
+                      As admin now you finish the Presale.
+                    </p>
+                  </ng-container>
+                </div>
+                <div class="unset-pd">
+                  <button class="bottom-btn btn-secondary-costum">
+                    Claim Presale
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="item === 'failed'">
+          <div class="card">
+            <div class="row">
+              <div class="col-md-2 unset-pd avatar-section">
+                <div class="headings">
+                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
+                  <h4 style="color: #1c1c1e;">Token</h4>
+                </div>
+                <div class="track-image d-flex align-items-center justify-content-end flex-column">
+                  <img style="width: 65%;"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                    alt="">
+                  <span *ngIf="isPresaleEnded" class="ended-mark color-violet">FAILED</span>
+                </div>
+              </div>
+              <div class="right-container">
+                <div class="col-md-3 unset-pd" style="line-height: normal;">
+                  <div class="admin-content-extra-last">
+                    <div class="admin-header d-flex align-items-center">
+                      <h4>Admin Functions</h4>
+                    </div>
+                    <div class="admin-bottom">
+                      <div class="left-values">
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
+                          <span>Date</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
+                          <span>Date</span>
+                        </div>
+                      </div>
+                      <div class="d-flex flex-column align-items-start right-values">
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
+                          <span>Value</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
+                          <span>Value</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="admin-bottom-last">
+                      <div class="d-flex align-items-start flex-column">
+                        <div class="subscr">
+                          <span>
+                            Subscribed
+                          </span>
+                        </div>
+                        <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
+                          <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%"
+                              aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between" style="width: 100%">
+                          <div class="d-flex align-items-center">
+                            <h6 class="color-violet">
+                              Raised:
+                            </h6>
+                            <span style="margin-left: 6px">
+                              Algo
+                            </span>
+                          </div>
+                          <div class="d-flex align-items-center">
+                            <h6 class="color-violet">
+                              Max:
+                            </h6>
+                            <span style="margin-left: 6px">
+                              Algo
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="unset-pd">
-                    <button class="bottom-btn btn-secondary-costum">
-                      Claim Presale
+                </div>
+                <div class="text-area">
+                  <ng-container *ngIf="isPresaleEnded">
+                    <p>
+                      Your presale did not reach your Softcap.
+                    </p>
+                    <p>
+                      User can't claim any tokens now.
+                    </p>
+                    <p>
+                      You can start a new presale with better conditions for your users, or do a fair launch.
+                    </p>
+                    <p>
+                      Users participated can claim their comitted Algo before a new presale starts or leave them in
+                      the contract to have a guaranteed allocation in your next presale.
+                    </p>
+                  </ng-container>
+                </div>
+                <div class="unset-pd">
+                  <div class="btn-container d-flex flex-column">
+                    <button (click)="openPopUp('restart')" class="bottom-btn btn-secondary-costum">
+                      Restart Presale
+                    </button>
+                    <button (click)="openPopUp('fair')" class="bottom-btn btn-secondary-costum">
+                      Fair Launch
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-          </ng-container>
-          <ng-container *ngIf="item === 'failed'">
-            <div class="card">
-              <div class="row">
-                <div class="col-md-2 unset-pd avatar-section">
-                  <div class="headings">
-                    <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
-                    <h4 style="color: #1c1c1e;">Token</h4>
-                  </div>
-                  <div class="track-image d-flex align-items-center justify-content-end flex-column">
-                    <img style="width: 65%;"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
-                      alt="">
-                    <span *ngIf="isPresaleEnded" class="ended-mark color-violet">FAILED</span>
-                  </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="item === 'user'">
+          <div class="card">
+            <div class="row">
+              <div class="col-md-2 unset-pd avatar-section">
+                <div class="headings">
+                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
+                  <h4 style="color: #1c1c1e;">Token</h4>
                 </div>
-                <div class="right-container">
-                  <div class="col-md-3 unset-pd" style="line-height: normal;">
-                    <div class="admin-content-extra-last">
-                      <div class="admin-header d-flex align-items-center">
-                        <h4>Admin Functions</h4>
-                      </div>
-                      <div class="admin-bottom">
-                        <div class="left-values">
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                            <span>Date</span>
-                          </div>
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                            <span>Date</span>
-                          </div>
+                <div class="track-image d-flex align-items-center justify-content-end flex-column">
+                  <img style="width: 65%;"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                    alt="">
+                  <span *ngIf="isPresaleEnded" class="ended-mark color-violet">FAILED</span>
+                </div>
+              </div>
+              <div class="right-container">
+                <div class="col-md-3 unset-pd" style="line-height: normal;">
+                  <div class="admin-content-extra-last">
+                    <div class="admin-header d-flex align-items-center">
+                      <h4>User Functions</h4>
+                    </div>
+                    <div class="admin-bottom">
+                      <div class="left-values">
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
+                          <span>Date</span>
                         </div>
-                        <div class="d-flex flex-column align-items-start right-values">
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
-                            <span>Value</span>
-                          </div>
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
-                            <span>Value</span>
-                          </div>
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
+                          <span>Date</span>
                         </div>
                       </div>
-                      <div class="admin-bottom-last">
-                        <div class="d-flex align-items-start flex-column">
-                          <div class="subscr">
-                            <span>
-                              Subscribed
+                      <div class="d-flex flex-column align-items-start right-values">
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
+                          <span>Value</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
+                          <span>Value</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="admin-bottom-last">
+                      <div class="d-flex align-items-start flex-column">
+                        <div class="subscr">
+                          <span>
+                            Subscribed
+                          </span>
+                        </div>
+                        <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
+                          <div class="progress">
+                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%"
+                              aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between" style="width: 100%">
+                          <div class="d-flex align-items-center">
+                            <h6 class="color-violet">
+                              Raised:
+                            </h6>
+                            <span style="margin-left: 6px">
+                              Algo
                             </span>
                           </div>
-                          <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
-                            <div class="progress">
-                              <div class="progress-bar progress-bar-striped bg-info" role="progressbar"
-                                style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </div>
-                          <div class="d-flex align-items-center justify-content-between" style="width: 100%">
-                            <div class="d-flex align-items-center">
-                              <h6 class="color-violet">
-                                Raised:
-                              </h6>
-                              <span style="margin-left: 6px">
-                                Algo
-                              </span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                              <h6 class="color-violet">
-                                Max:
-                              </h6>
-                              <span style="margin-left: 6px">
-                                Algo
-                              </span>
-                            </div>
+                          <div class="d-flex align-items-center">
+                            <h6 class="color-violet">
+                              Max:
+                            </h6>
+                            <span style="margin-left: 6px">
+                              Algo
+                            </span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class="text-area">
-                    <ng-container *ngIf="isPresaleEnded">
-                      <p>
-                        Your presale did not reach your Softcap.
-                      </p>
-                      <p>
-                        User can't claim any tokens now.
-                      </p>
-                      <p>
-                        You can start a new presale with better conditions for your users, or do a fair launch.
-                      </p>
-                      <p>
-                        Users participated can claim their comitted Algo before a new presale starts or leave them in
-                        the contract to have a guaranteed allocation in your next presale.
-                      </p>
-                    </ng-container>
-                  </div>
-                  <div class="unset-pd">
-                    <div class="btn-container d-flex flex-column">
-                      <button (click)="openPopUp('restart')" class="bottom-btn btn-secondary-costum">
-                        Restart Presale
-                      </button>
-                      <button (click)="openPopUp('fair')" class="bottom-btn btn-secondary-costum">
-                        Fair Launch
-                      </button>
-                    </div>
-                  </div>
+                </div>
+                <div class="text-area">
+                  <ng-container *ngIf="isPresaleEnded">
+                    <p>
+                      This presale where you participated did not meet its required softcap.
+                    </p>
+                    <p>
+                      Head over to the projects communication channel to inform you how they want to proceed.
+                    </p>
+                    <p>
+                      You can claim your committed Algo or you leave them in this presale contract to have a guaranteed
+                      allocation if the Project manager starts a new presale with same or better conditions.
+                    </p>
+                  </ng-container>
+                </div>
+                <div class="unset-pd">
+                  <button class="bottom-btn btn-secondary-costum">
+                    Claim Algo
+                  </button>
                 </div>
               </div>
             </div>
-          </ng-container>
-          <ng-container *ngIf="item === 'user'">
-            <div class="card">
-              <div class="row">
-                <div class="col-md-2 unset-pd avatar-section">
-                  <div class="headings">
-                    <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
-                    <h4 style="color: #1c1c1e;">Token</h4>
-                  </div>
-                  <div class="track-image d-flex align-items-center justify-content-end flex-column">
-                    <img style="width: 65%;"
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
-                      alt="">
-                    <span *ngIf="isPresaleEnded" class="ended-mark color-violet">FAILED</span>
-                  </div>
-                </div>
-                <div class="right-container">
-                  <div class="col-md-3 unset-pd" style="line-height: normal;">
-                    <div class="admin-content-extra-last">
-                      <div class="admin-header d-flex align-items-center">
-                        <h4>User Functions</h4>
-                      </div>
-                      <div class="admin-bottom">
-                        <div class="left-values">
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                            <span>Date</span>
-                          </div>
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                            <span>Date</span>
-                          </div>
-                        </div>
-                        <div class="d-flex flex-column align-items-start right-values">
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
-                            <span>Value</span>
-                          </div>
-                          <div class="d-flex align-items-center">
-                            <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
-                            <span>Value</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="admin-bottom-last">
-                        <div class="d-flex align-items-start flex-column">
-                          <div class="subscr">
-                            <span>
-                              Subscribed
-                            </span>
-                          </div>
-                          <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
-                            <div class="progress">
-                              <div class="progress-bar progress-bar-striped bg-info" role="progressbar"
-                                style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </div>
-                          <div class="d-flex align-items-center justify-content-between" style="width: 100%">
-                            <div class="d-flex align-items-center">
-                              <h6 class="color-violet">
-                                Raised:
-                              </h6>
-                              <span style="margin-left: 6px">
-                                Algo
-                              </span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                              <h6 class="color-violet">
-                                Max:
-                              </h6>
-                              <span style="margin-left: 6px">
-                                Algo
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-area">
-                    <ng-container *ngIf="isPresaleEnded">
-                      <p>
-                        This presale where you participated did not meet its required softcap.
-                      </p>
-                      <p>
-                        Head over to the projects communication channel to inform you how they want to proceed.
-                      </p>
-                      <p>
-                        You can claim your committed Algo or you leave them in this presale contract to have a guaranteed allocation if the Project manager starts a new presale with same or better conditions.
-                      </p>
-                    </ng-container>
-                  </div>
-                  <div class="unset-pd">
-                    <button class="bottom-btn btn-secondary-costum">
-                      Claim Algo
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-        </div>
+          </div>
+        </ng-container>
       </div>
     </div>
   </div>

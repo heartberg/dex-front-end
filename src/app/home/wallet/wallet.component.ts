@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-wallet',
@@ -8,10 +9,19 @@ import { Component, OnInit } from '@angular/core';
 export class WalletComponent implements OnInit {
   public isActiveFirst: boolean = false;
   public isActiveSecond: boolean = false;
-  constructor() { }
+
+  constructor(
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.isActiveFirst = true;
+    if (this.route.snapshot.routeConfig?.path === 'wallet/entries') {
+      this.activeSecond();
+    } else if (this.route.snapshot.routeConfig?.path === 'wallet') {
+      this.activeFirst();
+    } else {
+      this.isActiveFirst = true;
+    }
   }
 
   activeFirst() {

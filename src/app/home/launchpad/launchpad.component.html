@@ -1,5 +1,5 @@
-<div class="main">
-  <div class="wrapper-border">
+<div class="main" [ngStyle]="{'height' : isWallet ? 'calc(100vh - 240px)' : 'calc(100vh - 100px)'}">
+  <div class="" [ngClass]="{'wrapper-border': !isWallet}">
     <div class="header d-flex justify-content-between">
       <div class="search-section hide-respo">
         <div class="search">
@@ -15,11 +15,12 @@
         </div>
       </div>
       <app-drop-down-selector [isNotAccordion]="false"
-        [dropDownValues]="['Ending Soon', 'Finished', 'Subscription: High to low', 'Subscription: Low to high']" [widthPX]="'160px'">
+        [dropDownValues]="['Ending Soon', 'Finished', 'Subscription: High to low', 'Subscription: Low to high']"
+        [widthPX]="'160px'">
       </app-drop-down-selector>
     </div>
-    <div class="scrollable-content">
-    <app-card *ngFor="let item of array;"></app-card>
+    <div class="scrollable-content" [ngStyle]="{'height' : isWallet ? 'calc(100vh - 285px)' : 'calc(100vh - 210px)'}">
+      <app-card *ngFor="let item of array;"></app-card>
     </div>
   </div>
 </div>

@@ -84,6 +84,10 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
       this.dropDownValue.emit(value);
       this.isDropDownOpened = false;
     }
+
+    if(value.includes('Sub')) {
+      this.showDropDownSelected = value.substring(value.indexOf(' '), 25)
+    }
   }
 
   emitCollectionIdAndWallet(value: string, collectionId: string, wallet: string): void {

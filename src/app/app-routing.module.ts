@@ -66,6 +66,10 @@ const routes: Routes = [
   {
     path: 'token-detail',
     component: TokenDetailComponent
+  },
+  {
+    path: 'wallet/entries',
+    component: WalletComponent
   }
 ];
 

@@ -144,13 +144,18 @@
     input {
       max-width: 200px;
       margin: 5px 0 5px 15px;
-      border: 1px solid #81007F;
+      border: 1px solid #81007f8a;
+      background-color:rgba(128, 128, 128, 0.09);
       border-radius: 5px;
       height: 28px;
-    }
-    
-    label {
-      margin-bottom: unset;
+      outline: none;
+      padding: 0 8px;
+      
+      &:focus {
+        border: 1px solid rgba($color: #81007fd8, $alpha: .7);
+        box-shadow: rgba($color: #81007fd8, $alpha: .7) 0px 0px 3px;
+        background-color: transparent;
+      }
     }
 
   }
