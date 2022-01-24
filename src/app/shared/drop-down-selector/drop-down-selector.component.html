@@ -11,7 +11,7 @@
       <ng-container *ngFor="let button of dropDownValues; let i = index">
         <button class="btn-default" *ngIf="i === 0">
           <ng-container *ngIf="showDropDownSelected === ''">
-            {{button}}
+            {{button.name}}
           </ng-container>
           <ng-container *ngIf="showDropDownSelected !== ''">
             {{showDropDownSelected}}
@@ -105,7 +105,7 @@
         </div>
       </div>
     </div>
-    <div class="section" *ngFor="let button of dropDownValues; let last = last; let i = index" (click)="selectValue(button, i+1)" [class.border-none]="last" [class.no-border]="tree" [class.unHover]="isProfileSection">
+    <div class="section" *ngFor="let button of dropDownValues; let last = last; let i = index" (click)="selectValue(button.name, i+1)" [class.border-none]="last" [class.no-border]="tree" [class.unHover]="isProfileSection">
 <!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
       <button class="btn-default"
               [class.color-violet]="tree"
@@ -121,15 +121,15 @@
               <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png" alt="" style="width: 40px; height: 35px">
             </div>
             <div style="font-size: 16px">
-              {{button}}
+              {{button.name}}
             </div>
             <div>
-              <ng-container *ngIf="!publicTradeIsAdded">
+              <ng-container (click)="addToFavourites(button, i)" *ngIf="!publicTradeIsAdded">
                 <img src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg" alt="" style="width: 23px; height: 23px">
               </ng-container>
               <ng-container *ngIf="publicTradeIsAdded">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU" alt=""
-                     style="98width: 23px; height: 23px">
+                     style="width: 23px; height: 23px">
               </ng-container>
             </div>
           </div>

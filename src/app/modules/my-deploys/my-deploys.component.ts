@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-my-deploy',
-  templateUrl: './my-deploy.component.html',
-  styleUrls: ['./my-deploy.component.scss']
+  selector: 'app-my-deploys',
+  templateUrl: './my-deploys.component.html',
+  styleUrls: ['./my-deploys.component.scss']
 })
-export class MyDeployComponent implements OnInit {
+export class MyDeploysComponent implements OnInit {
   arr: number[] = [1,2, 3];
   firstStep: boolean = false;
   secondStep: boolean = false;

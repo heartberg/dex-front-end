@@ -15,7 +15,7 @@ export class WalletComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.route.snapshot.routeConfig?.path === 'wallet/entries') {
+    if (this.route.snapshot.routeConfig?.path === 'entries') {
       this.activeSecond();
     } else if (this.route.snapshot.routeConfig?.path === 'wallet') {
       this.activeFirst();

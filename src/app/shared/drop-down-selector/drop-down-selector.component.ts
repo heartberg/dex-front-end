@@ -1,5 +1,7 @@
 import {Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
+import { Observable } from 'rxjs';
+import { AssetView } from 'src/app/models/assetView.model';
 
 
 @Component({
@@ -8,7 +10,7 @@ import {ActivatedRoute, Router} from "@angular/router";
   styleUrls: ['./drop-down-selector.component.scss']
 })
 export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
-  @Input() public dropDownValues: any[] = [];
+  @Input() public dropDownValues: AssetView[] | any = [];
   @Input() public isNotAccordion: boolean = true;
   @Input() public treeDots: boolean = false;
   // profile
@@ -23,6 +25,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() public dropDownIsTrue: boolean = false;
   // marketplace artists and collections
   @Output() dropDownValue = new EventEmitter<string>();
+
+  @Output() selectedAsset = new EventEmitter<number>();
 
   @Input() public widthPX: any = '';
   @Input() public extraDropDown: boolean = false;
@@ -70,7 +74,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     }
   }
 
-  selectValue(value: string, i?: any) {
+  selectValue(value: string, i?: any, id?: string) {
     if (this.notCloseOnClick) {
       // this.isDropDownOpenedCounter +=1;
       this.openDropDown()
@@ -85,9 +89,17 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
       this.isDropDownOpened = false;
     }
 
+    // Store ID
+
+
     if(value.includes('Sub')) {
       this.showDropDownSelected = value.substring(value.indexOf(' '), 25)
     }
+  }
+
+  addToFavourites(button: AssetView, i: number) {
+    this.selectedAsset.emit(button.assetId);
+    
   }
 
   emitCollectionIdAndWallet(value: string, collectionId: string, wallet: string): void {

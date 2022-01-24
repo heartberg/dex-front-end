@@ -22,7 +22,7 @@
       <div class="d-flex flex-column" [class.flex-column-reverse]="rotate">
         <div class="d-flex top" [ngStyle]="{'margin-bottom': !rotate ? '32px' : '0px'}">
           <app-drop-down-selector (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
-            [dropDownValues]="firstDropValues" [isNotAccordion]="false" [widthPX]="'160px'"
+            [dropDownValues]="assetArr" [isNotAccordion]="false" [widthPX]="'160px'"
             (dropDownValue)="getValueFromDropDown($event, 1)" [extraDropDown]="true" [notCloseOnClick]="true"
             class="first-drop-down" #componentRefA></app-drop-down-selector>
           <div class="input d-flex flex-column">
@@ -56,7 +56,7 @@
         </div>
         <div class="d-flex" [ngStyle]="{'margin-bottom': rotate ? '32px' : '0px'}">
           <app-drop-down-selector style="margin-top: 23px;" (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
-            [dropDownValues]="secondDropValues" [isNotAccordion]="false" [widthPX]="'160px'" [extraDropDown]="true"
+            [dropDownValues]="dummyArr" [isNotAccordion]="false" [widthPX]="'160px'" [extraDropDown]="true"
             (dropDownValue)="getValueFromDropDown($event, 2)" [notCloseOnClick]="true" #componentRefB>
           </app-drop-down-selector>
           <div class="input d-flex flex-column align-items-end">
