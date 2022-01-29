@@ -1,44 +1,42 @@
 .avatar-section {
   h6 {
-   margin-top: 10px;
-   font-size: 14px;
+    margin-top: 10px;
+    font-size: 14px;
   }
 }
 .avatar-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 
+  .data-box {
+    text-align: flex-start;
+    padding-left: 12%;
+    flex-basis: 50%;
+    margin: 25px 0;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    flex-direction: column;
 
-    .data-box {
-        text-align: flex-start;
-        padding-left: 12%;
-        flex-basis: 50%;
-        margin: 25px 0;
-        display: flex;
-        flex-direction: column;
-        
-        span {
-            font-size: 16px;
-        }
-    
-        .property {
-            color: #81007F;
-            margin-bottom: 5px;
-        }
-    
-        .value {
-            color: black;
-            margin: 2px 0;
-        }
+    span {
+      font-size: 16px;
     }
 
+    .property {
+      color: #81007f;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      color: black;
+      margin: 2px 0;
+    }
+  }
 
   margin-top: 20px;
   div {
     margin: 10px 0px;
     span {
-      color: #81007F;
+      color: #81007f;
     }
   }
 }
@@ -62,7 +60,7 @@
   overflow-y: scroll;
 
   h3 {
-    color: #81007F;
+    color: #81007f;
   }
   .desc {
     margin-top: 15px;
@@ -76,7 +74,7 @@
     margin-right: 8px;
   }
   span {
-    color: #81007F;
+    color: #81007f;
   }
   .token-first {
     margin-top: 15px;
@@ -95,7 +93,7 @@
     flex-direction: column;
     align-items: center;
     span {
-        font-size: 14px;
+      font-size: 14px;
     }
     img {
       width: 100%;
@@ -110,34 +108,38 @@
 }
 
 .roadmap-container {
-    max-width: 100%;
-    img {
-        object-fit: cover;
-        width: 100%;
-        max-height: 300px;
-    }
+  max-width: 100%;
+  img {
+    object-fit: cover;
+    width: 100%;
+    max-height: 300px;
+  }
+}
+.outer-buttons-container {
+  border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
+  padding-top: 20px;
 }
 
-
 .buttons-container {
-    display: flex;
-    justify-content: space-around;
-    border-top: 1px solid rgba($color: #000000, $alpha: .1);
-    padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 5px;
 
-    button {
-      width: 150px;
-    }
+  button {
+    width: 150px;
+    height: 38px;
+  }
+
+  .interest-span {
+    padding: 5px;
+  }
 }
 
 .socLinks {
-    margin-top: 10px;
-    img {
-        cursor: pointer;
-        max-width: 50px;
-        max-height: 50px;
-    }
+  margin-top: 10px;
+  img {
+    cursor: pointer;
+    max-width: 50px;
+    max-height: 50px;
+  }
 }
-
-
-

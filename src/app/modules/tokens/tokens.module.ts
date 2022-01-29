@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TokensRoutingModule } from './tokens-routing.module';
 import { TokensComponent } from './tokens.component';
 import { TokenDetailComponent } from './token-detail/token-detail.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { TokenDetailComponent } from './token-detail/token-detail.component';
   imports: [
     CommonModule,
     TokensRoutingModule,
+    SharedModule
   ]
 })
 export class TokensModule { }

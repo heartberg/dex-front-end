@@ -6,34 +6,64 @@
     <div class="top-side">
       <div class="title">
         <h3 class="color-violet" *ngIf="isTrade">Get Backing for Token Name</h3>
-        <h3 style="text-align: unset;" class="color-violet" *ngIf="isRestart">Restart Presale</h3>
-        <h3 style="text-align: unset;" class="color-violet" *ngIf="isFair">Fair Launch</h3>
+        <h3 style="text-align: unset" class="color-violet" *ngIf="isRestart">
+          Restart Presale
+        </h3>
+        <h3 style="text-align: unset" class="color-violet" *ngIf="isFair">
+          Fair Launch
+        </h3>
         <h3 *ngIf="openWallet && !isDeploy">Connect your Wallet</h3>
-        <div class="launch-detail-version" *ngIf="!openWallet &&!isTrade && !isFair && !isRestart">
+        <div
+          class="launch-detail-version"
+          *ngIf="
+            !openWallet &&
+            !isTrade &&
+            !isFair &&
+            !isRestart &&
+            !isBorrow &&
+            !isBacking
+          "
+        >
           <h3>Participate</h3>
           <h3>Project Name Pre-sale</h3>
         </div>
         <h3 *ngIf="isDeploy">are you sure one time only?</h3>
+        <div *ngIf="isBorrow" class="isBorrow-version-headline">
+          <h3 style="text-align: unset">Borrow</h3>
+        </div>
+        <div *ngIf="isBacking" class="isBacking-version">
+          <h3>Backing</h3>
+        </div>
       </div>
       <div class="pre-title isNotWallet">
-        <span *ngIf="openWallet && !isDeploy">Choose your preferred method to connect to the Algoverse
-          Marketplace</span>
-        <div class="input-section" *ngIf="!openWallet && !isTrade && !isFair && !isRestart">
+        <span *ngIf="openWallet && !isDeploy"
+          >Choose your preferred method to connect to the Algoverse
+          Marketplace</span
+        >
+        <div
+          class="input-section"
+          *ngIf="
+            !openWallet &&
+            !isTrade &&
+            !isFair &&
+            !isRestart &&
+            !isBacking &&
+            !isBorrow
+          "
+        >
           <div class="d-flex align-items-center justify-content-between">
             <span>Amount</span>
             <!-- <span style="color: #81007F; margin-right: 8px">200</span> -->
           </div>
           <div>
-            <input type="text" class="input-costum">
+            <input type="text" class="input-costum" />
             <span class="color-violet">Algo</span>
           </div>
           <div class="d-flex buttons">
             <button class="btn-primary-costum" (click)="closePopUp(false)">
               Cancel
             </button>
-            <button class="btn-secondary-costum">
-              Buy
-            </button>
+            <button class="btn-secondary-costum">Buy</button>
           </div>
         </div>
         <div class="input-section" *ngIf="isDeploy">
@@ -52,13 +82,19 @@
       <div class="row" style="width: 100%">
         <div class="col-md-6">
           <div class="wallet-section">
-            <img src="https://walletconnect.org/walletconnect-logo.svg" alt="">
+            <img
+              src="https://walletconnect.org/walletconnect-logo.svg"
+              alt=""
+            />
             <span>WalletConnect</span>
           </div>
         </div>
         <div class="col-md-6">
-          <div class="wallet-section" (click)="setelectWalletConnect('MyAlgoWallet')">
-            <img src="https://wallet.myalgo.com/images/MyAlgoBlue.svg" alt="">
+          <div
+            class="wallet-section"
+            (click)="setelectWalletConnect('MyAlgoWallet')"
+          >
+            <img src="https://wallet.myalgo.com/images/MyAlgoBlue.svg" alt="" />
             <span>MyAlgoWallet</span>
           </div>
         </div>
@@ -67,11 +103,14 @@
     <!-- isTrade container -->
     <ng-container *ngIf="isTrade">
       <div class="paragraph">
-        <p>To get the backing for an amount of Tokens, they must be burned. They will be permanently removed from your
-          wallet and from circulating supply.</p>
+        <p>
+          To get the backing for an amount of Tokens, they must be burned. They
+          will be permanently removed from your wallet and from circulating
+          supply.
+        </p>
         <p>Careful! This is not revertable!</p>
       </div>
-      <div style="margin: 50px 0 30px 0;">
+      <div style="margin: 50px 0 30px 0">
         <div class="data-box">
           <span class="property">Total Backing:</span>
           <span class="value">Y Algo</span>
@@ -86,14 +125,14 @@
           <span>Amount</span>
           <div>
             <span class="color-violet">Available:</span>
-            <span style="margin-left: 4px;">1000</span>
+            <span style="margin-left: 4px">1000</span>
           </div>
         </div>
         <div>
-          <input type="text" class="input-costum">
+          <input type="text" class="input-costum" />
         </div>
       </div>
-      <div class="data-box" style="margin: 40px 0 20px 0;">
+      <div class="data-box" style="margin: 40px 0 20px 0">
         <span class="property">Output:</span>
         <span class="value">Y Algo</span>
       </div>
@@ -101,9 +140,7 @@
         <button class="btn-primary-costum" (click)="closePopUp(false)">
           Cancel
         </button>
-        <button class="btn-secondary-costum">
-          Burn Tokens
-        </button>
+        <button class="btn-secondary-costum">Burn Tokens</button>
       </div>
     </ng-container>
     <!-- isTrade container -->
@@ -111,53 +148,53 @@
     <!-- isRestart container -->
 
     <ng-container *ngIf="isRestart">
-      <div style="max-width: 700px;">
-        <p>Restart your Presale with same or better conditions for your users. Hover over the info icons to see
-          requirements for an updated presale.</p>
+      <div style="max-width: 700px">
+        <p>
+          Restart your Presale with same or better conditions for your users.
+          Hover over the info icons to see requirements for an updated presale.
+        </p>
       </div>
-      <div style="margin-top: 25px;" class="d-flex justify-content-between">
+      <div style="margin-top: 25px" class="d-flex justify-content-between">
         <div class="d-flex flex-column">
           <!-- left inputs -->
           <div class="input-box">
             <label for="presale-start">Presale Start</label>
-            <input id="presale-start" type="text">
+            <input id="presale-start" type="text" />
           </div>
           <div class="input-box">
             <label for="presale-end">Presale End</label>
-            <input id="presale-end" type="text">
+            <input id="presale-end" type="text" />
           </div>
           <div class="input-box">
             <label for="trading-start">Trading Start</label>
-            <input id="trading-start" type="text">
+            <input id="trading-start" type="text" />
           </div>
         </div>
         <div class="d-flex flex-column">
           <div class="input-box">
             <label for="soft-cap">Soft Cap</label>
-            <input id="soft-cap" type="text">
+            <input id="soft-cap" type="text" />
           </div>
           <div class="input-box">
             <label for="hard-cap">Hard Cap</label>
-            <input id="hard-cap" type="text">
+            <input id="hard-cap" type="text" />
           </div>
           <div class="input-box">
             <label for="wallet-cap">Wallet Cap</label>
-            <input id="wallet-cap" type="text">
+            <input id="wallet-cap" type="text" />
           </div>
           <div class="input-box">
             <label for="to-liquidity">To Liquidity</label>
-            <input id="to-liquidity" type="text">
+            <input id="to-liquidity" type="text" />
           </div>
           <!-- right inputs -->
         </div>
       </div>
-      <div style="margin-top: 25px;" class="d-flex buttons isTrade-buttons">
+      <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
         <button class="btn-primary-costum" (click)="closePopUp(false)">
           Cancel
         </button>
-        <button class="btn-secondary-costum">
-          Restart
-        </button>
+        <button class="btn-secondary-costum">Restart</button>
       </div>
     </ng-container>
     <!-- isRestart container -->
@@ -165,32 +202,181 @@
     <!-- isFair container -->
 
     <ng-container *ngIf="isFair">
-
-      <div style="max-width: 700px;">
-        <p>Restart your Presale with same or better conditions for your users. Hover over the info icons to see
-          requirements for an updated presale.</p>
+      <div style="max-width: 700px">
+        <p>
+          Restart your Presale with same or better conditions for your users.
+          Hover over the info icons to see requirements for an updated presale.
+        </p>
       </div>
-      <div style="margin-top: 50px;" class="d-flex justify-content-between">
+      <div style="margin-top: 50px" class="d-flex justify-content-between">
         <div class="d-flex flex-column">
           <!-- left inputs -->
           <div class="input-box">
             <label for="trading-start">Trading Start</label>
-            <input id="trading-start" type="text">
+            <input id="trading-start" type="text" />
           </div>
         </div>
       </div>
-      <div style="margin-top: 25px;" class="d-flex buttons isTrade-buttons">
+      <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
         <button class="btn-primary-costum" (click)="closePopUp(false)">
           Cancel
         </button>
-        <button class="btn-secondary-costum">
-          Launch
-        </button>
+        <button class="btn-secondary-costum">Launch</button>
       </div>
-
     </ng-container>
 
     <!-- isFair container -->
 
+    <!-- isBacking container -->
+
+    <ng-container *ngIf="isBacking">
+      <div style="max-width: 600px" class="paragraph">
+        <p>
+          Smart ASAs deployed with our technology have an ever growing baseline
+          value, which is called the Backing. You can destroy your owned Smart
+          ASA to receive their respective baseline value.
+        </p>
+        <p>This enforces a guaranteed minimum value for each Smart ASA.</p>
+        <p>
+          Once you destroyed your Smart ASA there is no way to get them back.
+          Think carefully about this interaction
+        </p>
+        <p></p>
+      </div>
+      <div class="borrow-active-container">
+        <div class="d-flex flex-column">
+          <span style="align-self: flex-end" class="thin-gray-text"
+            >Available: 2000</span
+          >
+          <div class="input-box">
+            <label for="token-name">Token Name:</label>
+            <input id="token-name" type="text" />
+          </div>
+        </div>
+        <div class="d-flex flex-column jusitfy-content-center">
+          <div class="input-box">
+            <label for="token-name"></label>
+            <input id="token-name" type="text" />
+          </div>
+          <span style="align-self: center;" class="thin-gray-text">Please enter 'AGREE' if you consent with burning your Smart ASAs.</span>
+        </div>
+
+        <button
+          style="
+            border-radius: 5px;
+            margin-top: 10px;
+            align-self: center;
+          "
+          class="btn-secondary-costum"
+        >
+          Get Backing
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- isBacking container -->
+
+    <!-- isBorrow container -->
+
+    <ng-container class="isBorrow-version" *ngIf="isBorrow">
+      <div style="max-width: 800px" class="paragraph">
+        <p>
+          Smart ASAs deployed with our technology have an ever growing baseline
+          value. You can borrow against the baseline value of your owned Smart
+          ASAs.
+        </p>
+        <p>
+          There is no borrowing fee, and the backing of the Smart ASA won't
+          change with this interaction.
+        </p>
+        <p>
+          To get your Smart ASA back, simply return the borrowed amount of Algo.
+        </p>
+        <p></p>
+      </div>
+      <div class="wrapper-border">
+        <div class="d-flex flex-row">
+          <div class="section" (click)="activeFirst()">
+            <button
+              [ngClass]="{
+                'btn-secondary-costum': isActiveFirst,
+                'btn-primary-costum': isActiveSecond
+              }"
+              style="border-radius: 4px; margin-right: 10px"
+            >
+              Borrow
+            </button>
+          </div>
+          <div class="section" (click)="activeSecond()">
+            <button
+              [ngClass]="{
+                'btn-secondary-costum': isActiveSecond,
+                'btn-primary-costum': isActiveFirst
+              }"
+              class="btn-primary-costum"
+              style="border-radius: 4px"
+            >
+              Repay
+            </button>
+          </div>
+        </div>
+        <div
+          class="d-flex flex-column align-items-center"
+          style="margin-bottom: 10px"
+        >
+          <div *ngIf="isActiveFirst" class="borrow-active-container">
+            <div class="d-flex flex-column">
+              <span style="align-self: flex-end" class="thin-gray-text"
+                >Available: 2000</span
+              >
+              <div class="input-box">
+                <label for="token-name">Token Name:</label>
+                <input id="token-name" type="text" />
+              </div>
+            </div>
+            <div class="d-flex flex-row">
+              <div class="input-box">
+                <label for="borrow-amount">Borrow Amount:</label>
+                <input id="borrow-amount" type="text" />
+              </div>
+              <span
+                class="thin-gray-text"
+                style="position: absolute; right: 125px; top: 343px"
+                >Algo</span
+              >
+            </div>
+            <button
+              style="
+                border-radius: 5px;
+                margin-top: 10px;
+                max-width: 100px;
+                align-self: center;
+              "
+              class="btn-secondary-costum"
+            >
+              Borrow
+            </button>
+          </div>
+          <div *ngIf="isActiveSecond" class="borrow-active-container">
+            <div style="margin-top: 25px" class="input-box">
+              <label for="borrow-amount">Borrow Amount:</label>
+              <input id="borrow-amount" type="text" />
+            </div>
+            <button
+              style="
+                border-radius: 5px;
+                margin-top: 10px;
+                max-width: 100px;
+                align-self: center;
+              "
+              class="btn-secondary-costum"
+            >
+              Repay
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- isBorrow container -->
   </div>
 </div>

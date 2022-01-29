@@ -1,12 +1,12 @@
 <div class="main">
-  <div class="card" routerLink="/launchpad/launch-detail" style="cursor: pointer">
+  <div class="card" routerLink="launch-detail" style="cursor: pointer">
     <div class="row">
       <div class="col-2">
-        <h6 class="color-violet">Project Name</h6>
+        <h6 class="color-violet">{{data?.name}}</h6>
         <h6>Token</h6>
         <img style="width: 100%; height: 150px;
         object-fit: cover;;"
-          src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+          [src]="'data:image/jpeg;base64,' + data?.projectImage"
           alt="">
       </div>
       <div class="col-4">
@@ -14,21 +14,21 @@
           <div class="left-values">
             <div class="d-flex date">
               <h6 class="color-violet">Starts:</h6>
-              <span>Date</span>
+              <span>{{data?.presale?.startingTime | date}}</span>
             </div>
             <div class="d-flex date">
               <h6 class="color-violet">Ends:</h6>
-              <span>Date</span>
+              <span>{{data?.presale?.endingTime | date}}</span>
             </div>
           </div>
           <div class="right-values d-flex flex-column align-items-start">
             <div class="d-flex date">
               <h6 class="color-violet">Hardcap:</h6>
-              <span>Value</span>
+              <span>{{data?.presale?.hardCap}}</span>
             </div>
             <div class="d-flex date">
               <h6 class="color-violet">Softcap:</h6>
-              <span>Value</span>
+              <span>{{data?.presale?.softCap}}</span>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
                   Raised:
                 </h6>
                 <span>
-                  Algo
+                  {{data?.presale?.totalRaised}}
                 </span>
               </div>
               <div class="progress-bar-right">
@@ -55,7 +55,7 @@
                   Max:
                 </h6>
                 <span>
-                  Algo
+                  {{data?.asset?.maxBuy}}
                 </span>
               </div>
             </div>
@@ -65,22 +65,19 @@
       <div class="col-6">
         <h6 class="color-violet">Description</h6>
         <div class="desc" style="
-        height: 150px; 
-        overflow: hidden; 
+        height: 150px;
+        overflow: hidden;
         margin-top: 38px;
         line-height: 1.184;">
-          <span>
+          <!-- <span>
             Aenean auctor dictum purus, et sollicitudin leo ornare sed. Morbi suscipit ut orci eget varius. Sed ut
             sollicitudin dui, ac viverra nulla. Proin rutrum, mi vehicula ornare sodales, nisi augue venenatis urna,
             a dignissim mauris elit non lectus. Cras posuere urna vel purus elementum elementum. Praesent mollis,
             ipsum vel malesuada tincidunt, turpis tortor finibus nulla, id laoreet neque quam vel massa. Curabitur
             non ullamcorper nibh.
-          </span>
+          </span> -->
           <div style="text-overflow: ellipsis; overflow: hidden; white-space:nowrap;">
-            <span>Maecenas venenatis viverra est, id porta arcu. Curabistur a iaculis orci, non iaculis urna.
-              Maecenas ut maximus nibh, in tincidunt urna. Proin ullamcorper malesuada libero at posuere.
-              Suspendisse posuere, turpis id tempus vehicula, neque velit fermentum nibh, vitae consectetur metus
-              metus sed nisi. Aenean sed orci et ipsum malesuada volutpat.</span>
+            <span>{{data?.description}}</span>
           </div>
         </div>
       </div>

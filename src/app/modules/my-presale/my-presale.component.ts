@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { projectReqService } from 'src/app/services/APIs/project-req.service';
 
 @Component({
   selector: 'app-my-presale',
@@ -14,7 +15,9 @@ export class MyPresaleComponent implements OnInit {
 
   isPresaleEnded: boolean = true;
 
-  constructor() { }
+  constructor(
+    private projectReqService: projectReqService
+  ) { }
 
   openPopUp(version: string) {
     this.isPopUpOpen = true;
@@ -32,6 +35,11 @@ export class MyPresaleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const wallet = localStorage.getItem('wallet');
+    this.projectReqService.getCreatedPresales(wallet, 1).subscribe(
+      (res) => {
+        console.log(res);
+      })
   }
 
 }

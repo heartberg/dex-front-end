@@ -1,4 +1,4 @@
-export interface AssetView {
+export interface AssetViewModel {
     assetId: number
     smartContractId: number
     smartContractAddress: string

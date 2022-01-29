@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { AssetView } from "src/app/models/assetView.model";
+import { AssetViewModel } from "src/app/models/assetView.model";
 
 @Injectable({
     providedIn: 'root'
@@ -19,11 +19,22 @@ export class AssetReqService {
         wallet: string = ''
     ) {
         const url = `${this.baseUrl}/asset/get/pairs`;
-        return this._http.get<AssetView[]>(url, {
+        return this._http.get<AssetViewModel[]>(url, {
             params: {
                 wallet: wallet,
                 search: search,
                 all: all
+            }
+        })
+    }
+
+    getAssetFavorites(
+        wallet: string | any
+    ) {
+        const url = `${this.baseUrl}/asset/get/favorites`;
+        return this._http.get<AssetViewModel[]>(url, {
+            params: {
+                wallet: wallet
             }
         })
     }

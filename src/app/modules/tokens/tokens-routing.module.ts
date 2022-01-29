@@ -6,7 +6,7 @@ import { TokensComponent } from './tokens.component';
 const routes: Routes = [
   { path: '', component: TokensComponent },
   {
-    path: 'token-detail',
+    path: 'token-detail/:id',
     component: TokenDetailComponent
   },
 ];

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 @Component({
   selector: 'app-track',
@@ -8,6 +11,10 @@ import { Component, OnInit } from '@angular/core';
 export class TrackComponent implements OnInit {
   dropDownOpen = false;
 
+  constructor(
+    private assetReqService: AssetReqService,
+    private walletService: WalletsConnectService
+  ) { }
   arr = [
     {
       number: 1,
@@ -30,9 +37,17 @@ export class TrackComponent implements OnInit {
       open: false
     }
   ];
-  constructor() { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    const wallet = localStorage.getItem('wallet');
+    
+    console.log(wallet);
+    this.assetReqService.getAssetFavorites(wallet).subscribe(
+      (res: AssetViewModel[]) => {
+        console.log(res);
+      }
+    )
+  }
 
   dropDownToggle(i: number) {
     this.arr[i].open = !this.arr[i].open;

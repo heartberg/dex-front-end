@@ -1,7 +1,7 @@
 import {Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import { Observable } from 'rxjs';
-import { AssetView } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetView.model';
 
 
 @Component({
@@ -10,7 +10,7 @@ import { AssetView } from 'src/app/models/assetView.model';
   styleUrls: ['./drop-down-selector.component.scss']
 })
 export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
-  @Input() public dropDownValues: AssetView[] | any = [];
+  @Input() public dropDownValues: AssetViewModel[] | any = [];
   @Input() public isNotAccordion: boolean = true;
   @Input() public treeDots: boolean = false;
   // profile
@@ -97,7 +97,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     }
   }
 
-  addToFavourites(button: AssetView, i: number) {
+  addToFavourites(button: AssetViewModel, i: number) {
     this.selectedAsset.emit(button.assetId);
     
   }

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { AssetView } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 
 @Component({
@@ -17,8 +17,8 @@ export class TradeComponent implements OnInit {
   algoArr: string[] = ['Algo'];
   tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
 
-  assetArr: AssetView[] = [];
-  dummyArr: AssetView[] = [{
+  assetArr: AssetViewModel[] = [];
+  dummyArr: AssetViewModel[] = [{
     assetId: 5,
     smartContractId: 10,
     smartContractAddress: 'string',

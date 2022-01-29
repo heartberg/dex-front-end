@@ -8,7 +8,11 @@ const routes: Routes = [
   {
     path: 'launch-detail',
     component: LaunchDetailComponent
-  },
+  }
+  // {
+  //   path: 'launch-detail/:id',
+  //   component: LaunchDetailComponent
+  // }
 ];
 
 @NgModule({
