@@ -5,13 +5,15 @@ import {CommonModule} from "@angular/common";
 import {DropDownSelectorComponent} from "./drop-down-selector/drop-down-selector.component";
 import {PopUpComponent} from "./pop-up/component/pop-up.component";
 import { CardComponent } from './card/card.component';
+import { TextLimitPipe } from './pipes/text-limit.pipe';
 
 @NgModule({
   declarations: [
     HeaderComponent,
     DropDownSelectorComponent,
     PopUpComponent,
-    CardComponent
+    CardComponent,
+    TextLimitPipe,
   ],
   imports: [
     RouterModule,

@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-2">
         <h6 class="color-violet">{{data?.name}}</h6>
-        <h6>Token</h6>
+        <h6>{{data?.asset?.name}}</h6>
         <img style="width: 100%; height: 150px;
         object-fit: cover;;"
           [src]="'data:image/jpeg;base64,' + data?.projectImage"
@@ -55,7 +55,7 @@
                   Max:
                 </h6>
                 <span>
-                  {{data?.asset?.maxBuy}}
+                  {{data?.presale?.hardCap}}
                 </span>
               </div>
             </div>
@@ -68,7 +68,7 @@
         height: 150px;
         overflow: hidden;
         margin-top: 38px;
-        line-height: 1.184;">
+        line-height: 1.184;" >
           <!-- <span>
             Aenean auctor dictum purus, et sollicitudin leo ornare sed. Morbi suscipit ut orci eget varius. Sed ut
             sollicitudin dui, ac viverra nulla. Proin rutrum, mi vehicula ornare sodales, nisi augue venenatis urna,
@@ -76,8 +76,14 @@
             ipsum vel malesuada tincidunt, turpis tortor finibus nulla, id laoreet neque quam vel massa. Curabitur
             non ullamcorper nibh.
           </span> -->
-          <div style="text-overflow: ellipsis; overflow: hidden; white-space:nowrap;">
-            <span>{{data?.description}}</span>
+          <!-- CLEANUP MARKER -->
+          <!-- <div style="text-overflow: ellipsis;
+          overflow: hidden; white-space: nowrap;">
+            <span #element>element.offsetWidth * 7 / 7.8element.offsetWidth * 7 / 7element.offsetWidth * 7 / 7 style="text-overflow: ellipsis;
+              overflow: hidden; white-space: nowrap;".8.8</span>
+          </div> -->
+          <span #textContainer>{{data?.description | textLimit:[665,textContainer]}}</span>
+          <div>
           </div>
         </div>
       </div>

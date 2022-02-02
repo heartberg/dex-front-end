@@ -40,8 +40,7 @@ export class TrackComponent implements OnInit {
 
   ngOnInit(): void {
     const wallet = localStorage.getItem('wallet');
-    
-    console.log(wallet);
+
     this.assetReqService.getAssetFavorites(wallet).subscribe(
       (res: AssetViewModel[]) => {
         console.log(res);

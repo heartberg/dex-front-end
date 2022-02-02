@@ -2,19 +2,19 @@
   <div class="wrapper-border">
     <div class="exchanger">
       <div class="d-flex align-items-center wrapper-for-btns" [ngStyle]="{'top': rotate ? '110px' : '110px'}">
-        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(1)"
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(1, inputRef)"
           [class.btn-secondary-costum]="btnFirst">
           25%
         </button>
-        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(2)"
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(2, inputRef)"
           [class.btn-secondary-costum]="btnSecond">
           50%
         </button>
-        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(3)"
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(3, inputRef)"
           [class.btn-secondary-costum]="btnThird">
           75%
         </button>
-        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(4)"
+        <button class="btn-primary-costum btn-extra " (click)="getPercentOfButton(4, inputRef)"
           [class.btn-secondary-costum]="btnFourth">
           100%
         </button>
@@ -34,7 +34,7 @@
 
               <input type="text" class="input-costum" [value]="'0'" [class.d-none]="isClickedOnBtn">
 
-              <input type="text" (change)="onUserInput(inputRef)" class="input-costum" [value]="this.algoAmount"
+              <input type="text" (click)="onUserInput(inputRef)" class="input-costum" [value]="algoAmount"
               [class.d-none]="!isClickedOnBtn" #inputRef>
             </div>
           </div>
