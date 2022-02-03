@@ -3,13 +3,14 @@
     <h3>My Presales</h3>
     <div class="scrollable-content">
       <div *ngFor="let item of arr">
-        <ng-container *ngIf="item === 'ended'">
+        <!-- *ngIf="item === 'ended'" -->
+        <ng-container>
           <div class="card">
             <div class="row">
               <div class="col-md-2 unset-pd avatar-section">
                 <div class="headings">
-                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
-                  <h4 style="color: #1c1c1e;">Token</h4>
+                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">{{item?.name}}</h4>
+                  <h4 style="color: #1c1c1e;">{{item?.asset?.name}}</h4>
                 </div>
                 <div class="track-image d-flex align-items-center justify-content-end flex-column">
                   <img style="width: 65%;"
@@ -28,21 +29,21 @@
                       <div class="left-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                          <span>Date</span>
+                          <span>{{item?.presale?.startingTime}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                          <span>Date</span>
+                          <span>{{item?.presale?.endingTime}}</span>
                         </div>
                       </div>
                       <div class="d-flex flex-column align-items-start right-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
-                          <span>Value</span>
+                          <span>{{item?.presale?.hardCap}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
-                          <span>Value</span>
+                          <span>{{item?.presale?.softCap}}</span>
                         </div>
                       </div>
                     </div>
@@ -65,7 +66,7 @@
                               Raised:
                             </h6>
                             <span style="margin-left: 6px">
-                              Algo
+                              {{item?.presale?.totalRaised}}
                             </span>
                           </div>
                           <div class="d-flex align-items-center">
@@ -73,7 +74,7 @@
                               Max:
                             </h6>
                             <span style="margin-left: 6px">
-                              Algo
+                              {{item?.presale?.hardCap}}
                             </span>
                           </div>
                         </div>
@@ -103,13 +104,14 @@
             </div>
           </div>
         </ng-container>
-        <ng-container *ngIf="item === 'failed'">
+        <!-- *ngIf="item === 'failed'" -->
+        <ng-container>
           <div class="card">
             <div class="row">
               <div class="col-md-2 unset-pd avatar-section">
                 <div class="headings">
-                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
-                  <h4 style="color: #1c1c1e;">Token</h4>
+                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">{{item?.name}}</h4>
+                  <h4 style="color: #1c1c1e;">{{item?.asset?.name}}</h4>
                 </div>
                 <div class="track-image d-flex align-items-center justify-content-end flex-column">
                   <img style="width: 65%;"
@@ -128,21 +130,21 @@
                       <div class="left-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                          <span>Date</span>
+                          <span>{{item?.presale?.startingTime}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                          <span>Date</span>
+                          <span>{{item?.presale?.endingTime}}</span>
                         </div>
                       </div>
                       <div class="d-flex flex-column align-items-start right-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
-                          <span>Value</span>
+                          <span>{{item?.presale?.hardCap}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
-                          <span>Value</span>
+                          <span>{{item?.presale?.softCap}}</span>
                         </div>
                       </div>
                     </div>
@@ -165,7 +167,7 @@
                               Raised:
                             </h6>
                             <span style="margin-left: 6px">
-                              Algo
+                              {{item?.presale?.totalRaised}}
                             </span>
                           </div>
                           <div class="d-flex align-items-center">
@@ -173,7 +175,7 @@
                               Max:
                             </h6>
                             <span style="margin-left: 6px">
-                              Algo
+                              {{item?.presale?.hardCap}}
                             </span>
                           </div>
                         </div>
@@ -212,13 +214,14 @@
             </div>
           </div>
         </ng-container>
-        <ng-container *ngIf="item === 'user'">
+        <!-- *ngIf="item === 'user'" -->
+        <ng-container>
           <div class="card">
             <div class="row">
               <div class="col-md-2 unset-pd avatar-section">
                 <div class="headings">
-                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">Project Name</h4>
-                  <h4 style="color: #1c1c1e;">Token</h4>
+                  <h4 class="d-flex align-items-center" style="margin-bottom: 5px">{{item?.name}}</h4>
+                  <h4 style="color: #1c1c1e;">{{item?.asset?.name}}</h4>
                 </div>
                 <div class="track-image d-flex align-items-center justify-content-end flex-column">
                   <img style="width: 65%;"
@@ -237,21 +240,21 @@
                       <div class="left-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                          <span>Date</span>
+                          <span>{{item?.presale?.startingTime}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                          <span>Date</span>
+                          <span>{{item?.presale?.endingTime}}</span>
                         </div>
                       </div>
                       <div class="d-flex flex-column align-items-start right-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
-                          <span>Value</span>
+                          <span>{{item?.presale?.hardCap}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
-                          <span>Value</span>
+                          <span>{{item?.presale?.softCap}}</span>
                         </div>
                       </div>
                     </div>
@@ -274,7 +277,7 @@
                               Raised:
                             </h6>
                             <span style="margin-left: 6px">
-                              Algo
+                              {{item?.presale?.totalRaised}}
                             </span>
                           </div>
                           <div class="d-flex align-items-center">
@@ -282,7 +285,7 @@
                               Max:
                             </h6>
                             <span style="margin-left: 6px">
-                              Algo
+                              {{item?.presale?.hardCap}}
                             </span>
                           </div>
                         </div>

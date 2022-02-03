@@ -65,7 +65,8 @@ export class TradeComponent implements OnInit {
     this.selectedOptionA = this.tokenArr[0];
     this.selectedOptionB = this.tokenArr[0];
 
-    this.assetReqService.getAssetPairs().subscribe(
+    const wallet = localStorage.getItem('wallet')!;
+    this.assetReqService.getAssetPairs(true, '', wallet).subscribe(
       (res) => {
         console.log(res);
         this.assetArr = res;
@@ -151,7 +152,7 @@ export class TradeComponent implements OnInit {
     this.selectedOptionA = $event;
   }
 
-  getPercentOfButton(index: number) {
+  getPercentOfButton(index: number, inputRef: HTMLInputElement) {
     this.isClickedOnBtn = true;
     this.clickCounter++;
     if (index === 1) {
@@ -159,35 +160,40 @@ export class TradeComponent implements OnInit {
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      this.algoAmount = 2000 / 4;
+      this.algoAmount = (2000 / 4);
+      inputRef.value = this.algoAmount.toString();
     } else
-      if (index === 2) {
-        this.btnSecond = true;
-        this.btnFirst = false;
-        this.btnThird = false;
-        this.btnFourth = false;
-        this.algoAmount = 2000 / 2;
-      } else
-        if (index === 3) {
-          this.btnThird = true;
-          this.btnFirst = false;
-          this.btnSecond = false;
-          this.btnFourth = false;
-          this.algoAmount = 2000 / 4 * 3;
-        } else
-          if (index === 4) {
-            this.btnFourth = true;
-            this.btnFirst = false;
-            this.btnSecond = false;
-            this.btnThird = false;
-            this.algoAmount = 2000;
+    if (index === 2) {
+      this.btnSecond = true;
+      this.btnFirst = false;
+      this.btnThird = false;
+      this.btnFourth = false;
+      this.algoAmount = 2000 / 2;
+      inputRef.value = this.algoAmount.toString();
+    } else
+    if (index === 3) {
+      this.btnThird = true;
+      this.btnFirst = false;
+      this.btnSecond = false;
+      this.btnFourth = false;
+      this.algoAmount = 2000 / 4 * 3;
+      inputRef.value = this.algoAmount.toString();
+    } else
+    if (index === 4) {
+      this.btnFourth = true;
+      this.btnFirst = false;
+      this.btnSecond = false;
+      this.btnThird = false;
+      this.algoAmount = 2000;
+      inputRef.value = this.algoAmount.toString();
           }
-    // if (this.clickCounter % 2 === 0) {
-    //   this.btnFourth = false;
-    //   this.btnFirst = false;
-    //   this.btnSecond = false;
-    //   this.btnThird = false;
-    //   this.algoAmount = 0;
-    // }
-  }
+          // if (this.clickCounter % 2 === 0) {
+            //   this.btnFourth = false;
+            //   this.btnFirst = false;
+            //   this.btnSecond = false;
+            //   this.btnThird = false;
+            //   this.algoAmount = 0;
+            // }
+            console.log(this.algoAmount);
+          }
 }

@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 
 @Component({
   selector: 'app-my-presale',
   templateUrl: './my-presale.component.html',
-  styleUrls: ['./my-presale.component.scss']
+  styleUrls: ['./my-presale.component.scss'],
 })
 export class MyPresaleComponent implements OnInit {
-  arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
+  // arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
+  arr: ProjectPreviewModel[] = [];
 
   isPopUpOpen: boolean = false;
   isRestart: boolean = false;
@@ -15,9 +17,7 @@ export class MyPresaleComponent implements OnInit {
 
   isPresaleEnded: boolean = true;
 
-  constructor(
-    private projectReqService: projectReqService
-  ) { }
+  constructor(private projectReqService: projectReqService) {}
 
   openPopUp(version: string) {
     this.isPopUpOpen = true;
@@ -36,10 +36,9 @@ export class MyPresaleComponent implements OnInit {
 
   ngOnInit(): void {
     const wallet = localStorage.getItem('wallet');
-    this.projectReqService.getCreatedPresales(wallet, 1).subscribe(
-      (res) => {
-        console.log(res);
-      })
+    this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
+      console.log(res);
+      this.arr = res;
+    });
   }
-
 }

@@ -36,4 +36,8 @@ export class MyDeploysComponent implements OnInit {
     this.isPopUpOpened = false;
     this.firstStep = true;
   }
+
+  copyContentToClipboard(content: HTMLElement) {
+    navigator.clipboard.writeText(content.innerText);
+  }
 }
