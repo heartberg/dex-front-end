@@ -11,6 +11,7 @@ export class AppComponent {
   changeTheme(value: boolean) {
     this.isThemeChanged = value;
     return this.isThemeChanged;
+    console.log('saba');
   }
 
   log() {
