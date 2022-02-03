@@ -12,5 +12,6 @@ export class AppComponent {
     this.isThemeChanged = value;
     return this.isThemeChanged;
     console.log('saba');
+    console.log(2223);
   }
 }
