@@ -5,6 +5,7 @@ import { TokensRoutingModule } from './tokens-routing.module';
 import { TokensComponent } from './tokens.component';
 import { TokenDetailComponent } from './token-detail/token-detail.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     TokensRoutingModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule
   ]
 })
 export class TokensModule { }

@@ -1,30 +1,65 @@
 <div class="main">
   <div class="wrapper-border">
-    <div class="exchanger">
-    <div class="d-flex top flex-column">
-      <h4>Send token</h4>
-      <div class="d-flex">
-        <app-drop-down-selector [isNotAccordion]="false" [dropDownValues]="['Token a', 'Token b', 'Token c']" [widthPX]="'170px'" [extraDropDown]="true"></app-drop-down-selector>
-        <div class="d-flex flex-column align-items-end">
-          <div >
-            <span style="color: #81007F; margin-right: 5px; font-size: 13px; margin-bottom: 3px">Available Balance:</span>
-            <span style=" margin-right: 17px; font-size: 13px; margin-bottom: 3px">xy unit UnitName</span>
-          </div>
-          <div class="input">
-            <input type="text" class="input-costum" placeholder="Enter...">
+    <form class="exchanger" [formGroup]="sendForm">
+      <!-- <div class="exchanger"> -->
+        <div class="d-flex top flex-column">
+          <h4>Send token</h4>
+          <div class="d-flex">
+            <app-drop-down-selector
+              [isNotAccordion]="false"
+              [dropDownValues]="['Token a', 'Token b', 'Token c']"
+              [widthPX]="'170px'"
+              [extraDropDown]="true"
+            ></app-drop-down-selector>
+            <div class="d-flex flex-column align-items-end">
+              <div>
+                <span
+                  style="
+                    color: #81007f;
+                    margin-right: 5px;
+                    font-size: 13px;
+                    margin-bottom: 3px;
+                  "
+                  >Available Balance:</span
+                >
+                <span
+                  style="
+                    margin-right: 17px;
+                    font-size: 13px;
+                    margin-bottom: 3px;
+                  "
+                  >xy unit UnitName</span
+                >
+              </div>
+              <div class="input">
+                <input
+                formControlName="sendInput"
+                  type="text"
+                  class="input-costum"
+                  placeholder="Enter..."
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <h6> To Address </h6>
-    <div class="d-flex">
-      <input type="text" class="input-costum">
-    </div>
-    <div class="d-flex align-items-center justify-content-around">
-      <button class="btn-secondary-costum" style="margin: 25px auto; width: 160px; font-size: 20px;">
-        Send
-      </button>
-    </div>
-  </div>
+        <h6>To Address</h6>
+        <div class="d-flex">
+          <input formControlName="addressInput" type="text" class="input-costum" />
+        </div>
+
+        <span *ngIf="addressNotOptedIn" class="error-message error-msg">Address not opted - in</span>
+
+        <span *ngIf="invalidAddress" class="error-message error-msg">The address is invalid</span>
+
+        <div class="d-flex align-items-center justify-content-around">
+          <button
+            class="btn-secondary-costum"
+            style="margin: 25px auto; width: 160px; font-size: 20px"
+          >
+            Send
+          </button>
+        </div>
+      <!-- </div> -->
+    </form>
   </div>
 </div>

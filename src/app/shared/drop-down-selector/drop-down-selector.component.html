@@ -97,11 +97,11 @@
   </div>
   <div class="dropDown" *ngIf="isDropDownOpened" [class.marketplace-w_position-unset]="isNotAccordion" [class.left-0]="treeDots" [class.isTree]="tree && !isProfileSection">
     <div class="section unHover forWidth" *ngIf="!isProfileSection && extraDropDown">
-      <div style="display: flex; align-items: center; flex-direction: column; justify-content: center">
-        <input type="text" class="input-costum" style="color: #81007F">
+      <div [formGroup]="dropDownForm" style="display: flex; align-items: center; flex-direction: column; justify-content: center">
+        <input formControlName="search" type="text" class="input-costum" style="color: #81007F">
         <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px">
           <label style="font-size: 15px; color: #81007F; margin-bottom: 0px; font-weight: bold; margin-right: 5px; cursor: pointer" for="check">Show All</label>
-          <input type="checkbox" name="check" id="check" style="width: 16px; height: 16px">
+          <input formControlName="showAll" (change)="handleCheckBox()" type="checkbox" name="check" id="check" style="width: 16px; height: 16px">
         </div>
       </div>
     </div>

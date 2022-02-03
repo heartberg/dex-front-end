@@ -12,6 +12,7 @@
           [ngStyle]="{ margin: isWallet ? '4px 0px 0px 4px' : 'unset' }"
         >
           <input
+            [formControl]="searchInput"
             type="text"
             placeholder="Token, Project..."
             class="input-costum"

@@ -5,6 +5,7 @@ import { LaunchpadRoutingModule } from './launchpad-routing.module';
 import { LaunchpadComponent } from './launchpad.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { LaunchDetailComponent } from './launch-detail/launch-detail.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { LaunchDetailComponent } from './launch-detail/launch-detail.component';
   imports: [
     CommonModule,
     LaunchpadRoutingModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule
   ],
   exports: [
     LaunchpadComponent

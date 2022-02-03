@@ -1,13 +1,21 @@
-import {Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {
+  Component,
+  DoCheck,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AssetViewModel } from 'src/app/models/assetView.model';
-
 
 @Component({
   selector: 'app-drop-down-selector',
   templateUrl: './drop-down-selector.component.html',
-  styleUrls: ['./drop-down-selector.component.scss']
+  styleUrls: ['./drop-down-selector.component.scss'],
 })
 export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() public dropDownValues: AssetViewModel[] | any = [];
@@ -15,11 +23,11 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() public treeDots: boolean = false;
   // profile
   @Input() public isProfileSection: boolean = false;
-  @Input() public profileSectionImg: string = ''
-  @Input() public profileSectionInfo: string = ''
+  @Input() public profileSectionImg: string = '';
+  @Input() public profileSectionInfo: string = '';
   // profile
   @Input() public tree: boolean = false;
-  @Input() public hasTitle: string  = '';
+  @Input() public hasTitle: string = '';
   // marketplace artists and collections
   @Input() public dropDownForObj: any[] = [];
   @Input() public dropDownIsTrue: boolean = false;
@@ -27,6 +35,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Output() dropDownValue = new EventEmitter<string>();
 
   @Output() selectedAsset = new EventEmitter<number>();
+
+  @Output() showAll: EventEmitter<boolean> = new EventEmitter();
 
   @Input() public widthPX: any = '';
   @Input() public extraDropDown: boolean = false;
@@ -39,6 +49,13 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   //  for while
   publicTradeIsAdded: boolean = false;
 
+  // FORM
+  dropDownForm = this.fb.group({
+    search: [],
+    showAll: [],
+  });
+  // FORM
+
   // default values for marketplace collection and artists
 
   // public artistsDropDownDefaultName: string = 'All Artists';
@@ -48,18 +65,14 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   // public passedEitherCollection: boolean = false;
 
   constructor(
-                private route: ActivatedRoute,
-                private router: Router
-              ) { }
+    private route: ActivatedRoute,
+    private router: Router,
+    private fb: FormBuilder
+  ) {}
 
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
-
-  }
-
-  ngDoCheck() {
-
-  }
+  ngDoCheck() {}
 
   ngOnChanges() {
     // this.showDropDownSelected = this.dropDownValueTitleForObj;
@@ -77,13 +90,13 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   selectValue(value: string, i?: any, id?: string) {
     if (this.notCloseOnClick) {
       // this.isDropDownOpenedCounter +=1;
-      this.openDropDown()
+      this.openDropDown();
       this.showDropDownSelected = value;
       this.dropDownValue.emit(value);
       this.publicTradeIsAdded = !this.publicTradeIsAdded;
     } else {
       // this.isDropDownOpenedCounter +=1;
-      this.openDropDown()
+      this.openDropDown();
       this.showDropDownSelected = value;
       this.dropDownValue.emit(value);
       this.isDropDownOpened = false;
@@ -91,19 +104,25 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
     // Store ID
 
-
-    if(value.includes('Sub')) {
-      this.showDropDownSelected = value.substring(value.indexOf(' '), 25)
+    if (value.includes('Sub')) {
+      this.showDropDownSelected = value.substring(value.indexOf(' '), 25);
     }
+  }
+
+  handleCheckBox() {
+    this.showAll.emit(this.dropDownForm.get('showAll')?.value);
   }
 
   addToFavourites(button: AssetViewModel, i: number) {
     this.selectedAsset.emit(button.assetId);
-    
   }
 
-  emitCollectionIdAndWallet(value: string, collectionId: string, wallet: string): void {
-    this.isDropDownOpenedCounter +=1;
+  emitCollectionIdAndWallet(
+    value: string,
+    collectionId: string,
+    wallet: string
+  ): void {
+    this.isDropDownOpenedCounter += 1;
 
     this.showDropDownSelected = value;
     this.isDropDownOpened = false;
@@ -111,6 +130,6 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   getElement(i: any) {
-    console.log(i)
+    console.log(i);
   }
 }

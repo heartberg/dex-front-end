@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SendRoutingModule } from './send-routing.module';
 import { SendComponent } from './send.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     SendRoutingModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule
   ]
 })
 export class SendModule { }

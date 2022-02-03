@@ -14,7 +14,7 @@ export class AssetReqService {
     ) { }
 
     getAssetPairs(
-        all: boolean = true,
+        all: boolean = false,
         search: string = '',
         wallet: string = ''
     ) {

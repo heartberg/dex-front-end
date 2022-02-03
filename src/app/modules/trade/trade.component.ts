@@ -1,15 +1,22 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 
 @Component({
   selector: 'app-trade',
   templateUrl: './trade.component.html',
-  styleUrls: ['./trade.component.scss']
+  styleUrls: ['./trade.component.scss'],
 })
 export class TradeComponent implements OnInit {
   algoAmount: number = 2000;
   rotate: boolean = false;
+  autoSlippage: boolean = true;
 
   firstDropValues: string[] = [];
   secondDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
@@ -18,29 +25,33 @@ export class TradeComponent implements OnInit {
   tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
 
   assetArr: AssetViewModel[] = [];
-  dummyArr: AssetViewModel[] = [{
-    assetId: 5,
-    smartContractId: 10,
-    smartContractAddress: 'string',
-    name: 'Algo',
-    unitName: 'string',
-    totalSupply: 45,
-    url: 'string',
-    maxBuy: 3,
-    tradingStart: 5,
-    risingPriceFloor: 2,
-    backing: 5,
-    buyBurn: 3,
-    sellBurn: 6,
-    sendBurn: 8,
-    additionalFee: 6,
-    additionalFeeWallet: 'string',
-    image: 'string',
-    deployerWallet: 'string'
-  }]
+  dummyArr: AssetViewModel[] = [
+    {
+      assetId: 5,
+      smartContractId: 10,
+      smartContractAddress: 'string',
+      name: 'Algo',
+      unitName: 'string',
+      totalSupply: 45,
+      url: 'string',
+      maxBuy: 3,
+      tradingStart: 5,
+      risingPriceFloor: 2,
+      backing: 5,
+      buyBurn: 3,
+      sellBurn: 6,
+      sendBurn: 8,
+      additionalFee: 6,
+      additionalFeeWallet: 'string',
+      image: 'string',
+      deployerWallet: 'string',
+    },
+  ];
 
-  selectedOptionA: string = '';
-  selectedOptionB: string = '';
+  selectedOptionAname: string = '';
+  selectedOptionBname: string = '';
+  selectedOption: AssetViewModel | undefined;
+
   blockchainChecked: boolean = true;
 
   isPopUpOpen: boolean = false;
@@ -57,31 +68,56 @@ export class TradeComponent implements OnInit {
   isClickedOnBtn: boolean = false;
 
   constructor(
-    private assetReqService: AssetReqService
-  ) { }
+    private assetReqService: AssetReqService,
+    private fb: FormBuilder
+  ) {}
+
+  // FORMS
+
+  botInput = this.fb.control([0]);
+  // slippageInput = this.fb.control([]);
+
+  slippageForm = this.fb.group({
+    slippageInput: [
+      {
+        disabled: this.autoSlippage,
+      },
+    ],
+    slippageCheckBox: [this.autoSlippage],
+  });
+
+  topForms = this.fb.group({
+    zeroInput: [0],
+    topInput: [],
+  });
+
+  // FORMS
 
   ngOnInit(): void {
+    if (this.slippageForm.get('slippageCheckBox')?.value) {
+      this.slippageForm.get('slippageInput')?.disable();
+    }
     this.secondDropValues = this.tokenArr;
-    this.selectedOptionA = this.tokenArr[0];
-    this.selectedOptionB = this.tokenArr[0];
+    this.selectedOptionAname = this.tokenArr[0];
+    this.selectedOptionBname = this.tokenArr[0];
 
     const wallet = localStorage.getItem('wallet')!;
-    this.assetReqService.getAssetPairs(true, '', wallet).subscribe(
-      (res) => {
-        console.log(res);
-        this.assetArr = res;
-        res.forEach(el => {
-          this.firstDropValues.push(el.name);
-        });
-        this.secondDropValues = this.algoArr;
-        this.selectedOptionA = this.firstDropValues[0];
-        this.selectedOptionB = this.firstDropValues[0];
-      }
-    );
+    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+      // this.assetArr = res;
+      this.assetArr = res;
+      console.log(this.assetArr);
+      res.forEach((el) => {
+        this.firstDropValues.push(el.name);
+      });
+      this.secondDropValues = this.algoArr;
+      this.selectedOptionAname = this.firstDropValues[0];
+      this.selectedOptionBname = this.firstDropValues[0];
+      this.selectAsset(this.firstDropValues[0]);
+    });
   }
 
   makeReverse() {
-    this.rotate = !this.rotate
+    this.rotate = !this.rotate;
   }
 
   onUserInput(input: HTMLInputElement) {
@@ -91,28 +127,76 @@ export class TradeComponent implements OnInit {
     this.btnFourth = false;
   }
 
-  dropdownSelected(value: string, index: number) {
+  handleCheckboxUpdate(event: any) {
+    if (event === true) {
+      const wallet = localStorage.getItem('wallet')!;
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
+        // this.assetArr = res;
+        this.assetArr = res;
+        this.firstDropValues = [];
+        res.forEach((el) => {
+          this.firstDropValues.push(el.name);
+        });
+        this.secondDropValues = this.algoArr;
+        this.selectedOptionAname = this.firstDropValues[0];
+        this.selectedOptionBname = this.firstDropValues[0];
+        this.selectAsset(this.firstDropValues[0]);
+      });
+    } else if (event === false) {
+      const wallet = localStorage.getItem('wallet')!;
+      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+        // this.assetArr = res;
+        this.assetArr = res;
+        this.firstDropValues = [];
+        res.forEach((el) => {
+          this.firstDropValues.push(el.name);
+        });
+        this.secondDropValues = this.algoArr;
+        this.selectedOptionAname = this.firstDropValues[0];
+        this.selectedOptionBname = this.firstDropValues[0];
+        this.selectAsset(this.firstDropValues[0]);
+      });
+    }
+  }
 
+  dropdownSelected(value: string, index: number) {
     if (index === 1) {
       if (value === 'Algo') {
         this.secondDropValues = this.tokenArr;
       } else if (value.includes('Token')) {
         this.secondDropValues = this.algoArr;
-        this.selectedOptionA = value;
-        this.selectedOptionB = value;
+        this.selectedOptionAname = value;
+        this.selectedOptionBname = value;
       }
     } else if (index === 2) {
       if (value === 'Algo') {
         // this.firstDropValues = this.tokenArr;
       } else if (value.includes('Token')) {
         // this.firstDropValues = this.algoArr;
-        this.selectedOptionA = value;
-        this.selectedOptionB = value;
+        this.selectedOptionAname = value;
+        this.selectedOptionBname = value;
       }
     }
   }
 
-  checkBoxClicked() { }
+  selectAsset(assetName: string) {
+    this.selectedOption = this.assetArr.find((el) => {
+      return el.name === assetName;
+    });
+    console.log(this.selectedOption);
+  }
+
+  checkBoxClicked() {
+    const slippageBox = this.slippageForm.get('slippageCheckBox');
+    const slippageInput = this.slippageForm.get('slippageInput');
+
+    if (!slippageBox?.value) {
+      slippageInput?.enable();
+    } else if (slippageBox.value) {
+      slippageInput?.disable();
+      slippageInput?.setValue(null);
+    }
+  }
 
   openPopUp() {
     this.isPopUpOpen = true;
@@ -132,24 +216,27 @@ export class TradeComponent implements OnInit {
     //   })
     //   console.log(this.secondDropValues);
     // }
+
+    this.selectAsset($event);
+
     if (index === 1) {
       // if ($event === 'Algo') {
-        // this.secondDropValues = this.tokenArr;
+      // this.secondDropValues = this.tokenArr;
       // } else if ($event.includes('Token')) {
-        // this.secondDropValues = this.algoArr;
-        this.selectedOptionA = $event;
-        this.selectedOptionB = $event;
+      // this.secondDropValues = this.algoArr;
+      this.selectedOptionAname = $event;
+      this.selectedOptionBname = $event;
       // }
     } else if (index === 2) {
       // if ($event === 'Algo') {
-        // this.firstDropValues = this.tokenArr;
+      // this.firstDropValues = this.tokenArr;
       // } else if ($event.includes('Token')) {
-        // this.firstDropValues = this.algoArr;
-        this.selectedOptionA = $event;
-        this.selectedOptionB = $event;
+      // this.firstDropValues = this.algoArr;
+      this.selectedOptionAname = $event;
+      this.selectedOptionBname = $event;
       // }
     }
-    this.selectedOptionA = $event;
+    this.selectedOptionAname = $event;
   }
 
   getPercentOfButton(index: number, inputRef: HTMLInputElement) {
@@ -160,40 +247,37 @@ export class TradeComponent implements OnInit {
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      this.algoAmount = (2000 / 4);
+      this.algoAmount = 2000 / 4;
       inputRef.value = this.algoAmount.toString();
-    } else
-    if (index === 2) {
+    } else if (index === 2) {
       this.btnSecond = true;
       this.btnFirst = false;
       this.btnThird = false;
       this.btnFourth = false;
       this.algoAmount = 2000 / 2;
       inputRef.value = this.algoAmount.toString();
-    } else
-    if (index === 3) {
+    } else if (index === 3) {
       this.btnThird = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnFourth = false;
-      this.algoAmount = 2000 / 4 * 3;
+      this.algoAmount = (2000 / 4) * 3;
       inputRef.value = this.algoAmount.toString();
-    } else
-    if (index === 4) {
+    } else if (index === 4) {
       this.btnFourth = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnThird = false;
       this.algoAmount = 2000;
       inputRef.value = this.algoAmount.toString();
-          }
-          // if (this.clickCounter % 2 === 0) {
-            //   this.btnFourth = false;
-            //   this.btnFirst = false;
-            //   this.btnSecond = false;
-            //   this.btnThird = false;
-            //   this.algoAmount = 0;
-            // }
-            console.log(this.algoAmount);
-          }
+    }
+    // if (this.clickCounter % 2 === 0) {
+    //   this.btnFourth = false;
+    //   this.btnFirst = false;
+    //   this.btnSecond = false;
+    //   this.btnThird = false;
+    //   this.algoAmount = 0;
+    // }
+    console.log(this.algoAmount);
+  }
 }

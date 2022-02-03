@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
@@ -51,9 +52,14 @@ export class LaunchpadComponent implements OnInit {
 
   wallet = localStorage.getItem('wallet');
 
+  searchInput = this.fb.control([])
+
   @Input() isWallet: boolean = false;
 
-  constructor(private projectReqService: projectReqService) {}
+  constructor(
+    private projectReqService: projectReqService,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     console.log(this.isWallet);

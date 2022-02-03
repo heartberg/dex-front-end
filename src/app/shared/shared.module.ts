@@ -6,6 +6,7 @@ import {DropDownSelectorComponent} from "./drop-down-selector/drop-down-selector
 import {PopUpComponent} from "./pop-up/component/pop-up.component";
 import { CardComponent } from './card/card.component';
 import { TextLimitPipe } from './pipes/text-limit.pipe';
+import { ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -18,7 +19,7 @@ import { TextLimitPipe } from './pipes/text-limit.pipe';
   imports: [
     RouterModule,
     CommonModule,
-
+    ReactiveFormsModule
   ],
   exports: [
     HeaderComponent,

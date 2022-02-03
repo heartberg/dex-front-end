@@ -3,6 +3,7 @@ import { of } from 'rxjs';
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
 import { User } from '../../../models/user.model';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-pop-up',
@@ -27,9 +28,32 @@ export class PopUpComponent implements OnInit {
   isActiveFirst = true;
   isActiveSecond = false;
 
+  // FORMS
+
+  tokenDetailBorrowForm = this.fb.group({
+    tokenName: [],
+    borrowedAmount: [],
+  });
+
+  tokenDetailRepayForm = this.fb.group({
+    borrowedAmount: [],
+    repayAmount: [],
+  });
+
+  tokenDetailBackingForm = this.fb.group({
+    tokenName: [],
+    secondInput: [],
+  });
+
+  launchDetailControl = this.fb.control([]);
+  tradeBackingControl = this.fb.control([]);
+
+  // FORMS
+
   constructor(
     private _walletsConnectService: WalletsConnectService,
-    private authService: AuthService
+    private authService: AuthService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {}

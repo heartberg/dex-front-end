@@ -476,3 +476,14 @@ textarea {
   font-weight: 400;
   color: #04040580;
 }
+
+.input-invalid {
+  border: rgba(255, 0, 0, 0.5) 2px solid;
+  box-shadow: rgba(255, 0, 0, 0.2) 0px 0px 0px 2px;
+  background-color: rgba(255, 0, 0, 0.02);
+}
+
+.error-msg {
+  color: rgba(255, 0, 0, 0.7);
+  font-size: 16px;
+}

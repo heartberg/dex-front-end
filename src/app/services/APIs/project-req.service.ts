@@ -4,6 +4,7 @@ import { environment } from "src/environments/environment";
 import { ProjectPreviewModel } from "src/app/models/projectPreview.model";
 import { OrderingEnum } from "src/app/models/orderingEnum.enum";
 import { ProjectViewModel } from "src/app/models/projectView.model";
+import { Subject } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -11,6 +12,8 @@ import { ProjectViewModel } from "src/app/models/projectView.model";
 export class projectReqService {
     private baseUrl = environment.baseUrl;
     private wallet = localStorage.getItem('wallet');
+
+    presaleCount = new Subject<number>();
 
 
     constructor(

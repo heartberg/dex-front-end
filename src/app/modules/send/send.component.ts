@@ -1,15 +1,21 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-send',
   templateUrl: './send.component.html',
-  styleUrls: ['./send.component.scss']
+  styleUrls: ['./send.component.scss'],
 })
 export class SendComponent implements OnInit {
+  addressNotOptedIn: boolean = false;
+  invalidAddress: boolean = false;
 
-  constructor() { }
+  sendForm = this.fb.group({
+    sendInput: [],
+    addressInput: [],
+  });
 
-  ngOnInit(): void {
-  }
+  constructor(private fb: FormBuilder) {}
 
+  ngOnInit(): void {}
 }
