@@ -12,4 +12,8 @@ export class AppComponent {
     this.isThemeChanged = value;
     return this.isThemeChanged;
   }
+
+  log() {
+    console.log(1)
+  }
 }
