@@ -33,12 +33,11 @@
   }
 
   .headings {
-
   }
 
   h4 {
     margin-left: 10px;
-    color: #81007F;
+    color: #81007f;
   }
   h3 {
     margin-left: 12px;
@@ -66,7 +65,7 @@ h3 {
   .section {
     span {
       font-size: 16px;
-      color: #81007F;
+      color: #81007f;
       white-space: nowrap;
     }
     input {
@@ -128,7 +127,6 @@ h3 {
     }
   }
 
-
   h4 {
     font-size: 16px;
   }
@@ -144,22 +142,25 @@ h3 {
   }
 }
 
+.btn-container {
+  button {
+    margin: 5px 0;
+  }
+}
+
+// LABEL
+// ADD color-violet Class for color
+
 .ended-mark {
   letter-spacing: 2px;
-  border: 3px solid #81007F;
+  border: 3px solid #81007f;
   padding: 2px 4px 2px 8px;
   border-radius: 5px;
   font-size: 22px;
-  background-color: rgba(white , .8);
+  background-color: rgba(white, 0.8);
 
   position: absolute;
   bottom: 3%;
   right: 10%;
   transform: rotate(320deg);
-}
-
-.btn-container {
-  button {
-    margin: 5px 0;
-  }
 }

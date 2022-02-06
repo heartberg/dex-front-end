@@ -48,7 +48,35 @@ export class PopUpComponent implements OnInit {
   launchDetailControl = this.fb.control([]);
   tradeBackingControl = this.fb.control([]);
 
+  myPresaleRestartForm = this.fb.group({
+    presaleStart: [],
+    presaleEnd: [],
+    tradingStart: [],
+    tokenInPresale: [],
+    softCap: [],
+    hardCap: [],
+    walletCap: [],
+    toLiquidity: [],
+  });
+
+  myPresaleFairLaunchForm = this.fb.group({
+    tradingStart: [],
+    additionalAlgo: [],
+  });
+
   // FORMS
+
+  onSubmit(formName: string) {
+    if (formName === 'myPresaleRestartForm') {
+      console.log(this.myPresaleRestartForm.value);
+      this.myPresaleRestartForm.reset();
+    }
+
+    if (formName === 'myPresaleFairLaunchForm') {
+      console.log(this.myPresaleFairLaunchForm.value);
+      this.myPresaleFairLaunchForm.reset();
+    }
+  }
 
   constructor(
     private _walletsConnectService: WalletsConnectService,

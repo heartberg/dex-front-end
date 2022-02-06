@@ -17,6 +17,7 @@
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
                     alt="">
                   <span *ngIf="isPresaleEnded" class="ended-mark color-violet">ENDED</span>
+                  <span *ngIf="isSoldOut" class="ended-mark color-violet">Sold Out</span>
                 </div>
               </div>
               <div class="right-container">
@@ -36,7 +37,7 @@
                           <span>{{item?.presale?.endingTime}}</span>
                         </div>
                       </div>
-                      <div class="d-flex flex-column align-items-start right-values">
+                      <!-- <div class="d-flex flex-column align-items-start right-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
                           <span>{{item?.presale?.hardCap}}</span>
@@ -45,7 +46,7 @@
                           <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
                           <span>{{item?.presale?.softCap}}</span>
                         </div>
-                      </div>
+                      </div> -->
                     </div>
                     <div class="admin-bottom-last">
                       <div class="d-flex align-items-start flex-column">
@@ -88,16 +89,13 @@
                       Your Presale ended.
                     </p>
                     <p>
-                      You can start going through the following steps to make your token tradable on the Verse Pad.
-                    </p>
-                    <p>
-                      As admin now you finish the Presale.
+                      After the Token is tradable you can remove the max buying amount anytime you want.
                     </p>
                   </ng-container>
                 </div>
                 <div class="unset-pd">
                   <button class="bottom-btn btn-secondary-costum">
-                    Claim Presale
+                    Remove Max Buy
                   </button>
                 </div>
               </div>
@@ -137,7 +135,7 @@
                           <span>{{item?.presale?.endingTime}}</span>
                         </div>
                       </div>
-                      <div class="d-flex flex-column align-items-start right-values">
+                      <!-- <div class="d-flex flex-column align-items-start right-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
                           <span>{{item?.presale?.hardCap}}</span>
@@ -146,7 +144,7 @@
                           <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
                           <span>{{item?.presale?.softCap}}</span>
                         </div>
-                      </div>
+                      </div> -->
                     </div>
                     <div class="admin-bottom-last">
                       <div class="d-flex align-items-start flex-column">
@@ -247,7 +245,7 @@
                           <span>{{item?.presale?.endingTime}}</span>
                         </div>
                       </div>
-                      <div class="d-flex flex-column align-items-start right-values">
+                      <!-- <div class="d-flex flex-column align-items-start right-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Hardcap:</h4>
                           <span>{{item?.presale?.hardCap}}</span>
@@ -256,7 +254,7 @@
                           <h4 style="margin-right: 5px; color: #81007F">Softcap:</h4>
                           <span>{{item?.presale?.softCap}}</span>
                         </div>
-                      </div>
+                      </div> -->
                     </div>
                     <div class="admin-bottom-last">
                       <div class="d-flex align-items-start flex-column">
@@ -302,8 +300,7 @@
                       Head over to the projects communication channel to inform you how they want to proceed.
                     </p>
                     <p>
-                      You can claim your committed Algo or you leave them in this presale contract to have a guaranteed
-                      allocation if the Project manager starts a new presale with same or better conditions.
+                      You can claim your committed Algo or you leave them in this presale contract to have a guaranteed allocation if the Project manager starts a new presale with same or better conditions.
                     </p>
                   </ng-container>
                 </div>

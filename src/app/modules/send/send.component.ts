@@ -15,6 +15,11 @@ export class SendComponent implements OnInit {
     addressInput: [],
   });
 
+  onSubmit() {
+    console.log(this.sendForm.value);
+    this.sendForm.reset();
+  }
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {}
