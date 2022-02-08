@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
 import { User } from '../../../models/user.model';
-import { FormBuilder } from '@angular/forms';
+import { Form, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-pop-up',
@@ -15,6 +15,8 @@ export class PopUpComponent implements OnInit {
   @Output() isClosed = new EventEmitter<boolean>();
   @Output() logInValue = new EventEmitter<string | null>();
   @Output() isLiquiditied = new EventEmitter<boolean>();
+
+  @Output() makeRequest = new EventEmitter<FormGroup>();
 
   @Input() openWallet: boolean = false;
   @Input() isDeploy: boolean = false;
@@ -68,12 +70,12 @@ export class PopUpComponent implements OnInit {
 
   onSubmit(formName: string) {
     if (formName === 'myPresaleRestartForm') {
-      console.log(this.myPresaleRestartForm.value);
+      this.makeRequest.next(this.myPresaleRestartForm);
       this.myPresaleRestartForm.reset();
     }
 
     if (formName === 'myPresaleFairLaunchForm') {
-      console.log(this.myPresaleFairLaunchForm.value);
+      this.makeRequest.next(this.myPresaleFairLaunchForm);
       this.myPresaleFairLaunchForm.reset();
     }
   }

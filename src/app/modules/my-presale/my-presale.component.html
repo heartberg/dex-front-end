@@ -94,7 +94,7 @@
                   </ng-container>
                 </div>
                 <div class="unset-pd">
-                  <button class="bottom-btn btn-secondary-costum">
+                  <button (click)="removeMaxBuy(item.asset.assetId)" class="bottom-btn btn-secondary-costum">
                     Remove Max Buy
                   </button>
                 </div>
@@ -318,4 +318,4 @@
   </div>
 </div>
 
-<app-pop-up [isRestart]="isRestart" [isFair]="isFair" (isClosed)="closePopUp($event)" *ngIf="isPopUpOpen"></app-pop-up>
+<app-pop-up (makeRequest)="makeRequest($event)" [isRestart]="isRestart" [isFair]="isFair" (isClosed)="closePopUp($event)" *ngIf="isPopUpOpen"></app-pop-up>

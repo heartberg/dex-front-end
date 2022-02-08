@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 
 @Component({
@@ -57,7 +59,10 @@ export class MyPresaleComponent implements OnInit {
   isPresaleEnded: boolean = true;
   isSoldOut: boolean = false;
 
-  constructor(private projectReqService: projectReqService) {}
+  constructor(
+    private projectReqService: projectReqService,
+    private assetReqService: AssetReqService
+  ) {}
 
   openPopUp(version: string) {
     this.isPopUpOpen = true;
@@ -72,6 +77,22 @@ export class MyPresaleComponent implements OnInit {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+  }
+
+  removeMaxBuy(assetId: number) {
+    this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
+      console.log(res);
+    });
+  }
+
+  makeRequest(form: FormGroup) {
+    if (Object.keys(form.controls).length === 2) {
+      console.log('fairLaunch', form);
+    }
+
+    if (Object.keys(form.controls).length === 8) {
+      console.log('restartPresale', form);
+    }
   }
 
   ngOnInit(): void {
