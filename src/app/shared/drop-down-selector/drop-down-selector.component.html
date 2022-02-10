@@ -1,46 +1,56 @@
 <div class="drop-down">
-  <div class="valueCatcher WIDTH" (click)="openDropDown()"
-       [class.isProfile]="isProfileSection"
-       [class.border-bottom-none]="isDropDownOpened && !tree"
-       [class.no-border]="treeDots"
-       [class.justify-content-end]="tree"
-       [style.width]="widthPX"
-       >
+  <div
+    class="valueCatcher WIDTH"
+    (click)="openDropDown()"
+    [class.isProfile]="isProfileSection"
+    [class.border-bottom-none]="isDropDownOpened && !tree"
+    [class.no-border]="treeDots"
+    [class.justify-content-end]="tree"
+    [style.width]="widthPX"
+  >
     <ng-container *ngIf="!treeDots && !tree">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAPFBMVEX///8AAADw8PAoKCj09PTv7+8lJSWTk5OQkJArKyuMjIyZmZmSkpKWlpYhISGcnJyFhYXGxsY6OjpISEiJJhDdAAACyUlEQVR4nO3XbXebMAyG4TpNStY3su3//9eFOrQBS4pDzGxx7utrWx+eSkbi6QkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGCZ345OXaQL/Qqn9uG4wqmLdCGsELE/n9pIxGMYvBU+tf869bXwqYvEgKWr2F9ObSBiF8IKEfvvU6s36k/Ako3aX51aOeIxhBUi9pNTqzbqewgrROxnp1asYhfmPgqc+pacWi3ivIKD7uFTP4RTK0U8Co/yeBXTCla7i2mLlogoB6xSRamZHo+oBSzR/vc6/FIf5n3xofq/7flQ8Nkz7V+KV1Gv4Oe+6LNn2ulVXBZRD/hSoYKD3bP6SEsaVW/RWgHPjVryLhp3sEqLRnu9ive++4wK7lZ59kyHUhFbbNHIaNR7hrS2PpxbtGoFB0aj5keUNtxLBSvewZHxRs2NqFewdotGO3305y3MegU/mwho3sWciPI3yqDmmJgyFrjbjWpUsJmA5tC4FdF4yTTSopHxurEb9dVJwMV30cMdHBlzUY9otGj1QZ863D809Aq21qKR0agn8Q/0O1h/VZMZQ0OqolHB5u7gyPjqTyN6a9HIWODmjaq3aCurmiz7Lp7U32tvTEwZd/E6olHBxgOaC9xPRD+bjMRY4MaIeou2OOhTxnYTIxoVbL5FoxtVNAK6qODAWOBObsfElDE0/qg/aX1MTBlDQ62gq4DmAifzMCamjNfNNgKadzHl6w6OjLmYVNDNmJgyFjj/LRplNmqrX/Q5shrVy6omy3ij+m3RyPjqjzytarIbd9HnmJgyFzhvq5rMuIve7+BIjbiVgOpd3MIdHIlz0euqJhMWuO20aJQ0qudVTTZrVN+rmmzy1b+1Fo2uFjj/q5rs+y5uaUxMXRa4baxqsq+hsc07ODovcNsa9Kn9340HBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/8k/r0QS+70JmxMAAAAASUVORK5CYII=" alt="">
+      <img
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAPFBMVEX///8AAADw8PAoKCj09PTv7+8lJSWTk5OQkJArKyuMjIyZmZmSkpKWlpYhISGcnJyFhYXGxsY6OjpISEiJJhDdAAACyUlEQVR4nO3XbXebMAyG4TpNStY3su3//9eFOrQBS4pDzGxx7utrWx+eSkbi6QkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGCZ345OXaQL/Qqn9uG4wqmLdCGsELE/n9pIxGMYvBU+tf869bXwqYvEgKWr2F9ObSBiF8IKEfvvU6s36k/Ako3aX51aOeIxhBUi9pNTqzbqewgrROxnp1asYhfmPgqc+pacWi3ivIKD7uFTP4RTK0U8Co/yeBXTCla7i2mLlogoB6xSRamZHo+oBSzR/vc6/FIf5n3xofq/7flQ8Nkz7V+KV1Gv4Oe+6LNn2ulVXBZRD/hSoYKD3bP6SEsaVW/RWgHPjVryLhp3sEqLRnu9ive++4wK7lZ59kyHUhFbbNHIaNR7hrS2PpxbtGoFB0aj5keUNtxLBSvewZHxRs2NqFewdotGO3305y3MegU/mwho3sWciPI3yqDmmJgyFrjbjWpUsJmA5tC4FdF4yTTSopHxurEb9dVJwMV30cMdHBlzUY9otGj1QZ863D809Aq21qKR0agn8Q/0O1h/VZMZQ0OqolHB5u7gyPjqTyN6a9HIWODmjaq3aCurmiz7Lp7U32tvTEwZd/E6olHBxgOaC9xPRD+bjMRY4MaIeou2OOhTxnYTIxoVbL5FoxtVNAK6qODAWOBObsfElDE0/qg/aX1MTBlDQ62gq4DmAifzMCamjNfNNgKadzHl6w6OjLmYVNDNmJgyFjj/LRplNmqrX/Q5shrVy6omy3ij+m3RyPjqjzytarIbd9HnmJgyFzhvq5rMuIve7+BIjbiVgOpd3MIdHIlz0euqJhMWuO20aJQ0qudVTTZrVN+rmmzy1b+1Fo2uFjj/q5rs+y5uaUxMXRa4baxqsq+hsc07ODovcNsa9Kn9340HBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/8k/r0QS+70JmxMAAAAASUVORK5CYII="
+        alt=""
+      />
       <ng-container *ngFor="let button of dropDownValues; let i = index">
         <button class="btn-default" *ngIf="i === 0">
           <ng-container *ngIf="showDropDownSelected === ''">
-            {{button.name}}
+            {{ button.name ? button.name : button }}
           </ng-container>
           <ng-container *ngIf="showDropDownSelected !== ''">
-            {{showDropDownSelected}}
-          </ng-container>
-        </button>
-      </ng-container>
-
-<!--       main header for marketplac obj data-->
-      <ng-container *ngIf="dropDownIsTrue">
-        <ng-container *ngFor="let button of dropDownForObj; let i = index">
-          <button *ngIf="i === 0 && showDropDownSelected === ''" class="btn-default specific-button-viewer">
-            <ng-container>
-              <ng-container *ngIf="button.collectionId">
-                {{ 'All Collections' }}
-              </ng-container>
-              <ng-container *ngIf="button.wallet">
-                {{ 'All Artists' }}
-              </ng-container>
-            </ng-container>
-          </button>
-        </ng-container>
-        <button class="btn-default specific-button-viewer" *ngIf="showDropDownSelected !== ''">
-          <ng-container >
             {{ showDropDownSelected }}
           </ng-container>
         </button>
       </ng-container>
-<!--       #main header for marketplac obj data-->
 
+      <!--       main header for marketplac obj data-->
+      <ng-container *ngIf="dropDownIsTrue">
+        <ng-container *ngFor="let button of dropDownForObj; let i = index">
+          <button
+            *ngIf="i === 0 && showDropDownSelected === ''"
+            class="btn-default specific-button-viewer"
+          >
+            <ng-container>
+              <ng-container *ngIf="button.collectionId">
+                {{ "All Collections" }}
+              </ng-container>
+              <ng-container *ngIf="button.wallet">
+                {{ "All Artists" }}
+              </ng-container>
+            </ng-container>
+          </button>
+        </ng-container>
+        <button
+          class="btn-default specific-button-viewer"
+          *ngIf="showDropDownSelected !== ''"
+        >
+          <ng-container>
+            {{ showDropDownSelected }}
+          </ng-container>
+        </button>
+      </ng-container>
+      <!--       #main header for marketplac obj data-->
     </ng-container>
     <ng-container *ngIf="treeDots">
       <div class="dotes">
@@ -57,79 +67,180 @@
           </div>
         </div>
         <div class="action-btns">
-          <img src="data:image/png;base64,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" alt="">
-          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAkFBMVEX///8dHRsAAAAbGxnz8/MKCgUZGRcSEg8XFxX6+voQEA0VFRIODgsGBgA9PTxdXVzm5uZnZ2bs7Ozf39+zs7JiYmHPz8/Y2Nh6enmjo6PAwMBHR0YiIiCpqai3t7aLi4qdnZxxcXCTk5KGhoU1NTRPT04uLiwnJyZXV1YvLy2BgYHJyciYmJe9vb05OTdRUU/LZvqDAAAMc0lEQVR4nOVd52LqOgwmcvaEBAgQ9ji0pfS+/9vdUG5Pke3s5eR+P2kTW5GsZVkejZqGIYer6XJ38CL3/XqVJOl6PbuRd9gtp6tQNhofv0n4wf14iFR4QDEtlRDpCUJUy1S+f1ejw24a+F1PtQTC7eJyBXBs/YcsPohuOwDry2Ibdj3lAgg2s3XMNSudNkSnFXNU8pZB11PPAXm1iMXSzE/cC5kaAFls5a5JSMN4OzFBKUPdXyptMCfTcdeE8GFsZ1Y55lFEmqB7W/F07HxRUja5RMbyeph3TdIr5E1UTTg5RNrgLkVZksFuDVat5D2hw/okwooMJ+DUy75fqI4y6dqAhG/1rT4eYmF969IVCA+gNUjeExpMuqIxmICdZ4qE6KYDLBxTJ7n4b0Mnsip/ZNNHdC0mzSbu5LiZrubB2I9jCUP2x8F8Nd0cJ24shLGRyXBdv2nctW4gN4qTQZ3lgOV6u3uYpvPjyOo4cy1wtAwqQd20RtsD8whSZ6Q6oLztbuN8H94Y33aeDo6a+sUgas8HMD7SFMzDITkf50WttTE/ngHSWKnBqRFyWNy0ZAGNybPeSnvO/vbNSiMStFutlPAhLyBRmlSwvU21eN2fekraAIvGPbn5GZKGN+HPZx1e1nh/BjORjeeGV+NnkgdKHJjUJ0LzZFfQgs/ahmHhXxIYqIJ0qjeb5MfufIKwwqWxxNV8zbfxBN6X9Q8qL98TTJItNSSpS9D59GnLZhwOY2PxaVRh2cR4B+5oBPR9cw6VsefTSOBQ+1hyxF2CpnNqVn3LJ4W7NCCqedzgizeOCrPmnf44hOGpHPtc69Bzleemgb6qc5BErCSe/Ghqjfpmy/uKFnzUN0IGPnhmWIVtXe+f8j4huG2m+0KXO4dpPW/fcNSZCqd2Q1LjxJEjArUEjXsOgUorTj7GzVQ4JO6rv3jPEQ+YdZGrlWe8qeyrvnbDvpXAsYb5lsEnR5yqCuqUfacF7UvoD26sTiXV1M2WJdBxu8y0+y6TXyBVjMacFVHwut33MjiLEUrbrUBlFDQs6pxuKXwwJKqkpAMnnxlXrTMd84ojQ6J2LqfbI9rZrsnAVgbrgthRmfcc6E9VUWvVCFbDl4kXlyyBtTm6lcHq+OJR/41+h0gEckgkRRWqv6ZzMsKI6BNMvKOviyXDLrSWEUTJ/IJxJ+1Lkcc/6ceFMBMYjNEokipmfBkBDD2LBTPL3EtR/qL8W8drcqal4VE+qvWV1/DTH8dyxavBekB2KU7kFbUbRSABEep2eBjTNiNfYGfYapnHOgHNDJXkeWpBSXeju1lVQSvUPBvhtB5VZs3PswJmVHoKsquLIhwyqZooBYJ8yBZeU1pmlEG7CgIvwifopZjlfMlUmWhrBR7lccIkEjNd6D6wmhHVEr7CoKxiOlMCmuVClSIngNaNkJa1meCQosXdpSqgclP2JPlfQ/yvqtreLCtBx/o0xWLQLGxnA7Q6VhQTE014mJ/bgmFGsSaJiW/I2BOl6yLy/AhwBZX2xv83ioU9MIW/oIxigjqdoHI5oovtrmHI+KAcf4EFONiqY3e1ReCNXOLwmHhC7gyxxPdmXmHgwluHs8TkNWZhI5VjDQLn6NU1u8ZwUKG+94uFMRPfkdnnhBguSnL3joU0E3UmTsTuK5H6pEifkCW8zGirv0BeAW+hCg+sKhUqs2hQpqKPB+R9LIaANckW/dXsj0f6CuyyULuBHnJJhU/O8IFTNiaKMMbI6VHPXc2xIs6vBoPor6l6vN/YM4ftF9h1Q3u6SIKJLeo+RRbGKFP4qk1kdJZXE3MvLQ+QOiEvyex7Mnf7BWq13f/+AZl7YvXRGD7hI435YvRVJKQJKYBeACViiPTzczAUIWXE9CcOxoFTLz22H2DP7W8IhTRQb839EyhK/OvWoOjeEa9ypgh2rwEGWT9/xFnEXmzGJAPHuf8FiWh1EsH3fLOAnZf/4gtkDXvs0DyB7MV/FvHyusPo7DqeYVWghWh9V/P5SNH0NDT8BQoSyfVh+pC9J1Zf44ofjFFq+NvmowSG3oON+3QYKC36rWqOr4KriV0flAfIf/m27geb/qXfQKrGftTwR4irfdnYTgYKdq0ollsUOuUoCxMdyEUjxBjJ6Ae73x7NA76NWCbTJHc9vxpAKKFcYWPR9fRqgEspFuR39zSdj4FSozDF224DMBaUgYflaPdaZCvcyZgyQEkZZTc6vLoAvc5C/QCvu8PIe42diht8Q24BxXxlpDstbxS9pm4KpjD8RxO5NhAV6fKDEhnqZeQywUZu3BKbVdUNHb7yzwyHg+7oHVFYJDoM+X2jmoG2zj21MaLwPLq+vqdQNlhtkcA4Ssi92YCzwtfRGlFYwC3FG1bNI3dQgDxtaU1RWGBBH3I1oK2Rwn3OiRkUhfgt+QnEKboWYOc+kI6FqzwPW6cw7zlWmoel1+GCbfnTKHKX2tHrsLQupQ8cNU5hXotI69Ly9jBKbDLaCIG5lyFtD8v7NL7UIomOm3sB0T5NBb90HIFG2oBqg5d//dB+aaXY4u4RR2kcznpSZF44tpiNDlTM33/Q8eHwY/zh52mGn2sbfr50+Dnv4e1bKNS+xcD3niSD3j+8Z79CcDD7h9QecN+LTXh7wMPfxx9cLQYKJR61GMOvp/Gvg6qJQh7MsyZq+HVtOKU0yNpEpGoGWV86/Brh4dd5j2aDr9Uf/nmL4Z+ZwTHjEM89YYvY67NryGVTfttcDfX84W8eefhnSKlzwEpf44vkc8D/g7PcgzyPryKN6eGGC/0MEtN6KvwP+mIMv7cJVVkxwP40A+gx5Gf0GMKp7z72icKmwmL7Cfe+19efrF5f8hr/R9+YiFnI69c22uGV2O+ee8BLimKnrm+uG9U3ke9a44JRYvVJndK9L/klYlQj6J60SX6CapacVL1G9aDldsgUE2G+HrRMH+H+7CXm7SM8/F7QbD/vflgMw8rdz5uuv++JsqF7sqfV2g6/rz7l2PTzboT0PV6DUCItvpzS91tkKQ/6xjbhUzbMHSWZ+Wz6npmMKz+6hmxS98xk3y8XUrdECW73KVufqzDvRLNd5E3hMvc9jUb0HbkCuzbMnV1S9jOcxwZ37xrv7jwxtQ1tCfNf0yifqScVMffbPOr0XP77D4d/h2Vf7yHdF3mcvUtWtOwie5fsP4We59wHLNaBocr3AcdLceB3OnOkQCQS67iX+39wt3ocZdDahgiibpYMgXbmzZVcyGeNepEYRoMxE5J2Lul0BYRpzlJOGmoFY+gllZTOXTMKNSbR69ZHlT22DUCVfNmdJVFxu4w0/C+mkwOpdlaL1VqS1WG8eAOmGUdlDc+Yxcc7u9I3n+z3rsHX2rMkSjDrYjHylmAtG7l7zoez7fYl9WayLX9IPTvVGw6JKny0mw03Tpy+YqSucIDx47/Fw21zT2PucudQmxt55/Vls9rL+BsfrA59yFGNR3rnhHHgHp9Qa2c1rnQeAzW1ViEKzrzOXgS85s9+BxNuZz/7XHOZgRxxmybZzkezhkP+ULhd0yCqf9wDR6U+KjasIl0bC8LYW/xRm4kAlvw+iQSUhmg0lnz6JL2pQHW+5rfZI/C+r7+oWF7+4dMn2evGDJV/SehgpoJ0qpdG/5TYOhT+abJGe88zTN98dKBQM6d03Cbg8PkXm+HP2obhIvxKbERnwp/POmLH8f4MiX3S4KtxV0r+SG48q4LibaqJkD/1lLQBFm1ENTcpQQNIj9NUoL1Ny3LSn77Fzye+XAK1rbqJE/CcuF8i4bqbF/3WxvzRdjmFPElr8z77MEpm47c0OaC87W7jfHbSGN92ng5OattlFaJ2uwNt7IzWl8RyQHO90z1MW5h+uDrOXA2cNOY9AKT1hLt8gsw2u0TXFACbuJPjZrqaB2NfNkaG7I+D+Wq6OU5cYkNMnJ5BXWzjYddF+dl4kk3jN51ENx1OG3LH1EkmbU/6Dl2VK4eTNJVTEzSYddmeK3wDOxcfSiIWY6/rCtDgAI31nlfB7kw+XxHs1kneaiXosN6JUqskbyJQ6hVWooC7FKpQKVwAmHUR+XCLFuJ1/zPuM70OIokJqrcVtPp6vJ2Y1cQ1Fk5tMhX6FLK8Wkgl5fUhm9LiLtTiS0CwmawBFCu/ESFW7N2tvY0IpiEvwu3i8id2zUwrnZ3Eenh068tiK55myYYc3I+HiHw7oYppqX+9UEJUy1S+f5eiw24bCL3wMmHI4Wq63B28i3u+XtfS+no9uxfvsFtOV2HBi47K4F9HUrme1OOYRQAAAABJRU5ErkJggg==" alt="">
+          <img
+            src="data:image/png;base64,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"
+            alt=""
+          />
+          <img
+            src="data:image/png;base64,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"
+            alt=""
+          />
         </div>
       </div>
     </ng-container>
     <ng-container *ngIf="isProfileSection">
       <div class="collection-details d-flex align-items-center">
-        <div class="collection collection-name d-flex align-items-center flex-column">
-          <img src="https://www.annualreviews.org/pb-assets/journal-home/special-collections/collection-archive-extreme-weather-2021-1630444709857.png" alt="">
+        <div
+          class="collection collection-name d-flex align-items-center flex-column"
+        >
+          <img
+            src="https://www.annualreviews.org/pb-assets/journal-home/special-collections/collection-archive-extreme-weather-2021-1630444709857.png"
+            alt=""
+          />
           <span class="color-violet">BMW</span>
         </div>
-        <div class="collection collection-from d-flex align-items-center flex-column">
-          <img src="https://www.annualreviews.org/pb-assets/journal-home/special-collections/collection-archive-extreme-weather-2021-1630444709857.png" alt="">
+        <div
+          class="collection collection-from d-flex align-items-center flex-column"
+        >
+          <img
+            src="https://www.annualreviews.org/pb-assets/journal-home/special-collections/collection-archive-extreme-weather-2021-1630444709857.png"
+            alt=""
+          />
           <span class="color-violet">From</span>
         </div>
       </div>
     </ng-container>
     <!--    added-->
-    <div class="d-flex align-items-center" *ngIf="isProfileSection ">
+    <div class="d-flex align-items-center" *ngIf="isProfileSection">
       <ng-container *ngIf="tree">
-        <img src="./assets/img/caret-right-solid.svg" alt="" [class.rotate]="isDropDownOpened" style="filter: contrast(0.5);">
+        <img
+          src="./assets/img/caret-right-solid.svg"
+          alt=""
+          [class.rotate]="isDropDownOpened"
+          style="filter: contrast(0.5)"
+        />
       </ng-container>
       <ng-container *ngIf="hasTitle !== ''">
-        <span style="margin-left: 10px">{{hasTitle}}</span>
+        <span style="margin-left: 10px">{{ hasTitle }}</span>
       </ng-container>
     </div>
     <!--    added-->
     <!--    added-->
     <ng-container *ngIf="!isProfileSection">
       <ng-container *ngIf="tree">
-        <img src="./assets/img/caret-right-solid.svg" alt="" [class.rotate]="isDropDownOpened" style="filter: contrast(0.5);">
+        <img
+          src="./assets/img/caret-right-solid.svg"
+          alt=""
+          [class.rotate]="isDropDownOpened"
+          style="filter: contrast(0.5)"
+        />
       </ng-container>
       <ng-container *ngIf="hasTitle !== ''">
-        <span style="margin-left: 10px">{{hasTitle}}</span>
+        <span style="margin-left: 10px">{{ hasTitle }}</span>
       </ng-container>
     </ng-container>
     <!--    added-->
   </div>
-  <div class="dropDown" *ngIf="isDropDownOpened" [class.marketplace-w_position-unset]="isNotAccordion" [class.left-0]="treeDots" [class.isTree]="tree && !isProfileSection">
-    <div class="section unHover forWidth" *ngIf="!isProfileSection && extraDropDown">
-      <div [formGroup]="dropDownForm" style="display: flex; align-items: center; flex-direction: column; justify-content: center">
-        <input formControlName="search" type="text" class="input-costum" style="color: #81007F">
-        <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px">
-          <label style="font-size: 15px; color: #81007F; margin-bottom: 0px; font-weight: bold; margin-right: 5px; cursor: pointer" for="check">Show All</label>
-          <input formControlName="showAll" (change)="handleCheckBox()" type="checkbox" name="check" id="check" style="width: 16px; height: 16px">
+  <div
+    class="dropDown"
+    *ngIf="isDropDownOpened"
+    [class.marketplace-w_position-unset]="isNotAccordion"
+    [class.left-0]="treeDots"
+    [class.isTree]="tree && !isProfileSection"
+  >
+    <div
+      class="section unHover forWidth"
+      *ngIf="!isProfileSection && extraDropDown"
+    >
+      <div
+        [formGroup]="dropDownForm"
+        style="
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          justify-content: center;
+        "
+      >
+        <input
+          formControlName="search"
+          type="text"
+          class="input-costum"
+          style="color: #81007f"
+        />
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+          "
+        >
+          <label
+            style="
+              font-size: 15px;
+              color: #81007f;
+              margin-bottom: 0px;
+              font-weight: bold;
+              margin-right: 5px;
+              cursor: pointer;
+            "
+            for="check"
+            >Show All</label
+          >
+          <input
+            formControlName="showAll"
+            (change)="handleCheckBox()"
+            type="checkbox"
+            name="check"
+            id="check"
+            style="width: 16px; height: 16px"
+          />
         </div>
       </div>
     </div>
-    <div class="section" *ngFor="let button of dropDownValues; let last = last; let i = index" (click)="selectValue(button.name, i+1)" [class.border-none]="last" [class.no-border]="tree" [class.unHover]="isProfileSection">
-<!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
-      <button class="btn-default"
-              [class.color-violet]="tree"
-              *ngIf="!isProfileSection && !extraDropDown">
-              {{button}}
+    <div
+      class="section"
+      *ngFor="let button of dropDownValues; let last = last; let i = index"
+      (click)="selectValue(button.name ? button.name : button, i + 1)"
+      [class.border-none]="last"
+      [class.no-border]="tree"
+      [class.unHover]="isProfileSection"
+    >
+      <!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
+      <button
+        class="btn-default"
+        [class.color-violet]="tree"
+        *ngIf="!isProfileSection && !extraDropDown"
+      >
+        {{ button }}
       </button>
-      <ng-container *ngIf="!isProfileSection && extraDropDown " >
-        <button class="btn-default"
-                [class.color-violet]="tree"
-                style="width: 100%">
-          <div class="d-flex align-items-center justify-content-between" style="white-space: nowrap">
+      <ng-container *ngIf="!isProfileSection && extraDropDown">
+        <button
+          class="btn-default"
+          [class.color-violet]="tree"
+          style="width: 100%"
+        >
+          <div
+            class="d-flex align-items-center justify-content-between"
+            style="white-space: nowrap"
+          >
             <div>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png" alt="" style="width: 40px; height: 35px">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                alt=""
+                style="width: 40px; height: 35px"
+              />
             </div>
             <div style="font-size: 16px">
-              {{button.name}}
+              {{ button.name }}
             </div>
             <div>
-              <ng-container (click)="addToFavourites(button, i)" *ngIf="!publicTradeIsAdded">
-                <img src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg" alt="" style="width: 23px; height: 23px">
+              <ng-container
+                (click)="addToFavourites(button, i)"
+                *ngIf="!publicTradeIsAdded"
+              >
+                <img
+                  src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                  alt=""
+                  style="width: 23px; height: 23px"
+                />
               </ng-container>
               <ng-container *ngIf="publicTradeIsAdded">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU" alt=""
-                     style="width: 23px; height: 23px">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                  alt=""
+                  style="width: 23px; height: 23px"
+                />
               </ng-container>
             </div>
           </div>
@@ -141,12 +252,12 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="img">
-                  <img [src]="profileSectionImg" alt="">
+                  <img [src]="profileSectionImg" alt="" />
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="info">
-                  <p>{{profileSectionInfo}}</p>
+                  <p>{{ profileSectionInfo }}</p>
                 </div>
               </div>
             </div>
@@ -155,41 +266,50 @@
       </ng-container>
     </div>
     <ng-container *ngIf="dropDownIsTrue">
-      <div class="section d-flex justify-content-between align-items-center" (click)="emitCollectionIdAndWallet(button?.name, button?.collectionId, button?.wallet)" *ngFor="let button of dropDownForObj">
-<!--        <ng-container *ngIf="showDefaultPropertyInDropDown">-->
-<!--          <button *ngIf="showDefaultPropertyInDropDown !== ''">-->
-<!--            {{ showDefaultPropertyInDropDown }}-->
-<!--          </button>-->
-<!--        </ng-container>-->
+      <div
+        class="section d-flex justify-content-between align-items-center"
+        (click)="
+          emitCollectionIdAndWallet(
+            button?.name,
+            button?.collectionId,
+            button?.wallet
+          )
+        "
+        *ngFor="let button of dropDownForObj"
+      >
+        <!--        <ng-container *ngIf="showDefaultPropertyInDropDown">-->
+        <!--          <button *ngIf="showDefaultPropertyInDropDown !== ''">-->
+        <!--            {{ showDefaultPropertyInDropDown }}-->
+        <!--          </button>-->
+        <!--        </ng-container>-->
 
-          <button class="btn-default specific-button" [class.color-violet]="tree">{{button?.name}}</button>
-          <ng-container *ngIf="button?.profileImage">
-            <img src="{{button?.profileImage}}" alt="">
-          </ng-container>
-          <ng-container *ngIf="button?.icon">
-            <img src="{{button.icon}}" alt="">
-          </ng-container>
-
-
+        <button class="btn-default specific-button" [class.color-violet]="tree">
+          {{ button?.name }}
+        </button>
+        <ng-container *ngIf="button?.profileImage">
+          <img src="{{ button?.profileImage }}" alt="" />
+        </ng-container>
+        <ng-container *ngIf="button?.icon">
+          <img src="{{ button.icon }}" alt="" />
+        </ng-container>
       </div>
-<!--      <div class="section d-flex justify-content-between align-items-center"-->
-<!--           (click)="emitCollectionIdAndWallet(button?.name, button?.collectionId, button?.wallet)"-->
-<!--           *ngIf="showDefaultPropertyInDropDown"-->
-<!--      >-->
-<!--                <ng-container *ngIf="showDefaultPropertyInDropDown">-->
-<!--                  <button *ngIf="showDefaultPropertyInDropDown !== ''">-->
-<!--                    {{ showDefaultPropertyInDropDown }}-->
-<!--                  </button>-->
-<!--                </ng-container>-->
-<!--      </div>-->
-
+      <!--      <div class="section d-flex justify-content-between align-items-center"-->
+      <!--           (click)="emitCollectionIdAndWallet(button?.name, button?.collectionId, button?.wallet)"-->
+      <!--           *ngIf="showDefaultPropertyInDropDown"-->
+      <!--      >-->
+      <!--                <ng-container *ngIf="showDefaultPropertyInDropDown">-->
+      <!--                  <button *ngIf="showDefaultPropertyInDropDown !== ''">-->
+      <!--                    {{ showDefaultPropertyInDropDown }}-->
+      <!--                  </button>-->
+      <!--                </ng-container>-->
+      <!--      </div>-->
     </ng-container>
   </div>
-<!--  <select name="" id="">-->
-<!--    <option value="" *ngFor="let button of dropDownValues">-->
-<!--      {{ button }}-->
-<!--    </option>-->
-<!--  </select>-->
+  <!--  <select name="" id="">-->
+  <!--    <option value="" *ngFor="let button of dropDownValues">-->
+  <!--      {{ button }}-->
+  <!--    </option>-->
+  <!--  </select>-->
 </div>
 
 <div (click)="openDropDown()" *ngIf="isDropDownOpened" class="background"></div>

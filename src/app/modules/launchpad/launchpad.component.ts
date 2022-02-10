@@ -52,7 +52,14 @@ export class LaunchpadComponent implements OnInit {
 
   wallet = localStorage.getItem('wallet');
 
-  searchInput = this.fb.control([])
+  searchInput = this.fb.control([]);
+
+  dropDownValues = [
+    'Ending Soon',
+    'Finished',
+    'Subscription: High to low',
+    'Subscription: Low to high',
+  ];
 
   @Input() isWallet: boolean = false;
 
