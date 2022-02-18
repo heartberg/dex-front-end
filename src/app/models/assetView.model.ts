@@ -5,6 +5,7 @@ export interface AssetView {
     name: string
     unitName: string
     totalSupply: number
+    decimals: number
     url?: string
     maxBuy: number
     tradingStart: number
