@@ -1,7 +1,7 @@
 .main {
   display: flex;
   justify-content: center;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 80px);
   .exchanger {
     display: flex;
     flex-direction: column;
@@ -25,6 +25,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  margin-bottom: 20px;
 }
 .wrapper-for-btns {
   position: relative;
@@ -128,7 +129,7 @@ app-drop-down-selector {
 
     .propery-pair {
       padding: 5px 0;
-      
+
       span {
         font-size: 15px;
         margin: 0 2px;
@@ -146,7 +147,7 @@ app-drop-down-selector {
   position: relative;
   bottom: 0;
   left: 0;
-  
+
   .amount {
     margin-left: 4px;
     font-size: 13px;

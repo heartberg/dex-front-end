@@ -1,5 +1,5 @@
 .header-title {
-    
+
     display: flex;
     flex-direction: row;
 
@@ -15,4 +15,12 @@
     .color-violet {
         padding: 0 !important;
     }
+}
+
+.main {
+  height: calc(100vh - 80px);
+}
+
+.wrapper-border {
+  height: calc(100vh - 100px);
 }

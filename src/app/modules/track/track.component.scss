@@ -1,5 +1,5 @@
 .main {
-  height: calc(100vh - 243px);
+  height: calc(100vh - 222px);
   overflow: hidden;
   .header-title {
     h3 {
@@ -75,7 +75,7 @@
 
   width: 100%;
   // border: 1px solid green;
-  
+
   .column {
       display: flex;
       // justify-content: space-between;
@@ -85,7 +85,7 @@
           margin: 25px 0;
           display: flex;
           flex-direction: column;
-          
+
           span {
               font-size: 16px;
           }

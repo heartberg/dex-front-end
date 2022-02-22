@@ -158,6 +158,14 @@ html {
 }
 
 .dark-mode {
+
+  background-color: #1c1c1e;
+
+  .card {
+    background-color: #1c1c1e;
+    border: 1px solid #81007F;
+  }
+
   .dark-mode-icon {
     color: rgba(255, 255, 255, 0.8) !important;
     background: rgba(255, 255, 255, 0.8) !important;
@@ -182,14 +190,17 @@ html {
   .input-costum {
     background: rgba(255, 255, 255, 0.07) !important;
     color: rgb(255, 255, 255, 0.8) !important;
-    //&::placeholder {
-    //  color: rgb(255, 255, 255, 0.8) !important;
-    //}
-    //&:focus {
-    //  background: rgba(255, 255, 255, 0) !important;
-    //  border-color: rgba(255, 255, 255, 0.3) !important;
-    //  box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
-    //}
+    &::placeholder {
+      color: rgb(255, 255, 255, 0.8) !important;
+    }
+    &:focus {
+      background: rgba(255, 255, 255, 0) !important;
+      border-color: rgba(255, 255, 255, 0.3) !important;
+      box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
+    }
+  }
+  .search-btn {
+    color: rgb(255, 255, 255, 0.8) !important;
   }
 
   textarea {
@@ -277,7 +288,7 @@ html {
       }
     }
   }
-  .MAIN {
+  .main {
     background: #1c1c1e;
   }
 

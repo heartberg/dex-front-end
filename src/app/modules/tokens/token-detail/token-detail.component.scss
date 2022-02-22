@@ -42,9 +42,9 @@
 }
 
 .unscrollable-section {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 80px);
   overflow: hidden;
-  // justify-content: space-between;
+
   .unscrollable-left-section {
     display: flex;
     flex-direction: column;

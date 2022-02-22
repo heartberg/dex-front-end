@@ -1,7 +1,7 @@
 .main {
   display: flex;
   justify-content: center;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 80px);
   .exchanger {
     display: flex;
     flex-direction: column;
@@ -30,6 +30,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
+  height: calc(100vh - 100px);
 }
 app-drop-down-selector {
   margin-top: 22px;

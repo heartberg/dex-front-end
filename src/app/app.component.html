@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main" [ngClass]="{ 'dark-mode': isThemeChanged }">
   <app-header (themeWasChanged)="changeTheme($event)"></app-header>
   <div class="content">
     <router-outlet></router-outlet>

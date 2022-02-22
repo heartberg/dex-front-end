@@ -7,18 +7,21 @@
     // }
   }
 }
+.main {
+  height: calc(100vh - 80px);
+}
 .avatar-info {
   margin-top: 20px;
   div {
     justify-content: space-between;
     margin: 10px 0px;
 
-    
+
     h6 {
       color: #81007F;
       font-size: 16px;
     }
-    
+
     span {
       font-size: 16px;
       text-align: end;
@@ -32,7 +35,7 @@
     font-size: 14px;
     color: #81007F;
   }
-  
+
   span {
     font-size: 14px;
     color: #1c1c1e;
