@@ -1,0 +1,166 @@
+.row {
+  flex-wrap: nowrap;
+  // display: flex;
+  // flex-basis: unset;
+  justify-content: space-around;
+  align-items: center;
+  .unset-pd {
+    padding-bottom: 0px !important;
+  }
+
+  .text-area {
+    // line-height: unset;
+    max-width: 350px;
+  }
+}
+.card {
+  // padding: 20px 10px 0px 10px;
+  // margin-bottom: 20px;
+  margin: 27px 5px;
+  padding: 20px 10px;
+}
+.main {
+  height: calc(100vh - 80px);
+  overflow: hidden;
+  .scrollable-content {
+    height: calc(100vh - 180px);
+    overflow-y: scroll;
+  }
+}
+.avatar-section {
+  .track-image {
+    padding-top: 50px;
+  }
+
+  .headings {
+  }
+
+  h4 {
+    margin-left: 10px;
+    color: #81007f;
+  }
+  h3 {
+    margin-left: 12px;
+    margin-bottom: 5px;
+  }
+}
+
+.right-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-around;
+}
+
+h3 {
+  margin-bottom: 15px;
+}
+.wrapper-border {
+  margin-bottom: 20px;
+}
+.content {
+  .row {
+    height: 100%;
+  }
+  .section {
+    span {
+      font-size: 16px;
+      color: #81007f;
+      white-space: nowrap;
+    }
+    input {
+      height: 30px;
+      width: 100%;
+      margin-left: 10px;
+      font-size: 16px;
+    }
+  }
+  .aligner-of-content {
+    justify-content: space-between !important;
+    padding-bottom: 13px !important;
+    padding-top: 16px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .extra-content {
+    justify-content: space-between !important;
+    padding-bottom: 13px !important;
+    padding-top: 16px !important;
+  }
+  button {
+    width: 155px;
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    font-size: 16px;
+  }
+}
+.detail-btn {
+  width: 140px;
+  margin: auto;
+}
+.fixed-height {
+  height: 170px;
+  .admin-content-extra,
+  .admin-content-extra-last {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 13px;
+  }
+}
+.admin-bottom {
+  display: flex;
+  justify-content: space-between;
+
+  padding-top: 10px;
+  margin: 10px 0;
+  line-height: 1;
+
+  .right-values {
+    justify-content: space-around;
+
+    h4 {
+      font-size: 14px;
+    }
+  }
+
+  h4 {
+    font-size: 16px;
+  }
+
+  span {
+    font-size: 16px;
+  }
+
+  div {
+    // &:first-child {
+    //   margin-bottom: 4px;
+    // }
+  }
+}
+
+.btn-container {
+  button {
+    margin: 5px 0;
+  }
+}
+
+// LABEL
+// ADD color-violet Class for color
+
+.ended-mark {
+  letter-spacing: 2px;
+  border: 3px solid #81007f;
+  padding: 2px 4px 2px 8px;
+  border-radius: 5px;
+  font-size: 22px;
+  background-color: rgba(white, 0.8);
+
+  position: absolute;
+  bottom: 3%;
+  right: 10%;
+  transform: rotate(320deg);
+}

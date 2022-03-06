@@ -1,0 +1,163 @@
+.main {
+  display: flex;
+  justify-content: center;
+  height: calc(100vh - 80px);
+  .exchanger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .input {
+      margin-left: 10px;
+    }
+    .top {
+    }
+  }
+}
+.input-costum {
+
+}
+.margin-t {
+  margin-top: 20px;
+}
+.wrapper-border {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.wrapper-for-btns {
+  position: relative;
+    top: 110px;
+    left: 80px;
+
+
+  margin-top: 10px;
+  justify-content: space-evenly;
+}
+app-drop-down-selector {
+  margin-top: 5px;
+}
+
+.wrapper-for-btns {
+  align-items: center;
+  justify-content: center;
+
+  .btn-extra {
+    padding: 5px 12px;
+    font-size: 16px;
+  }
+}
+
+.input-field {
+  .amount {
+    font-size: 13px;
+    color: #81007F;
+    margin-bottom: 3px;
+    margin-right: 17px;
+  }
+}
+.first-drop-down {
+  margin-top: 23px;
+}
+
+.spillage-checkbox {
+  margin: 5px 0;
+
+  input {
+    margin-right: 8px;
+  }
+
+  label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+.last-text {
+  max-width: 240px;
+  text-align: center;
+  align-self: center;
+}
+
+// Floating selection div styles
+
+.position-left {
+  left: 10vw;
+}
+
+.position-right {
+  right: 10vw;
+}
+
+.selected-option {
+  position: absolute;
+  top: 32vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  border: #81007F 2px solid;
+  border-radius: 10px;
+  padding: 15px 25px 15px 25px;
+  width: 200px;
+  height: 230px;
+
+    button {
+      position: absolute;
+      bottom: -15%;
+      left: 34%;
+      border: 2px solid #81007F;
+      padding: 2px 4px;
+      border-radius: 4px;
+      background: transparent;
+      font-size: 16px;
+    }
+
+    h4 {
+      font-size: 16px;
+      font-weight: 700;
+      padding-bottom: 10px;
+      color: #81007F;
+      margin-right: 8px;
+    }
+
+
+  .selection-data {
+    display: flex;
+    flex-direction: column;
+
+    .propery-pair {
+      padding: 5px 0;
+
+      span {
+        font-size: 15px;
+        margin: 0 2px;
+      }
+    }
+  }
+}
+
+// .bot-input {
+//   display: flex;
+//   flex-direction: column;
+// }
+
+.bot-text {
+  position: relative;
+  bottom: 0;
+  left: 0;
+
+  .amount {
+    margin-left: 4px;
+    font-size: 13px;
+    color: #81007F;
+    margin-bottom: 3px;
+    margin-right: 17px;
+  }
+
+}
+
+.top-text {
+  position: relative;
+}

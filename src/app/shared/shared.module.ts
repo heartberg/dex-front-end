@@ -4,22 +4,29 @@ import {RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {DropDownSelectorComponent} from "./drop-down-selector/drop-down-selector.component";
 import {PopUpComponent} from "./pop-up/component/pop-up.component";
+import { CardComponent } from './card/card.component';
+import { TextLimitPipe } from './pipes/text-limit.pipe';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [
     HeaderComponent,
     DropDownSelectorComponent,
-    PopUpComponent
+    PopUpComponent,
+    CardComponent,
+    TextLimitPipe,
   ],
   imports: [
     RouterModule,
     CommonModule,
-
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     HeaderComponent,
     DropDownSelectorComponent,
-    PopUpComponent
+    PopUpComponent,
+    CardComponent
   ]
 
 })

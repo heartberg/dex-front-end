@@ -1,0 +1,284 @@
+<div class="main">
+  <div class="wrapper-border">
+    <div class="exchanger">
+      <div
+        class="d-flex align-items-center wrapper-for-btns"
+        [ngStyle]="{ top: rotate ? '110px' : '110px' }"
+      >
+        <button
+          class="btn-primary-costum btn-extra"
+          (click)="getPercentOfButton(1, inputRef)"
+          [class.btn-secondary-costum]="btnFirst"
+        >
+          25%
+        </button>
+        <button
+          class="btn-primary-costum btn-extra"
+          (click)="getPercentOfButton(2, inputRef)"
+          [class.btn-secondary-costum]="btnSecond"
+        >
+          50%
+        </button>
+        <button
+          class="btn-primary-costum btn-extra"
+          (click)="getPercentOfButton(3, inputRef)"
+          [class.btn-secondary-costum]="btnThird"
+        >
+          75%
+        </button>
+        <button
+          class="btn-primary-costum btn-extra"
+          (click)="getPercentOfButton(4, inputRef)"
+          [class.btn-secondary-costum]="btnFourth"
+        >
+          100%
+        </button>
+      </div>
+      <div class="d-flex flex-column" [class.flex-column-reverse]="rotate">
+        <div
+          class="d-flex top"
+          [ngStyle]="{ 'margin-bottom': !rotate ? '32px' : '0px' }"
+        >
+          <app-drop-down-selector
+            (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
+            [dropDownValues]="assetArr"
+            [isNotAccordion]="false"
+            [widthPX]="'160px'"
+            (dropDownValue)="getValueFromDropDown($event, 1)"
+            [extraDropDown]="true"
+            [notCloseOnClick]="true"
+            class="first-drop-down"
+            #componentRefA
+            (showAll)="handleCheckboxUpdate($event)"
+          ></app-drop-down-selector>
+          <div class="input d-flex flex-column">
+            <div class="input-field d-flex flex-column align-items-end">
+              <div
+                [ngStyle]="{ bottom: rotate ? '200px' : '0px' }"
+                class="top-text"
+              >
+                <span class="thin-gray-text">Available:</span>
+                <span style="margin-left: 4px" class="amount">{{
+                  "2000"
+                }}</span>
+              </div>
+              <form [formGroup]="topForms">
+                <input
+                  formControlName="zeroInput"
+                  type="number"
+                  class="input-costum"
+                  [class.d-none]="isClickedOnBtn"
+                />
+
+                <input
+                  formControlName="topInput"
+                  type="number"
+                  (click)="onUserInput(inputRef)"
+                  class="input-costum"
+                  [value]="algoAmount"
+                  [class.d-none]="!isClickedOnBtn"
+                  #inputRef
+                />
+              </form>
+            </div>
+          </div>
+        </div>
+        <div
+          class="reverse"
+          style="
+            padding-bottom: 20px;
+            display: flex;
+            animation: c;
+            align-items: center;
+            justify-content: center;
+            padding-top: 20px;
+          "
+        >
+          <img
+            (click)="makeReverse()"
+            src="https://www.pngrepo.com/download/253436/reverse.png"
+            alt=""
+            style="
+              width: 60px;
+              height: 60px;
+              transform: rotate(90deg);
+              margin: auto;
+              cursor: pointer;
+            "
+          />
+        </div>
+        <div
+          class="d-flex"
+          [ngStyle]="{ 'margin-bottom': rotate ? '32px' : '0px' }"
+        >
+          <app-drop-down-selector
+            style="margin-top: 23px"
+            (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
+            [dropDownValues]="dummyArr"
+            [isNotAccordion]="false"
+            [widthPX]="'160px'"
+            [extraDropDown]="true"
+            (dropDownValue)="getValueFromDropDown($event, 2)"
+            [notCloseOnClick]="true"
+            #componentRefB
+          >
+          </app-drop-down-selector>
+          <div class="input d-flex flex-column align-items-end">
+            <div
+              [ngStyle]="{ bottom: rotate ? '-200px' : '0' }"
+              class="bot-text"
+            >
+              <span class="thin-gray-text">Spot Price:</span>
+              <span style="margin-left: 4px" class="amount">{{
+                selectedOption?.unitName
+              }}</span>
+            </div>
+            <input
+              [formControl]="botInput"
+              type="number"
+              class="input-costum"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="d-flex align-items-center justify-content-around margin-t flex-column"
+      >
+        <div class="d-flex" style="width: 100%; justify-content: space-around">
+          <div>
+            <form [formGroup]="slippageForm">
+              <div class="d-flex align-items-center">
+                <span>Slippage:</span>
+                <input
+
+                  type="number"
+                  formControlName="slippageInput"
+                  class=""
+                  style="
+                    width: 70px;
+                    margin-left: 5px;
+                    margin-right: 5px;
+                    color: #040405;
+                    padding-left: 5px;
+                  "
+                />
+                <span style="color: #81007f">%</span>
+              </div>
+              <div class="spillage-checkbox">
+                <input
+                  (change)="checkBoxClicked()"
+                  id="spillageCheckBox"
+                  formControlName="slippageCheckBox"
+                  type="checkbox"
+                  #checkBox
+                />
+                <label for="spillageCheckBox">Auto Slippage</label>
+              </div>
+            </form>
+          </div>
+          <div style="flex-direction: column" class="d-flex">
+            <div>
+              <span>Minimum Output:</span>
+              <span class="color-violet" style="margin-left: 10px">{{
+                selectedOption?.unitName
+              }}</span>
+            </div>
+            <!-- <div>
+              <span style="position: relative;
+            left: 3vw;" class="thin-gray-text">Unit name of lower token selected</span>
+            </div> -->
+          </div>
+        </div>
+        <div class="d-flex" style="margin-top: 20px">
+          <span>Price Impact:</span>
+          <span style="color: #81007f; margin-left: 10px">XY %</span>
+        </div>
+      </div>
+      <button
+        *ngIf="blockchainChecked"
+        class="btn-secondary-costum unHover"
+        style="
+          margin: 25px auto;
+          margin-bottom: 12px;
+          width: 160px;
+          font-size: 20px;
+        "
+      >
+        Swap
+      </button>
+      <button
+        *ngIf="!blockchainChecked"
+        class="btn-secondary-costum unHover"
+        style="
+          margin: 25px auto;
+          margin-bottom: 12px;
+          width: 160px;
+          font-size: 20px;
+        "
+      >
+        Opt In
+      </button>
+    </div>
+  </div>
+  <div *ngIf="selectedOption?.name" class="selected-option position-left">
+    <h4>{{ selectedOption?.name }} Information</h4>
+    <div class="selection-data">
+      <div class="propery-pair">
+        <span>Marketcap:</span>
+        <span class="thin-gray-text">999</span>
+      </div>
+      <div class="propery-pair">
+        <span>Total Supply:</span>
+        <span class="thin-gray-text">459</span>
+      </div>
+      <div class="propery-pair">
+        <span>Liquidity:</span>
+        <span class="thin-gray-text">High</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing:</span>
+        <span class="thin-gray-text">Yes</span>
+      </div>
+      <div class="propery-pair">
+        <span>Max Buy:</span>
+        <span class="thin-gray-text">{{ selectedOption?.maxBuy }}</span>
+      </div>
+      <button (click)="openPopUp()">Backing</button>
+    </div>
+  </div>
+
+  <div *ngIf="selectedOption?.name" class="selected-option position-right">
+    <h4>{{ selectedOption?.name }} Fees</h4>
+    <div class="selection-data">
+      <div class="propery-pair">
+        <span>Buy Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption?.buyBurn }}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Sell Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption?.sellBurn }}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption?.backing }}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Send Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption?.sendBurn }}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Additional Tax:</span>
+        <span class="thin-gray-text">$25</span>
+      </div>
+      <div class="propery-pair">
+        <span>(Purpose)</span>
+        <span class="thin-gray-text">Resale</span>
+      </div>
+    </div>
+  </div>
+</div>
+<app-pop-up
+  [isTrade]="true"
+  (isClosed)="closePopUp($event)"
+  *ngIf="isPopUpOpen"
+></app-pop-up>

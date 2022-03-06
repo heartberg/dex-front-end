@@ -1,57 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {HomeComponent} from "./home/home/home.component";
-import {TradeComponent} from "./home/trade/trade.component";
-import {SendComponent} from "./home/send/send.component";
-import {LaunchpadComponent} from "./home/launchpad/launchpad.component";
-import {LaunchDetailComponent} from "./home/launch-detail/launch-detail.component";
-import {DeployComponent} from "./home/deploy/deploy.component";
-import {TrackComponent} from "./home/track/track.component";
-import {MyDeployComponent} from "./home/my-deploy/my-deploy.component";
-import {MyPresaleComponent} from "./home/my-presale/my-presale.component";
 
 const routes: Routes = [
-  {
-    path: 'home',
-    component: HomeComponent,
-  },
   {
     path: '',
     pathMatch: 'full',
     redirectTo: 'home'
   },
-  {
-    path: 'trade',
-    component: TradeComponent,
-  },
-  {
-    path: 'send',
-    component: SendComponent
-  },
-  {
-    path: 'launchpad',
-    component: LaunchpadComponent
-  },
-  {
-    path: 'launch-detail',
-    component: LaunchDetailComponent
-  },
-  {
-    path: 'deploy',
-    component: DeployComponent
-  },
-  {
-    path: 'track',
-    component: TrackComponent
-  },
-  {
-    path: 'my-deploy',
-    component: MyDeployComponent
-  },
-  {
-    path: 'my-presale',
-    component: MyPresaleComponent
-  }
+  { path: 'deploy', loadChildren: () => import('./modules/deploy/deploy.module').then(m => m.DeployModule) },
+  { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule) },
+  { path: 'launchpad', loadChildren: () => import('./modules/launchpad/launchpad.module').then(m => m.LaunchpadModule) },
+  { path: 'wallet', loadChildren: () => import('./modules/wallet/wallet.module').then(m => m.WalletModule) },
+  { path: 'track', loadChildren: () => import('./modules/track/track.module').then(m => m.TrackModule) },
+  { path: 'my-deploys', loadChildren: () => import('./modules/my-deploys/my-deploys.module').then(m => m.MyDeploysModule) },
+  { path: 'send', loadChildren: () => import('./modules/send/send.module').then(m => m.SendModule) },
+  { path: 'trade', loadChildren: () => import('./modules/trade/trade.module').then(m => m.TradeModule) },
+  { path: 'my-presale', loadChildren: () => import('./modules/my-presale/my-presale.module').then(m => m.MyPresaleModule) },
+  { path: 'tokens', loadChildren: () => import('./modules/tokens/tokens.module').then(m => m.TokensModule) }
 ];
 
 @NgModule({

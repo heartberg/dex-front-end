@@ -1,0 +1,116 @@
+<!-- <div class="choise d-flex" style="margin-top: 5px; margin-bottom: 10px;"> -->
+<!-- <app-track *ngIf="isActiveFirst"></app-track>
+    <app-launchpad *ngIf="isActiveSecond"></app-launchpad> -->
+<div class="main">
+  <div class="wrapper-border">
+    <div class="header-title header d-flex">
+      <div class="search-section hide-respo">
+        <div class="search">
+          <input
+            [formControl]="searchInput"
+            type="text"
+            placeholder="Collection, items..."
+            class="input-costum"
+            style="color: #040405 !important"
+          />
+        </div>
+        <div class="search-btn search_btn">
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            width="16"
+            height="16"
+            xlmns="http://www.w3.org/2000/svg"
+            class="sc-bdnxRM sc-hKFxyN hOiKLt"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 9.76142 9.76142 12 7 12C4.23858 12 2 9.76142 2 7ZM7 0C3.13401 0 0 3.13401 0 7C0 10.866 3.13401 14 7 14C8.57591 14 10.0302 13.4792 11.2001 12.6004C11.2281 12.6376 11.259 12.6733 11.2929 12.7071L14.2929 15.7071C14.6834 16.0976 15.3166 16.0976 15.7071 15.7071C16.0976 15.3166 16.0976 14.6834 15.7071 14.2929L12.7071 11.2929C12.6733 11.259 12.6376 11.2281 12.6004 11.2001C13.4792 10.0302 14 8.57591 14 7C14 3.13401 10.866 0 7 0Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="scrollable-content">
+      <div>
+        <div class="track-section">
+          <ng-container *ngFor="let item of arr">
+            <div class="card">
+              <!-- <div class="row"> -->
+              <!-- LEFT SIDE -->
+              <div class="col-md-2 unset-pd left-wrapper">
+                <div class="left-container">
+                  <div class="left-texts-container">
+                    <span class="left-text">{{ item?.name }}</span>
+                    <span class="left-text">{{ item?.asset?.name }}</span>
+                    <div
+                      style="cursor: pointer"
+                      (click)="copyContentToClipboard(content)"
+                      class="asa-id-container left-text"
+                    >
+                      <span #content>{{ item?.asset?.assetId }}</span>
+                      <i
+                        style="margin-left: 10px; font-size: 18px"
+                        class="fas fa-clipboard-list"
+                      ></i>
+                    </div>
+                  </div>
+                  <img
+                    routerLink="/tokens/token-detail/{{ item.projectId }}"
+                    style="width: 65%; cursor: pointer"
+                    [src]="'data:image/jpeg;base64,' + item?.projectImage"
+                    alt=""
+                  />
+                </div>
+              </div>
+              <!-- LEFT SIDE -->
+              <!-- RIGHT SIDE -->
+              <div
+                routerLink="/tokens/token-detail/{{ item.projectId }}"
+                class="columns-container"
+              >
+                <div class="column">
+                  <div class="data-box">
+                    <span class="property">Marketcap</span>
+                    <span class="value">XY Algo</span>
+                  </div>
+                  <div class="data-box">
+                    <span class="property">Remaining Supply</span>
+                    <span class="value">X Token</span>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="data-box">
+                    <span class="property">Price</span>
+                    <span class="value">XY Algo/Token</span>
+                  </div>
+                  <div class="data-box">
+                    <span class="property">Backing</span>
+                    <span class="value">{{ item?.asset?.backing }}</span>
+                  </div>
+                </div>
+                <!-- <div class="column"> -->
+                <!-- </div>  -->
+                <!-- RIGHT SIDE -->
+              </div>
+              <div
+                routerLink="/tokens/token-detail/{{ item.projectId }}"
+                class="chart"
+              >
+                <span class="property">Price over last 7 Days</span>
+                <img
+                  src="https://cdn.pixabay.com/photo/2018/03/05/16/41/graph-3201151_960_720.png"
+                  alt=""
+                />
+              </div>
+              <!-- </div> -->
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+</div>

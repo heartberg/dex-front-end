@@ -1,0 +1,26 @@
+.header-title {
+
+    display: flex;
+    flex-direction: row;
+
+    h3 {
+        margin: 5px 0 15px 0;
+    }
+
+    span {
+        // margin-left: 150px;
+        padding-top: 5px;
+    }
+
+    .color-violet {
+        padding: 0 !important;
+    }
+}
+
+.main {
+  height: calc(100vh - 80px);
+}
+
+.wrapper-border {
+  height: calc(100vh - 100px);
+}

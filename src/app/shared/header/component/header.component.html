@@ -12,9 +12,9 @@
       <div class="navbar-section left-m" [ngClass]="{'menu-respo-opened': isMenuRespoOpened}">
         <ul [ngClass]="{'clicked': isMenuRespoOpened}">
           <ng-container *ngIf="!changeRespoNavAndProfileIcons">
-            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLink="/trade">Trade</li>
-            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLink="/launchpad">Launchpad</li>
-            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLink="/send">Send</li>
+            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLinkActive="active" routerLink="/trade">Trade</li>
+            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/tokens">Tokens</li>
+            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLinkActive="active" routerLink="/launchpad">Launchpad</li>
           </ng-container>
 <!--          <ng-container *ngIf="changeRespoNavAndProfileIcons">-->
 <!--            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLink="/profile">Profile</li>-->
@@ -30,7 +30,7 @@
     <div class="wrapper-profile">
       <div class="profile-section navbar-section">
         <ul>
-          <li routerLink="/deploy">
+          <li routerLinkActive="active" routerLink="deploy">
             Deploy
           </li>
           <li>
@@ -69,10 +69,18 @@
             </ng-container>
             <div class="dropDown" *ngIf="isProfileOpened">
               <ul class="d-flex flex-column">
-                <li routerLink="/my-deploy">My Deploys</li>
-                <li routerLink="/my-presale">My Presales</li>
-                <li routerLink="/launchpad">Entries</li>
-                <li routerLink="/track">Track</li>
+                <li routerLink="/wallet">Wallet</li>
+                <li routerLink="/send">Send</li>
+                <li routerLink="/my-deploys">My Deploys</li>
+                <li routerLink="/my-presale" style="position: relative">
+                  My Presales
+                  <span style="color: #81007F; position: absolute; top: 4px; font-size: 14px; right: 4px;">
+                    9
+                    <!-- MARKER -->
+                  </span>
+                </li>
+<!--                <li routerLink="/launchpad">Entries</li>-->
+<!--                <li routerLink="/track">Track</li>-->
                 <li (click)="disconnect()">Disconnect</li>
               </ul>
             </div>

@@ -1,0 +1,198 @@
+.avatar-section {
+  h6 {
+    margin-top: 10px;
+    font-size: 14px;
+    // &:last-child {
+    //   margin-top: 20px;
+    // }
+  }
+}
+.main {
+  height: calc(100vh - 80px);
+}
+.avatar-info {
+  margin-top: 20px;
+  div {
+    justify-content: space-between;
+    margin: 10px 0px;
+
+
+    h6 {
+      color: #81007F;
+      font-size: 16px;
+    }
+
+    span {
+      font-size: 16px;
+      text-align: end;
+    }
+  }
+}
+.avatar-progress {
+  margin-top: 30px;
+
+  h6 {
+    font-size: 14px;
+    color: #81007F;
+  }
+
+  span {
+    font-size: 14px;
+    color: #1c1c1e;
+  }
+
+  .progress-progress-bar {
+    margin-top: 10px;
+  }
+}
+.algo-calculator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+
+  .calc-title {
+    width: 45%;
+    justify-content: space-between;
+    align-items: center;
+    span {
+      &:first-child {
+        color: #81007F;
+      }
+      &:last-child {
+        color: #81007F;
+      }
+    }
+  }
+  .between {
+    margin: 15px 0px;
+    span {
+      &:first-child {
+        color: #81007F;
+      }
+      &:last-child {
+        margin-left: 8px;
+      }
+    }
+  }
+  .button {
+    max-width: 140px;
+    .btn-secondary-costum {
+      font-size: 14px;
+      padding: 6px 20px;
+    }
+  }
+  .socLinks {
+    margin-top: 15px;
+    span {
+      &:last-child {
+        margin-left: 8px;
+      }
+    }
+  }
+}
+.unscrollable-section {
+  height: calc(100vh - 100px);
+  overflow: hidden;
+
+  .unscrollable-left-section {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 150px);
+  }
+  .desc-section {
+    height: calc(100vh - 150px);
+  }
+}
+.desc-section {
+  height: 67.5%;
+  overflow-y: scroll;
+
+  h3 {
+    color: #81007F;
+  }
+  .desc {
+    margin-top: 15px;
+  }
+  .second-section {
+
+    .second-section-inside-container {
+      display: flex;
+      justify-content: space-between;
+
+      .Liquidity-container {
+
+      }
+    }
+    margin-top: 30px;
+
+    h3 {
+
+    }
+
+    h6 {
+
+    }
+
+    span {
+
+    }
+  }
+}
+.tokenDesc, .Liquidity-container {
+  h6 {
+    margin-right: 8px;
+  }
+  span {
+    color: #81007F;
+  }
+  .token-first {
+    margin-top: 15px;
+  }
+  .token-second {
+    margin-top: 15px;
+  }
+}
+.third-section {
+  margin-top: 30px;
+  h3 {
+    margin-bottom: 15px;
+  }
+  .img {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    span {
+        font-size: 14px;
+    }
+    img {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  }
+}
+.fourth-section {
+  h3 {
+    margin-bottom: 15px;
+  }
+}
+
+
+.socLinks {
+  margin-top: 10px;
+  img {
+      cursor: pointer;
+      max-width: 50px;
+      max-height: 50px;
+  }
+}
+
+.roadmap-container {
+  max-width: 100%;
+  img {
+      object-fit: cover;
+      width: 100%;
+      max-height: 300px;
+  }
+}

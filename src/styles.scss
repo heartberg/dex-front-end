@@ -45,7 +45,7 @@ html {
 h1,h2,h3,h4,h5,h6 {
   font-family: secondary;
 }
-li,a,p,span,button,input, ::placeholder {
+li,a,p,span,button,input,label ::placeholder {
   font-family: primary;
 }
 h1,h2,h3 {
@@ -73,6 +73,12 @@ input, textarea {
   font-size: 18px;
   color: #1c1c1e;
 }
+
+label {
+  margin-bottom: unset;
+  font-family: 'primary';
+}
+
 .color-violet {
   color: #81007F !important;
 }
@@ -99,6 +105,10 @@ html {
   &:hover {
     transform: scale(1.05);
   }
+
+}
+.btn-extra {
+  border-radius: 4px !important;
 }
 
 .btn-secondary-costum {
@@ -148,6 +158,14 @@ html {
 }
 
 .dark-mode {
+
+  background-color: #1c1c1e;
+
+  .card {
+    background-color: #1c1c1e;
+    border: 1px solid #81007F;
+  }
+
   .dark-mode-icon {
     color: rgba(255, 255, 255, 0.8) !important;
     background: rgba(255, 255, 255, 0.8) !important;
@@ -180,6 +198,9 @@ html {
       border-color: rgba(255, 255, 255, 0.3) !important;
       box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
     }
+  }
+  .search-btn {
+    color: rgb(255, 255, 255, 0.8) !important;
   }
 
   textarea {
@@ -267,7 +288,7 @@ html {
       }
     }
   }
-  .MAIN {
+  .main {
     background: #1c1c1e;
   }
 
@@ -369,11 +390,12 @@ html {
     color: rgba(4, 4, 5, 0.5);
   }
   &:hover {
-    border: 1px solid rgba(4, 4, 5, 0.1);
+    outline: 1px solid rgba(4, 4, 5, 0.1);
   }
+
   &:focus {
     background: rgba(4, 4, 5, 0);
-    border: 1px solid rgba(4, 4, 5, 0.3);
+    outline: 1px solid rgba(4, 4, 5, 0.3);
     box-shadow: rgb(4 4 5 / 6%) 0px 0px 0px 4px;
   }
 
@@ -458,4 +480,21 @@ textarea {
       }
     }
   }
+}
+
+.thin-gray-text {
+  font-size: 15px;
+  font-weight: 400;
+  color: #04040580;
+}
+
+.input-invalid {
+  border: rgba(255, 0, 0, 0.5) 2px solid;
+  box-shadow: rgba(255, 0, 0, 0.2) 0px 0px 0px 2px;
+  background-color: rgba(255, 0, 0, 0.02);
+}
+
+.error-msg {
+  color: rgba(255, 0, 0, 0.7);
+  font-size: 16px;
 }

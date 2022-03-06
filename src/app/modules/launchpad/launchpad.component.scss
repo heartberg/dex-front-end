@@ -1,0 +1,48 @@
+// .main {
+//   height: calc(100vh - 95px);
+// }
+.search-section {
+  position: relative;
+  input {
+    //&::placeholder {
+    //  padding-left: 25px;
+    //}
+  }
+  .search-btn {
+    position: absolute;
+    left: 12px;
+    top: 10px;
+  }
+
+  .search-btn-wallet {
+    left: 17px;
+    top: 12px;
+  }
+}
+.main {
+  overflow: hidden;
+}
+input {
+  width: 240px;
+  height: 100%;
+  padding-left: 35px;
+}
+.header {
+  margin-bottom: 10px;
+}
+.main {
+  margin-top: 15px;
+}
+.wrapper-border {
+  min-height: calc(100vh - 210px);
+}
+
+.scrollable-content {
+  overflow-y: scroll;
+}
+
+.position-search-icon {
+  position: absolute;
+  // top: 3px;
+  // left: 4px;
+}

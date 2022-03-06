@@ -564,7 +564,7 @@
   ul {
     li {
       margin-right: 0px !important;
-      padding: 7.5px 15px !important;
+      padding: 7.5px 18px !important;
       &:first-child {
         padding-top: 15px !important;
       }
@@ -573,5 +573,19 @@
       }
     }
   }
+  ul {
+    li {
+      &:hover {
+        span {
+          color: red !important;
+        }
+      }
+    }
+  }
+}
 
+
+
+.active {
+  color: black !important;
 }

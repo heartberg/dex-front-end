@@ -1,15 +1,19 @@
-import { AfterViewInit, Component, EventEmitter, OnChanges, OnInit, Output } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnChanges, OnInit, Output} from '@angular/core';
 import { Router } from "@angular/router";
 import {Observable, of} from "rxjs";
 import {AuthService} from "../../../services/authService.service";
 import {User} from "../../../models/user.model";
+import {host} from "@angular-devkit/build-angular/src/test-utils";
 
 @Component({
+
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+
 })
 export class HeaderComponent implements OnInit {
+
   public isProfileOpened = false;
   public isPopUpOpened = false;
   public isMenuRespoOpened = false;
@@ -27,7 +31,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private _eref: ElementRef
   ) { }
 
   ngOnInit(): any {
@@ -108,4 +113,9 @@ export class HeaderComponent implements OnInit {
     this.isLoggedIn = false;
     localStorage.removeItem('wallet');
   }
+
+  closeDropDown() {
+    console.log('clicked outside');
+  }
+
 }

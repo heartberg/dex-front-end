@@ -7,11 +7,20 @@
   background: rgba(28, 28, 30, 0.4);
   z-index: 9999;
 
+  .launch-detail-version {
+    display: flex;
+    justify-content: space-between;
+
+    h3 {
+      font-size: 18px;
+    }
+  }
+
   .wrapper {
     padding: 45px !important;
     border-radius: 24px;
     background: #fff;
-    border: 1px solid #81007F;
+    border: 1px solid #81007f;
     width: fit-content;
     left: 50%;
     top: 50%;
@@ -56,7 +65,7 @@
         cursor: pointer;
 
         &:hover {
-          border: 1px solid #81007F;
+          border: 1px solid #81007f;
           transform: scale(1.05);
         }
         img {
@@ -85,11 +94,97 @@
     }
   }
 }
+// isTrade Styles
+
+.paragraph {
+  margin-top: 40px;
+  max-width: 400px;
+
+  p {
+    &:last-child {
+      margin-top: 20px;
+    }
+  }
+}
+
+.data-box {
+  margin: 2px 0;
+  display: flex;
+  flex-direction: row;
+
+  .property {
+    color: #81007f;
+    margin-bottom: 5px;
+  }
+  .value {
+    margin-left: 4px;
+  }
+}
+
+.isTrade-buttons {
+  align-items: center;
+  justify-content: flex-end;
+
+  button {
+    margin: 2px 5px;
+  }
+}
+// isTrade Styles
+
+// isRestart Styles
+
+// .inputs-container {
+// margin: 20px 0;
+// }
+
+.input-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  input {
+    max-width: 200px;
+    margin: 5px 0 5px 15px;
+    border: 1px solid #81007f8a;
+    background-color: rgba(128, 128, 128, 0.09);
+    border-radius: 5px;
+    height: 28px;
+    outline: none;
+    padding: 0 8px;
+
+    &:focus {
+      border: 1px solid rgba($color: #81007fd8, $alpha: 0.7);
+      box-shadow: rgba($color: #81007fd8, $alpha: 0.7) 0px 0px 3px;
+      background-color: transparent;
+    }
+  }
+}
+
+// .isBorrow-version {
+  .borrow-active-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 45px;
+
+  .input-box {
+    margin: 10px 0;
+    input {
+      max-width: 100%;
+    }
+  }
+}
+
+.isBacking-version {
+}
+
+// isRestart Styles
+
 .wallet-side {
   img {
     width: 100%;
   }
 }
+.deploy-width {
+  width: 340px;
+}
 @media (max-width: 580px) {
-
 }

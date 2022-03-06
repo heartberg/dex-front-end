@@ -1,0 +1,28 @@
+.card {
+    padding: 10px 20px !important;
+    margin: 0 0 20px 0;
+    .date {
+      align-items: center;
+      span {
+        margin-left: 10px;
+      }
+    }
+    h6 {
+      padding: 10px 0px;
+    }
+    .progress-bar-costum {
+      span {
+        &:last-child {
+          margin-left: 10px;
+        }
+      }
+      .progress-progress-bar {
+        margin-bottom: 0px;
+      }
+    }
+    .progress-bar-right,
+    .progress-bar-left {
+      align-items: center;
+      display: flex;
+    }
+  }
