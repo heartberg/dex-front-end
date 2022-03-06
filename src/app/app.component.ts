@@ -14,4 +14,8 @@ export class AppComponent {
     console.log('saba');
     console.log(2223);
   }
+
+  log() {
+    console.log(1)
+  }
 }
