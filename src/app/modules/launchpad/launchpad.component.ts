@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import {DeployedApp} from "../../blockchain/deployer_application";
 
 @Component({
   selector: 'app-launchpad',
@@ -65,7 +66,7 @@ export class LaunchpadComponent implements OnInit {
 
   constructor(
     private projectReqService: projectReqService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {

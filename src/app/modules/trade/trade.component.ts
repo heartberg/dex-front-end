@@ -25,28 +25,6 @@ export class TradeComponent implements OnInit {
   tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
 
   assetArr: AssetViewModel[] = [];
-  dummyArr: AssetViewModel[] = [
-    {
-      assetId: 5,
-      smartContractId: 10,
-      smartContractAddress: 'string',
-      name: 'Algo',
-      unitName: 'string',
-      totalSupply: 45,
-      url: 'string',
-      maxBuy: 3,
-      tradingStart: 5,
-      risingPriceFloor: 2,
-      backing: 5,
-      buyBurn: 3,
-      sellBurn: 6,
-      sendBurn: 8,
-      additionalFee: 6,
-      additionalFeeWallet: 'string',
-      image: 'string',
-      deployerWallet: 'string',
-    },
-  ];
 
   selectedOptionAname: string = '';
   selectedOptionBname: string = '';
