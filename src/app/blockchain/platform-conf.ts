@@ -1,4 +1,3 @@
-import { AssetView } from "../models/assetView.model";
 
 type AlgodConf = {
     server: string

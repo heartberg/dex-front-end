@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import {platform_settings as ps} from './platform-conf'
-import algosdk, {LogicSigAccount} from 'algosdk'  
-import { AssetView } from "../models/assetView.model";
+import algosdk, {LogicSigAccount} from 'algosdk'
 import { Asset, AssetHolding } from 'algosdk/dist/types/src/client/v2/algod/models/types'
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
 
@@ -49,14 +48,14 @@ export async function isOptedIntoApp(address: string, app_id: number): Promise<b
     const client = getAlgodClient()
     const result = await client.accountInformation(address).do()
     const optedIn = result['apps-local-state'].find((r: { id: number; })=>{ return r.id == app_id })
-    return optedIn !== undefined 
+    return optedIn !== undefined
 }
 
 export async function isOptedIntoAsset(address: string, idx: number): Promise<boolean> {
     const client = getAlgodClient()
     const result = await client.accountInformation(address).do()
     const optedIn = result['assets'].find((r: { [x: string]: number; })=>{ return r['asset-id'] == idx })
-    return optedIn !== undefined 
+    return optedIn !== undefined
 }
 
 export async function getHolding(addr: string): Promise<Holding[] | undefined> {
@@ -72,7 +71,7 @@ export async function getHolding(addr: string): Promise<Holding[] | undefined> {
 
     const np = []
     // TODO: load deployed assets from backend here
-    const deployedAssets: AssetView[] = []
+    const deployedAssets: any[] = []
     for(let aidx in acct['assets']) {
         // TODO: filter for assetIds in the deployed assets
         const ass: AssetHolding = acct['assets'][aidx]
@@ -101,7 +100,7 @@ export async function getGlobalState(contractId: number){
 export async function readLocalState(addr: string, index: number){
     const client: algosdk.Algodv2 = getAlgodClient();
     let accountInfoResponse = await client.accountInformation(addr).do();
-    for (let i = 0; i < accountInfoResponse['apps-local-state'].length; i++) { 
+    for (let i = 0; i < accountInfoResponse['apps-local-state'].length; i++) {
         if (accountInfoResponse['apps-local-state'][i].id == index) {
             return accountInfoResponse['apps-local-state'][i]
         }
@@ -145,12 +144,12 @@ export async function sendWait(signed: any[]): Promise<any> {
         const result = await waitForConfirmation(client, txId, 3)
         //showNetworkSuccess(txId)
 
-        return result 
-    } catch (error) { 
-        //showNetworkError("", error) 
+        return result
+    } catch (error) {
+        //showNetworkError("", error)
     }
 
-    return undefined 
+    return undefined
 }
 
 
@@ -169,7 +168,7 @@ export async function waitForConfirmation(algodclient: algosdk.Algodv2 | null, t
 
     const startround = status['last-round'] + 1;
     let currentround = startround;
-  
+
     /* eslint-disable no-await-in-loop */
     while (currentround < startround + timeout) {
       const pending = await algodclient
@@ -177,10 +176,10 @@ export async function waitForConfirmation(algodclient: algosdk.Algodv2 | null, t
         .do();
 
       if (pending !== undefined) {
-        if ( pending['confirmed-round'] !== null && pending['confirmed-round'] > 0) 
+        if ( pending['confirmed-round'] !== null && pending['confirmed-round'] > 0)
           return pending;
-  
-        if ( pending['pool-error'] != null && pending['pool-error'].length > 0) 
+
+        if ( pending['pool-error'] != null && pending['pool-error'].length > 0)
           throw new Error( `Transaction Rejected pool error${pending['pool-error']}`);
       }
 
