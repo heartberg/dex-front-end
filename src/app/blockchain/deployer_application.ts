@@ -20,8 +20,8 @@ import { sign } from "crypto";
 import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
 import { allowedNodeEnvironmentFlags } from "process";
 import {HomeComponent} from "../modules/home/home.component";
-import {MapperService} from "../services/mapper.service";
-import {ProjectViewModel} from "../models/projectViewModel";
+// import {MapperService} from "../services/mapper.service";
+// import {ProjectViewModel} from "../models/projectViewModel";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -50,7 +50,7 @@ export class DeployedApp {
     // this is
     // TODO: check mapping of freshly deployed app with deployed app settings, maybe split it up, create mapper functions somewhere
     constructor(
-      private mapper: MapperService,
+      // private mapper: MapperService,
       conf: DeployedAppSettings,
     ){
         this.settings = conf;
