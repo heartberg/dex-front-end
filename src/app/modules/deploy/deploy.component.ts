@@ -1,4 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {DeployedApp} from "../../blockchain/deployer_application";
+import {WalletsConnectService} from "../../services/wallets-connect.service";
 
 @Component({
   selector: 'app-deploy',
@@ -17,6 +19,7 @@ export class DeployComponent implements OnInit {
   ngOnInit(): void {
 
   }
+
   @ViewChild('checkbox', { static: false})
   // @ts-ignore
   private checkbox: ElementRef;

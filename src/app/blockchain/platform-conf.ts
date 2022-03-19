@@ -85,7 +85,7 @@ type PlatformConf = {
 };
 
 
-const platform_settings = require("../../config.json") as PlatformConf;
+const platform_settings = require("../../environments/config.json") as PlatformConf;
 
 
 export { platform_settings , DeployedAppSettings}
