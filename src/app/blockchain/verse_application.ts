@@ -221,9 +221,10 @@ export class VerseApp {
         
         const args = [Method.Claim]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const accounts = [encodeParam(ps.platform.burn_addr)]
         const apps = [encodeParam(ps.platform.verse_app_id)]
 
-        const claim = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, undefined))
+        const claim = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, accounts))
         const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.staking_addr, 3000))
         algosdk.assignGroupID([pay, claim])
         const [signedPay, signedClaim] = await wallet.signTxn([pay, claim])
