@@ -77,7 +77,7 @@ export class DeployedApp {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
-        const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, 10_000))
+        const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, 201_000))
 
         const args = [Method.Create, encodeParam(this.settings.name), encodeParam(this.settings.unit), encodeParam(this.settings.decimals), encodeParam(this.settings.url)]
         const mint = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, undefined, undefined))
@@ -94,6 +94,25 @@ export class DeployedApp {
         return result
     }
 
+    async payAndOptInBurn(wallet: Wallet): Promise<boolean> {
+        const suggested = await getSuggested(10)
+        const addr = wallet.getDefaultAccount()
+
+        const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.burn_addr, 101_000))
+
+        const optIn = new Transaction(get_asa_optin_txn(suggested, ps.platform.burn_addr, this.settings.asset_id))
+
+        const grouped = [pay, optIn]
+
+        algosdk.assignGroupID(grouped)
+
+        const [signedPay] = await wallet.signTxn([pay])
+        const [signedOptIn] = await algosdk.signLogicSigTransactionObject(optIn, ps.platform.burn_lsig)
+        const result = await sendWait([signedPay, signedOptIn])
+
+        return result
+    }
+
     async setupNoPresale(wallet: Wallet): Promise<boolean> {
         const suggestedExtraFee = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
@@ -101,22 +120,19 @@ export class DeployedApp {
 
         const args = [Method.Setup, encodeParam(this.settings.initial_token_liq), encodeParam(this.settings.trading_start)]
         const assets = [encodeParam(this.settings.asset_id)]
-        const accounts = [encodeParam(ps.platform.fee_addr)]
+        const accounts = [encodeParam(ps.platform.fee_addr), encodeParam(ps.platform.burn_addr)]
         const setup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, this.settings.contract_id, args, undefined, assets, accounts))
 
         const suggested = await getSuggested(10)
         const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, this.settings.initial_algo_liq + this.settings.initial_algo_liq_fee))
 
         const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.asset_id))
-        const payBurn = new Transaction(get_pay_txn(suggested, addr, ps.platform.burn_addr, 10_000))
-        const burnOptin = new Transaction(get_asa_optin_txn(suggested, ps.platform.burn_addr, this.settings.asset_id))
 
-        const grouped = [payBurn, burnOptin, creatorOptin, pay, setup]
+        const grouped = [creatorOptin, pay, setup]
         algosdk.assignGroupID(grouped)
 
-        const [signedPayBurn, signedCreatorOptin, signedPay, signedSetup] = await wallet.signTxn([payBurn, creatorOptin, pay, setup])
-        const signedBurnOptin = signLogicSigTransaction(burnOptin, ps.platform.burn_lsig)
-        const result = await sendWait([signedPayBurn, signedBurnOptin, signedCreatorOptin, signedPay, signedSetup])
+        const [signedCreatorOptin, signedPay, signedSetup] = await wallet.signTxn([creatorOptin, pay, setup])
+        const result = await sendWait([signedCreatorOptin, signedPay, signedSetup])
 
         return result
     }
@@ -131,22 +147,20 @@ export class DeployedApp {
         encodeParam(this.settings.presale_settings?.walletcap), encodeParam(this.settings.presale_settings?.to_lp), encodeParam(this.settings.presale_settings?.presale_token_amount)]
 
         const assets = [encodeParam(this.settings.asset_id)]
-        const accounts = [encodeParam(ps.platform.fee_addr)]
+        const accounts = [encodeParam(ps.platform.fee_addr), encodeParam(ps.platform.burn_addr)]
         const setup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, this.settings.contract_id, args, undefined, assets, accounts))
 
         const suggested = await getSuggested(10)
         const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, this.settings.initial_algo_liq + this.settings.initial_algo_liq_fee))
 
         const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.asset_id))
-        const payBurn = new Transaction(get_pay_txn(suggested, addr, ps.platform.burn_addr, 10_000))
-        const burnOptin = new Transaction(get_asa_optin_txn(suggested, ps.platform.burn_addr, this.settings.asset_id))
 
-        const grouped = [payBurn, burnOptin, creatorOptin, pay, setup]
+        const grouped = [creatorOptin, pay, setup]
         algosdk.assignGroupID(grouped)
 
-        const [signedPayBurn, signedCreatorOptin, signedPay, signedSetup] = await wallet.signTxn([payBurn, creatorOptin, pay, setup])
-        const signedBurnOptin = signLogicSigTransaction(burnOptin, ps.platform.burn_lsig)
-        const result = await sendWait([signedPayBurn, signedBurnOptin, signedCreatorOptin, signedPay, signedSetup])
+        const [signedCreatorOptin, signedPay, signedSetup] = await wallet.signTxn([creatorOptin, pay, setup])
+
+        const result = await sendWait([signedCreatorOptin, signedPay, signedSetup])
 
         return result
     }
@@ -204,20 +218,36 @@ export class DeployedApp {
 
         const args = [Method.Resetup, encodeParam(tradingStart), encodeParam(tokenLiq)]
 
-        const claim = new Transaction(get_app_call_txn(suggestedExtraFee, addr, this.settings.contract_id, args, undefined, undefined, undefined))
+        const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, this.settings.contract_id, args, undefined, undefined, undefined))
 
         if(algoLiq > this.settings.initial_algo_liq) {
             const suggested = await getSuggested(10)
             const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, algoLiq - this.settings.initial_algo_liq))
-            algosdk.assignGroupID([claim, pay])
-            const [signedClaim, signedPay] = await wallet.signTxn([claim, pay])
-            const result = await sendWait([signedClaim, signedPay])
+            algosdk.assignGroupID([resetup, pay])
+            const [signedResetup, signedPay] = await wallet.signTxn([resetup, pay])
+            const result = await sendWait([signedResetup, signedPay])
             return result
         } else {
-            const signedClaim = await wallet.signTxn([claim])
-            const result = await sendWait([signedClaim])
+            const signedResetup = await wallet.signTxn([resetup])
+            const result = await sendWait([signedResetup])
             return result
         }
+    }
+
+    async resetupPresale(wallet: Wallet, softCap: number, hardCap: number, presaleStart: number, presaleEnd: number, walletCap: number, 
+        toLiq: number, tradingStart: number, presaleTokenAmount: number): Promise<boolean> {
+            const suggestedExtraFee = await getSuggested(10)
+            suggestedExtraFee.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+            const addr = wallet.getDefaultAccount()
+    
+            const args = [Method.Resetup, encodeParam(softCap), encodeParam(hardCap), encodeParam(presaleStart), encodeParam(presaleEnd), encodeParam(walletCap),
+                encodeParam(toLiq), encodeParam(tradingStart), encodeParam(presaleTokenAmount)]
+            const assets = [this.settings.asset_id]
+            const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, this.settings.contract_id, args, undefined, assets, undefined))
+    
+            const signedResetup = await wallet.signTxn([resetup])
+            const result = await sendWait([signedResetup])
+            return result
     }
 
     async optIn(wallet: Wallet): Promise<boolean> {
@@ -261,22 +291,23 @@ export class DeployedApp {
     // trade page
     async buy(wallet: Wallet , algoAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
 
         const args = [Method.Buy, encodeParam(slippage), encodeParam(wantedReturn)]
-        const accounts = [encodeParam(ps.platform.burn_addr)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.fee_addr), encodeParam(ps.platform.verse_app_addr)]
+        const assets = [encodeParam(this.settings.asset_id), encodeParam(ps.platform.verse_asset_id)]
+        const apps = [encodeParam(ps.platform.verse_app_id)]
 
-        const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
-        const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.verse_app_addr, algoAmount))
+        const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
+        const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, algoAmount))
 
-        const grouped = [buy, pay]
+        const grouped = [pay, buy]
 
         algosdk.assignGroupID(grouped)
 
-        const [signedBuy, signedPay] = await wallet.signTxn([buy, pay])
-        const result = await sendWait([signedBuy, signedPay])
+        const [signedPay, signedBuy] = await wallet.signTxn([pay, buy])
+        const result = await sendWait([signedPay, signedBuy])
 
         return result
     }
@@ -287,11 +318,11 @@ export class DeployedApp {
         const addr = wallet.getDefaultAccount()
 
         const args = [Method.Sell, encodeParam(tokenAmount), encodeParam(slippage), encodeParam(wantedReturn)]
-        const accounts = [encodeParam(ps.platform.burn_addr)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.fee_addr), encodeParam(ps.platform.verse_app_addr)]
+        const assets = [encodeParam(this.settings.asset_id)]
 
-        const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
-        const [signed] = await wallet.signTxn([buy])
+        const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const [signed] = await wallet.signTxn([sell])
         const result = await sendWait([signed])
 
         return result
@@ -306,7 +337,7 @@ export class DeployedApp {
         const args = [Method.Transfer, encodeParam(tokenAmount)]
 
         const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(to)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const assets = [encodeParam(this.settings.asset_id)]
 
         const send = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
         const [signed] = await wallet.signTxn([send])
@@ -321,11 +352,9 @@ export class DeployedApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
 
-        const args = []
-        args.push(Method.GetBacking)
-        args.push(encodeParam(tokenAmount))
+        const args = [Method.GetBacking, encodeParam(tokenAmount)]
         const accounts = [encodeParam(ps.platform.burn_addr)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const assets = [encodeParam(this.settings.asset_id)]
 
         const backing = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
         const [signed] = await wallet.signTxn([backing])
@@ -339,10 +368,8 @@ export class DeployedApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
 
-        const args = []
-        args.push(Method.Borrow)
-        args.push(encodeParam(tokenAmount))
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const args = [Method.Borrow, encodeParam(tokenAmount)]
+        const assets = [encodeParam(this.settings.asset_id)]
 
         const borrow = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
         const [signed] = await wallet.signTxn([borrow])
@@ -353,15 +380,14 @@ export class DeployedApp {
 
     async repay(wallet: Wallet , algoAmount: bigint): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
 
-        const args = []
-        args.push(Method.Repay)
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const args = [Method.Repay]
+        const assets = [encodeParam(this.settings.asset_id)]
 
         const repay = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
-        const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.verse_app_addr, algoAmount))
+        const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, algoAmount))
 
         const grouped = [repay, pay]
 

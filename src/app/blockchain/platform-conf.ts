@@ -1,3 +1,5 @@
+import {LogicSig} from 'algosdk/dist/types/src/logicsig';
+
 
 type AlgodConf = {
     server: string
@@ -29,7 +31,7 @@ type DevConf = {
 
 type Platform = {
     burn_addr: string,
-    burn_lsig: any,
+    burn_lsig: LogicSig,
     fee_addr: string,
     staking_addr: string,
     staking_id: number,

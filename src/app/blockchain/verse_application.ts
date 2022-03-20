@@ -64,14 +64,11 @@ export class VerseApp {
 
     async buy(wallet: Wallet , algoAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
         
-        const args = []
-        args.push(Method.Buy)
-        args.push(encodeParam(slippage))
-        args.push(encodeParam(wantedReturn))
-        const accounts = [encodeParam(ps.platform.burn_addr)]
+        const args = [Method.Buy, encodeParam(slippage), encodeParam(wantedReturn)]
+        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.fee_addr)]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
 
         const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
@@ -89,19 +86,15 @@ export class VerseApp {
 
     async sell(wallet: Wallet , tokenAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
         
-        const args = []
-        args.push(Method.Sell)
-        args.push(encodeParam(tokenAmount))
-        args.push(encodeParam(slippage))
-        args.push(encodeParam(wantedReturn))
-        const accounts = [encodeParam(ps.platform.burn_addr)]
+        const args = [Method.Sell, encodeParam(tokenAmount), encodeParam(slippage), encodeParam(wantedReturn)]
+        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.fee_addr)]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
 
-        const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
-        const [signed] = await wallet.signTxn([buy])
+        const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const [signed] = await wallet.signTxn([sell])
         const result = await sendWait([signed])
 
         return result
@@ -113,9 +106,7 @@ export class VerseApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
         
-        const args = []
-        args.push(Method.Transfer)
-        args.push(encodeParam(tokenAmount))
+        const args = [Method.Transfer, encodeParam(tokenAmount)]
         const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(to)]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
 
@@ -132,9 +123,7 @@ export class VerseApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
         
-        const args = []
-        args.push(Method.GetBacking)
-        args.push(encodeParam(tokenAmount))
+        const args = [Method.GetBacking, encodeParam(tokenAmount)]
         const accounts = [encodeParam(ps.platform.burn_addr)]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
 
@@ -151,9 +140,7 @@ export class VerseApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
         
-        const args = []
-        args.push(Method.Borrow)
-        args.push(encodeParam(tokenAmount))
+        const args = [Method.Borrow, encodeParam(tokenAmount)]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
 
         const borrow = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
@@ -168,8 +155,7 @@ export class VerseApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
 
-        const args = []
-        args.push(Method.Repay)
+        const args = [Method.Repay]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
 
         const repay = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
@@ -197,7 +183,8 @@ export class VerseApp {
         const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
         
         suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
-        const stake = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, undefined, assets, accounts))
+        const stakingArgs = [Method.Stake, encodeParam(amount)]
+        const stake = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, stakingArgs, undefined, undefined, undefined))
 
         algosdk.assignGroupID([transfer, stake])
 
@@ -209,35 +196,39 @@ export class VerseApp {
 
     async withdraw(wallet: Wallet, amount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
         
         const args = [Method.Withdraw, encodeParam(amount)]
-        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.staking_addr)]
+        const accounts = [encodeParam(ps.platform.burn_addr)]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
         const apps = [encodeParam(ps.platform.verse_app_id)]
 
         const withdraw = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, accounts))
 
-        const [signedWithdraw] = await wallet.signTxn([withdraw])
-        const result = await sendWait([signedWithdraw])
+        const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.staking_addr, 3000))
+
+        algosdk.assignGroupID([pay, withdraw])
+        const [signedPay, signedWithdraw] = await wallet.signTxn([pay, withdraw])
+        const result = await sendWait([signedPay, signedWithdraw])
 
         return result
     }
 
     async claim(wallet: Wallet): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
         
         const args = [Method.Claim]
         const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const accounts = [encodeParam(ps.platform.burn_addr)]
         const apps = [encodeParam(ps.platform.verse_app_id)]
 
-        const claim = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, undefined))
-
-        const [signedClaim] = await wallet.signTxn([claim])
-        const result = await sendWait([signedClaim])
+        const claim = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, accounts))
+        const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.staking_addr, 3000))
+        algosdk.assignGroupID([pay, claim])
+        const [signedPay, signedClaim] = await wallet.signTxn([pay, claim])
+        const result = await sendWait([signedPay, signedClaim])
 
         return result
     }
@@ -246,6 +237,14 @@ export class VerseApp {
         const addr = wallet.getDefaultAccount()
         const stakingGlobalState = await getGlobalState(ps.platform.staking_id)
         const localState = await readLocalState(addr, ps.platform.staking_id)
+        console.log("Users local state")
+        for (let n = 0; n < localState[`key-value`].length; n++) {
+            console.log(localState[`key-value`][n]);
+        }
+        console.log("Apps global state")
+        for (let n = 0; n < stakingGlobalState.length; n++) {
+            console.log(stakingGlobalState[n]);
+        }
         const claimableAmount = 0
         return claimableAmount
     }

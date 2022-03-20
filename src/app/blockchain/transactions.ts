@@ -79,7 +79,7 @@ export function get_create_deploy_app_txn(suggestedParams, addr, args, apps, ass
         from:addr,
         type:'appl',
         appGlobalByteSlices: 2,
-        appGlobalInts: 18,
+        appGlobalInts: 27,
         appLocalByteSlices: 0,
         appLocalInts: 3,
         appApprovalProgram: approval,
