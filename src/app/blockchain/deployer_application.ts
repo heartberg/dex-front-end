@@ -107,6 +107,7 @@ export class DeployedApp {
         algosdk.assignGroupID(grouped)
 
         const [signedPay] = await wallet.signTxn([pay])
+      // @ts-ignore
         const [signedOptIn] = await algosdk.signLogicSigTransactionObject(optIn, ps.platform.burn_lsig)
         const result = await sendWait([signedPay, signedOptIn])
 
@@ -234,17 +235,17 @@ export class DeployedApp {
         }
     }
 
-    async resetupPresale(wallet: Wallet, softCap: number, hardCap: number, presaleStart: number, presaleEnd: number, walletCap: number, 
+    async resetupPresale(wallet: Wallet, softCap: number, hardCap: number, presaleStart: number, presaleEnd: number, walletCap: number,
         toLiq: number, tradingStart: number, presaleTokenAmount: number): Promise<boolean> {
             const suggestedExtraFee = await getSuggested(10)
             suggestedExtraFee.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
             const addr = wallet.getDefaultAccount()
-    
+
             const args = [Method.Resetup, encodeParam(softCap), encodeParam(hardCap), encodeParam(presaleStart), encodeParam(presaleEnd), encodeParam(walletCap),
                 encodeParam(toLiq), encodeParam(tradingStart), encodeParam(presaleTokenAmount)]
             const assets = [this.settings.asset_id]
             const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, this.settings.contract_id, args, undefined, assets, undefined))
-    
+
             const signedResetup = await wallet.signTxn([resetup])
             const result = await sendWait([signedResetup])
             return result
