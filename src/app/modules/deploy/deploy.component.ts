@@ -1,6 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {DeployedApp} from "../../blockchain/deployer_application";
+// import {DeployedApp} from "../../blockchain/deployer_application";
 import {WalletsConnectService} from "../../services/wallets-connect.service";
+import {DeployedApp} from "../../blockchain/deployer_application";
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-deploy',
@@ -14,10 +16,15 @@ export class DeployComponent implements OnInit {
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
 
-  constructor() { }
+  walletPS = this.walletProviderService;
+
+  constructor(
+    private walletProviderService: WalletsConnectService,
+    private deployerBC: DeployedApp
+  ) { }
 
   ngOnInit(): void {
-
+    console.log(this.walletPS.walletObj);
   }
 
   @ViewChild('checkbox', { static: false})
@@ -60,6 +67,23 @@ export class DeployComponent implements OnInit {
     } else {
       this.extraFieldsArr.pop()
     }
+  }
+
+  onSubmit() {
+    // of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
+    //   res.then(
+    //     (res) => {
+    //       console.log(res);
+    //     }
+    //   )
+    // })
+
+    this.deployerBC.deploy(this.walletPS.walletObj).then(
+      (res) => {
+        console.log(res);
+      }
+    )
+
   }
 
   activatePurposeSection() {

@@ -29,12 +29,28 @@ export class WalletsConnectService {
   permissionCallback?: PermissionCallback;
   walletConn: MyAlgo;
   returnedObj: any = {};
+  walletObj: Wallet;
 
   constructor() {
     this.accounts = [];
     this.defaultAccount = 0;
     this.network = 's'
     this.walletConn = new MyAlgo();
+    this.walletObj = {
+      accounts: this.accounts,
+      defaultAccount: this.defaultAccount,
+      network: this.network,
+      permissionCallback: this.permissionCallback,
+      displayName: this.displayName,
+      img: this.img,
+      connect: this.connectToMyAlgo,
+      isConnected: this.isConnected,
+      disconnect: this.disconnect,
+      getDefaultAccount: this.getDefaultAccount,
+      signTxn: this.signTxn,
+      signBytes: this.signBytes,
+      signTeal: this.signTeal
+    }
   }
   // algo
   public myAlgoAddress: any | undefined;

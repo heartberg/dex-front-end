@@ -20,6 +20,7 @@ import { sign } from "crypto";
 import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
 import { allowedNodeEnvironmentFlags } from "process";
 import {HomeComponent} from "../modules/home/home.component";
+import { Injectable } from "@angular/core";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -41,16 +42,19 @@ export enum Method {
     ClaimPresale = "Y2xhaW1fcHJlc2FsZQ=="
 }
 
+@Injectable({
+  providedIn: 'root'
+})
 
 export class DeployedApp {
 
     settings: DeployedAppSettings;
     // this is
     // TODO: check mapping of freshly deployed app with deployed app settings, maybe split it up, create mapper functions somewhere
+    conf!: DeployedAppSettings
     constructor(
-      conf: DeployedAppSettings,
     ){
-        this.settings = conf;
+        this.settings = this.conf;
     }
 
     async deploy(wallet: Wallet) {
