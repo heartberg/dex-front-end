@@ -1,19 +1,23 @@
 {
     "domain": "Vexpad",
     "algod":{
-        "server":"https://testnet.algoexplorerapi.io",
-        "port":0,
-        "token":"",
+        "server":"https://testnet-algorand.api.purestake.io/ps2",
+        "port":"",
+        "token":{
+          "X-API-Key": "Wk5uOr4VRB8d4zE4LYuRM7FSJKqH3814K38EEZe5"
+        },
         "network": "TestNet"
     },
     "indexer": {
-        "server":"https://testnet.algoexplorerapi.io/idx2",
-        "port":0,
-        "token":""
+        "server":"https://testnet-algorand.api.purestake.io/idx2",
+        "port":"",
+        "token":{
+          "X-API-Key": "Wk5uOr4VRB8d4zE4LYuRM7FSJKqH3814K38EEZe5"
+        }
     },
     "ipfs":{
         "display":"https://cloudflare-ipfs.com/ipfs/",
-        "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnaXRodWJ8NTIwMjM2IiwiaXNzIjoibmZ0LXN0b3JhZ2UiLCJpYXQiOjE2MTc5MTEzNTMzOTQsIm5hbWUiOiJkZWZhdWx0In0.3Hkh9IHXK6OgmXBUsCK12ca0Iit9-dJgqdDtKcQiYZQ" 
+        "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnaXRodWJ8NTIwMjM2IiwiaXNzIjoibmZ0LXN0b3JhZ2UiLCJpYXQiOjE2MTc5MTEzNTMzOTQsIm5hbWUiOiJkZWZhdWx0In0.3Hkh9IHXK6OgmXBUsCK12ca0Iit9-dJgqdDtKcQiYZQ"
     },
     "explorer":"algoscan.app",
     "platform": {
@@ -29,7 +33,7 @@
         "approval":"deployer_token_approval.teal",
         "clear":"deployer_token_clear.teal"
     },
-    "dev":{ 
+    "dev":{
         "debug_txns":false,
         "accounts":{ }
     }
