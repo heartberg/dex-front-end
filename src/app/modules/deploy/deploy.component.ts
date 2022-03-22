@@ -4,6 +4,7 @@ import {WalletsConnectService} from "../../services/wallets-connect.service";
 import {DeployedApp} from "../../blockchain/deployer_application";
 import { of } from 'rxjs';
 
+
 @Component({
   selector: 'app-deploy',
   templateUrl: './deploy.component.html',
@@ -94,19 +95,25 @@ export class DeployComponent implements OnInit {
   }
 
   onSubmit() {
-    // of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
-    //   res.then(
-    //     (res) => {
-    //       console.log(res);
-    //     }
-    //   )
-    // })
+    of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
+      res.then(
+        (res) => {
+          console.log(res);
+        }
+      )
+    })
 
-    this.deployerBC.deploy(this.walletPS.walletObj).then(
-      (res) => {
-        console.log(res);
-      }
-    )
+    // this.deployerBC.deploy(this.walletPS.walletObj).then(
+    //   (res) => {
+    //     console.log(res);
+    //   }
+    // )
+
+    // this.deployerBC.setupWithPresale(this.walletPS.walletObj).then(
+    //   (res) => {
+    //     console.log(res);
+    //   }
+    // )
 
   }
 
