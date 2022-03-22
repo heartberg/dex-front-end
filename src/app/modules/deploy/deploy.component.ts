@@ -25,6 +25,30 @@ export class DeployComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.walletPS.walletObj);
+    this.deployerBC.settings = {
+      creator: 'saba',
+      // @ts-ignore
+      total_supply: 9007199254740991n,
+      buy_burn: 210,
+      sell_burn: 123,
+      transfer_burn: 123,
+      to_lp: 239,
+      to_backing: 20,
+      max_buy: 20,
+      name: 'saeee',
+      unit: 'dsfm',
+      decimals: 2.4,
+      url: '',
+      trading_start: 23405,
+      initial_token_liq: 23405,
+      initial_algo_liq: 23405,
+      initial_algo_liq_fee: 23405,
+      contract_id: 2,
+      contract_address: 'sjkjd',
+      asset_id: 234,
+      // @ts-ignore
+      presale_settings: {}
+    }
   }
 
   @ViewChild('checkbox', { static: false})
