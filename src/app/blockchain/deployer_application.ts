@@ -21,6 +21,7 @@ import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/sugge
 import { allowedNodeEnvironmentFlags } from "process";
 import {HomeComponent} from "../modules/home/home.component";
 import { Injectable } from "@angular/core";
+import {WalletsConnectService} from "../services/wallets-connect.service";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -53,6 +54,7 @@ export class DeployedApp {
     // TODO: check mapping of freshly deployed app with deployed app settings, maybe split it up, create mapper functions somewhere
     conf!: DeployedAppSettings
     constructor(
+      private wallet: WalletsConnectService
     ){
         this.settings = this.conf;
     }

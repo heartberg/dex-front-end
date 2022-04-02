@@ -92,46 +92,65 @@ export class PopUpComponent implements OnInit {
     this.isClosed.emit(false);
   }
 
+  // async setelectWalletConnect(value: string) {
+  //   if (value === 'MyAlgoWallet') {
+  //     await of(this._walletsConnectService.connectToMyAlgo()).toPromise();
+  //     let wallet = localStorage.getItem('wallet');
+  //     if (
+  //       this._walletsConnectService.myAlgoAddress &&
+  //       this._walletsConnectService.myAlgoName !== undefined
+  //     ) {
+  //       this.authService
+  //         .createUser(
+  //           // @ts-ignore
+  //           {
+  //             wallet: wallet,
+  //             name: 'Name',
+  //             verified: false,
+  //             bio: 'Nothing yet...',
+  //             profileImage: '',
+  //             banner: '',
+  //             featuredImage: '',
+  //             customUrl: '',
+  //             twitter: '',
+  //             instagram: '',
+  //             website: '',
+  //           }
+  //         )
+  //         .subscribe(
+  //           (user: any) => {
+  //             console.log(user);
+  //             this.isConnectedToWallet.emit(false);
+  //             this.logInValue.emit(wallet);
+  //           },
+  //           (error) => {
+  //             console.log('error', error);
+  //             this.logInValue.emit(wallet);
+  //             this.isConnectedToWallet.emit(false);
+  //           }
+  //         );
+  //     }
+  //   }
+  // }
+
+
   async setelectWalletConnect(value: string) {
     if (value === 'MyAlgoWallet') {
       await of(this._walletsConnectService.connectToMyAlgo()).toPromise();
-      let wallet = localStorage.getItem('wallet');
-      if (
-        this._walletsConnectService.myAlgoAddress &&
-        this._walletsConnectService.myAlgoName !== undefined
-      ) {
-        this.authService
-          .createUser(
-            // @ts-ignore
-            {
-              wallet: wallet,
-              name: 'Name',
-              verified: false,
-              bio: 'Nothing yet...',
-              profileImage: '',
-              banner: '',
-              featuredImage: '',
-              customUrl: '',
-              twitter: '',
-              instagram: '',
-              website: '',
-            }
-          )
-          .subscribe(
-            (user: any) => {
-              console.log(user);
-              this.isConnectedToWallet.emit(false);
-              this.logInValue.emit(wallet);
-            },
-            (error) => {
-              console.log('error', error);
-              this.logInValue.emit(wallet);
-              this.isConnectedToWallet.emit(false);
-            }
-          );
+      if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
+        this.isConnectedToWallet.emit(false);
+        console.log('emited')
+        console.log('Connected to MyAlgoWallet')
+      }
+    } else if (value == 'WalletConnect') {
+      this._walletsConnectService.connectToWalletConnect();
+      if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
+        this.isConnectedToWallet.emit(false);
+        console.log('Connected to MyAlgoWallet')
       }
     }
   }
+
   activeFirst() {
     this.isActiveFirst = true;
     this.isActiveSecond = false;

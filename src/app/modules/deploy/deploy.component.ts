@@ -25,7 +25,12 @@ export class DeployComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.walletPS.walletObj);
+    of(this.walletProviderService.payToSetUpIndex(localStorage.getItem('wallet')!, 1)).subscribe(
+      (item: any) => {
+        console.log(item);
+      }
+    )
+    // console.log(this.walletPS.walletObj);
     this.deployerBC.settings = {
       creator: 'saba',
       // @ts-ignore
@@ -95,13 +100,13 @@ export class DeployComponent implements OnInit {
   }
 
   onSubmit() {
-    of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
-      res.then(
-        (res) => {
-          console.log(res);
-        }
-      )
-    })
+    // of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
+    //   res.then(
+    //     (res) => {
+    //       console.log(res);
+    //     }
+    //   )
+    // })
 
     // this.deployerBC.deploy(this.walletPS.walletObj).then(
     //   (res) => {
@@ -114,7 +119,7 @@ export class DeployComponent implements OnInit {
     //     console.log(res);
     //   }
     // )
-
+    // this.walletProviderService.walletsjj;
   }
 
   activatePurposeSection() {

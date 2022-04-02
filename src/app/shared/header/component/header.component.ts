@@ -93,6 +93,8 @@ export class HeaderComponent implements OnInit {
 
   connect(event: any) {
     console.log(event);
+    this.isLoggedIn = true;
+    this.isPopUpOpened = false;
   }
 
   loginIn($event: any) {

@@ -88,21 +88,18 @@
     <div class="wallet-side" *ngIf="openWallet && !isDeploy">
       <div class="row" style="width: 100%">
         <div class="col-md-6">
-          <div class="wallet-section">
-            <img
-              src="https://walletconnect.org/walletconnect-logo.svg"
-              alt=""
-            />
-            <span>WalletConnect</span>
+          <div class="wallet-section" (click)="setelectWalletConnect('MyAlgoWallet')">
+            <img src="./src/assets/img/walletconnect.png">
+            <span>MyAlgoWallet</span>
           </div>
         </div>
         <div class="col-md-6">
           <div
             class="wallet-section"
-            (click)="setelectWalletConnect('MyAlgoWallet')"
+            (click)="setelectWalletConnect('WalletConnect')"
           >
-            <img src="https://wallet.myalgo.com/images/MyAlgoBlue.svg" alt="" />
-            <span>MyAlgoWallet</span>
+            <img src="./src/assets/img/myalgo.png">
+            <span>WalletConnect</span>
           </div>
         </div>
       </div>
