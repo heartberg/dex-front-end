@@ -138,7 +138,7 @@ export class WalletsConnectService {
 
   payToSetUpIndex = async (tradeIndex: string, amount: number): Promise<any> => {
     try {
-      const txn = await singlePayTxn(this.myAlgoAddress[0], tradeIndex, amount, "Payment for trade setup to opt app into asset");
+      const txn = await singlePayTxn(localStorage.getItem('wallet')!, tradeIndex, amount, "Payment for trade setup to opt app into asset");
       console.log('txn', txn);
       const signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
       console.log('txId', signedTxn.txID);

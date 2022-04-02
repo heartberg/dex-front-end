@@ -25,11 +25,11 @@ export class DeployComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    of(this.walletProviderService.payToSetUpIndex(localStorage.getItem('wallet')!, 1)).subscribe(
-      (item: any) => {
-        console.log(item);
-      }
-    )
+    // of(this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1)).subscribe(
+    //   (item: any) => {
+    //     console.log(item);
+    //   }
+    // )
     // console.log(this.walletPS.walletObj);
     this.deployerBC.settings = {
       creator: 'saba',
@@ -99,7 +99,9 @@ export class DeployComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  async onSubmit() {
+    let result = await this.walletProviderService.payToSetUpIndex('PIRRXZSIWZWCKB4XRME4TN5CQEP3R7KJYDICVWYQOUW4BP74RE6A', 1000);
+    console.log(result);
     // of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
     //   res.then(
     //     (res) => {
