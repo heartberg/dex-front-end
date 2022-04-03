@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import {DeployedApp} from "../../blockchain/deployer_application";
+import {DeployedAppSettings} from "../../blockchain/platform-conf";
 
 @Component({
   selector: 'app-deploy',
@@ -12,6 +14,38 @@ export class DeployComponent implements OnInit {
   extraFieldsArr: number[] = [1];
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
+
+  blockchainObect: DeployedAppSettings = {
+    creator: '',
+    // @ts-ignore
+    total_supply: 9007199254740991n,
+    buy_burn: 22,
+    sell_burn: 34,
+    transfer_burn: 2,
+    to_lp: 23,
+    to_backing: 23,
+    max_buy: 293,
+    name: 'saba',
+    unit: 'unit', // not *
+    decimals: 21,
+    url: 'url', // not *,
+    trading_start: 23004,
+    initial_token_liq: 23,
+    initial_algo_liq: 2,
+    initial_algo_liq_fee: 2,
+    contract_id: 23, // not *
+    contract_address: 'saba', // not *
+    asset_id: 21, // not *
+    presale_settings: {
+      presale_token_amount: 21,
+      presale_start: 21,
+      presale_end: 12,
+      to_lp: 1,
+      softcap: 1,
+      hardcap: 1,
+      walletcap: 12
+    } // not *
+  };
 
   constructor(private fb: FormBuilder) {}
 
@@ -33,6 +67,40 @@ export class DeployComponent implements OnInit {
   private checkPresale: ElementRef;
 
   imageURL: string = '';
+
+  setObjForBlockchain(): void {
+    // @ts-ignore
+    this.blockchainObect = {
+      creator: 'saba',
+      total_supply: this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value,
+      buy_burn: this.deployFormGroup.get('feesGroup.buyBurn')?.value,
+      sell_burn: this.deployFormGroup.get('feesGroup.sellBurn')?.value,
+      transfer_burn: this.deployFormGroup.get('tokenInfoGroup.sellBurn')?.value, // to ask
+      to_lp: this.deployFormGroup.get('tokenInfoGroup.sellBurn')?.value, // to ask
+      to_backing: this.deployFormGroup.get('feesGroup.backing')?.value,
+      max_buy: this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value,
+      name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
+      unit: this.deployFormGroup.get('tokenInfoGroup.unitName')?.value || null,
+      decimals: this.deployFormGroup.get('tokenInfoGroup.decimals')?.value,
+      url: this.deployFormGroup.get('tokenInfoGroup.URL')?.value || null,
+      trading_start: this.deployFormGroup.get('tradingStart')?.value,
+      initial_token_liq: this.deployFormGroup.get('liquidity.tokensToLiq')?.value,
+      initial_algo_liq: this.deployFormGroup.get('liquidity.algoToLiq')?.value,
+      // initial_algo_liq_fee: ,
+      contract_id: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null, // ask
+      contract_address: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null,
+      asset_id: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null, // ask,
+      presale_settings: {
+        presale_token_amount: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value, // to ask
+        presale_start: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value,
+        presale_end: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value,
+        to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value, // to ask
+        softcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value,
+        hardcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value,
+        walletcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value,
+      } || null
+    }
+  }
 
   deployFormGroup = this.fb.group({
     tokenInfoGroup: this.fb.group({
@@ -92,7 +160,9 @@ export class DeployComponent implements OnInit {
     teamInfoCheck: this.fb.control(false),
   });
 
-  submit() {}
+  submit() {
+    // this.blockchainObect.creator =
+  }
 
   check() {
     if (this.checkbox.nativeElement.checked) {
