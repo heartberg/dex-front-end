@@ -100,7 +100,7 @@ export class DeployComponent implements OnInit {
   }
 
   async onSubmit() {
-    let result = await this.walletProviderService.payToSetUpIndex('PIRRXZSIWZWCKB4XRME4TN5CQEP3R7KJYDICVWYQOUW4BP74RE6A', 1000);
+    let result = await this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     console.log(result);
     // of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
     //   res.then(

@@ -8,11 +8,11 @@ export const environment = {
   // baseUrl: 'http://localhost:5000',
 
   ALGOD_TESTNET_URL:"https://testnet-algorand.api.purestake.io/ps2",
-  ALGOD_TESTNET_TOKEN:"ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE",
+  ALGOD_TESTNET_TOKEN:"Z4lUOOfIOm8thZUeUK9n349ImUCpiCC190RtGnm6",
   ALGOD_TESTNET_INDEXER_ADDRESS:"https://testnet-algorand.api.purestake.io/idx2",
 
   ALGOD_URL:"https://testnet-algorand.api.purestake.io/ps2",
-  ALGOD_TOKEN:"ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE",
+  ALGOD_TOKEN:"Z4lUOOfIOm8thZUeUK9n349ImUCpiCC190RtGnm6",
   ALGOD_INDEXER_ADDRESS:"https://testnet-algorand.api.purestake.io/idx2",
 
   TOKEN_APP_ID: 1,

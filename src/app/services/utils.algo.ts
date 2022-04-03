@@ -21,7 +21,7 @@ export type AlgoTxnReturnType = IAlgoTxn[][];
 
 export const getAlgodClient = () => {
   const tokenHeader = {
-    "x-api-key": environment.ALGOD_TOKEN
+    "X-API-Key": environment.ALGOD_TOKEN
   };
 
   return new Algodv2(tokenHeader, environment.ALGOD_URL, 443);
