@@ -52,14 +52,14 @@ export class DeployedApp {
     settings: DeployedAppSettings;
     // this is
     // TODO: check mapping of freshly deployed app with deployed app settings, maybe split it up, create mapper functions somewhere
-    conf!: DeployedAppSettings
     constructor(
       private wallet: WalletsConnectService
     ){
-        this.settings = this.conf;
+      this.settings = <DeployedAppSettings>{};
     }
 
-    async deploy(wallet: Wallet) {
+    async deploy(wallet: Wallet, settings: DeployedAppSettings) {
+        this.settings = settings;
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
@@ -79,7 +79,8 @@ export class DeployedApp {
         return result
     }
 
-    async mint(wallet: Wallet) {
+    async mint(wallet: Wallet, settings: DeployedAppSettings) {
+        this.settings = settings;
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
@@ -100,7 +101,8 @@ export class DeployedApp {
         return result
     }
 
-    async payAndOptInBurn(wallet: Wallet): Promise<boolean> {
+    async payAndOptInBurn(wallet: Wallet, settings: DeployedAppSettings): Promise<boolean> {
+        this.settings = settings;
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
@@ -120,7 +122,8 @@ export class DeployedApp {
         return result
     }
 
-    async setupNoPresale(wallet: Wallet): Promise<boolean> {
+    async setupNoPresale(wallet: Wallet, settings: DeployedAppSettings): Promise<boolean> {
+        this.settings = settings;
         const suggestedExtraFee = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
         suggestedExtraFee.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
@@ -144,7 +147,8 @@ export class DeployedApp {
         return result
     }
 
-    async setupWithPresale(wallet: Wallet): Promise<boolean> {
+    async setupWithPresale(wallet: Wallet, settings: DeployedAppSettings): Promise<boolean> {
+        this.settings = settings;
         const suggestedExtraFee = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
         suggestedExtraFee.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE

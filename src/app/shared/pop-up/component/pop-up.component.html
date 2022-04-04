@@ -37,7 +37,7 @@
       </div>
       <div class="pre-title isNotWallet">
         <span *ngIf="openWallet && !isDeploy"
-          >Choose your preferred method to connect to the Algoverse
+        >Choose your preferred method to connect to the Algoverse
           Marketplace</span
         >
         <div
@@ -88,18 +88,18 @@
     <div class="wallet-side" *ngIf="openWallet && !isDeploy">
       <div class="row" style="width: 100%">
         <div class="col-md-6">
-          <div class="wallet-section" (click)="setelectWalletConnect('MyAlgoWallet')">
-            <img src="./src/assets/img/walletconnect.png">
-            <span>MyAlgoWallet</span>
+          <div class="wallet-section">
+            <img src="https://docs.walletconnect.com/img/walletconnect-logo.svg" alt="">
+            <span>WalletConnect</span>
           </div>
         </div>
         <div class="col-md-6">
           <div
             class="wallet-section"
-            (click)="setelectWalletConnect('WalletConnect')"
+            (click)="setelectWalletConnect('MyAlgoWallet')"
           >
-            <img src="./src/assets/img/myalgo.png">
-            <span>WalletConnect</span>
+            <img src="https://ml.globenewswire.com/Resource/Download/abe9938b-0ff0-4d09-8f8e-da43ca142899?size=2" alt="">
+            <span>MyAlgoWallet</span>
           </div>
         </div>
       </div>
@@ -162,53 +162,53 @@
         </p>
       </div>
       <form [formGroup]="myPresaleRestartForm">
-      <div style="margin-top: 25px" class="d-flex justify-content-between">
-        <div class="d-flex flex-column">
-          <!-- left inputs -->
-          <div class="input-box">
-            <label for="presale-start">Presale Start</label>
-            <input formControlName="presaleStart" id="presale-start" type="text" />
+        <div style="margin-top: 25px" class="d-flex justify-content-between">
+          <div class="d-flex flex-column">
+            <!-- left inputs -->
+            <div class="input-box">
+              <label for="presale-start">Presale Start</label>
+              <input formControlName="presaleStart" id="presale-start" type="text" />
+            </div>
+            <div class="input-box">
+              <label for="presale-end">Presale End</label>
+              <input formControlName="presaleEnd" id="presale-end" type="text" />
+            </div>
+            <div class="input-box">
+              <label for="trading-start">Trading Start</label>
+              <input formControlName="tradingStart" id="trading-start" type="text" />
+            </div>
+            <div class="input-box">
+              <label for="tokenInPresale">Token In Presale</label>
+              <input formControlName="tokenInPresale" id="tokenInPresale" type="text"/>
+            </div>
           </div>
-          <div class="input-box">
-            <label for="presale-end">Presale End</label>
-            <input formControlName="presaleEnd" id="presale-end" type="text" />
-          </div>
-          <div class="input-box">
-            <label for="trading-start">Trading Start</label>
-            <input formControlName="tradingStart" id="trading-start" type="text" />
-          </div>
-          <div class="input-box">
-            <label for="tokenInPresale">Token In Presale</label>
-            <input formControlName="tokenInPresale" id="tokenInPresale" type="text"/>
+          <div class="d-flex flex-column">
+            <div class="input-box">
+              <label for="soft-cap">Soft Cap</label>
+              <input formControlName="softCap" id="soft-cap" type="text" />
+            </div>
+            <div class="input-box">
+              <label for="hard-cap">Hard Cap</label>
+              <input formControlName="hardCap" id="hard-cap" type="text" />
+            </div>
+            <div class="input-box">
+              <label for="wallet-cap">Wallet Cap</label>
+              <input formControlName="walletCap" id="wallet-cap" type="text" />
+            </div>
+            <div class="input-box">
+              <label for="to-liquidity">To Liquidity</label>
+              <input formControlName="toLiquidity" id="to-liquidity" type="text" />
+            </div>
+            <!-- right inputs -->
           </div>
         </div>
-        <div class="d-flex flex-column">
-          <div class="input-box">
-            <label for="soft-cap">Soft Cap</label>
-            <input formControlName="softCap" id="soft-cap" type="text" />
-          </div>
-          <div class="input-box">
-            <label for="hard-cap">Hard Cap</label>
-            <input formControlName="hardCap" id="hard-cap" type="text" />
-          </div>
-          <div class="input-box">
-            <label for="wallet-cap">Wallet Cap</label>
-            <input formControlName="walletCap" id="wallet-cap" type="text" />
-          </div>
-          <div class="input-box">
-            <label for="to-liquidity">To Liquidity</label>
-            <input formControlName="toLiquidity" id="to-liquidity" type="text" />
-          </div>
-          <!-- right inputs -->
+        <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
+          <button class="btn-primary-costum" (click)="closePopUp(false)">
+            Cancel
+          </button>
+          <button (click)="onSubmit('myPresaleRestartForm')"  class="btn-secondary-costum">Restart</button>
         </div>
-      </div>
-      <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
-        <button class="btn-primary-costum" (click)="closePopUp(false)">
-          Cancel
-        </button>
-        <button (click)="onSubmit('myPresaleRestartForm')"  class="btn-secondary-costum">Restart</button>
-      </div>
-    </form>
+      </form>
     </ng-container>
     <!-- isRestart container -->
 
@@ -221,26 +221,26 @@
         </p>
       </div>
       <form [formGroup]="myPresaleFairLaunchForm">
-      <div style="margin-top: 50px" class="d-flex">
-        <div class="d-flex flex-column">
-          <!-- left inputs -->
-          <div class="input-box">
-            <label for="trading-start">Trading Start</label>
-            <input formControlName="tradingStart" id="trading-start" type="date" />
-          </div>
-          <div class="input-box">
-            <label for="trading-start">Add additional Algo to Liquidity</label>
-            <input formControlName="additionalAlgo" id="trading-start" type="text" />
+        <div style="margin-top: 50px" class="d-flex">
+          <div class="d-flex flex-column">
+            <!-- left inputs -->
+            <div class="input-box">
+              <label for="trading-start">Trading Start</label>
+              <input formControlName="tradingStart" id="trading-start" type="date" />
+            </div>
+            <div class="input-box">
+              <label for="trading-start">Add additional Algo to Liquidity</label>
+              <input formControlName="additionalAlgo" id="trading-start" type="text" />
+            </div>
           </div>
         </div>
-      </div>
-      <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
-        <button class="btn-primary-costum" (click)="closePopUp(false)">
-          Cancel
-        </button>
-        <button (click)="onSubmit('myPresaleFairLaunchForm')" class="btn-secondary-costum">Launch</button>
-      </div>
-    </form>
+        <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
+          <button class="btn-primary-costum" (click)="closePopUp(false)">
+            Cancel
+          </button>
+          <button (click)="onSubmit('myPresaleFairLaunchForm')" class="btn-secondary-costum">Launch</button>
+        </div>
+      </form>
     </ng-container>
 
     <!-- isFair container -->
@@ -267,7 +267,7 @@
       >
         <div class="d-flex flex-column">
           <span style="align-self: flex-end" class="thin-gray-text"
-            >Available: 2000</span
+          >Available: 2000</span
           >
           <div class="input-box">
             <label for="token-name">Token Name:</label>
@@ -280,7 +280,7 @@
             <input formControlName="secondInput" id="token-name" type="text" />
           </div>
           <span style="align-self: center" class="thin-gray-text"
-            >Please enter 'AGREE' if you consent with burning your Smart
+          >Please enter 'AGREE' if you consent with burning your Smart
             ASAs.</span
           >
         </div>
@@ -351,7 +351,7 @@
           >
             <div class="d-flex flex-column">
               <span style="align-self: flex-end" class="thin-gray-text"
-                >Available: 2000</span
+              >Available: 2000</span
               >
               <div class="input-box">
                 <label for="token-name">Token Name:</label>
@@ -374,7 +374,7 @@
               <span
                 class="thin-gray-text"
                 style="position: absolute; right: 125px; top: 343px"
-                >Algo</span
+              >Algo</span
               >
             </div>
             <button
