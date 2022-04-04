@@ -83,6 +83,7 @@ export class WalletsConnectService {
       this.myAlgoName = accounts.map(value => value.name)
 
       if (this.myAlgoAddress.length > 0) {
+       // paste here
         this.userServce.getUserByWallet(this.myAlgoAddress[0]).subscribe(
           (result: any) => console.log('profile', result),
           (error: any) => {
