@@ -135,15 +135,30 @@ export class PopUpComponent implements OnInit {
 
 
   async setelectWalletConnect(value: string) {
+    // if (value === 'MyAlgoWallet') {
+    //   await of(this._walletsConnectService.connectToMyAlgo()).toPromise();
+    //   if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
+    //     this.isConnectedToWallet.emit(false);
+    //     console.log('emited')
+    //     console.log('Connected to MyAlgoWallet')
+    //   }
+    // } else if (value == 'WalletConnect') {
+    //   this._walletsConnectService.connectToWalletConnect();
+    //   if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
+    //     this.isConnectedToWallet.emit(false);
+    //     console.log('Connected to MyAlgoWallet')
+    //   }
+    // }
+
     if (value === 'MyAlgoWallet') {
-      await of(this._walletsConnectService.connectToMyAlgo()).toPromise();
+      await this._walletsConnectService.connect('my-algo-connect');
       if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
         this.isConnectedToWallet.emit(false);
         console.log('emited')
         console.log('Connected to MyAlgoWallet')
       }
     } else if (value == 'WalletConnect') {
-      this._walletsConnectService.connectToWalletConnect();
+      await this._walletsConnectService.connect('wallet-connect');
       if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
         this.isConnectedToWallet.emit(false);
         console.log('Connected to MyAlgoWallet')

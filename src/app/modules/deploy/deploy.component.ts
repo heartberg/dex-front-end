@@ -230,28 +230,12 @@ export class DeployComponent implements OnInit {
     // let result = await this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     // console.log(result);
 
-    // wallet transfer method
-    // of(this.deployerBC.deploy(this.))
-    // of(this.deployerBC.deploy(this.walletPS.walletObj)).subscribe((res) => {
-    //   res.then(
-    //     (res) => {
-    //       console.log(res);
-    //     }
-    //   )
-    // })
+    let result = await this.walletProviderService.payAndSign('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
+    console.log(result);
 
-    // this.deployerBC.deploy(this.walletPS.walletObj).then(
-    //   (res) => {
-    //     console.log(res);
-    //   }
-    // )
+    // const deploy = new DeployedApp(this.walletProviderService);
+    // deploy.deploy()
 
-    // this.deployerBC.setupWithPresale(this.walletPS.walletObj).then(
-    //   (res) => {
-    //     console.log(res);
-    //   }
-    // )
-    // this.walletProviderService.walletsjj;
   }
 
   activatePurposeSection() {

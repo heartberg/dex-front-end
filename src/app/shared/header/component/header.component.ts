@@ -4,6 +4,7 @@ import {Observable, of} from "rxjs";
 import {AuthService} from "../../../services/authService.service";
 import {User} from "../../../models/user.model";
 import {host} from "@angular-devkit/build-angular/src/test-utils";
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 @Component({
 
@@ -32,13 +33,17 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private _eref: ElementRef
+    private _walletsConnectService: WalletsConnectService,
+    private _eref: ElementRef,
   ) { }
 
   ngOnInit(): any {
-    if (localStorage.getItem('wallet')) {
+    if (this._walletsConnectService.sessionWallet.connected()) {
       this.isLoggedIn = true;
     }
+    // if (localStorage.getItem('wallet')) {
+    //   this.isLoggedIn = true;
+    // }
   }
 
   openAvatar() {
@@ -114,6 +119,7 @@ export class HeaderComponent implements OnInit {
   disconnect() {
     this.isLoggedIn = false;
     localStorage.removeItem('wallet');
+    this._walletsConnectService.disconnect()
   }
 
   closeDropDown() {
