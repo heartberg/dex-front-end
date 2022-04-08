@@ -2,7 +2,7 @@ import { AuthService } from "./authService.service";
 
 import { Injectable } from '@angular/core';
 import { async } from '@angular/core/testing';
-import algosdk, { Algodv2, Indexer, IntDecoding, BaseHTTPClient, getApplicationAddress, Transaction, waitForConfirmation } from 'algosdk';
+import algosdk, { Algodv2, Indexer, IntDecoding, BaseHTTPClient, getApplicationAddress, Transaction, waitForConfirmation, TransactionType } from 'algosdk';
 import AccountInformation from 'algosdk/dist/types/src/client/v2/algod/accountInformation';
 import GetAssetByID from 'algosdk/dist/types/src/client/v2/algod/getAssetByID';
 import { environment } from 'src/environments/environment';
@@ -11,77 +11,58 @@ import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayTxn, waitForTransaction } from './utils.algo';
 import MyAlgoConnect from '@randlabs/myalgo-connect';
 import { Buffer } from 'buffer';
-import { PermissionResult, SessionWallet, SignedTxn, allowedWallets } from 'algorand-session-wallet';
+import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
 
 
 const client = getAlgodClient()
 const myAlgoConnect = new MyAlgoConnect();
 
+
 @Injectable()
 export class WalletsConnectService {
 
-  public sessionWallet: any | undefined;
+  public sessionWallet: SessionWallet | undefined;
   public myAlgoAddress: any | undefined;
   public myAlgoName: any | undefined;
 
   constructor(private userServce: AuthService) { }
 
-  permPopupCallback = {
-    async request(pr: PermissionResult): Promise<SignedTxn[]> {
-      // set a local var that will be modified in the popup
-      let result = ""
-      function setResult(res: string) {
-        console.log(res)
-        result = res
-      }
-
-      //setPopupProps({ isOpen:true, result: setResult })
-
-      // Wait for it to finish
-
-      const timeout = async (ms: number) => new Promise(res => setTimeout(res, ms));
-      async function wait(): Promise<SignedTxn[]> {
-        while (result === "") await timeout(50);
-
-        if (result === "approve") return pr.approved()
-        return pr.declined()
-      }
-
-      //get signed
-      const txns = await wait()
-
-      //close popup
-      //setPopupProps(pprops)
-
-      //return signed
-      return txns
-    }
-  }
-
 
   connect = async (choice: string) => {
-    this.sessionWallet = new SessionWallet("TestNet", this.permPopupCallback, choice)
+    console.log('choice', choice);
+    const sw = new SessionWallet("TestNet");
 
-    if (!await this.sessionWallet.connect()) return alert("Couldnt connect")
+    if (!await sw.connect()) return alert("Couldnt connect")
 
-    this.myAlgoAddress = this.sessionWallet.accountList()
+    this.myAlgoAddress = sw.accountList()
     localStorage.setItem('wallet', this.myAlgoAddress[0])
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
+
+    this.sessionWallet = sw;
   }
 
 
   disconnect = async () => {
-    this.sessionWallet.disconnect()
+    this.sessionWallet!.disconnect()
     //setConnected(false)
     this.myAlgoAddress = []
   }
 
 
   payAndSign = async (receiver: string, amount: number) => {
-    const txn = await singlePayTxn(localStorage.getItem('wallet')!, receiver, amount, "Payment for trade setup to opt app into asset");
+    //const txn = await singlePayTxn(localStorage.getItem('wallet')!, receiver, amount, "Payment for trade setup to opt app into asset");
+    const suggestedParams = await getTransactionParams();
+    const txn = new Transaction({
+      from:localStorage.getItem('wallet')!,
+      type:TransactionType.pay,
+      to: receiver,
+      amount: Number(amount),
+      ...suggestedParams
+    })
     console.log('txn', txn);
 
-    const [s_pay_txn] = await this.sessionWallet.signTxn([txn])
+    console.log(this.sessionWallet!.wallet);
+    const [s_pay_txn] = await this.sessionWallet!.wallet.signTxn([txn])
     console.log('s_pay_txn', s_pay_txn)
 
     const {txId} = await client.sendRawTransaction([s_pay_txn.blob]).do()

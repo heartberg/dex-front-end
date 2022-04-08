@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): any {
-    if (this._walletsConnectService.sessionWallet.connected()) {
+    if (this._walletsConnectService.sessionWallet && this._walletsConnectService.sessionWallet!.connected()) {
       this.isLoggedIn = true;
     }
     // if (localStorage.getItem('wallet')) {
