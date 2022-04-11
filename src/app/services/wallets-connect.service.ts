@@ -30,7 +30,7 @@ export class WalletsConnectService {
 
   connect = async (choice: string) => {
     console.log('choice', choice);
-    const sw = new SessionWallet("TestNet");
+    const sw = new SessionWallet("TestNet", undefined, choice);
 
     if (!await sw.connect()) return alert("Couldnt connect")
 
