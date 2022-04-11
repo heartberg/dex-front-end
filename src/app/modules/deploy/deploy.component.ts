@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import {DeployedApp} from "../../blockchain/deployer_application";
-import {DeployedAppSettings} from "../../blockchain/platform-conf";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DeployerContractService } from 'src/app/services/blockchain/deployer-contract.service';
+import { Presale, ProjectViewModel, ProjectViewModelForMinit } from 'src/app/shared/class/shared.class';
+import { switchMap } from 'rxjs/operators'
 
 @Component({
   selector: 'app-deploy',
@@ -15,39 +16,7 @@ export class DeployComponent implements OnInit {
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
 
-  blockchainObect: DeployedAppSettings = {
-    creator: '',
-    // @ts-ignore
-    total_supply: 9007199254740991n,
-    buy_burn: 22,
-    sell_burn: 34,
-    transfer_burn: 2,
-    to_lp: 23,
-    to_backing: 23,
-    max_buy: 293,
-    name: 'saba',
-    unit: 'unit', // not *
-    decimals: 21,
-    url: 'url', // not *,
-    trading_start: 23004,
-    initial_token_liq: 23,
-    initial_algo_liq: 2,
-    initial_algo_liq_fee: 2,
-    contract_id: 23, // not *
-    contract_address: 'saba', // not *
-    asset_id: 21, // not *
-    presale_settings: {
-      presale_token_amount: 21,
-      presale_start: 21,
-      presale_end: 12,
-      to_lp: 1,
-      softcap: 1,
-      hardcap: 1,
-      walletcap: 12
-    } // not *
-  };
-
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private _http:DeployerContractService) {}
 
   ngOnInit(): void {}
   @ViewChild('checkbox', { static: false })
@@ -68,55 +37,21 @@ export class DeployComponent implements OnInit {
 
   imageURL: string = '';
 
-  setObjForBlockchain(): void {
-    // @ts-ignore
-    this.blockchainObect = {
-      creator: 'saba',
-      total_supply: this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value,
-      buy_burn: this.deployFormGroup.get('feesGroup.buyBurn')?.value,
-      sell_burn: this.deployFormGroup.get('feesGroup.sellBurn')?.value,
-      transfer_burn: this.deployFormGroup.get('tokenInfoGroup.sellBurn')?.value, // to ask
-      to_lp: this.deployFormGroup.get('tokenInfoGroup.sellBurn')?.value, // to ask
-      to_backing: this.deployFormGroup.get('feesGroup.backing')?.value,
-      max_buy: this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value,
-      name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
-      unit: this.deployFormGroup.get('tokenInfoGroup.unitName')?.value || null,
-      decimals: this.deployFormGroup.get('tokenInfoGroup.decimals')?.value,
-      url: this.deployFormGroup.get('tokenInfoGroup.URL')?.value || null,
-      trading_start: this.deployFormGroup.get('tradingStart')?.value,
-      initial_token_liq: this.deployFormGroup.get('liquidity.tokensToLiq')?.value,
-      initial_algo_liq: this.deployFormGroup.get('liquidity.algoToLiq')?.value,
-      // initial_algo_liq_fee: ,
-      contract_id: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null, // ask
-      contract_address: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null,
-      asset_id: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null, // ask,
-      presale_settings: {
-        presale_token_amount: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value, // to ask
-        presale_start: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value,
-        presale_end: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value,
-        to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value, // to ask
-        softcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value,
-        hardcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value,
-        walletcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value,
-      } || null
-    }
-  }
-
   deployFormGroup = this.fb.group({
     tokenInfoGroup: this.fb.group({
-      tokenName: '',
-      unitName: '',
-      totalSupply: '',
-      decimals: '',
-      URL: '',
-      maxBuy: '',
+      tokenName: new FormControl('', Validators.required),
+      unitName: new FormControl('', [Validators.required, Validators.minLength(8), Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]),
+      totalSupply: new FormControl('', Validators.required),
+      decimals: new FormControl('', Validators.required),
+      url: new FormControl('', Validators.required),
+      maxBuy: new FormControl('', Validators.required),
     }),
     feesGroup: this.fb.group({
-      risingPriceFloor: '',
-      backing: '',
-      buyBurn: '',
-      sellBurn: '',
-      sendBurn: '',
+      risingPriceFloor: new FormControl('', Validators.required),
+      backing: new FormControl('', Validators.required),
+      buyBurn: new FormControl('', Validators.required),
+      sellBurn: new FormControl('', Validators.required),
+      sendBurn: new FormControl('', Validators.required),
     }),
     additionalFeeOptionGroup: this.fb.group({
       addFeeCheck: this.fb.control(false),
@@ -126,13 +61,6 @@ export class DeployComponent implements OnInit {
     }),
     presaleOptionsGroupDescription: this.fb.control(''),
     createPresaleOptionGroup: this.fb.group({
-      presaleSettings: this.fb.group({
-        presaleStart: '',
-        presaleEnd: '',
-        softCap: '',
-        hardCap: '',
-        walletCap: '',
-      }),
       presaleLiquidity: this.fb.group({
         tokensInPresale: '',
         tokensInLiquidity: '',
@@ -144,24 +72,96 @@ export class DeployComponent implements OnInit {
       tokensToLiq: '',
       algoToLiq: '',
     }),
-    tradingStart: this.fb.control(''),
+    tradingStart: this.fb.control(null),
     addRoadMapOptionGroup: this.fb.group({
       roadmapDescription: '',
       roadmapImage: '',
     }),
-    teamInfoOptionGroup: this.fb.group({
-      teamInfoImage: '',
-      name: '',
-      position: '',
-      social: '',
-    }),
+    teamInfoOptionGroup: this.fb.array([]),
     presaleCheck: this.fb.control(false),
     roadmapCheck: this.fb.control(false),
     teamInfoCheck: this.fb.control(false),
   });
 
+
+  get teamInfo(){
+    return this.deployFormGroup.controls['teamInfoOptionGroup'] as FormArray
+  }
+
   submit() {
-    // this.blockchainObect.creator =
+    const formValue = this.deployFormGroup.value;
+
+    const creatorWallet:any = localStorage.getItem("wallet");
+
+    const projectDataMint = new ProjectViewModelForMinit(
+      "GQ34GQ5G6HW6W57J795",
+      777777,
+      "5e740938-e719-4a0e-9bbb-f78dc63f94a4",
+      11111,
+      "UWUWUWUWUWUWUWUUWUW",
+      formValue.tokenInfoGroup.tokenName,
+      formValue.tokenInfoGroup.unitName,
+      formValue.tokenInfoGroup.totalSupply,
+      formValue.tokenInfoGroup.url,
+      formValue.tokenInfoGroup.maxBuy,
+      new Date(formValue.tradingStart).getTime()/1000,
+      formValue.feesGroup.risingPriceFloor,
+      formValue.feesGroup.backing,                                      //ობიექტი Mint
+      formValue.feesGroup.buyBurn,
+      formValue.feesGroup.sellBurn,
+      formValue.feesGroup.sendBurn,
+      null,
+      null,
+      "drip-coin.jpg",
+      creatorWallet
+    )
+
+    const projectData = new ProjectViewModel(
+      formValue.presaleOptionsGroupDescription,
+      "GQ34GQ5G6HW6W57J7",
+      72373583,
+      "Best Project",
+      "base64encodedimage",                                          //<= მთავარი ობიექტი
+      creatorWallet,
+      formValue.addRoadMapOptionGroup.roadmapDescription,
+      formValue.addRoadMapOptionGroup.roadmapImage,
+      "twitter.com",
+      "telegram.com",
+      "instagram.com",
+      "website.com",
+      formValue.teamInfoOptionGroup,
+    )
+
+    if(this.presaleIsChecked){
+
+      const presaleData = new Presale(
+        formValue.createPresaleOptionGroup.presaleSettings.softCap,
+        formValue.createPresaleOptionGroup.presaleSettings.hardCap,
+        1000000,
+        formValue.createPresaleOptionGroup.presaleSettings.walletCap,                                               //მთავარ ობიექტში დამატება presale ობიექტის როდესაც creat presale chek box არის true
+        new Date(formValue.createPresaleOptionGroup.presaleSettings.presaleStart).getTime() / 1000,
+        new Date(formValue.createPresaleOptionGroup.presaleSettings.presaleEnd).getTime() / 1000,
+      )
+
+      projectData.presale = presaleData;
+
+      // this._http.postProjectViewModel(projectData).subscribe(v => {
+      //   console.log(v)
+      // })
+      console.log(projectData);
+
+    }else{
+      const {presale, ...projectDataWithoutPresaleData} = projectData;
+
+      // this._http.postProjectViewModelWithoutPresaleData(projectDataWithoutPresaleData).subscribe((v:any) => {
+      //   this.httpRequests(v, projectDataMint)
+      // })
+      
+      console.log(projectDataWithoutPresaleData);
+      console.log(projectDataMint)
+    }
+
+
   }
 
   check() {
@@ -174,17 +174,31 @@ export class DeployComponent implements OnInit {
 
   checkSecond() {
     if (this.checkboxSecond.nativeElement.checked) {
+      const itemForm = this.fb.group({
+        image: '',
+        name: '',
+        role: '',
+        social: '',
+      });
+      this.teamInfo.push(itemForm);
       this.isCheckedTeamInfo = true;
     } else {
       this.isCheckedTeamInfo = false;
+      this.teamInfo.clear();
     }
   }
 
   addExtraFields(index: number) {
     if (index === 0) {
-      this.extraFieldsArr.push(1);
+      const itemForm = this.fb.group({
+        image: '',
+        name: '',
+        role: '',
+        social: '',
+      });
+      this.teamInfo.push(itemForm);
     } else {
-      this.extraFieldsArr.pop();
+      this.teamInfo.removeAt(index);
     }
   }
 
@@ -197,10 +211,25 @@ export class DeployComponent implements OnInit {
   }
 
   activatePresaleSection() {
+    let createPresaleOptionGroup = this.deployFormGroup.get('createPresaleOptionGroup') as FormGroup
+
     if (this.checkPresale.nativeElement.checked) {
       this.presaleIsChecked = true;
+
+      const presaleFormGroup = this.fb.group({
+        presaleStart: new FormControl('', Validators.required),
+        presaleEnd: new FormControl('', Validators.required),
+        softCap: new FormControl('', Validators.required),                                              // presaleFormGroup ფორმ გრუპის დამატება createPresaleOptionGroup ფორმ გრუპში, ვალიდაციისთვის  
+        hardCap: new FormControl('', Validators.required),
+        walletCap: new FormControl('', Validators.required),                                              
+      })
+
+      createPresaleOptionGroup.addControl('presaleSettings', presaleFormGroup);
+      
     } else {
       this.presaleIsChecked = false;
+
+      createPresaleOptionGroup.removeControl('presaleSettings');
     }
   }
 
@@ -211,5 +240,13 @@ export class DeployComponent implements OnInit {
       this.imageURL = reader.result as string;
     };
     reader.readAsDataURL(imageFile);
+  }
+
+
+  httpRequests(projectId:string, mintDate:ProjectViewModelForMinit){
+    mintDate.projectId = projectId;
+
+    console.log(mintDate)
+    this._http.postProjectViewModelForMint(mintDate).subscribe(v => console.log(v));
   }
 }

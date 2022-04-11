@@ -1,6 +1,6 @@
 <div style="height: calc(100vh - 75px)">
   <div class="wrapper wrapper-border mainDiv">
-    <div class="whole" style="padding-right: 5px">
+    <div class="whole">
       <div class="row" style="width: 100%">
         <form
           class="col-md-12 scrollable-section-first"
@@ -69,7 +69,8 @@
                     </div>
                     <div class="col-md-7 restyle-col">
                       <input
-                        type="text"
+                        type="number"
+                        min="0"
                         class="input-costum"
                         placeholder="21000000"
                         formControlName="totalSupply"
@@ -89,7 +90,8 @@
                     </div>
                     <div class="col-md-7 restyle-col">
                       <input
-                        type="text"
+                        type="number"
+                        min="0"
                         class="input-costum"
                         placeholder="6"
                         formControlName="decimals"
@@ -115,7 +117,7 @@
                         type="text"
                         class="input-costum"
                         placeholder="bitcoin.org"
-                        formControlName="URL"
+                        formControlName="url"
                       />
                     </div>
                   </div>
@@ -135,7 +137,8 @@
                     </div>
                     <div class="col-md-7 restyle-col">
                       <input
-                        type="text"
+                        type="number"
+                        min="0"
                         class="input-costum"
                         placeholder="250"
                         formControlName="maxBuy"
@@ -152,7 +155,8 @@
               <div class="createoffer wrapper-border">
                 <h4 class="amountheader">Rising pricefloor</h4>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
                   placeholder="2"
                   class="input-costum"
                   formControlName="risingPriceFloor"
@@ -161,7 +165,8 @@
               <div class="createoffer wrapper-border">
                 <h4 class="amountheader">Backing</h4>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
                   placeholder="3"
                   class="input-costum"
                   formControlName="backing"
@@ -170,7 +175,8 @@
               <div class="createoffer wrapper-border">
                 <h4 class="amountheader">Buy Burn</h4>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
                   placeholder="3"
                   class="input-costum"
                   formControlName="buyBurn"
@@ -179,7 +185,8 @@
               <div class="createoffer wrapper-border">
                 <h4 class="amountheader">Sell Burn</h4>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
                   placeholder="3"
                   class="input-costum"
                   formControlName="sellBurn"
@@ -188,7 +195,8 @@
               <div class="createoffer wrapper-border">
                 <h4 class="amountheader">Send Burn</h4>
                 <input
-                  type="text"
+                  type="number"
+                  min="0"
                   placeholder="3"
                   class="input-costum"
                   formControlName="sendBurn"
@@ -258,36 +266,33 @@
           </div>
           <!-- </div> -->
 
-          <div class="row">
-            <div class="col-md-12 second-half">
-              <div class="wrapper-section d-flex flex-column">
-                <!--          <div class="wrapper-border">-->
-                <!--            <h3 class="color-violet title">-->
-                <!--              Project Description-->
-                <!--            </h3>-->
-                <!--            <div class="desc">-->
-                <!--              <textarea></textarea>-->
-                <!--            </div>-->
-                <!--          </div>-->
-                <div class="presale-section">
-                  <div class="wrapper-border">
-                    <div
-                      class="d-flex align-items-center"
-                      [ngStyle]="{
-                      'margin-bottom': presaleIsChecked ? '8px' : '0px'
-                    }"
-                      (click)="activatePresaleSection()"
-                    >
-                      <input
-                        type="checkbox"
-                        name="checkPurpose"
-                        id="checkPresale"
-                        #checkPresale
-                        formControlName="presaleCheck"
-                      />
-                      <label
-                        for="checkPresale"
-                        style="
+          <div class="col-md-12 second-half">
+            <div class="wrapper-section d-flex flex-column">
+              <!--          <div class="wrapper-border">-->
+              <!--            <h3 class="color-violet title">-->
+              <!--              Project Description-->
+              <!--            </h3>-->
+              <!--            <div class="desc">-->
+              <!--              <textarea></textarea>-->
+              <!--            </div>-->
+              <!--          </div>-->
+              <div class="presale-section">
+                <div class="wrapper-border">
+                  <div
+                    class="d-flex align-items-center"
+                    style="margin-bottom: 8px"
+                    (click)="activatePresaleSection()"
+                  >
+                    <input
+                      type="checkbox"
+                      name="checkPurpose"
+                      id="checkPresale"
+                      #checkPresale
+                      formControlName="presaleCheck"
+                    />
+                    <label
+                      for="checkPresale"
+                      style="
                         color: #81007f;
                         font-weight: 700;
                         margin-left: 5px;
@@ -295,148 +300,81 @@
                         margin-bottom: 0px;
                       "
                       >Create Presale</label
-                      >
-                    </div>
-                    <div class="wrapper-border" *ngIf="presaleIsChecked">
-                      <h3 class="color-violet title">Project Description</h3>
-                      <div class="desc">
+                    >
+                  </div>
+                  <div class="wrapper-border">
+                    <h3 class="color-violet title">Project Description</h3>
+                    <div class="desc">
                       <textarea
                         formControlName="presaleOptionsGroupDescription"
                       ></textarea>
-                      </div>
                     </div>
-                    <form formGroupName="createPresaleOptionGroup">
-                      <ng-container *ngIf="presaleIsChecked">
-                        <div class="wrapper-border">
-                          <form formGroupName="presaleSettings">
-                            <h3 class="color-violet">Presale Settings</h3>
-                            <div class="inputs">
-                              <div class="d-flex align-items-center">
-                                <h4>Presale Start</h4>
-                                <input
-                                  type="date"
-                                  class="input-costum"
-                                  formControlName="presaleStart"
-                                />
-                              </div>
-                              <div class="d-flex align-items-center">
-                                <h4>Presale End</h4>
-                                <input
-                                  type="date"
-                                  class="input-costum"
-                                  formControlName="presaleEnd"
-                                />
-                              </div>
-                              <div class="d-flex align-items-center">
-                                <h4>Soft Cap</h4>
-                                <input
-                                  type="text"
-                                  class="input-costum"
-                                  formControlName="softCap"
-                                />
-                              </div>
-                              <div class="d-flex align-items-center">
-                                <h4>Hard Cap</h4>
-                                <input
-                                  type="text"
-                                  class="input-costum"
-                                  formControlName="hardCap"
-                                />
-                              </div>
-                              <div class="d-flex align-items-center">
-                                <h4>Wallet Cap</h4>
-                                <input
-                                  type="text"
-                                  class="input-costum"
-                                  formControlName="walletCap"
-                                />
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                        <!-- <div class="wrapper-border"> -->
-                        <form
-                          class="wrapper-border"
-                          formGroupName="presaleLiquidity"
-                        >
-                          <h3 class="color-violet">Presale Liquidity</h3>
+                  </div>
+                  <form formGroupName="createPresaleOptionGroup">
+                    <ng-container *ngIf="presaleIsChecked">
+                      <div class="wrapper-border">
+                        <form formGroupName="presaleSettings">
+                          <h3 class="color-violet">Presale Settings</h3>
                           <div class="inputs">
                             <div class="d-flex align-items-center">
-                              <h4>Tokens in Presale</h4>
+                              <h4>Presale Start</h4>
                               <input
-                                type="text"
+                                type="date"
                                 class="input-costum"
-                                formControlName="tokensInPresale"
-                              />
-                              <h4
-                                class="color-violet"
-                                style="padding-left: 10px; font-size: 14px"
-                              >
-                                X% of total supply
-                              </h4>
-                            </div>
-                          </div>
-                          <div class="inputs">
-                            <div class="d-flex align-items-center">
-                              <h4>Tokens in liquidity</h4>
-                              <input
-                                type="text"
-                                class="input-costum"
-                                formControlName="tokensInLiquidity"
-                              />
-                              <h4
-                                class="color-violet"
-                                style="padding-left: 10px; font-size: 14px"
-                              >
-                                X% of total supply
-                              </h4>
-                            </div>
-                          </div>
-                          <div class="inputs">
-                            <div class="d-flex align-items-center">
-                              <h4>Algo to liquidity</h4>
-                              <input
-                                type="text"
-                                class="input-costum"
-                                formControlName="algoToLiquidity"
+                                formControlName="presaleStart"
                               />
                             </div>
-                          </div>
-                          <div class="inputs">
                             <div class="d-flex align-items-center">
-                              <h4>Presale funds to liquidity (in %)</h4>
+                              <h4>Presale End</h4>
+                              <input
+                                type="date"
+                                class="input-costum"
+                                formControlName="presaleEnd"
+                              />
+                            </div>
+                            <div class="d-flex align-items-center">
+                              <h4>Soft Cap</h4>
                               <input
                                 type="number"
+                                min="0"
                                 class="input-costum"
-                                formControlName="presaleFundsToLiquidity"
+                                formControlName="softCap"
+                              />
+                            </div>
+                            <div class="d-flex align-items-center">
+                              <h4>Hard Cap</h4>
+                              <input
+                                type="number"
+                                min="0"
+                                class="input-costum"
+                                formControlName="hardCap"
+                              />
+                            </div>
+                            <div class="d-flex align-items-center">
+                              <h4>Wallet Cap</h4>
+                              <input
+                                type="number"
+                                min="0"
+                                class="input-costum"
+                                formControlName="walletCap"
                               />
                             </div>
                           </div>
                         </form>
-                        <!-- </div> -->
-                        <div class="info-box">
-                          <h6 class="color-violet">Presale Price:</h6>
-                          <h6>X Algo/Token</h6>
-                        </div>
-                        <div class="info-box">
-                          <h6 class="color-violet">Initial Price:</h6>
-                          <h6>X Algo/Token</h6>
-                        </div>
-                      </ng-container>
-                    </form>
-                    <!--  -->
-                    <hr />
-                    <ng-container *ngIf="!presaleIsChecked">
+                      </div>
                       <!-- <div class="wrapper-border"> -->
-                      <form class="wrapper-border" formGroupName="liquidity">
-                        <h3 class="color-violet title">Liquidity</h3>
+                      <form
+                        class="wrapper-border"
+                        formGroupName="presaleLiquidity"
+                      >
+                        <h3 class="color-violet">Presale Liquidity</h3>
                         <div class="inputs">
                           <div class="d-flex align-items-center">
-                            <h4>Tokens to liquidity</h4>
+                            <h4>Tokens in Presale</h4>
                             <input
                               type="text"
                               class="input-costum"
-                              formControlName="tokensToLiq"
+                              formControlName="tokensInPresale"
                             />
                             <h4
                               class="color-violet"
@@ -446,132 +384,178 @@
                             </h4>
                           </div>
                         </div>
-
+                        <div class="inputs">
+                          <div class="d-flex align-items-center">
+                            <h4>Tokens in liquidity</h4>
+                            <input
+                              type="text"
+                              class="input-costum"
+                              formControlName="tokensInLiquidity"
+                            />
+                            <h4
+                              class="color-violet"
+                              style="padding-left: 10px; font-size: 14px"
+                            >
+                              X% of total supply
+                            </h4>
+                          </div>
+                        </div>
                         <div class="inputs">
                           <div class="d-flex align-items-center">
                             <h4>Algo to liquidity</h4>
                             <input
                               type="text"
                               class="input-costum"
-                              formControlName="algoToLiq"
+                              formControlName="algoToLiquidity"
+                            />
+                          </div>
+                        </div>
+                        <div class="inputs">
+                          <div class="d-flex align-items-center">
+                            <h4>Presale funds to liquidity (in %)</h4>
+                            <input
+                              type="number"
+                              min="0"
+                              class="input-costum"
+                              formControlName="presaleFundsToLiquidity"
                             />
                           </div>
                         </div>
                       </form>
                       <!-- </div> -->
                       <div class="info-box">
+                        <h6 class="color-violet">Presale Price:</h6>
+                        <h6>X Algo/Token</h6>
+                      </div>
+                      <div class="info-box">
                         <h6 class="color-violet">Initial Price:</h6>
                         <h6>X Algo/Token</h6>
                       </div>
-                      <div class="wrapper-border">
-                        <h3 class="color-violet title">Trading Start</h3>
-                        <div class="inputs">
-                          <div class="d-flex align-items-center">
-                            <h4>Date and Time</h4>
-                            <input
-                              type="datetime-local"
-                              class="input-costum"
-                              formControlName="tradingStart"
-                            />
-                          </div>
+                    </ng-container>
+                  </form>
+                  <!--  -->
+
+                  <ng-container *ngIf="!presaleIsChecked">
+                    <!-- <div class="wrapper-border"> -->
+                    <form class="wrapper-border" formGroupName="liquidity">
+                      <h3 class="color-violet title">Liquidity</h3>
+                      <div class="inputs">
+                        <div class="d-flex align-items-center">
+                          <h4>Tokens to liquidity</h4>
+                          <input
+                            type="text"
+                            class="input-costum"
+                            formControlName="tokensToLiq"
+                          />
+                          <h4
+                            class="color-violet"
+                            style="padding-left: 10px; font-size: 14px"
+                          >
+                            X% of total supply
+                          </h4>
                         </div>
                       </div>
-                    </ng-container>
-                    <hr *ngIf="!presaleIsChecked" />
-                    <div
-                      class="down-checkbox"
-                      (click)="check()"
-                      [ngClass]="{
+
+                      <div class="inputs">
+                        <div class="d-flex align-items-center">
+                          <h4>Algo to liquidity</h4>
+                          <input
+                            type="text"
+                            class="input-costum"
+                            formControlName="algoToLiq"
+                          />
+                        </div>
+                      </div>
+                    </form>
+                    <!-- </div> -->
+                    <div class="info-box">
+                      <h6 class="color-violet">Initial Price:</h6>
+                      <h6>X Algo/Token</h6>
+                    </div>
+                    <div class="wrapper-border">
+                      <h3 class="color-violet title">Trading Start</h3>
+                      <div class="inputs">
+                        <div class="d-flex align-items-center">
+                          <h4>Date and Time</h4>
+                          <input
+                            type="datetime-local"
+                            class="input-costum"
+                            formControlName="tradingStart"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                  <hr />
+                  <div
+                    class="down-checkbox"
+                    (click)="check()"
+                    [ngClass]="{
                       'wrapper-border': isCheckedRoadMap,
                       top: !isCheckedRoadMap
                     }"
-                      [class.label-last]="!isCheckedRoadMap"
-                    >
-                      <input
-                        type="checkbox"
-                        #checkbox
-                        name="check"
-                        id="check"
-                        formControlName="roadmapCheck"
-                      />
-                      <label for="check">Add Roadmap</label>
-                      <div class="desc" *ngIf="isCheckedRoadMap">
-                        <form formGroupName="addRoadMapOptionGroup">
+                    [class.label-last]="!isCheckedRoadMap"
+                  >
+                    <input
+                      type="checkbox"
+                      #checkbox
+                      name="check"
+                      id="check"
+                      formControlName="roadmapCheck"
+                    />
+                    <label for="check">Add Roadmap</label>
+                    <div class="desc" *ngIf="isCheckedRoadMap">
+                      <form formGroupName="addRoadMapOptionGroup">
                         <textarea
                           formControlName="roadmapDescription"
                         ></textarea>
-                          <div class="image-area">
-                            <button
-                              class="btn-primary-costum upload"
-                              style="margin-top: 10px"
-                            >
-                              Upload Image
-                              <input
-                                accept=".png, .jpg, .jpeg"
-                                (change)="onImageUpload($event)"
-                                type="file"
-                                id="myFile"
-                                name="filename"
-                                formControlName="roadmapImage"
-                              />
-                            </button>
-                            <img
-                              class="uploaded-image-preview wrapper-border"
-                              *ngIf="imageURL"
-                              [src]="imageURL"
-                              alt=""
-                            />
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                    <hr />
-                    <div
-                      class="down-checkbox label-last"
-                      (click)="checkSecond()"
-                      [ngClass]="{
-                      'wrapper-border': isCheckedTeamInfo,
-                      top: !isCheckedTeamInfo
-                    }"
-                      [class.label-last]="!isCheckedTeamInfo"
-                    >
-                      <input
-                        type="checkbox"
-                        #checkboxSecond
-                        name="check"
-                        id="checkSecond"
-                        formControlName="teamInfoCheck"
-                      />
-                      <label for="checkSecond">Add Team Info</label>
-                      <ng-container
-                        *ngFor="let item of extraFieldsArr; let i = index"
-                      >
-                        <div class="desc overflow" *ngIf="isCheckedTeamInfo">
-                          <div
-                            class="row"
-                            style="position: relative"
-                            [ngStyle]="{ 'margin-top': i !== 0 ? '12px' : '0px' }"
+                        <div class="image-area">
+                          <button
+                            class="btn-primary-costum upload"
+                            style="margin-top: 10px"
                           >
-                            <form
-                              class="col-md-6"
-                              formGroupName="teamInfoOptionGroup"
-                            >
-                              <div class="col-md-6">
-                                <div
-                                  class="image-place d-flex flex-column"
-                                  style="
+                            Upload Image
+                            <input
+                              accept=".png, .jpg, .jpeg"
+                              (change)="onImageUpload($event)"
+                              type="file"
+                              id="myFile"
+                              name="filename"
+                              formControlName="roadmapImage"
+                            />
+                          </button>
+                          <img
+                            class="uploaded-image-preview wrapper-border"
+                            *ngIf="imageURL"
+                            [src]="imageURL"
+                            alt=""
+                          />
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <hr />
+                  <div class="down-checkbox label-last" [ngClass]="{
+                    'wrapper-border': isCheckedTeamInfo,
+                    top: !isCheckedTeamInfo
+                  }" [class.label-last]="!isCheckedTeamInfo">
+                  <input  (click)="checkSecond()" type="checkbox" #checkboxSecond name="check" id="checkSecond"
+                    formControlName="teamInfoCheck" />
+                  <label for="checkSecond">Add Team Info</label>
+                  <ng-container formArrayName="teamInfoOptionGroup">
+                    <ng-container *ngFor="let item of teamInfo.controls; let i = index">
+                      <div class="desc overflow" *ngIf="isCheckedTeamInfo">
+                        <div class="row" style="position: relative"
+                          [ngStyle]="{ 'margin-top': i !== 0 ? '12px' : '0px' }">
+                          <form class="col-md-6" [formGroup]="item">
+                            <div class="col-md-6">
+                              <div class="image-place d-flex flex-column" style="
                                   justify-content: center;
                                   align-items: center;
                                   width: 100%;
                                   margin-top: 30px;
-                                "
-                                >
-                                  <input
-                                    type="file"
-                                    id="myFile"
-                                    name="filename"
-                                    formControlName="teamInfoImage"
-                                    style="
+                                ">
+                                <input type="file" id="myFile" name="filename" formControlName="image" style="
                                     position: absolute;
                                     height: 60px;
                                     background: red;
@@ -579,73 +563,45 @@
                                     width: 100%;
                                     opacity: 0;
                                     cursor: pointer;
-                                  "
-                                  />
-                                  <i
-                                    aria-hidden="true"
-                                    class="fa fa-user"
-                                    style="font-size: 70px; cursor: pointer"
-                                  ></i>
+                                  " />
+                                <i aria-hidden="true" class="fa fa-user" style="font-size: 70px; cursor: pointer"></i>
+                              </div>
+                            </div>
+                            <div class="col-md-6 desc-middle">
+                              <div class="d-flex flex-column">
+                                <div class="d-flex align-items-center">
+                                  <span>Name</span>
+                                  <input type="text" class="input-costum" formControlName="name" />
+                                </div>
+                                <div class="d-flex align-items-center">
+                                  <span>Position</span>
+                                  <input type="text" class="input-costum" formControlName="role" />
+                                </div>
+                                <div class="d-flex align-items-center">
+                                  <span>Social</span>
+                                  <input type="text" class="input-costum" formControlName="social" />
                                 </div>
                               </div>
-                              <div class="col-md-6 desc-middle">
-                                <div class="d-flex flex-column">
-                                  <div class="d-flex align-items-center">
-                                    <span>Name</span>
-                                    <input
-                                      type="text"
-                                      class="input-costum"
-                                      formControlName="name"
-                                    />
-                                  </div>
-                                  <div class="d-flex align-items-center">
-                                    <span>Position</span>
-                                    <input
-                                      type="text"
-                                      class="input-costum"
-                                      formControlName="position"
-                                    />
-                                  </div>
-                                  <div class="d-flex align-items-center">
-                                    <span>Social</span>
-                                    <input
-                                      type="text"
-                                      class="input-costum"
-                                      formControlName="social"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              <div
-                                class="col-md-2 plus_icon"
-                                (click)="addExtraFields(i)"
-                                style="
+                            </div>
+                            <div class="col-md-2 plus_icon" (click)="addExtraFields(i)" style="
                                 left: 0px;
                                 right: 0px;
                                 bottom: -20px;
                                 margin: auto;
                                 position: absolute;
-                              "
-                              >
-                                <img
-                                  src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
-                                  alt=""
-                                  style="width: 30px; height: 30px"
-                                  *ngIf="i === 0"
-                                />
-                                <img
-                                  *ngIf="i !== 0"
-                                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
-                                  alt=""
-                                  style="height: 30px; width: 30px"
-                                />
-                              </div>
-                            </form>
-                          </div>
+                              ">
+                              <img src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg" alt=""
+                                style="width: 30px; height: 30px" *ngIf="i === 0" />
+                              <img *ngIf="i !== 0"
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                alt="" style="height: 30px; width: 30px" />
+                            </div>
+                          </form>
                         </div>
-                      </ng-container>
-                    </div>
-                  </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </div>
                 </div>
               </div>
             </div>
@@ -655,6 +611,7 @@
     </div>
     <div class="deploy d-flex flex-column">
       <button
+      [disabled]="deployFormGroup.invalid"
         (click)="submit()"
         class="btn-secondary-costum"
         type="submit"
