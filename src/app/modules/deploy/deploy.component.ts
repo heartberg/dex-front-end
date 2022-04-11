@@ -3,6 +3,9 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { DeployerContractService } from 'src/app/services/blockchain/deployer-contract.service';
 import { Presale, ProjectViewModel, ProjectViewModelForMinit } from 'src/app/shared/class/shared.class';
 import { switchMap } from 'rxjs/operators'
+import {DeployedAppSettings} from "../../blockchain/platform-conf";
+import {WalletsConnectService} from "../../services/wallets-connect.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-deploy',
@@ -15,8 +18,9 @@ export class DeployComponent implements OnInit {
   extraFieldsArr: number[] = [1];
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
+  fee = environment.Y_FEE;
 
-  constructor(private fb: FormBuilder, private _http:DeployerContractService) {}
+  constructor(private fb: FormBuilder, private _http:DeployerContractService, private walletProviderService: WalletsConnectService) {}
 
   ngOnInit(): void {}
   @ViewChild('checkbox', { static: false })
@@ -83,12 +87,14 @@ export class DeployComponent implements OnInit {
     teamInfoCheck: this.fb.control(false),
   });
 
+  blockchainObect: any;
 
   get teamInfo(){
     return this.deployFormGroup.controls['teamInfoOptionGroup'] as FormArray
   }
 
   submit() {
+    console.log(this.blockchainObect);
     const formValue = this.deployFormGroup.value;
 
     const creatorWallet:any = localStorage.getItem("wallet");
@@ -150,13 +156,8 @@ export class DeployComponent implements OnInit {
       // })
       console.log(projectData);
 
-    }else{
+    } else{
       const {presale, ...projectDataWithoutPresaleData} = projectData;
-
-      // this._http.postProjectViewModelWithoutPresaleData(projectDataWithoutPresaleData).subscribe((v:any) => {
-      //   this.httpRequests(v, projectDataMint)
-      // })
-
       console.log(projectDataWithoutPresaleData);
       console.log(projectDataMint)
     }
@@ -298,7 +299,7 @@ export class DeployComponent implements OnInit {
   async onSubmit() {
     // let result = await this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     // console.log(result);
-
+    console.log(this.blockchainObect);
     let result = await this.walletProviderService.payAndSign('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     console.log(result);
 
