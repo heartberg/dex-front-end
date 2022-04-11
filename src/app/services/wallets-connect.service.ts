@@ -39,6 +39,7 @@ export class WalletsConnectService {
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
 
     this.sessionWallet = sw;
+    console.log(this.sessionWallet, 'esaaa')
   }
 
 

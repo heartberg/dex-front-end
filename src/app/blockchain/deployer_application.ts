@@ -14,7 +14,7 @@ import {
     DeployedAppSettings,
     platform_settings as ps
 } from "./platform-conf";
-import { Wallet } from "algorand-session-wallet"
+import {SessionWallet, Wallet} from "algorand-session-wallet"
 import { encode } from "querystring";
 import { sign } from "crypto";
 import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
@@ -58,9 +58,10 @@ export class DeployedApp {
       this.settings = <DeployedAppSettings>{};
     }
 
-    async deploy(wallet: Wallet, settings: DeployedAppSettings) {
+    async deploy(wallet: SessionWallet, settings: DeployedAppSettings) {
         this.settings = settings;
         const suggested = await getSuggested(10)
+      console.log(wallet)
         const addr = wallet.getDefaultAccount()
 
         const args = [encodeParam(this.settings.total_supply), encodeParam(this.settings.buy_burn), encodeParam(this.settings.sell_burn),
