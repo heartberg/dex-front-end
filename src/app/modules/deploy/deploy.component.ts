@@ -57,11 +57,12 @@ export class DeployComponent implements OnInit {
     private walletProviderService: WalletsConnectService,
     private deployerBC: DeployedApp,
     private fb: FormBuilder,
-  ) {
-    this.sessionWallet = this.walletProviderService.sessionWallet?.wallet;
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.sessionWallet = this.walletProviderService.sessionWallet;
+    console.log('sessionWallet', this.sessionWallet)
+
     // of(this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1)).subscribe(
     //   (item: any) => {
     //     console.log(item);
@@ -231,12 +232,14 @@ export class DeployComponent implements OnInit {
 
 
   async onSubmit() {
+    this.sessionWallet = this.walletProviderService.sessionWallet;
     // let result = await this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     // console.log(result);
 
     // let result = await this.walletProviderService.payAndSign('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     // console.log(result);
-    console.log('saba');
+    console.log(this.deployerBC);
+    console.log(this.sessionWallet);
     this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
     // const deploy = new DeployedApp(this.walletProviderService);
     // deploy.deploy()
