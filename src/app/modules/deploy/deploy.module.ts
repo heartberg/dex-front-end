@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { DeployRoutingModule } from './deploy-routing.module';
 import { DeployComponent } from './deploy.component';
-import {ReactiveFormsModule} from "@angular/forms";
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
