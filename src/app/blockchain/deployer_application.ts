@@ -63,6 +63,7 @@ export class DeployedApp {
     const suggested = await getSuggested(10)
     console.log('wallet', wallet)
     const addr = wallet.getDefaultAccount()
+    console.log('addr', addr)
 
     const args = [encodeParam(this.settings.total_supply), encodeParam(this.settings.buy_burn), encodeParam(this.settings.sell_burn),
     encodeParam(this.settings.transfer_burn), encodeParam(this.settings.to_lp), encodeParam(this.settings.to_backing),
