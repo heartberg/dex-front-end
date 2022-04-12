@@ -3,7 +3,7 @@
     <button class="btn-default btn-default close" (click)="closePopUp(false)">
       <i class="fa fa-close"></i>
     </button>
-    <div class="top-side">
+    <div class="top-side" *ngIf="!stacking">
       <div class="title">
         <h3 class="color-violet" *ngIf="isTrade">Get Backing for Token Name</h3>
         <h3 style="text-align: unset" class="color-violet" *ngIf="isRestart">
@@ -426,5 +426,52 @@
       </div>
     </ng-container>
     <!-- isBorrow container -->
+
+<!--    if is stacking-->
+    <ng-container *ngIf="stacking">
+      <div class="stacking">
+        <h3 *ngIf="stackingISStake">Stake</h3>
+        <h3 *ngIf="!stackingISStake">Withdraw</h3>
+        <div class="pretitle">
+          <span class="color-violet" *ngIf="stackingISStake">
+                      Stake Verse Tokens to receive rewards in Algo and Verse
+          </span>
+          <span class="color-violet" *ngIf="!stackingISStake">
+            Withdraw your staked Verse Tokens.
+          </span>
+        </div>
+        <ng-container *ngIf="stackingISStake">
+          <div class="inputs second d-flex align-items-center justify-content-between">
+            <h4>Verse</h4>
+            <input type="text" class="input-costum">
+            <span class="color-violet txt">available: X</span>
+          </div>
+        </ng-container>
+          <ng-container *ngIf="!stackingISStake">
+            <div class="inputs first d-flex align-items-center justify-content-between">
+              <h4>Currently Staked</h4>
+              <input type="text" class="input-costum">
+            </div>
+            <div class="inputs d-flex align-items-center justify-content-between">
+              <h4>Withdraw Verse</h4>
+              <input type="text" class="input-costum">
+            </div>
+          </ng-container>
+          <div class="buttons d-flex align-items-center justify-content-between">
+            <ng-container *ngIf="stacking">
+              <button class="btn-primary-costum">
+                Ok
+              </button>
+              <button class="btn-secondary-costum">Cancel</button>
+            </ng-container>
+            <ng-container *ngIf="!stacking">
+              <button class="btn-primary-costum">
+                Ok
+              </button>
+              <button class="btn-secondary-costum">Cancel</button>
+            </ng-container>
+          </div>
+      </div>
+    </ng-container>
   </div>
 </div>

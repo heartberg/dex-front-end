@@ -1,6 +1,6 @@
 <div class="main" [ngClass]="{ 'dark-mode': isThemeChanged }">
   <app-header (themeWasChanged)="changeTheme($event)"></app-header>
-  <div class="content">
+  <div class="content" style="min-height: 100vh; padding-bottom: 30px">
     <router-outlet></router-outlet>
   </div>
 </div>

@@ -188,3 +188,33 @@
 }
 @media (max-width: 580px) {
 }
+.stacking {
+  .input-costum {
+    width: 50%;
+    height: 40px;
+  }
+  .pretitle {
+    margin-top: 15px;
+  }
+  .first {
+    margin-bottom: 15px;
+    margin-top: 40px;
+  }
+  .second {
+    margin-top: 40px;
+    position: relative;
+    .txt{
+      position: absolute;
+      top: -14px;
+      right: 8px;
+      font-size: 12px;
+    }
+  }
+  .buttons {
+    margin-top: 20px;
+    button {
+      width: 140px;
+    }
+  }
+}
+

@@ -16,7 +16,8 @@ const routes: Routes = [
   { path: 'send', loadChildren: () => import('./modules/send/send.module').then(m => m.SendModule) },
   { path: 'trade', loadChildren: () => import('./modules/trade/trade.module').then(m => m.TradeModule) },
   { path: 'my-presale', loadChildren: () => import('./modules/my-presale/my-presale.module').then(m => m.MyPresaleModule) },
-  { path: 'tokens', loadChildren: () => import('./modules/tokens/tokens.module').then(m => m.TokensModule) }
+  { path: 'tokens', loadChildren: () => import('./modules/tokens/tokens.module').then(m => m.TokensModule) },
+  { path: 'stacking', loadChildren: () => import('./modules/stacking/stacking.module').then(m => m.stackingModule) }
 ];
 
 @NgModule({

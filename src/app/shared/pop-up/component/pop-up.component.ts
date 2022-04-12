@@ -27,6 +27,8 @@ export class PopUpComponent implements OnInit {
   @Input() isRestart: boolean = false;
   @Input() isFair: boolean = false;
 
+  @Input() stacking: boolean = false;
+  @Input() stackingISStake: boolean = false;
   isActiveFirst = true;
   isActiveSecond = false;
 

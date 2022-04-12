@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { SharedModule } from "./shared/shared.module";
 import { HttpClientModule } from "@angular/common/http";
 import {WalletsConnectService} from "./services/wallets-connect.service";
+import {stackingModule} from "./modules/stacking/stacking.module";
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import {WalletsConnectService} from "./services/wallets-connect.service";
     BrowserModule,
     AppRoutingModule,
     SharedModule,
-    HttpClientModule
+    HttpClientModule,
+    stackingModule,
   ],
   providers: [WalletsConnectService],
   bootstrap: [AppComponent]
