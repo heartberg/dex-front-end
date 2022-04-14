@@ -190,3 +190,15 @@ export async function waitForConfirmation(algodclient: algosdk.Algodv2 | null, t
     /* eslint-enable no-await-in-loop */
     throw new Error(`Transaction not confirmed after ${timeout} rounds!`);
 }
+
+export async function compileProgram(programSource: string) {
+    if (client != null){
+        let encoder = new TextEncoder();
+        let programBytes = encoder.encode(programSource);
+        let compileResponse = await client.compile(programBytes).do();
+        let compiledBytes = new Uint8Array(Buffer.from(compileResponse.result, "base64"));
+        return compiledBytes;
+    } else {
+        return undefined
+    }
+}
