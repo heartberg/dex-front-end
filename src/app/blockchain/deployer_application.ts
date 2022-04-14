@@ -1,5 +1,5 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, compileProgram, getGlobalState, getAlgodClient } from "./algorand"
-import { readFileSync } from 'fs';
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState } from "./algorand"
+import * as fs from 'fs';
 import {
   get_app_optin_txn,
   get_verse_app_call_txn,
@@ -25,6 +25,7 @@ import { Injectable } from "@angular/core";
 import { WalletsConnectService } from "../services/wallets-connect.service";
 import { AppRoutingModule } from "../app-routing.module";
 import AlgodClient from "algosdk/dist/types/src/client/v2/algod/algod";
+import { compileProgram, getTransactionParams, waitForTransaction } from "../services/utils.algo";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -56,7 +57,7 @@ export class DeployedApp {
   // this is
   // TODO: check mapping of freshly deployed app with deployed app settings, maybe split it up, create mapper functions somewhere
   constructor(
-    private wallet: WalletsConnectService
+    private walletConnectService: WalletsConnectService
   ) {
     this.settings = <DeployedAppSettings>{};
   }
@@ -68,31 +69,48 @@ export class DeployedApp {
     console.log('wallet', wallet)
     const addr = wallet.getDefaultAccount()
     console.log('addr', addr)
-    
-    const args = [algosdk.encodeUint64(this.settings.total_supply), algosdk.encodeUint64(this.settings.buy_burn),
-                  algosdk.encodeUint64(this.settings.sell_burn), algosdk.encodeUint64(this.settings.transfer_burn),
-                  algosdk.encodeUint64(this.settings.to_lp), algosdk.encodeUint64(this.settings.to_backing),
+
+    const args = [algosdk.encodeUint64(this.settings.total_supply), algosdk.encodeUint64(this.settings.buy_burn), algosdk.encodeUint64(this.settings.sell_burn),
+                  algosdk.encodeUint64(this.settings.transfer_burn), algosdk.encodeUint64(this.settings.to_lp), algosdk.encodeUint64(this.settings.to_backing),
                   algosdk.encodeUint64(this.settings.max_buy)]
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
     const assets = [ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id]
 
-    const fs = require('fs')
-    var approval;
-    var clear;
-    try {
-      approval = fs.readFileSync('../../assets/contracts/deployer_token_approval.teal', 'utf8');
-      clear = fs.readFileSync('../../assets/contracts/deployer_token_clear.teal', 'utf8');
-    } catch (err) {
-      console.error(err)
-    }
+    const approval = await (await fetch('../../assets/contracts/deployer_token_approval.teal')).text()
+    //console.log('approval', approval)
+    const clear = await (await fetch('../../assets/contracts/deployer_token_clear.teal')).text()
+    //console.log('clear', clear)
 
-    const createApp = new Transaction(get_create_deploy_app_txn(suggested, addr, args, apps, assets, accounts, approval, clear))
+    const createApp = algosdk.makeApplicationCreateTxnFromObject({
+      from: wallet.getDefaultAccount(),
+        approvalProgram: await compileProgram(approval),
+        clearProgram: await compileProgram(clear),
+        numGlobalInts: 27,
+        numGlobalByteSlices: 2,
+        numLocalInts: 3,
+        numLocalByteSlices: 0,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        note: new Uint8Array(Buffer.from("Deploy App")),
+        appArgs: args,
+        foreignApps: apps,
+        accounts: accounts,
+        foreignAssets: assets,
+        suggestedParams: await getTransactionParams(),
+    })
 
-    const [signed] = await wallet.signTxn([createApp])
-    const result = await sendWait([signed])
-    this.settings.contract_id = result['application_index']
-    this.settings.contract_address = algosdk.getApplicationAddress(BigInt(result['application_index']));
+    //const createApp = new Transaction(get_create_deploy_app_txn(suggested, addr, args, apps, assets, accounts, approval, clear))
+
+    const [signedTxns] = await wallet.signTxn([createApp])
+    const result = await getAlgodClient().sendRawTransaction(signedTxns.blob).do();
+    await waitForTransaction(getAlgodClient(), result.txId);
+
+    // const result = await sendWait([signed])
+    const txRes = await getAlgodClient().pendingTransactionInformation(result.txId).do();
+    console.log('appCreateResult', txRes);
+
+    this.settings.contract_id = txRes['application-index'];
+    this.settings.contract_address = algosdk.getApplicationAddress(BigInt( txRes['application-index'] ));
     return result
   }
 

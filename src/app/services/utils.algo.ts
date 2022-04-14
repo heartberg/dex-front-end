@@ -2042,3 +2042,14 @@ export const isOptinAsset = async (assetIndex: number, address: string) => {
 
   return false;
 }
+
+export const compileProgram = async (programSource: string) => {
+	const encoder = new TextEncoder();
+	const programBytes = encoder.encode(programSource);
+	const compileResponse = await getAlgodClient().compile(programBytes).do();
+	const compiledBytes = new Uint8Array(
+		Buffer.from(compileResponse.result, "base64")
+	);
+
+	return compiledBytes;
+}
