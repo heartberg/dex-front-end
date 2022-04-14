@@ -62,14 +62,14 @@ export class VerseApp {
         return result  
     }
 
-    async buy(wallet: Wallet , algoAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
+    async buy(wallet: Wallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
         
-        const args = [Method.Buy, encodeParam(slippage), encodeParam(wantedReturn)]
-        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.fee_addr)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const args = [new Uint8Array(Buffer.from("buy")), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
+        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+        const assets = [ps.platform.verse_asset_id]
 
         const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
         const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.verse_app_addr, algoAmount))
@@ -123,9 +123,13 @@ export class VerseApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
         
-        const args = [Method.GetBacking, encodeParam(tokenAmount)]
-        const accounts = [encodeParam(ps.platform.burn_addr)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        var args = [Method.Transfer, encodeParam(tokenAmount)]
+        var accounts = [ps.platform.burn_addr, ps.platform.burn_addr]
+        var assets = [encodeParam(ps.platform.verse_asset_id)]
+
+        args = [Method.GetBacking, encodeParam(tokenAmount)]
+        accounts = [ps.platform.burn_addr]
+        assets = [encodeParam(ps.platform.verse_asset_id)]
 
         const backing = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
         const [signed] = await wallet.signTxn([backing])

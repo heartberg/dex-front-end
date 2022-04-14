@@ -62,37 +62,6 @@ export class DeployComponent implements OnInit {
   ngOnInit(): void {
     this.sessionWallet = this.walletProviderService.sessionWallet;
     console.log('sessionWallet', this.sessionWallet)
-
-    // of(this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1)).subscribe(
-    //   (item: any) => {
-    //     console.log(item);
-    //   }
-    // )
-
-    // this.deployerBC.settings = {
-    //   creator: 'saba',
-    //   // @ts-ignore
-    //   total_supply: 9007199254740991n,
-    //   buy_burn: 210,
-    //   sell_burn: 123,
-    //   transfer_burn: 123,
-    //   to_lp: 239,
-    //   to_backing: 20,
-    //   max_buy: 20,
-    //   name: 'saeee',
-    //   unit: 'dsfm',
-    //   decimals: 2.4,
-    //   url: '',
-    //   trading_start: 23405,
-    //   initial_token_liq: 23405,
-    //   initial_algo_liq: 23405,
-    //   initial_algo_liq_fee: 23405,
-    //   contract_id: 2,
-    //   contract_address: 'sjkjd',
-    //   asset_id: 234,
-    //   // @ts-ignore
-    //   presale_settings: {}
-    // }
   }
 
   @ViewChild('checkbox', { static: false})
@@ -199,8 +168,8 @@ export class DeployComponent implements OnInit {
 
   blockchainObjInitialize(): DeployedAppSettings {
     return this.blockchainObect = {
-      creator: 'saba',
-      total_supply: this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value,
+      creator: this.sessionWallet.wallet.getDefaultAccount(),
+      total_supply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value,
       buy_burn: this.deployFormGroup.get('feesGroup.buyBurn')?.value,
       sell_burn: this.deployFormGroup.get('feesGroup.sellBurn')?.value,
       transfer_burn: this.deployFormGroup.get('feesGroup.sendBurn')?.value,
@@ -238,7 +207,8 @@ export class DeployComponent implements OnInit {
 
     // let result = await this.walletProviderService.payAndSign('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
     // console.log(result);
-    console.log(this.deployerBC);
+    this.blockchainObjInitialize()
+    console.log(this.blockchainObect);
     console.log(this.sessionWallet);
     this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
     // const deploy = new DeployedApp(this.walletProviderService);

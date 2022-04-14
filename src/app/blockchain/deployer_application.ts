@@ -1,4 +1,4 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, compileProgram } from "./algorand"
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, compileProgram, getGlobalState, getAlgodClient } from "./algorand"
 import { readFileSync } from 'fs';
 import {
   get_app_optin_txn,
@@ -24,6 +24,7 @@ import { HomeComponent } from "../modules/home/home.component";
 import { Injectable } from "@angular/core";
 import { WalletsConnectService } from "../services/wallets-connect.service";
 import { AppRoutingModule } from "../app-routing.module";
+import AlgodClient from "algosdk/dist/types/src/client/v2/algod/algod";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -67,10 +68,11 @@ export class DeployedApp {
     console.log('wallet', wallet)
     const addr = wallet.getDefaultAccount()
     console.log('addr', addr)
-
-    const args = [this.settings.total_supply, this.settings.buy_burn, this.settings.sell_burn,
-                  this.settings.transfer_burn, this.settings.to_lp, this.settings.to_backing,
-                  this.settings.max_buy]
+    
+    const args = [algosdk.encodeUint64(this.settings.total_supply), algosdk.encodeUint64(this.settings.buy_burn),
+                  algosdk.encodeUint64(this.settings.sell_burn), algosdk.encodeUint64(this.settings.transfer_burn),
+                  algosdk.encodeUint64(this.settings.to_lp), algosdk.encodeUint64(this.settings.to_backing),
+                  algosdk.encodeUint64(this.settings.max_buy)]
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
     const assets = [ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id]
@@ -84,7 +86,6 @@ export class DeployedApp {
     } catch (err) {
       console.error(err)
     }
-    
 
     const createApp = new Transaction(get_create_deploy_app_txn(suggested, addr, args, apps, assets, accounts, approval, clear))
 
@@ -428,4 +429,16 @@ export class DeployedApp {
   // trade and token page
 
   // in final we gonna do one more call for blockchain in trad epoage to calculate
+
+  async getContractGlobalState(){
+    if(this.settings.contract_id){
+      var globalState = getGlobalState(this.settings.contract_id)
+      console.log(globalState)
+      return globalState
+    }
+    return undefined
+  }
+
+
+
 }

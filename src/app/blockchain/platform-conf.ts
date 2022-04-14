@@ -54,7 +54,7 @@ type PresaleSettings = {
 
 type DeployedAppSettings = {
     creator: string,
-    total_supply: bigint,
+    total_supply: number,
     buy_burn: number,
     sell_burn: number,
     transfer_burn: number,

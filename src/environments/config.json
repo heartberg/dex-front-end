@@ -27,7 +27,8 @@
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",
-        "clear":"deployer_token_clear.teal"
+        "clear":"deployer_token_clear.teal",
+        "burn_teal":"burn_escrow.teal"
     },
     "dev":{
         "debug_txns":false,

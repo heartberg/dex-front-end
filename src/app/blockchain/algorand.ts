@@ -91,7 +91,7 @@ export async function getGlobalState(contractId: number){
     let client: algosdk.Algodv2 = getAlgodClient();
     let applicationInfoResponse = await client.getApplicationByID(contractId).do();
     let globalState = []
-    if(applicationInfoResponse['params'].includes('global-state')) {
+    if('global-state' in applicationInfoResponse['params']) {
         globalState = applicationInfoResponse['params']['global-state']
     }
     return globalState

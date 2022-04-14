@@ -5,6 +5,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { getGlobalState } from 'src/app/blockchain/algorand';
+import { DeployedApp } from 'src/app/blockchain/deployer_application';
+import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 
@@ -47,7 +50,9 @@ export class TradeComponent implements OnInit {
 
   constructor(
     private assetReqService: AssetReqService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    //private deployedApp: DeployedApp,
+    //private verseApp: VerseApp
   ) {}
 
   // FORMS
@@ -184,7 +189,7 @@ export class TradeComponent implements OnInit {
     this.isPopUpOpen = event;
   }
 
-  getValueFromDropDown($event: any, index: number) {
+  async getValueFromDropDown($event: any, index: number) {
     // console.log($event);
     // if (index === 1 && $event) {
     //   this.secondDropValues.find( (item, i) =>  {
@@ -196,6 +201,17 @@ export class TradeComponent implements OnInit {
     // }
 
     this.selectAsset($event);
+    console.log(this.selectedOption?.contractAddress);
+    
+    // get blockchain information of contract
+    
+    let globalState = await getGlobalState(4458)
+
+
+    console.log(globalState)
+
+    // fill deployed app settings with information
+    // create deployed app object
 
     if (index === 1) {
       // if ($event === 'Algo') {

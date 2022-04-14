@@ -1,7 +1,7 @@
 export interface AssetViewModel {
     assetId: number
-    smartContractId: number
-    smartContractAddress: string
+    contractId: number
+    contractAddress: string
     name: string
     unitName: string
     totalSupply: number
