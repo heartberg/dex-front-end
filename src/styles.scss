@@ -189,7 +189,7 @@ html {
   }
   .input-costum {
     background: rgba(255, 255, 255, 0.07) !important;
-    color: rgb(255, 255, 255, 0.8) !important;
+    color: black !important;
     &::placeholder {
       color: rgb(255, 255, 255, 0.8) !important;
     }
@@ -198,6 +198,7 @@ html {
       border-color: rgba(255, 255, 255, 0.3) !important;
       box-shadow: rgb(255 255 255 / 6%) 0px 0px 0px 4px !important;
     }
+    color: rgba(255, 255, 255, 0.8) !important;
   }
   .search-btn {
     color: rgb(255, 255, 255, 0.8) !important;
@@ -383,9 +384,8 @@ html {
   border-radius: 24px;
   height: 50px;
   background: rgba(4, 4, 5, 0.07);
-  color: rgb(128, 128, 128) !important;
   padding-left: 15px;
-
+  color: black;
   &::placeholder {
     color: rgba(4, 4, 5, 0.5);
   }

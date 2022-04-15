@@ -185,7 +185,7 @@ export class DeployedApp {
   // 4 - setup (will be added one more);  (project/setup - if it's  not)
   // anouther container for a blockchain state of ngrx
 
-  ////  deploy page end here ------------
+  ////  deploy-api-logic-file page end here ------------
 
   async buyPresale(wallet: Wallet, amount: number): Promise<boolean> {
     const suggested = await getSuggested(10)

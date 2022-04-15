@@ -185,6 +185,7 @@ export class TradeComponent implements OnInit {
   }
 
   getValueFromDropDown($event: any, index: number) {
+    console.log($event);
     // console.log($event);
     // if (index === 1 && $event) {
     //   this.secondDropValues.find( (item, i) =>  {

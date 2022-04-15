@@ -4,11 +4,12 @@ import {WalletsConnectService} from "../../services/wallets-connect.service";
 import { of } from 'rxjs';
 import {DeployedApp} from "../../blockchain/deployer_application";
 import {DeployedAppSettings} from "../../blockchain/platform-conf";
-import {FormBuilder} from "@angular/forms";
+import {FormBuilder, FormGroup} from "@angular/forms";
 import {environment} from "../../../environments/environment";
+import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
 
 @Component({
-  selector: 'app-deploy',
+  selector: 'app-deploy-api-logic-file',
   templateUrl: './deploy.component.html',
   styleUrls: ['./deploy.component.scss']
 })
@@ -19,48 +20,22 @@ export class DeployComponent implements OnInit {
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
   fee = environment.Y_FEE;
-  blockchainObect: DeployedAppSettings = {
-    creator: '',
-    // @ts-ignore
-    total_supply: 9007199254740991n,
-    buy_burn: 22,
-    sell_burn: 34,
-    transfer_burn: 2,
-    to_lp: 23,
-    to_backing: 23,
-    max_buy: 293,
-    name: 'saba',
-    unit: 'unit', // not *
-    decimals: 21,
-    url: 'url', // not *,
-    trading_start: 23004,
-    initial_token_liq: 23,
-    initial_algo_liq: 2,
-    initial_algo_liq_fee: 2,
-    contract_id: 23, // not *
-    contract_address: 'saba', // not *
-    asset_id: 21, // not *
-    presale_settings: {
-      presale_token_amount: 21,
-      presale_start: 21,
-      presale_end: 12,
-      to_lp: 1,
-      softcap: 1,
-      hardcap: 1,
-      walletcap: 12
-    } // not *
-  };
-
   sessionWallet: any;
+  blockchainObect: DeployedAppSettings | undefined;
+
+  // @ts-ignore
+  deployFormGroup: FormGroup;
 
   constructor(
     private walletProviderService: WalletsConnectService,
     private deployerBC: DeployedApp,
     private fb: FormBuilder,
+    private deployLib: DeployLb
   ) {}
 
   ngOnInit(): void {
 
+    this.initiializeForm();
 
     // of(this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1)).subscribe(
     //   (item: any) => {
@@ -137,64 +112,67 @@ export class DeployComponent implements OnInit {
   }
 
   // for form intitialize
-  deployFormGroup = this.fb.group({
-    tokenInfoGroup: this.fb.group({
-      tokenName: '',
-      unitName: '',
-      totalSupply: '',
-      decimals: '',
-      URL: '',
-      maxBuy: '',
-    }),
-    feesGroup: this.fb.group({
-      risingPriceFloor: '',
-      backing: '',
-      buyBurn: '',
-      sellBurn: '',
-      sendBurn: '',
-    }),
-    additionalFeeOptionGroup: this.fb.group({
-      addFeeCheck: this.fb.control(false),
-      purpose: '',
-      address: '',
-      fee: '',
-    }),
-    presaleOptionsGroupDescription: this.fb.control(''),
-    createPresaleOptionGroup: this.fb.group({
-      presaleSettings: this.fb.group({
-        presaleStart: '',
-        presaleEnd: '',
-        softCap: '',
-        hardCap: '',
-        walletCap: '',
+
+  initiializeForm(): void {
+    this.deployFormGroup = this.fb.group({
+      tokenInfoGroup: this.fb.group({
+        tokenName: '',
+        unitName: '',
+        totalSupply: '',
+        decimals: '',
+        URL: '',
+        maxBuy: '',
       }),
-      presaleLiquidity: this.fb.group({
-        tokensInPresale: '',
-        tokensInLiquidity: '',
-        algoToLiquidity: '',
-        presaleFundsToLiquidity: '',
+      feesGroup: this.fb.group({
+        risingPriceFloor: '',
+        backing: '',
+        buyBurn: '',
+        sellBurn: '',
+        sendBurn: '',
       }),
-    }),
-    liquidity: this.fb.group({
-      tokensToLiq: '',
-      algoToLiq: '',
-    }),
-    tradingStart: this.fb.control(''),
-    addRoadMapOptionGroup: this.fb.group({
-      roadmapDescription: '',
-      roadmapImage: '',
-    }),
-    teamInfoOptionGroup: this.fb.group({
-      teamInfoImage: '',
-      name: '',
-      position: '',
-      social: '',
-    }),
-    presaleCheck: this.fb.control(false),
-    roadmapCheck: this.fb.control(false),
-    teamInfoCheck: this.fb.control(false),
-  });
-  // for form intitialize
+      additionalFeeOptionGroup: this.fb.group({
+        addFeeCheck: this.fb.control(false),
+        purpose: '',
+        address: '',
+        fee: '',
+      }),
+      presaleOptionsGroupDescription: this.fb.control(''),
+      createPresaleOptionGroup: this.fb.group({
+        presaleSettings: this.fb.group({
+          presaleStart: '',
+          presaleEnd: '',
+          softCap: '',
+          hardCap: '',
+          walletCap: '',
+        }),
+        presaleLiquidity: this.fb.group({
+          tokensInPresale: '',
+          tokensInLiquidity: '',
+          algoToLiquidity: '',
+          presaleFundsToLiquidity: '',
+        }),
+      }),
+      liquidity: this.fb.group({
+        tokensToLiq: '',
+        algoToLiq: '',
+      }),
+      tradingStart: this.fb.control(''),
+      addRoadMapOptionGroup: this.fb.group({
+        roadmapDescription: '',
+        roadmapImage: '',
+      }),
+      teamInfoOptionGroup: this.fb.group({
+        teamInfoImage: '',
+        name: '',
+        position: '',
+        social: '',
+      }),
+      presaleCheck: this.fb.control(false),
+      roadmapCheck: this.fb.control(false),
+      teamInfoCheck: this.fb.control(false),
+    });
+    // for form intitialize
+  }
 
   blockchainObjInitialize(): DeployedAppSettings {
     return this.blockchainObect = {
@@ -230,20 +208,16 @@ export class DeployComponent implements OnInit {
   }
 
 
-  async onSubmit() {
+  onSubmit() {
     this.sessionWallet = this.walletProviderService.sessionWallet;
-    console.log('sessionWallet', this.sessionWallet)
-    // let result = await this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
-    // console.log(result);
-
-    // let result = await this.walletProviderService.payAndSign('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1000);
-    // console.log(result);
-    console.log('saba');
-    this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
-    // const deploy = new DeployedApp(this.walletProviderService);
-    // deploy.deploy()
-
-  }
+    // console.log('sessionWallet', this.sessionWallet)
+    // console.log('saba');
+    // this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
+    // this.deployLib.
+    setTimeout(() => {
+      this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
+    }, 2000)
+}
 
   activatePurposeSection() {
     if (this.checkboxPurpose.nativeElement.checked) {
