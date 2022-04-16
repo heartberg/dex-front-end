@@ -6,7 +6,7 @@ import {DeployedApp} from "../../blockchain/deployer_application";
 import {DeployedAppSettings} from "../../blockchain/platform-conf";
 import {FormBuilder} from "@angular/forms";
 import {environment} from "../../../environments/environment";
-import { PropertyWrite } from '@angular/compiler';
+import { IfStmt, PropertyWrite } from '@angular/compiler';
 import { env } from 'process';
 
 @Component({
@@ -224,18 +224,22 @@ export class DeployComponent implements OnInit {
     let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
     console.log(response)
     // If successfull show popup: "Deployed Contract", send to backend
-    
+
     response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect);
     // If successfull show popup: "Minted", send to backend
 
     response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect);
     // If successfull show popup: "Opted In Burn address", send to backend
 
-    //If no presale:
-    //response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect);
-    // If presale: 
-    response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect);
+
+    if(this.presaleIsChecked){
+      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect);
+      
+    } else {
+      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect);
+    }
     // If successfull show popup: "Smart Token successfully deployed!" and send to backend
+
 
   }
 
