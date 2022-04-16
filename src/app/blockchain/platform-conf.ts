@@ -39,7 +39,9 @@ type Platform = {
     distribution_id: number,
     verse_app_id: number,
     verse_app_addr: string,
-    verse_asset_id: number
+    verse_asset_id: number,
+    backing_id: number,
+    backing_addr: string
 };
 
 type PresaleSettings = {
@@ -62,17 +64,18 @@ type DeployedAppSettings = {
     to_backing: number,
     max_buy: number,
     name: string,
-    unit?: string,
+    unit: string,
     decimals: number,
-    url?: string,
+    url: string,
     trading_start: number,
     initial_token_liq: number,
     initial_algo_liq: number,
-    initial_algo_liq_fee: number,
+    initial_algo_liq_with_fee: number,
+    extra_fee_time: number,
     contract_id?: number,
     contract_address?: string,
     asset_id?: number,
-    presale_settings?: PresaleSettings
+    presale_settings: PresaleSettings
 };
 
 type PlatformConf = {

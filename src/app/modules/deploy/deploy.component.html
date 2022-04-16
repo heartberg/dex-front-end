@@ -463,21 +463,21 @@
                         <h6 class="color-violet">Initial Price:</h6>
                         <h6>X Algo/Token</h6>
                       </div>
-                      <div class="wrapper-border">
-                        <h3 class="color-violet title">Trading Start</h3>
-                        <div class="inputs">
-                          <div class="d-flex align-items-center">
-                            <h4>Date and Time</h4>
-                            <input
-                              type="datetime-local"
-                              class="input-costum"
-                              formControlName="tradingStart"
-                            />
-                          </div>
-                        </div>
-                      </div>
                     </ng-container>
                     <hr *ngIf="!presaleIsChecked" />
+                    <div class="wrapper-border">
+                      <h3 class="color-violet title">Trading Start</h3>
+                      <div class="inputs">
+                        <div class="d-flex align-items-center">
+                          <h4>Date and Time</h4>
+                          <input
+                            type="datetime-local"
+                            class="input-costum"
+                            formControlName="tradingStart"
+                          />
+                        </div>
+                      </div>
+                    </div>
                     <div
                       class="down-checkbox"
                       (click)="check()"
