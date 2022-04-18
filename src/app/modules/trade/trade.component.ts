@@ -45,6 +45,8 @@ export class TradeComponent implements OnInit {
   clickCounter: number = 0;
   isClickedOnBtn: boolean = false;
 
+  checked: boolean = false;
+
   constructor(
     private assetReqService: AssetReqService,
     private fb: FormBuilder
@@ -90,8 +92,14 @@ export class TradeComponent implements OnInit {
       this.secondDropValues = this.algoArr;
       this.selectedOptionAname = this.firstDropValues[0];
       this.selectedOptionBname = this.firstDropValues[0];
-      this.selectAsset(this.firstDropValues[0]);
+      // this.selectAsset(this.firstDropValues[0]);
     });
+
+    // this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe(
+    //   (value: AssetViewModel[]) => {
+    //     console.log(value, 'sana');
+    //   }
+    // )
   }
 
   makeReverse() {
@@ -106,6 +114,8 @@ export class TradeComponent implements OnInit {
   }
 
   handleCheckboxUpdate(event: any) {
+    console.log(event, 'sjhdjksdhjkfhsjkdfhjksdfhjk')
+    this.checked = event;
     if (event === true) {
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
@@ -118,11 +128,11 @@ export class TradeComponent implements OnInit {
         this.secondDropValues = this.algoArr;
         this.selectedOptionAname = this.firstDropValues[0];
         this.selectedOptionBname = this.firstDropValues[0];
-        this.selectAsset(this.firstDropValues[0]);
+        // this.selectAsset(this.firstDropValues[0]);
       });
     } else if (event === false) {
       const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe((res) => {
         // this.assetArr = res;
         this.assetArr = res;
         this.firstDropValues = [];
@@ -132,9 +142,10 @@ export class TradeComponent implements OnInit {
         this.secondDropValues = this.algoArr;
         this.selectedOptionAname = this.firstDropValues[0];
         this.selectedOptionBname = this.firstDropValues[0];
-        this.selectAsset(this.firstDropValues[0]);
+        // this.selectAsset(this.firstDropValues[0]);
       });
     }
+
   }
 
   dropdownSelected(value: string, index: number) {
@@ -162,12 +173,20 @@ export class TradeComponent implements OnInit {
       return el.name === assetName;
     });
     console.log(this.selectedOption);
+    if (this.selectedOption) {
+      console.log(typeof localStorage.getItem('wallet'));
+      this.assetReqService.addFavoriteAsset(this.selectedOption.assetId, localStorage.getItem('wallet')!)
+        .subscribe(
+        (response: any) => {
+          console.log(response, 'response on add in favorites')
+        }
+      )
+    }
   }
 
   checkBoxClicked() {
     const slippageBox = this.slippageForm.get('slippageCheckBox');
     const slippageInput = this.slippageForm.get('slippageInput');
-
     if (!slippageBox?.value) {
       slippageInput?.enable();
     } else if (slippageBox.value) {
@@ -258,5 +277,9 @@ export class TradeComponent implements OnInit {
     //   this.algoAmount = 0;
     // }
     console.log(this.algoAmount);
+  }
+
+  getMinusPlusValue($event: number) {
+   console.log($event);
   }
 }

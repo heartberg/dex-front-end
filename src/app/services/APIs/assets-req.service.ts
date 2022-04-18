@@ -37,12 +37,27 @@ export class AssetReqService {
 
   addFavoriteAsset(assetId: number, wallet: string) {
     const url = `${this.baseUrl}/asset/favorites/add`;
-    return this._http.get(url, {
+    return this._http.post(url, {
       params: {
-        assetId: assetId,
+        assetId: +assetId,
         wallet: wallet,
       },
-    });
+    },
+      {
+        params: {
+          assetId: +assetId,
+          wallet: wallet,
+        },
+      }
+    );
+    // const headers = { 'content-type': 'application/json'};
+    // const bodyOne = +assetId;
+    // const bodyTwo = wallet;
+    // const body = {
+    //   assetId: +bodyOne,
+    //   wallet: bodyTwo,
+    // }
+    // return this._http.post(url, body, {'headers': headers})
   }
 
   removeFavoriteAsset(assetId: number, wallet: string) {

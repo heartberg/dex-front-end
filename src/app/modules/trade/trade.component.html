@@ -43,13 +43,15 @@
             (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
             [dropDownValues]="assetArr"
             [isNotAccordion]="false"
-            [widthPX]="'160px'"
+            [widthPX]="'255px'"
             (dropDownValue)="getValueFromDropDown($event, 1)"
             [extraDropDown]="true"
             [notCloseOnClick]="true"
             class="first-drop-down"
             #componentRefA
             (showAll)="handleCheckboxUpdate($event)"
+            [checkBoxCheckTrade]="checked"
+            [incomeData]="assetArr"
           ></app-drop-down-selector>
           <div class="input d-flex flex-column">
             <div class="input-field d-flex flex-column align-items-end">
@@ -116,7 +118,7 @@
             (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
             [dropDownValues]=""
             [isNotAccordion]="false"
-            [widthPX]="'160px'"
+            [widthPX]="'255px'"
             [extraDropDown]="true"
             (dropDownValue)="getValueFromDropDown($event, 2)"
             [notCloseOnClick]="true"

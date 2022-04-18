@@ -227,7 +227,7 @@
             <div>
               <ng-container
                 (click)="addToFavourites(button, i)"
-                *ngIf="!publicTradeIsAdded"
+                *ngIf="isPlus"
               >
                 <img
                   src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
@@ -235,7 +235,7 @@
                   style="width: 23px; height: 23px"
                 />
               </ng-container>
-              <ng-container *ngIf="publicTradeIsAdded">
+              <ng-container *ngIf="!isPlus" (click)="removeFromFavourites(button)">
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                   alt=""

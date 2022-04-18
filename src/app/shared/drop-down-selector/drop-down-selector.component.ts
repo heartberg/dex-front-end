@@ -9,8 +9,9 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import {Observable, of} from 'rxjs';
 import { AssetViewModel } from 'src/app/models/assetView.model';
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-drop-down-selector',
@@ -42,12 +43,23 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() public extraDropDown: boolean = false;
   @Input() public notCloseOnClick: boolean = false;
 
+  // for trade show all/show favs
+  @Input() public checkBoxCheckTrade: boolean = false;
+  @Input() incomeData: AssetViewModel[] = [];
+  public favAssetsArr: AssetViewModel[] = [];
+  public allAssetsArr: AssetViewModel[] = [];
+  isPlus: boolean = false;
+  // for trade show all/show favs
+
   public isDropDownOpened = false;
   public isDropDownOpenedCounter = 1;
   public showDropDownSelected: string = '';
 
   //  for while
   publicTradeIsAdded: boolean = false;
+
+  // isMinus: boolean = true;
+  // isPlus: boolean = false;
 
   // FORM
   dropDownForm = this.fb.group({
@@ -72,9 +84,20 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   ngOnInit(): void {}
 
-  ngDoCheck() {}
+  ngDoCheck() {
+  }
 
   ngOnChanges() {
+    if (this.checkBoxCheckTrade) {
+      this.allAssetsArr = this.incomeData;
+      console.log(this.checkBoxCheckTrade, 'all')
+      this.isPlus = true;
+    } else {
+      this.favAssetsArr = this.incomeData;
+      this.isPlus = false;
+      console.log(this.checkBoxCheckTrade, 'fav')
+    }
+
     // this.showDropDownSelected = this.dropDownValueTitleForObj;
   }
 
@@ -114,7 +137,11 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   addToFavourites(button: AssetViewModel, i: number) {
-    this.selectedAsset.emit(button.assetId);
+    console.log(button.assetId);
+  }
+
+  removeFromFavourites(button: AssetViewModel) {
+    console.log(button.assetId);
   }
 
   emitCollectionIdAndWallet(
@@ -131,5 +158,9 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   getElement(i: any) {
     console.log(i);
+  }
+
+  getMinusOrPlusLogic(button: any, index: number) {
+    // console.log(button, index);
   }
 }

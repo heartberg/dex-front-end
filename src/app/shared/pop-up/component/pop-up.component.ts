@@ -155,7 +155,49 @@ export class PopUpComponent implements OnInit {
     if (value === 'MyAlgoWallet') {
       await this._walletsConnectService.connect('my-algo-connect');
       if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
-        this.isConnectedToWallet.emit(false);
+        // this.isConnectedToWallet.emit(false);
+            let wallet = localStorage.getItem('wallet');
+            if (
+              this._walletsConnectService.myAlgoAddress &&
+              this._walletsConnectService.myAlgoName !== undefined
+            ) {
+              this.authService
+                .createUser(
+                  // @ts-ignore
+                  {
+                    wallet: wallet,
+                    name: 'Name',
+                    verified: false,
+                    bio: 'Nothing yet...',
+                    profileImage: '',
+                    banner: '',
+                    featuredImage: '',
+                    customUrl: '',
+                    twitter: '',
+                    instagram: '',
+                    website: '',
+                  }
+                )
+                .subscribe(
+                  (user: any) => {
+                    console.log(user);
+                    this.isConnectedToWallet.emit(false);
+                    this.logInValue.emit(wallet);
+                  },
+                  (error) => {
+                    console.log('error', error);
+                    this.authService.getUserByWallet(localStorage.getItem('wallet')!).subscribe(
+                      (response: any) => {
+                        console.log(response);
+                        if (response) {
+                          this.logInValue.emit(wallet);
+                          this.isConnectedToWallet.emit(false);
+                        }
+                      }
+                    );
+                  }
+                );
+            }
         console.log('emited')
         console.log('Connected to MyAlgoWallet')
       }
