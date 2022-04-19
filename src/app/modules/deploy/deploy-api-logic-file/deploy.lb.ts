@@ -30,65 +30,10 @@ export class DeployLb {
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
     this.initializeApiObj(data);
     if (isPresaleChecked) {
-      of(this.GetProjectPresaleCreate()).subscribe(
-        (value: any) => {
-          if (value) {
-            of(this.GetProjectMint()).subscribe(
-              (value: any) => {
-                if (value) {
-                  of(this.GetProjectBurnOptIn()).subscribe(
-                    (value: any) => {
-                      if (value) {
-                        of(this.GetProjectSetup()).subscribe(
-                          (value: any) => {
-                            if (value) {
-                              console.log('success everything was deployed!')
-                            }
-                          }
-                        )
-                      }
-                    }
-                  )
-                }
-              }
-            )
-          }
-        }
-      )
-      // end of presale checked api calls
+      this.GetProjectPresaleCreate();
     }
-    // end of presale checked statement on true
     else {
-      console.log('saba');
-      console.log(this.withoutPresaleObj);
       this.GetProjectWithoutPresaleCreate();
-        // .subscribe(
-        // (value: any) => {
-        //   console.log(this.ProjectID, 'project ID');
-        //   if (value) {
-        //     of(this.GetProjectMint(this.mintObj)).subscribe(
-        //       (value: any) => {
-        //         if (value) {
-        //           of(this.GetProjectBurnOptIn(this.projectId)).subscribe(
-        //             (value: any) => {
-        //               if (value) {
-        //                 of(this.GetProjectSetup(this.projectId)).subscribe(
-        //                   (value: any) => {
-        //                     if (value) {
-        //                       console.log('success everything was deployed!')
-        //                     }
-        //                   }
-        //                 )
-        //               }
-        //             }
-        //           )
-        //         }
-        //       }
-        //     )
-        //   }
-        // }
-      // )
-      // end of api call on project withour presale
     }
     // end of statement of false
   }
