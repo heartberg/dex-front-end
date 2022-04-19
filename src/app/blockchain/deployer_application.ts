@@ -1,4 +1,4 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState } from "./algorand"
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState, StateToObj } from "./algorand"
 import * as fs from 'fs';
 import {
   get_app_optin_txn,
@@ -31,6 +31,42 @@ import { compileProgram, getTransactionParams, waitForTransaction } from "../ser
 
 declare const AlgoSigner: any;
 
+export enum StateKeys {
+  token_liq_key = "s1",
+    algo_liq_key = "s2",
+    burned_key = "bd",
+    total_supply_key = "ts",
+    buy_burn_key = "bb",
+    sell_burn_key = "sb",
+    transfer_burn_key = "trb",
+    to_lp_key = "lp",
+    to_backing_key = "tb",
+    max_buy_key = "mb",
+    burn_addr_key = "ba",
+    asset_id_key = "asa",
+    verse_asset_id_key = "vasa",
+    verse_app_id_key = "vid",
+    verse_backing_app_id_key = "vbid",
+    verse_backing_key = "vb",
+    platform_fee_address_key = "fa",
+    flat_fee_key = "f",
+    trading_start_key = "t",
+    user_borrowed_key = "ub",
+    user_supplied_key = "us",
+    total_borrowed_key = "tbw",
+
+    presale_start_key = "ps",
+    presale_end_key = "pe",
+    presale_hard_cap_key = "phc",
+    presale_soft_cap_key = "psc",
+    presale_wallet_cap_key = "pwc",
+    presale_to_liq_key = "ptl",
+    presale_contribution_key = "pc",
+    presale_total_raised = "pr",
+    presale_token_amount = "pta",
+    presale_finished_key = "pf",
+    extra_fee_time_key = "eft"
+}
 
 export enum Method {
   Transfer = "transfer",
@@ -42,7 +78,7 @@ export enum Method {
   Create = "create",
   Setup = "setup",
   Resetup = "resetup_presale",
-  RemoveMaxBuy = "remove_max_buy=",
+  RemoveMaxBuy = "remove_max_buy",
   BuyPresale = "buy_presale",
   ClaimPresale = "claim_presale"
 }
@@ -465,7 +501,7 @@ export class DeployedApp {
 
   async getContractGlobalState(){
     if(this.settings.contract_id){
-      var globalState = getGlobalState(this.settings.contract_id)
+      var globalState = StateToObj(await getGlobalState(this.settings.contract_id), StateKeys)
       console.log(globalState)
       return globalState
     }

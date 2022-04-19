@@ -3,12 +3,62 @@ import {platform_settings as ps} from './platform-conf'
 import algosdk, {LogicSigAccount} from 'algosdk'
 import { Asset, AssetHolding } from 'algosdk/dist/types/src/client/v2/algod/models/types'
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
+import { stat } from 'fs';
 
 export const dummy_addr = "b64(YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE=)"
 
-type Holding= {
+type Holding = {
     assetId: number
     assetContract: number
+}
+
+export interface State  {
+    key: string
+    value: {
+        bytes: string
+        uint: number
+        type?: number
+        action?: number
+    }
+}
+
+// Generic object to hold state keys/values
+interface Obj {
+   [key: string] : {
+       b: Uint8Array
+       i: number
+   }
+}
+
+//@ts-ignore
+export function StateToObj(sd: State[], stateKeys): Obj {
+    const obj = {} as Obj
+
+    // Start with empty set
+    Object.values(stateKeys).forEach((k)=>{
+        //@ts-ignore
+        obj[k] = {i:0, b: new Uint8Array()}
+    })
+
+    for(const idx in sd){
+        const key = Buffer.from(sd[idx].key, 'base64').toString()
+
+        // https://github.com/algorand/go-algorand/blob/master/data/basics/teal.go
+        // In both global-state and state deltas, 1 is bytes and 2 is int
+        const v = sd[idx].value
+        const dataTypeFlag = v.action?v.action:v.type
+        switch(dataTypeFlag){
+            case 1:
+                obj[key] = {b:Buffer.from(v.bytes, 'base64'), i:0}
+                break;
+            case 2:
+                obj[key] = {i:v.uint, b:new Uint8Array()}
+                break;
+            default: // ??
+        }
+    }
+
+    return obj
 }
 
 let client: algosdk.Algodv2 | undefined = undefined;

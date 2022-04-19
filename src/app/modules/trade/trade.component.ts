@@ -51,8 +51,8 @@ export class TradeComponent implements OnInit {
   constructor(
     private assetReqService: AssetReqService,
     private fb: FormBuilder,
-    //private deployedApp: DeployedApp,
-    //private verseApp: VerseApp
+    private deployedApp: DeployedApp,
+    private verseApp: VerseApp
   ) {}
 
   // FORMS
