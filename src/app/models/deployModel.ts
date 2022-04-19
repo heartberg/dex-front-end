@@ -52,8 +52,8 @@ export interface projectWithoutPresaleCreateModel {
 export interface projectMintModel {
   assetId: number;
   projectId: string;
-  smartContractId: number;
-  smartContractAddress: string;
+  contractId: number;
+  contractAddress: string;
   name: string;
   unitName: string;
   totalSupply: number;

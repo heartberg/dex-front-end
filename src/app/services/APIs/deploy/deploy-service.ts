@@ -33,12 +33,32 @@ export class deployService {
 
   projectburnOptIn(projectId: any): Observable<any>{
     const url = `${this.baseUrl}/project/burnOptIn`;
-    return this._http.post<any>(url, projectId);
+    return this._http.post<any>(url, {
+      params: {
+        projectId: projectId
+      }
+    },
+    {
+      params: {
+        projectId: projectId
+      }
+    }
+    );
   }
 
   projectSetup(projectId: any): Observable<any>{
     const url = `${this.baseUrl}/project/setup`;
-    return this._http.post<any>(url, projectId);
+    return this._http.post<any>(url, {
+      params: {
+        projectId: projectId
+      }
+    },
+    {
+      params: {
+        projectId: projectId
+      }
+    }
+    );
   }
 
 }

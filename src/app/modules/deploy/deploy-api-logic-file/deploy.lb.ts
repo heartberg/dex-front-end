@@ -22,7 +22,7 @@ export class DeployLb {
   mintObj: projectMintModel;
   // @ts-ignore
   projectId: string;
-
+  // ProjectID: any = '';
   constructor(private _deployService: deployService) {
   }
 
@@ -61,32 +61,33 @@ export class DeployLb {
     else {
       console.log('saba');
       console.log(this.withoutPresaleObj);
-      of(this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj)).subscribe(
-        (value: any) => {
-          console.log(value);
-          if (value) {
-            of(this.GetProjectMint(this.mintObj)).subscribe(
-              (value: any) => {
-                if (value) {
-                  of(this.GetProjectBurnOptIn(this.projectId)).subscribe(
-                    (value: any) => {
-                      if (value) {
-                        of(this.GetProjectSetup(this.projectId)).subscribe(
-                          (value: any) => {
-                            if (value) {
-                              console.log('success everything was deployed!')
-                            }
-                          }
-                        )
-                      }
-                    }
-                  )
-                }
-              }
-            )
-          }
-        }
-      )
+      this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
+        // .subscribe(
+        // (value: any) => {
+        //   console.log(this.ProjectID, 'project ID');
+        //   if (value) {
+        //     of(this.GetProjectMint(this.mintObj)).subscribe(
+        //       (value: any) => {
+        //         if (value) {
+        //           of(this.GetProjectBurnOptIn(this.projectId)).subscribe(
+        //             (value: any) => {
+        //               if (value) {
+        //                 of(this.GetProjectSetup(this.projectId)).subscribe(
+        //                   (value: any) => {
+        //                     if (value) {
+        //                       console.log('success everything was deployed!')
+        //                     }
+        //                   }
+        //                 )
+        //               }
+        //             }
+        //           )
+        //         }
+        //       }
+        //     )
+        //   }
+        // }
+      // )
       // end of api call on project withour presale
     }
     // end of statement of false
@@ -94,37 +95,58 @@ export class DeployLb {
   // final
 
   GetProjectPresaleCrate(project: projectPresaleCreateModel) {
-    this._deployService.ProjectPresaleCreate(project).subscribe( (value: projectPresaleCreateModel) => {
-      return value;
+    return this._deployService.ProjectPresaleCreate(project).subscribe( (value: any) => {
+      console.log(value, 'presale')
     })
   }
 
   GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
-    this._deployService.ProjectCreate(project).subscribe( (value: projectWithoutPresaleCreateModel) => {
-      console.log(value);
-      return value;
+    this._deployService.ProjectCreate(project).subscribe( (value: any) => {
+      if (value) {
+        console.log(value, 'without presale');
+        // assigning
+        this.projectId = value;
+        this.mintObj.projectId = this.projectId;
+        // assigning
+        this.GetProjectMint(this.mintObj).subscribe(
+          (value) => {
+            console.log(value, 'minted')
+            if (2 === 2) {
+              this.GetProjectBurnOptIn(this.projectId).subscribe(
+                (value: any) => {
+                  if (2 === 2) {
+                    this.GetProjectSetup(this.projectId).subscribe(
+                      (value: any) => {
+                        console.log(value, 'everything is setted up');
+                      }
+                    )
+                  }
+                }
+              )
+            }
+          }
+        )
+      }
     })
   }
 
   GetProjectMint(project: projectMintModel) {
-    this._deployService.projectMint(project).subscribe( (value: projectMintModel) => {
-      console.log(value);
-      return value;
-    })
+    return this._deployService.projectMint(project)
+      // .subscribe( (value: projectMintModel) => {
+      // console.log(value, 'mint');
+      // return value;
+    // })
   }
 
   GetProjectBurnOptIn(projectId: string) {
-    this._deployService.projectburnOptIn(projectId).subscribe( (value: any) => {
-      console.log(value);
-      return value;
-    })
+    return this._deployService.projectburnOptIn(projectId)
+    //   .subscribe( (value: any) => {
+    //   console.log(value, 'burnOptIn');
+    // })
   }
 
   GetProjectSetup(projectId: string) {
-    this._deployService.projectSetup(projectId).subscribe( (value: any) => {
-      console.log(value);
-      return value;
-    })
+    return this._deployService.projectSetup(projectId)
   }
 
   // initializeObj
@@ -134,8 +156,8 @@ export class DeployLb {
 
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
-      contractAddress: 'GQ34GQ5G6HW6W57J7',
-      contractId: 32,
+      contractAddress: 'sssdsdfmk',
+      contractId: 323,
       projectName: form.get('tokenInfoGroup.tokenName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage').value, // ask
       creatorWallet: wallet!,
@@ -165,8 +187,8 @@ export class DeployLb {
 
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
-      contractAddress: 'GQ34GQ5G6HW6W57J7',
-      contractId: 32,
+      contractAddress: 'sssdsdfmk',
+      contractId: 323,
       projectName: form.get('tokenInfoGroup.tokenName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       creatorWallet: wallet!,
@@ -187,16 +209,16 @@ export class DeployLb {
     }
 
     this.mintObj = {
-      assetId: 3445,
-      projectId: 'dkj495950dj',
-      smartContractId: 1234,
-      smartContractAddress: 'ejj34',
+      assetId: 426,
+      projectId: 'willassigned',
+      contractId: 323,
+      contractAddress: 'sssdsdfmk',
       name: form.get('tokenInfoGroup.tokenName')?.value,
       unitName: form.get('tokenInfoGroup.unitName')?.value,
       totalSupply: form.get('tokenInfoGroup.totalSupply')?.value,
       url: form.get('tokenInfoGroup.URL')?.value,
       maxBuy: form.get('tokenInfoGroup.maxBuy')?.value,
-      tradingStart: form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value,
+      tradingStart: 1641387372,
       risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value,
       backing: form.get('feesGroup.backing')?.value,
       buyBurn: form.get('feesGroup.buyBurn')?.value,
@@ -207,8 +229,6 @@ export class DeployLb {
       image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       deployerWallet: localStorage.getItem('wallet')!,
     }
-
-    this.projectId = 'dkk35'
 
   }
 
