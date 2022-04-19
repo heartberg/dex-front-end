@@ -28,12 +28,19 @@ export class DeployLb {
 
   // final
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
+    // this.initializeApiObj(data);
+    // if (isPresaleChecked) {
+    //   this.GetProjectPresaleCreate();
+    // }
+    // else {
+    //   this.GetProjectWithoutPresaleCreate();
+    // }
     this.initializeApiObj(data);
     if (isPresaleChecked) {
-      this.GetProjectPresaleCreate();
+      this.GetProjectPresaleCreate(this.presaleObj);
     }
     else {
-      this.GetProjectWithoutPresaleCreate();
+      this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
     }
     // end of statement of false
   }
@@ -43,34 +50,116 @@ export class DeployLb {
     this.mintObj.assetId = assetId
   }
 
-  GetProjectPresaleCreate() {
-    return this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe( (value: any) => {
-      console.log(value, 'presale')
-      this.projectId = value;
-      this.mintObj.projectId = this.projectId;
-    })
+  // GetProjectPresaleCreate() {
+  //   return this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe( (value: any) => {
+  //     console.log(value, 'presale')
+  //     this.projectId = value;
+  //     this.mintObj.projectId = this.projectId;
+  //   })
+  // }
+  //
+  // GetProjectWithoutPresaleCreate() {
+  //   this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe( (value: any) => {
+  //     if (value) {
+  //       console.log(value, 'without presale');
+  //       this.projectId = value;
+  //       this.mintObj.projectId = this.projectId;
+  //     }
+  //   })
+  // }
+
+  // must thing
+  GetProjectPresaleCreate(project: projectPresaleCreateModel) {
+    this._deployService.ProjectPresaleCreate(project)
+      .subscribe( (value: any) => {
+        if (value) {
+          console.log(value, 'with presale');
+          // assigning
+          this.projectId = value;
+          this.mintObj.projectId = this.projectId;
+          // assigning
+          this.GetProjectMint(this.mintObj).subscribe(
+            (value) => {
+              console.log(value, 'minted')
+              if (2 === 2) {
+                this.GetProjectBurnOptIn(this.projectId).subscribe(
+                  (value: any) => {
+                    if (2 === 2) {
+                      this.GetProjectSetup(this.projectId).subscribe(
+                        (value: any) => {
+                          console.log(value, 'everything is setted up');
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            }
+          )
+        }
+      })
   }
 
-  GetProjectWithoutPresaleCreate() {
-    this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe( (value: any) => {
-      if (value) {
-        console.log(value, 'without presale');
-        this.projectId = value;
-        this.mintObj.projectId = this.projectId;
-      }
-    })
+  GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
+    this._deployService.ProjectCreate(project)
+      .subscribe( (value: any) => {
+        if (value) {
+          console.log(value, 'without presale');
+          // assigning
+          this.projectId = value;
+          this.mintObj.projectId = this.projectId;
+          // assigning
+          this.GetProjectMint(this.mintObj).subscribe(
+            (value) => {
+              console.log(value, 'minted')
+              if (2 === 2) {
+                this.GetProjectBurnOptIn(this.projectId).subscribe(
+                  (value: any) => {
+                    if (2 === 2) {
+                      this.GetProjectSetup(this.projectId).subscribe(
+                        (value: any) => {
+                          console.log(value, 'everything is setted up');
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            }
+          )
+        }
+      })
+  }
+  // #must thing
+
+  // GetProjectMint() {
+  //   return this._deployService.projectMint(this.mintObj)
+  // }
+  //
+  // GetProjectBurnOptIn() {
+  //   return this._deployService.projectburnOptIn(this.projectId)
+  // }
+  //
+  // GetProjectSetup() {
+  //   return this._deployService.projectSetup(this.projectId)
+  // }
+  GetProjectMint(project: projectMintModel) {
+    return this._deployService.projectMint(project)
+    // .subscribe( (value: projectMintModel) => {
+    // console.log(value, 'mint');
+    // return value;
+    // })
   }
 
-  GetProjectMint() {
-    return this._deployService.projectMint(this.mintObj)
+  GetProjectBurnOptIn(projectId: string) {
+    return this._deployService.projectburnOptIn(projectId)
+    //   .subscribe( (value: any) => {
+    //   console.log(value, 'burnOptIn');
+    // })
   }
 
-  GetProjectBurnOptIn() {
-    return this._deployService.projectburnOptIn(this.projectId)
-  }
-
-  GetProjectSetup() {
-    return this._deployService.projectSetup(this.projectId)
+  GetProjectSetup(projectId: string) {
+    return this._deployService.projectSetup(projectId)
   }
 
   // initializeObj
