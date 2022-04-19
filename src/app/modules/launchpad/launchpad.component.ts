@@ -19,8 +19,8 @@ export class LaunchpadComponent implements OnInit {
       'string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad ',
     asset: {
       assetId: 4,
-      smartContractId: 3,
-      smartContractAddress: 'string',
+      contractId: 3,
+      contractAddress: 'string',
       name: 'string',
       unitName: 'string',
       totalSupply: 4,

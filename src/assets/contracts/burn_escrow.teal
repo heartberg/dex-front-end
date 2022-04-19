@@ -1,0 +1,43 @@
+#pragma version 5
+txn TypeEnum
+int axfer
+==
+bnz main_l2
+err
+main_l2:
+global GroupSize
+int 2
+==
+gtxn 0 TypeEnum
+int pay
+==
+&&
+gtxn 0 Receiver
+txn Sender
+==
+&&
+gtxn 0 Amount
+int 101000
+>=
+&&
+txn TypeEnum
+int axfer
+==
+&&
+txn AssetCloseTo
+global ZeroAddress
+==
+&&
+txn CloseRemainderTo
+global ZeroAddress
+==
+&&
+txn Sender
+txn AssetReceiver
+==
+&&
+txn AssetAmount
+int 0
+==
+&&
+return

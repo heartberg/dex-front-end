@@ -21,8 +21,39 @@ export class DeployComponent implements OnInit {
   presaleIsChecked: boolean = false;
   fee = environment.Y_FEE;
   sessionWallet: any;
-  blockchainObect: DeployedAppSettings | undefined;
-
+  // blockchainObect: DeployedAppSettings | undefined;
+  blockchainObect: DeployedAppSettings = {
+    creator: '',
+    // @ts-ignore
+    extra_fee_time: 300,
+    total_supply: 9007199254740991,
+    buy_burn: 22,
+    sell_burn: 34,
+    transfer_burn: 2,
+    to_lp: 23,
+    to_backing: 23,
+    max_buy: 293,
+    name: 'saba',
+    unit: 'unit', // not *
+    decimals: 21,
+    url: 'url', // not *,
+    trading_start: 23004,
+    initial_token_liq: 23,
+    initial_algo_liq_with_fee: 2,
+    initial_algo_liq: 3,
+    contract_id: 23, // not *
+    contract_address: 'saba', // not *
+    asset_id: 21, // not *
+    presale_settings: {
+      presale_token_amount: 21,
+      presale_start: 21,
+      presale_end: 12,
+      to_lp: 1,
+      softcap: 1,
+      hardcap: 1,
+      walletcap: 12
+    } // not *
+  };
   // @ts-ignore
   deployFormGroup: FormGroup;
 
@@ -34,6 +65,8 @@ export class DeployComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.sessionWallet = this.walletProviderService.sessionWallet;
+    console.log('sessionWallet', this.sessionWallet)
 
     this.initiializeForm();
 
@@ -175,40 +208,53 @@ export class DeployComponent implements OnInit {
   }
 
   blockchainObjInitialize(): DeployedAppSettings {
+    let initial_algo_liq_with_fee;
+    let initial_token_liq;
+
+    let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
+    if(this.presaleIsChecked){
+      initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000 / (1 - this.fee))
+      initial_token_liq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, decimals)
+    } else {
+      initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000 / (1 - this.fee))
+      initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
+    }
+    console.log(initial_algo_liq_with_fee)
+    console.log(initial_token_liq)
+    let tradeStart =  parseInt((new Date(this.deployFormGroup.get('tradingStart')?.value).getTime() / 1000).toFixed(0))
+
     return this.blockchainObect = {
-      creator: 'saba',
-      total_supply: this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value,
-      buy_burn: this.deployFormGroup.get('feesGroup.buyBurn')?.value,
-      sell_burn: this.deployFormGroup.get('feesGroup.sellBurn')?.value,
-      transfer_burn: this.deployFormGroup.get('feesGroup.sendBurn')?.value,
-      to_lp: this.deployFormGroup.get('feesGroup.risingPriceFloor')?.value,
-      to_backing: this.deployFormGroup.get('feesGroup.backing')?.value,
-      max_buy: this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value,
+      extra_fee_time: 300,
+      creator: this.sessionWallet.wallet.getDefaultAccount(),
+      total_supply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, decimals),
+      buy_burn: +this.deployFormGroup.get('feesGroup.buyBurn')?.value * 100,
+      sell_burn: +this.deployFormGroup.get('feesGroup.sellBurn')?.value * 100,
+      transfer_burn: +this.deployFormGroup.get('feesGroup.sendBurn')?.value * 100,
+      to_lp: +this.deployFormGroup.get('feesGroup.risingPriceFloor')?.value * 100,
+      to_backing: +this.deployFormGroup.get('feesGroup.backing')?.value * 100,
+      max_buy: +this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value,
       name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
       unit: this.deployFormGroup.get('tokenInfoGroup.unitName')?.value || null,
-      decimals: this.deployFormGroup.get('tokenInfoGroup.decimals')?.value,
+      decimals: decimals,
       url: this.deployFormGroup.get('tokenInfoGroup.URL')?.value || null,
-      trading_start: this.deployFormGroup.get('tradingStart')?.value,
-      initial_token_liq: this.deployFormGroup.get('liquidity.tokensToLiq')?.value,
-      initial_algo_liq: this.deployFormGroup.get('liquidity.algoToLiq')?.value,
-      initial_algo_liq_fee: this.fee * +this.deployFormGroup.get('liquidity.algoToLiq')?.value,
-      contract_id: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null, // ask
-      contract_address: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null,
-      asset_id: this.deployFormGroup.get('additionalFeeOptionGroup.address')?.value || null, // ask,
+      trading_start: tradeStart,
+      initial_token_liq: initial_token_liq,
+      initial_algo_liq_with_fee: initial_algo_liq_with_fee,
+      initial_algo_liq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.fee),
       presale_settings: {
-        presale_token_amount: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value, // to ask
-        presale_start: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value,
-        presale_end: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value,
-        to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value, // to ask
-        softcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value,
-        hardcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value,
-        walletcap: this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value,
+        presale_token_amount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
+        to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
+        presale_start: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
+        presale_end: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
+        softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value,
+        hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value,
+        walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value,
       } || null
     }
   }
 
 
-  onSubmit() {
+  async onSubmit() {
     this.sessionWallet = this.walletProviderService.sessionWallet;
     // console.log('sessionWallet', this.sessionWallet)
     // console.log('saba');
@@ -217,7 +263,31 @@ export class DeployComponent implements OnInit {
     setTimeout(() => {
       this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }, 2000)
-}
+
+    this.blockchainObjInitialize();
+    console.log(this.blockchainObect);
+    console.log(this.sessionWallet);
+
+    let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
+    console.log(response)
+    // If successfull show popup: "Deployed Contract", send to backend
+
+    response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect);
+    // If successfull show popup: "Minted", send to backend
+
+    response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect);
+    // If successfull show popup: "Opted In Burn address", send to backend
+
+
+    if(this.presaleIsChecked){
+      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect);
+
+    } else {
+      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect);
+    }
+    // If successfull show popup: "Smart Token successfully deployed!" and send to backend
+
+  }
 
   activatePurposeSection() {
     if (this.checkboxPurpose.nativeElement.checked) {
