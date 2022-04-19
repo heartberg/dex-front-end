@@ -30,78 +30,49 @@ export class DeployLb {
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
     this.initializeApiObj(data);
     if (isPresaleChecked) {
-      of(this.GetProjectPresaleCrate(this.presaleObj)).subscribe(
-        (value: any) => {
-          if (value) {
-            of(this.GetProjectMint(this.mintObj)).subscribe(
-              (value: any) => {
-                if (value) {
-                  of(this.GetProjectBurnOptIn(this.projectId)).subscribe(
-                    (value: any) => {
-                      if (value) {
-                        of(this.GetProjectSetup(this.projectId)).subscribe(
-                          (value: any) => {
-                            if (value) {
-                              console.log('success everything was deployed!')
-                            }
-                          }
-                        )
-                      }
-                    }
-                  )
-                }
-              }
-            )
-          }
-        }
-      )
-      // end of presale checked api calls
+      this.GetProjectPresaleCrate(this.presaleObj);
     }
-    // end of presale checked statement on true
     else {
-      console.log('saba');
-      console.log(this.withoutPresaleObj);
       this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
-        // .subscribe(
-        // (value: any) => {
-        //   console.log(this.ProjectID, 'project ID');
-        //   if (value) {
-        //     of(this.GetProjectMint(this.mintObj)).subscribe(
-        //       (value: any) => {
-        //         if (value) {
-        //           of(this.GetProjectBurnOptIn(this.projectId)).subscribe(
-        //             (value: any) => {
-        //               if (value) {
-        //                 of(this.GetProjectSetup(this.projectId)).subscribe(
-        //                   (value: any) => {
-        //                     if (value) {
-        //                       console.log('success everything was deployed!')
-        //                     }
-        //                   }
-        //                 )
-        //               }
-        //             }
-        //           )
-        //         }
-        //       }
-        //     )
-        //   }
-        // }
-      // )
-      // end of api call on project withour presale
     }
     // end of statement of false
   }
   // final
 
   GetProjectPresaleCrate(project: projectPresaleCreateModel) {
-    return this._deployService.ProjectPresaleCreate(project).subscribe( (value: any) => {
-      console.log(value, 'presale')
+    this._deployService.ProjectPresaleCreate(project)
+      .subscribe( (value: any) => {
+        if (value) {
+          console.log(value, 'with presale');
+          // assigning
+          this.projectId = value;
+          this.mintObj.projectId = this.projectId;
+          // assigning
+          this.GetProjectMint(this.mintObj).subscribe(
+            (value) => {
+              console.log(value, 'minted')
+              if (2 === 2) {
+                this.GetProjectBurnOptIn(this.projectId).subscribe(
+                  (value: any) => {
+                    if (2 === 2) {
+                      this.GetProjectSetup(this.projectId).subscribe(
+                        (value: any) => {
+                          console.log(value, 'everything is setted up');
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            }
+          )
+        }
     })
   }
 
   GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
-    this._deployService.ProjectCreate(project).subscribe( (value: any) => {
+    this._deployService.ProjectCreate(project)
+      .subscribe( (value: any) => {
       if (value) {
         console.log(value, 'without presale');
         // assigning
