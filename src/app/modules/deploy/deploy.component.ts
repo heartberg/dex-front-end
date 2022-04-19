@@ -204,34 +204,44 @@ export class DeployComponent implements OnInit {
     // console.log('sessionWallet', this.sessionWallet)
     // console.log('saba');
     // this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
-    // this.deployLib.
-    setTimeout(() => {
-      this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
-    }, 2000)
+    //setTimeout(() => {
+    //  this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
+    //}, 2000)
 
     this.blockchainObjInitialize();
+    this.deployLib.initializeApiObj(this.deployFormGroup)
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
+
 
     let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect!);
     console.log(response)
     // If successfull show popup: "Deployed Contract", send to backend
+    if(this.presaleIsChecked){
+      this.deployLib.presaleObj.contractId = this.deployerBC.settings.contract_id!
+      this.deployLib.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
+      this.deployLib.GetProjectPresaleCreate()
+    } else {
+      this.deployLib.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
+      this.deployLib.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
+      this.deployLib.GetProjectWithoutPresaleCreate()
+    }
 
-    response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect!);
+    response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect!)
     // If successfull show popup: "Minted", send to backend
+    this.deployLib.GetProjectMint()
 
-    response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect!);
+    response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect!)
     // If successfull show popup: "Opted In Burn address", send to backend
-
+    this.deployLib.GetProjectBurnOptIn()
 
     if(this.presaleIsChecked){
-      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect!);
-
+      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect!)
     } else {
-      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect!);
+      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect!)
     }
     // If successfull show popup: "Smart Token successfully deployed!" and send to backend
-
+    this.deployLib.GetProjectSetup()
   }
 
   activatePurposeSection() {

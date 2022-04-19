@@ -30,16 +30,16 @@ export class DeployLb {
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
     this.initializeApiObj(data);
     if (isPresaleChecked) {
-      of(this.GetProjectPresaleCrate(this.presaleObj)).subscribe(
+      of(this.GetProjectPresaleCreate()).subscribe(
         (value: any) => {
           if (value) {
-            of(this.GetProjectMint(this.mintObj)).subscribe(
+            of(this.GetProjectMint()).subscribe(
               (value: any) => {
                 if (value) {
-                  of(this.GetProjectBurnOptIn(this.projectId)).subscribe(
+                  of(this.GetProjectBurnOptIn()).subscribe(
                     (value: any) => {
                       if (value) {
-                        of(this.GetProjectSetup(this.projectId)).subscribe(
+                        of(this.GetProjectSetup()).subscribe(
                           (value: any) => {
                             if (value) {
                               console.log('success everything was deployed!')
@@ -61,7 +61,7 @@ export class DeployLb {
     else {
       console.log('saba');
       console.log(this.withoutPresaleObj);
-      this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
+      this.GetProjectWithoutPresaleCreate();
         // .subscribe(
         // (value: any) => {
         //   console.log(this.ProjectID, 'project ID');
@@ -94,59 +94,34 @@ export class DeployLb {
   }
   // final
 
-  GetProjectPresaleCrate(project: projectPresaleCreateModel) {
-    return this._deployService.ProjectPresaleCreate(project).subscribe( (value: any) => {
+  GetProjectPresaleCreate() {
+    return this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe( (value: any) => {
       console.log(value, 'presale')
+      this.projectId = value;
+      this.mintObj.projectId = this.projectId;
     })
   }
 
-  GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
-    this._deployService.ProjectCreate(project).subscribe( (value: any) => {
+  GetProjectWithoutPresaleCreate() {
+    this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe( (value: any) => {
       if (value) {
         console.log(value, 'without presale');
-        // assigning
         this.projectId = value;
         this.mintObj.projectId = this.projectId;
-        // assigning
-        this.GetProjectMint(this.mintObj).subscribe(
-          (value) => {
-            console.log(value, 'minted')
-            if (2 === 2) {
-              this.GetProjectBurnOptIn(this.projectId).subscribe(
-                (value: any) => {
-                  if (2 === 2) {
-                    this.GetProjectSetup(this.projectId).subscribe(
-                      (value: any) => {
-                        console.log(value, 'everything is setted up');
-                      }
-                    )
-                  }
-                }
-              )
-            }
-          }
-        )
       }
     })
   }
 
-  GetProjectMint(project: projectMintModel) {
-    return this._deployService.projectMint(project)
-      // .subscribe( (value: projectMintModel) => {
-      // console.log(value, 'mint');
-      // return value;
-    // })
+  GetProjectMint() {
+    return this._deployService.projectMint(this.mintObj)
   }
 
-  GetProjectBurnOptIn(projectId: string) {
-    return this._deployService.projectburnOptIn(projectId)
-    //   .subscribe( (value: any) => {
-    //   console.log(value, 'burnOptIn');
-    // })
+  GetProjectBurnOptIn() {
+    return this._deployService.projectburnOptIn(this.projectId)
   }
 
-  GetProjectSetup(projectId: string) {
-    return this._deployService.projectSetup(projectId)
+  GetProjectSetup() {
+    return this._deployService.projectSetup(this.projectId)
   }
 
   // initializeObj
@@ -156,8 +131,8 @@ export class DeployLb {
 
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
-      contractAddress: 'sssdsdfmk',
-      contractId: 323,
+      contractAddress: 'tbd',
+      contractId: 0,
       projectName: form.get('tokenInfoGroup.tokenName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage').value, // ask
       creatorWallet: wallet!,
@@ -167,6 +142,7 @@ export class DeployLb {
       telegram: 's',
       instagram:  's',
       website:  's',
+      // TODO: SABA
       teamMembers: [
         {
           name: 'saba',
@@ -178,7 +154,7 @@ export class DeployLb {
       presale: {
         softCap: +form.get('presaleOptionsGroupDescription')?.value!,
         hardCap: +form.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value!,
-        tokenAmount: +form.get('createPresaleOptionGroup.presaleSettings.softCap')?.value!, // ask
+        tokenAmount: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
         walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value!,
         startingTime: +form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value!,
         endingTime: +form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value!,
@@ -187,8 +163,8 @@ export class DeployLb {
 
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
-      contractAddress: 'sssdsdfmk',
-      contractId: 323,
+      contractAddress: 'tbd',
+      contractId: 0,
       projectName: form.get('tokenInfoGroup.tokenName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       creatorWallet: wallet!,
