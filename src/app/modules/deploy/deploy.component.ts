@@ -229,6 +229,7 @@ export class DeployComponent implements OnInit {
 
     response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect!)
     // If successfull show popup: "Minted", send to backend
+    this.deployLib.SetAssetId(this.deployerBC.settings.asset_id!)
     this.deployLib.GetProjectMint()
 
     response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect!)

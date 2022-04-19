@@ -39,6 +39,10 @@ export class DeployLb {
   }
   // final
 
+  SetAssetId(assetId: number) {
+    this.mintObj.assetId = assetId
+  }
+
   GetProjectPresaleCreate() {
     return this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe( (value: any) => {
       console.log(value, 'presale')
@@ -130,10 +134,10 @@ export class DeployLb {
     }
 
     this.mintObj = {
-      assetId: 426,
-      projectId: 'willassigned',
-      contractId: 323,
-      contractAddress: 'sssdsdfmk',
+      assetId: 0,
+      projectId: 'tbd',
+      contractId: 0,
+      contractAddress: 'tbd',
       name: form.get('tokenInfoGroup.tokenName')?.value,
       unitName: form.get('tokenInfoGroup.unitName')?.value,
       totalSupply: form.get('tokenInfoGroup.totalSupply')?.value,
