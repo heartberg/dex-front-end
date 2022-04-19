@@ -21,39 +21,7 @@ export class DeployComponent implements OnInit {
   presaleIsChecked: boolean = false;
   fee = environment.Y_FEE;
   sessionWallet: any;
-  // blockchainObect: DeployedAppSettings | undefined;
-  blockchainObect: DeployedAppSettings = {
-    creator: '',
-    // @ts-ignore
-    extra_fee_time: 300,
-    total_supply: 9007199254740991,
-    buy_burn: 22,
-    sell_burn: 34,
-    transfer_burn: 2,
-    to_lp: 23,
-    to_backing: 23,
-    max_buy: 293,
-    name: 'saba',
-    unit: 'unit', // not *
-    decimals: 21,
-    url: 'url', // not *,
-    trading_start: 23004,
-    initial_token_liq: 23,
-    initial_algo_liq_with_fee: 2,
-    initial_algo_liq: 3,
-    contract_id: 23, // not *
-    contract_address: 'saba', // not *
-    asset_id: 21, // not *
-    presale_settings: {
-      presale_token_amount: 21,
-      presale_start: 21,
-      presale_end: 12,
-      to_lp: 1,
-      softcap: 1,
-      hardcap: 1,
-      walletcap: 12
-    } // not *
-  };
+  blockchainObect: DeployedAppSettings | undefined;
   // @ts-ignore
   deployFormGroup: FormGroup;
 
@@ -76,30 +44,6 @@ export class DeployComponent implements OnInit {
     //   }
     // )
 
-    // this.deployerBC.settings = {
-    //   creator: 'saba',
-    //   // @ts-ignore
-    //   total_supply: 9007199254740991n,
-    //   buy_burn: 210,
-    //   sell_burn: 123,
-    //   transfer_burn: 123,
-    //   to_lp: 239,
-    //   to_backing: 20,
-    //   max_buy: 20,
-    //   name: 'saeee',
-    //   unit: 'dsfm',
-    //   decimals: 2.4,
-    //   url: '',
-    //   trading_start: 23405,
-    //   initial_token_liq: 23405,
-    //   initial_algo_liq: 23405,
-    //   initial_algo_liq_fee: 23405,
-    //   contract_id: 2,
-    //   contract_address: 'sjkjd',
-    //   asset_id: 234,
-    //   // @ts-ignore
-    //   presale_settings: {}
-    // }
   }
 
   @ViewChild('checkbox', { static: false})
@@ -223,6 +167,7 @@ export class DeployComponent implements OnInit {
     console.log(initial_token_liq)
     let tradeStart =  parseInt((new Date(this.deployFormGroup.get('tradingStart')?.value).getTime() / 1000).toFixed(0))
 
+    // @ts-ignore
     return this.blockchainObect = {
       extra_fee_time: 300,
       creator: this.sessionWallet.wallet.getDefaultAccount(),
@@ -268,22 +213,22 @@ export class DeployComponent implements OnInit {
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
 
-    let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
+    let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect!);
     console.log(response)
     // If successfull show popup: "Deployed Contract", send to backend
 
-    response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect);
+    response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect!);
     // If successfull show popup: "Minted", send to backend
 
-    response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect);
+    response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect!);
     // If successfull show popup: "Opted In Burn address", send to backend
 
 
     if(this.presaleIsChecked){
-      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect);
+      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect!);
 
     } else {
-      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect);
+      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect!);
     }
     // If successfull show popup: "Smart Token successfully deployed!" and send to backend
 
