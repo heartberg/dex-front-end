@@ -22,6 +22,7 @@ export class MyPresaleComponent implements OnInit {
     asset: {
       assetId: 4,
       contractId: 3,
+      decimals: 2,
       contractAddress: 'string',
       name: 'string',
       unitName: 'string',

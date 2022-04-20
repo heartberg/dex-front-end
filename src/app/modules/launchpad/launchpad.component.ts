@@ -21,6 +21,7 @@ export class LaunchpadComponent implements OnInit {
       assetId: 4,
       contractId: 3,
       contractAddress: 'string',
+      decimals: 3,
       name: 'string',
       unitName: 'string',
       totalSupply: 4,

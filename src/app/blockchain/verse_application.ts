@@ -16,6 +16,7 @@ import { Wallet } from "algorand-session-wallet"
 import { encode } from "querystring";
 import { sign } from "crypto";
 import { toBase64String } from "@angular/compiler/src/output/source_map";
+import { Injectable } from "@angular/core";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -107,9 +108,11 @@ export enum Method {
     Claim = "claim"
 }
 
+@Injectable({
+    providedIn: 'root',
+  })
 
 export class VerseApp {
-
     constructor(){
     }
 

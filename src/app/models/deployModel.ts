@@ -12,7 +12,7 @@ export interface projectPresaleCreateModel {
   instagram:string,
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
-  presale?: projectPresaleCreatePresaleModel
+  presale: projectPresaleCreatePresaleModel
 }
 
 interface projectrPresaleCreateTeamModel {
@@ -69,6 +69,7 @@ export interface projectMintModel {
   additionalFeeWallet: null;
   image: string;
   deployerWallet: string;
+  decimals: number;
 }
 // project mint
 
