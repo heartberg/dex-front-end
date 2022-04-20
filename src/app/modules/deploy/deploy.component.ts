@@ -107,12 +107,6 @@ export class DeployComponent implements OnInit {
         sellBurn: '',
         sendBurn: '',
       }),
-      additionalFeeOptionGroup: this.fb.group({
-        addFeeCheck: this.fb.control(false),
-        purpose: '',
-        address: '',
-        fee: '',
-      }),
       presaleOptionsGroupDescription: this.fb.control(''),
       createPresaleOptionGroup: this.fb.group({
         presaleSettings: this.fb.group({

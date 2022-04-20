@@ -98,6 +98,7 @@ export class TradeComponent implements OnInit {
     const wallet = localStorage.getItem('wallet')!;
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe(async (res) => {
       // this.assetArr = res;
+      console.log(res)
       this.assetArr.push(await this.verseApp.getViewModel())
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       console.log(this.blockchainInfo)
@@ -114,11 +115,6 @@ export class TradeComponent implements OnInit {
       this.selectAsset(this.firstDropValues[0]);
     });
 
-    // this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe(
-    //   (value: AssetViewModel[]) => {
-    //     console.log(value, 'sana');
-    //   }
-    // )
   }
 
   makeReverse() {
@@ -193,6 +189,8 @@ export class TradeComponent implements OnInit {
     });
     if(assetName == 'Verse'){
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    } else if (assetName == 'Algo'){
+      
     } else {
       this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings)

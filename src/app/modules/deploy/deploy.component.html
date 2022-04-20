@@ -201,66 +201,6 @@
                 />
               </div>
             </form>
-
-            <div class="wrapper-border">
-              <form formGroupName="additionalFeeOptionGroup">
-                <div
-                  class="d-flex align-items-center"
-                  (click)="activatePurposeSection()"
-                  [ngStyle]="{
-                    'margin-bottom': purposeIsChecked ? '8px' : '0px'
-                  }"
-                >
-                  <input
-                    type="checkbox"
-                    name="checkPurpose"
-                    id="checkPurpose"
-                    formControlName="addFeeCheck"
-                    #checkboxPurpose
-                  />
-                  <label
-                    for="checkPurpose"
-                    style="
-                      color: #81007f;
-                      font-weight: 700;
-                      margin-left: 5px;
-                      cursor: pointer;
-                      margin-bottom: 0px;
-                    "
-                  >Additional Fee</label
-                  >
-                </div>
-                <ng-container *ngIf="purposeIsChecked">
-                  <div class="createoffer">
-                    <h4 class="amountheader">Purpose</h4>
-                    <input
-                      type="text"
-                      placeholder="Marketing"
-                      class="input-costum"
-                      formControlName="purpose"
-                    />
-                  </div>
-                  <div class="createoffer">
-                    <h4 class="amountheader">Address</h4>
-                    <input
-                      type="text"
-                      placeholder="address"
-                      class="input-costum"
-                      formControlName="address"
-                    />
-                  </div>
-                  <div class="createoffer">
-                    <h4 class="amountheader">Fee</h4>
-                    <input
-                      type="text"
-                      placeholder="1"
-                      class="input-costum"
-                      formControlName="fee"
-                    />
-                  </div>
-                </ng-container>
-              </form>
-            </div>
           </div>
           <!-- </div> -->
 
