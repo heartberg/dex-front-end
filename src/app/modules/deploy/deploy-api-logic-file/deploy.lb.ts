@@ -7,6 +7,9 @@ import {
 import {deployService} from "../../../services/APIs/deploy/deploy-service";
 import {FormGroup} from "@angular/forms";
 import {of} from "rxjs";
+import {DeployComponent} from "../deploy.component";
+import {DeployedAppSettings} from "../../../blockchain/platform-conf";
+import {DeployedApp} from "../../../blockchain/deployer_application";
 
 @Injectable({
   providedIn: 'root',
@@ -23,24 +26,29 @@ export class DeployLb {
   // @ts-ignore
   projectId: string;
   // ProjectID: any = '';
-  constructor(private _deployService: deployService) {
+  // @ts-ignore
+  blockchainObj: DeployedAppSettings;
+  sessionWallet: any;
+  constructor(private _deployService: deployService, private deployerBC: DeployedApp) {
   }
 
   // final
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
-    // this.initializeApiObj(data);
-    // if (isPresaleChecked) {
-    //   this.GetProjectPresaleCreate();
-    // }
-    // else {
-    //   this.GetProjectWithoutPresaleCreate();
-    // }
     this.initializeApiObj(data);
+    // @ts-ignore
+    this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
+    // @ts-ignore
+    this.sessionWallet = JSON.parse(localStorage.getItem('sessionWallet'));
+
     if (isPresaleChecked) {
       this.GetProjectPresaleCreate(this.presaleObj);
+      this.presaleObj.contractId = this.deployerBC.settings.contract_id!
+      this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     else {
       this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
+      this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
+      this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     // end of statement of false
   }
@@ -70,24 +78,42 @@ export class DeployLb {
 
   // must thing
   GetProjectPresaleCreate(project: projectPresaleCreateModel) {
-    this._deployService.ProjectPresaleCreate(project)
-      .subscribe( (value: any) => {
+    of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
+      (value: any) => {
         if (value) {
-          console.log(value, 'with presale');
-          // assigning
-          this.projectId = value;
-          this.mintObj.projectId = this.projectId;
-          // assigning
-          this.GetProjectMint(this.mintObj).subscribe(
+          this._deployService.ProjectPresaleCreate(project).subscribe(
             (value) => {
-              console.log(value, 'minted')
-              if (2 === 2) {
-                this.GetProjectBurnOptIn(this.projectId).subscribe(
+              if (value) {
+                of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     if (2 === 2) {
-                      this.GetProjectSetup(this.projectId).subscribe(
+                      this.GetProjectMint(this.mintObj).subscribe(
                         (value: any) => {
-                          console.log(value, 'everything is setted up');
+                          if (2 === 2) {
+                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObj!)).subscribe(
+                              (value: any) => {
+                                if (2 === 2) {
+                                  this.GetProjectBurnOptIn(this.projectId).subscribe(
+                                    (value: any) => {
+                                      if (2 === 2) {
+                                        of (this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObj!)).subscribe(
+                                          (value: any) => {
+                                            if (value) {
+                                              this.GetProjectSetup(this.projectId).subscribe(
+                                                (value: any) => {
+                                                  console.log('setup is done')
+                                                }
+                                              )
+                                            }
+                                          }
+                                        )
+                                      }
+                                    }
+                                  )
+                                }
+                              }
+                            )
+                          }
                         }
                       )
                     }
@@ -97,28 +123,75 @@ export class DeployLb {
             }
           )
         }
-      })
+      }
+    )
+    // this._deployService.ProjectPresaleCreate(project)
+    //   .subscribe( (value: any) => {
+    //     if (value) {
+    //       console.log(value, 'with presale');
+    //       // assigning
+    //       this.projectId = value;
+    //       this.mintObj.projectId = this.projectId;
+    //       // assigning
+    //       this.GetProjectMint(this.mintObj).subscribe(
+    //         (value) => {
+    //           console.log(value, 'minted')
+    //           if (2 === 2) {
+    //             this.GetProjectBurnOptIn(this.projectId).subscribe(
+    //               (value: any) => {
+    //                 if (2 === 2) {
+    //                   this.GetProjectSetup(this.projectId).subscribe(
+    //                     (value: any) => {
+    //                       console.log(value, 'everything is setted up');
+    //                     }
+    //                   )
+    //                 }
+    //               }
+    //             )
+    //           }
+    //         }
+    //       )
+    //     }
+    //   })
   }
 
   GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
-    this._deployService.ProjectCreate(project)
-      .subscribe( (value: any) => {
+    of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
+      (value: any) => {
         if (value) {
-          console.log(value, 'without presale');
-          // assigning
-          this.projectId = value;
-          this.mintObj.projectId = this.projectId;
-          // assigning
-          this.GetProjectMint(this.mintObj).subscribe(
+          this._deployService.ProjectCreate(project).subscribe(
             (value) => {
-              console.log(value, 'minted')
-              if (2 === 2) {
-                this.GetProjectBurnOptIn(this.projectId).subscribe(
+              if (value) {
+                of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     if (2 === 2) {
-                      this.GetProjectSetup(this.projectId).subscribe(
+                      this.GetProjectMint(this.mintObj).subscribe(
                         (value: any) => {
-                          console.log(value, 'everything is setted up');
+                          if (2 === 2) {
+                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObj!)).subscribe(
+                              (value: any) => {
+                                if (2 === 2) {
+                                  this.GetProjectBurnOptIn(this.projectId).subscribe(
+                                    (value: any) => {
+                                      if (2 === 2) {
+                                        of (this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObj!)).subscribe(
+                                          (value: any) => {
+                                            if (value) {
+                                              this.GetProjectSetup(this.projectId).subscribe(
+                                                (value: any) => {
+                                                  console.log('setup is done')
+                                                }
+                                              )
+                                            }
+                                          }
+                                        )
+                                      }
+                                    }
+                                  )
+                                }
+                              }
+                            )
+                          }
                         }
                       )
                     }
@@ -128,7 +201,36 @@ export class DeployLb {
             }
           )
         }
-      })
+      }
+    )
+    // this._deployService.ProjectCreate(project)
+    //   .subscribe( (value: any) => {
+    //     if (value) {
+    //       console.log(value, 'without presale');
+    //       // assigning
+    //       this.projectId = value;
+    //       this.mintObj.projectId = this.projectId;
+    //       // assigning
+    //       this.GetProjectMint(this.mintObj).subscribe(
+    //         (value) => {
+    //           console.log(value, 'minted')
+    //           if (2 === 2) {
+    //             this.GetProjectBurnOptIn(this.projectId).subscribe(
+    //               (value: any) => {
+    //                 if (2 === 2) {
+    //                   this.GetProjectSetup(this.projectId).subscribe(
+    //                     (value: any) => {
+    //                       console.log(value, 'everything is setted up');
+    //                     }
+    //                   )
+    //                 }
+    //               }
+    //             )
+    //           }
+    //         }
+    //       )
+    //     }
+    //   })
   }
   // #must thing
 

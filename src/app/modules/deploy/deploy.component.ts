@@ -201,49 +201,48 @@ export class DeployComponent implements OnInit {
 
   async onSubmit() {
     this.sessionWallet = this.walletProviderService.sessionWallet;
+    localStorage.setItem('sessionWallet', this.sessionWallet);
     // console.log('sessionWallet', this.sessionWallet)
     // console.log('saba');
     // this.deployerBC.deploy(this.sessionWallet, this.blockchainObect);
-    //setTimeout(() => {
-    //  this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
-    //}, 2000)
 
+     this.deployLib.DeployFinalFunc(this.presaleIsChecked, this.deployFormGroup);
     this.blockchainObjInitialize();
-    this.deployLib.initializeApiObj(this.deployFormGroup)
+    localStorage.setItem('blockchainObj', JSON.stringify(this.blockchainObect));
+
+    this.deployLib.initializeApiObj(this.deployFormGroup);
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
 
 
-    let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect!);
-    console.log(response)
+    // let response = await this.deployerBC.deploy(this.sessionWallet, this.blockchainObect!);
+    // console.log(response)
     // If successfull show popup: "Deployed Contract", send to backend
     if(this.presaleIsChecked){
-      this.deployLib.presaleObj.contractId = this.deployerBC.settings.contract_id!
-      this.deployLib.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
-      this.deployLib.GetProjectPresaleCreate()
+      // this.deployLib.presaleObj.contractId = this.deployerBC.settings.contract_id!
+      // this.deployLib.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
     } else {
-      this.deployLib.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
-      this.deployLib.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
-      this.deployLib.GetProjectWithoutPresaleCreate()
+      // this.deployLib.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
+      // this.deployLib.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
 
-    response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect!)
+    // response = await this.deployerBC.mint(this.sessionWallet, this.blockchainObect!)
     // If successfull show popup: "Minted", send to backend
     this.deployLib.SetAssetId(this.deployerBC.settings.asset_id!)
     console.log(this.deployLib.mintObj)
-    this.deployLib.GetProjectMint()
+    // this.deployLib.GetProjectMint()
 
-    response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect!)
+    // response = await this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObect!)
     // If successfull show popup: "Opted In Burn address", send to backend
-    this.deployLib.GetProjectBurnOptIn()
+    // this.deployLib.GetProjectBurnOptIn()
 
     if(this.presaleIsChecked){
-      response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect!)
+      // response = this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObect!)
     } else {
-      response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect!)
+      // response = await this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObect!)
     }
     // If successfull show popup: "Smart Token successfully deployed!" and send to backend
-    this.deployLib.GetProjectSetup()
+    // this.deployLib.GetProjectSetup()
   }
 
   activatePurposeSection() {
