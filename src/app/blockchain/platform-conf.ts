@@ -40,8 +40,10 @@ type Platform = {
     verse_app_id: number,
     verse_app_addr: string,
     verse_asset_id: number,
+    verse_decimals: number,
     backing_id: number,
-    backing_addr: string
+    backing_addr: string,
+    backing_per_x_token: number
 };
 
 type PresaleSettings = {
@@ -90,7 +92,15 @@ type PlatformConf = {
 };
 
 
+type BlockchainInformation = {
+    algoLiquidity: number,
+    tokenLiquidity: number,
+    totalsupply: number,
+    totalBacking: number,
+    totalBorrowedAlgo: number
+}
+
 const platform_settings = require("../../environments/config.json") as PlatformConf;
 
 
-export { platform_settings , DeployedAppSettings}
+export { platform_settings , DeployedAppSettings, BlockchainInformation}

@@ -1,4 +1,4 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getGlobalState, readLocalState, StateToObj } from "./algorand"
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getGlobalState, readLocalState, StateToObj, getAlgodClient } from "./algorand"
 import {
     get_app_optin_txn,
     get_verse_app_call_txn,
@@ -8,8 +8,9 @@ import {
     get_app_call_txn,
     get_asa_xfer_txn
 } from "./transactions"
-import algosdk, { encodeUint64, Transaction } from 'algosdk';
+import algosdk, { Algodv2, encodeUint64, Transaction } from 'algosdk';
 import { 
+    BlockchainInformation,
     platform_settings as ps
 } from "./platform-conf";
 import { Wallet } from "algorand-session-wallet"
@@ -17,6 +18,8 @@ import { encode } from "querystring";
 import { sign } from "crypto";
 import { toBase64String } from "@angular/compiler/src/output/source_map";
 import { Injectable } from "@angular/core";
+import { AssetViewModel } from "../models/assetView.model"
+import { IfStmt } from "@angular/compiler";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -362,5 +365,50 @@ export class VerseApp {
         var globalState = StateToObj(await getGlobalState(ps.platform.verse_app_id), verseStateKeys)
         console.log(globalState)
         return globalState
+    }
+
+    async getBlockchainInformation(): Promise<BlockchainInformation>{
+        let client: Algodv2 = getAlgodClient()
+        let backingInfo: any = await client.accountInformation(ps.platform.backing_addr).do()
+        let verseState: any = await this.getContractGlobalState()
+        let backingState = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
+        
+        let algoLiquidity = verseState[verseStateKeys.algo_liq_key]['i']
+        let tokenLiquidity = verseState[verseStateKeys.token_liq_key]['i']
+        let totalSupply = verseState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
+        let totalBacking = (backingInfo['amount'] - backingInfo['min-balance'] + backingState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
+        let totalBorrowedAlgo = backingState[backingStateKeys.total_algo_borrowed_key]['i']
+
+        return {
+            algoLiquidity: algoLiquidity,
+            tokenLiquidity: tokenLiquidity,
+            totalsupply: totalSupply,
+            totalBacking: totalBacking,
+            totalBorrowedAlgo: totalBorrowedAlgo
+        }
+    }
+
+    async getViewModel() : Promise<AssetViewModel>{
+        let state: any = await this.getContractGlobalState()
+
+        let verse: AssetViewModel = {
+            assetId: ps.platform.verse_asset_id,
+            contractId: ps.platform.verse_app_id,
+            contractAddress: ps.platform.verse_app_addr,
+            name: "Verse",
+            unitName: "Verse",
+            totalSupply: state[verseStateKeys.total_supply_key]['i'],
+            decimals: ps.platform.verse_decimals,
+            maxBuy: state[verseStateKeys.max_buy_key]['i'],
+            tradingStart: 0,
+            risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
+            backing: state[verseStateKeys.to_backing_key]['i'],
+            buyBurn: state[verseStateKeys.burn_key]['i'],
+            sellBurn: state[verseStateKeys.burn_key]['i'],
+            sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
+            image: "",
+            deployerWallet: ""
+        }
+        return verse
     }
 }

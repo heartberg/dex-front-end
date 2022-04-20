@@ -8,7 +8,7 @@ import {
   get_app_call_txn,
   get_asa_optin_txn
 } from "./transactions"
-import algosdk, { Transaction } from 'algosdk';
+import algosdk, { Algodv2, Transaction } from 'algosdk';
 import {
   DeployedAppSettings,
   platform_settings as ps
@@ -259,7 +259,8 @@ export class DeployedApp {
 
   ////  deploy-api-logic-file page end here ------------
 
-  async buyPresale(wallet: Wallet, amount: number): Promise<any> {
+  async buyPresale(wallet: Wallet, amount: number, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
@@ -278,7 +279,8 @@ export class DeployedApp {
     return result
   }
 
-  async claimPresale(wallet: Wallet): Promise<any> {
+  async claimPresale(wallet: Wallet, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -295,7 +297,8 @@ export class DeployedApp {
     return result
   }
 
-  async resetupPresaleToFairLaunch(wallet: Wallet, tradingStart: number, tokenLiq: number, algoLiq: number): Promise<any> {
+  async resetupPresaleToFairLaunch(wallet: Wallet, tradingStart: number, tokenLiq: number, algoLiq: number, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggestedExtraFee = await getSuggested(30)
     suggestedExtraFee.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -319,7 +322,8 @@ export class DeployedApp {
   }
 
   async resetupPresale(wallet: Wallet, softCap: number, hardCap: number, presaleStart: number, presaleEnd: number, walletCap: number,
-    toLiq: number, tradingStart: number, presaleTokenAmount: number): Promise<any> {
+    toLiq: number, tradingStart: number, presaleTokenAmount: number, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggestedExtraFee = await getSuggested(30)
     suggestedExtraFee.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -335,22 +339,24 @@ export class DeployedApp {
     return result
   }
 
-  async optIn(wallet: Wallet): Promise<any> {
+  async optIn(wallet: Wallet, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const optin = new Transaction(get_app_optin_txn(suggested, addr, ps.platform.verse_app_id))
+    const optin = new Transaction(get_app_optin_txn(suggested, addr, this.settings.contract_id))
     const [signed] = await wallet.signTxn([optin])
     const result = await sendWait([signed])
 
     return result
   }
   // also in token or project page (same page)
-  async optOut(wallet: Wallet): Promise<any> {
+  async optOut(wallet: Wallet, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const optout = new Transaction(get_app_closeout_txn(suggested, addr, ps.platform.verse_app_id))
+    const optout = new Transaction(get_app_closeout_txn(suggested, addr, this.settings.contract_id))
     const [signed] = await wallet.signTxn([optout])
     const result = await sendWait([signed])
     // some popup info mmanagaer in sendWait
@@ -359,7 +365,8 @@ export class DeployedApp {
   }
   // presale page ended here
   // token page  (your wallet)
-  async removeMaxBuy(wallet: Wallet): Promise<any> {
+  async removeMaxBuy(wallet: Wallet,settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
@@ -374,7 +381,8 @@ export class DeployedApp {
   }
   // #token page  (your wallet)
   // trade page
-  async buy(wallet: Wallet, algoAmount: bigint, slippage: number, wantedReturn: bigint): Promise<any> {
+  async buy(wallet: Wallet, algoAmount: bigint, slippage: number, wantedReturn: bigint, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -397,7 +405,8 @@ export class DeployedApp {
     return result
   }
 
-  async sell(wallet: Wallet, tokenAmount: bigint, slippage: number, wantedReturn: bigint): Promise<any> {
+  async sell(wallet: Wallet, tokenAmount: bigint, slippage: number, wantedReturn: bigint, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -414,7 +423,8 @@ export class DeployedApp {
   }
   // #trade page
   // transfer page
-  async transfer(wallet: Wallet, tokenAmount: bigint, to: string): Promise<any> {
+  async transfer(wallet: Wallet, tokenAmount: bigint, to: string, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -432,7 +442,8 @@ export class DeployedApp {
   }
   // #transfer page
   // trade and token page
-  async getBacking(wallet: Wallet, tokenAmount: bigint): Promise<any> {
+  async getBacking(wallet: Wallet, tokenAmount: bigint, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -448,7 +459,8 @@ export class DeployedApp {
     return result
   }
 
-  async borrow(wallet: Wallet, tokenAmount: bigint): Promise<any> {
+  async borrow(wallet: Wallet, tokenAmount: bigint, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -463,7 +475,8 @@ export class DeployedApp {
     return result
   }
 
-  async repay(wallet: Wallet, algoAmount: bigint): Promise<any> {
+  async repay(wallet: Wallet, algoAmount: bigint, settings: DeployedAppSettings): Promise<any> {
+    this.settings = settings
     const suggested = await getSuggested(30)
     suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
@@ -487,7 +500,8 @@ export class DeployedApp {
 
   // in final we gonna do one more call for blockchain in trad epoage to calculate
 
-  async getContractGlobalState(){
+  async getContractGlobalState(settings: DeployedAppSettings){
+    this.settings = settings
     if(this.settings.contract_id){
       var globalState = StateToObj(await getGlobalState(this.settings.contract_id), StateKeys)
       console.log(globalState)
@@ -496,6 +510,25 @@ export class DeployedApp {
     return undefined
   }
 
+  async getBlockchainInformation(settings: DeployedAppSettings) {
+    this.settings = settings
+    let client: Algodv2 = getAlgodClient()
+    let appState: any = await this.getContractGlobalState(settings)
+    let appInfo = await client.accountInformation(this.settings.contract_address!).do()
 
+    let algoLiquidity = appState[StateKeys.algo_liq_key]['i']
+    let tokenLiquidity = appState[StateKeys.token_liq_key]['i']
+    let totalSupply = appState[StateKeys.total_supply_key]['i'] / Math.pow(10, this.settings.decimals)
+    let totalBacking = (appInfo['amount'] - appInfo['min-balance'] - algoLiquidity + appState[StateKeys.total_borrowed_key]['i']) / Math.pow(10, 6)
+    let totalBorrowedAlgo = appState[StateKeys.total_borrowed_key]['i']
+
+    return {
+        algoLiquidity: algoLiquidity,
+        tokenLiquidity: tokenLiquidity,
+        totalsupply: totalSupply,
+        totalBacking: totalBacking,
+        totalBorrowedAlgo: totalBorrowedAlgo
+    }
+  }
 
 }

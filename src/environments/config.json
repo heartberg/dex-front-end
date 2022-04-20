@@ -24,8 +24,10 @@
         "verse_app_id": 4354,
         "verse_app_addr": "54U2VQDKNU6GD64KMRGWNE3774F4ZVZ552FMPUYE6PBKHMAEHAOTV4M7RQ",
         "verse_asset_id": 4357,
+        "verse_decimals": 6,
         "backing_id": 4352,
-        "backing_addr": "UUN45JAWDTK3GNXVIE5KVXYET5PIPVUZ5MEI6AQMICY2NHYSJHSNYU4XJA"
+        "backing_addr": "UUN45JAWDTK3GNXVIE5KVXYET5PIPVUZ5MEI6AQMICY2NHYSJHSNYU4XJA",
+        "backing_per_x_token": 1000000
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",

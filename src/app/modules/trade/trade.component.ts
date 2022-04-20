@@ -5,11 +5,16 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { getGlobalState } from 'src/app/blockchain/algorand';
+import { Algodv2 } from 'algosdk';
+import { pseudoRandomBytes } from 'crypto';
+import { env } from 'process';
+import { getAlgodClient, getGlobalState } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
+import { BlockchainInformation, DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+
 
 @Component({
   selector: 'app-trade',
@@ -17,7 +22,7 @@ import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
   styleUrls: ['./trade.component.scss'],
 })
 export class TradeComponent implements OnInit {
-  algoAmount: number = 2000;
+  availAmount: number = 0;
   rotate: boolean = false;
   autoSlippage: boolean = true;
 
@@ -27,13 +32,17 @@ export class TradeComponent implements OnInit {
   algoArr: string[] = ['Algo'];
   tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
 
+  // my
+  dropValues: string[] = ['Verse', 'Algo']
+  assetNames: string[] = ['Verse', 'Algo']
+
   assetArr: AssetViewModel[] = [];
 
   selectedOptionAname: string = '';
   selectedOptionBname: string = '';
   selectedOption: AssetViewModel | undefined;
 
-  blockchainChecked: boolean = true;
+  isOptedIn: boolean = true;
 
   isPopUpOpen: boolean = false;
 
@@ -49,6 +58,9 @@ export class TradeComponent implements OnInit {
   isClickedOnBtn: boolean = false;
 
   checked: boolean = false;
+
+  blockchainInfo: BlockchainInformation | undefined;
+  deployedAppSettings: DeployedAppSettings | undefined;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -82,22 +94,24 @@ export class TradeComponent implements OnInit {
     if (this.slippageForm.get('slippageCheckBox')?.value) {
       this.slippageForm.get('slippageInput')?.disable();
     }
-    this.secondDropValues = this.tokenArr;
-    this.selectedOptionAname = this.tokenArr[0];
-    this.selectedOptionBname = this.tokenArr[0];
 
     const wallet = localStorage.getItem('wallet')!;
-    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+    this.assetReqService.getAssetPairs(false, '', wallet).subscribe(async (res) => {
       // this.assetArr = res;
-      this.assetArr = res;
+      this.assetArr.push(await this.verseApp.getViewModel())
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      console.log(this.blockchainInfo)
+      this.assetArr.push(...res);
       console.log(this.assetArr);
+      this.firstDropValues = this.dropValues;
       res.forEach((el) => {
         this.firstDropValues.push(el.name);
+        this.assetNames.push(el.name);
       });
-      this.secondDropValues = this.algoArr;
+      this.secondDropValues = this.firstDropValues;
       this.selectedOptionAname = this.firstDropValues[0];
-      this.selectedOptionBname = this.firstDropValues[0];
-      // this.selectAsset(this.firstDropValues[0]);
+      this.selectedOptionBname = this.firstDropValues[1];
+      this.selectAsset(this.firstDropValues[0]);
     });
 
     // this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe(
@@ -126,7 +140,7 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
         // this.assetArr = res;
         this.assetArr = res;
-        this.firstDropValues = [];
+        this.firstDropValues = ['Verse', 'Algo'];
         res.forEach((el) => {
           this.firstDropValues.push(el.name);
         });
@@ -173,14 +187,44 @@ export class TradeComponent implements OnInit {
     }
   }
 
-  selectAsset(assetName: string) {
+  async selectAsset(assetName: string) {
     this.selectedOption = this.assetArr.find((el) => {
       return el.name === assetName;
     });
+    if(assetName == 'Verse'){
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    } else {
+      this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
+      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings)
+    }
     console.log(this.selectedOption);
-    if (this.selectedOption) {
+    console.log(this.blockchainInfo);
+    this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
+    console.log(this.availAmount)
+  }  
+
+  addFavorite(assetName: string){
+    let asset = this.assetArr.find((el) => {
+      return el.name === assetName;
+    });
+    if (asset) {
       console.log(typeof localStorage.getItem('wallet'));
-      this.assetReqService.addFavoriteAsset(this.selectedOption.assetId, localStorage.getItem('wallet')!)
+      this.assetReqService.addFavoriteAsset(asset.assetId, localStorage.getItem('wallet')!)
+        .subscribe(
+        (response: any) => {
+          console.log(response, 'response on add in favorites')
+        }
+      )
+    }
+  }
+
+  removeFavorite(assetName: string){
+    let asset = this.assetArr.find((el) => {
+      return el.name === assetName;
+    });
+    if (asset) {
+      console.log(typeof localStorage.getItem('wallet'));
+      this.assetReqService.removeFavoriteAsset(asset.assetId, localStorage.getItem('wallet')!)
         .subscribe(
         (response: any) => {
           console.log(response, 'response on add in favorites')
@@ -261,41 +305,97 @@ export class TradeComponent implements OnInit {
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      this.algoAmount = 2000 / 4;
-      inputRef.value = this.algoAmount.toString();
+      this.availAmount = 2000 / 4;
+      inputRef.value = this.availAmount.toString();
     } else if (index === 2) {
       this.btnSecond = true;
       this.btnFirst = false;
       this.btnThird = false;
       this.btnFourth = false;
-      this.algoAmount = 2000 / 2;
-      inputRef.value = this.algoAmount.toString();
+      this.availAmount = 2000 / 2;
+      inputRef.value = this.availAmount.toString();
     } else if (index === 3) {
       this.btnThird = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnFourth = false;
-      this.algoAmount = (2000 / 4) * 3;
-      inputRef.value = this.algoAmount.toString();
+      this.availAmount = (2000 / 4) * 3;
+      inputRef.value = this.availAmount.toString();
     } else if (index === 4) {
       this.btnFourth = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnThird = false;
-      this.algoAmount = 2000;
-      inputRef.value = this.algoAmount.toString();
+      this.availAmount = 2000;
+      inputRef.value = this.availAmount.toString();
     }
     // if (this.clickCounter % 2 === 0) {
     //   this.btnFourth = false;
     //   this.btnFirst = false;
     //   this.btnSecond = false;
     //   this.btnThird = false;
-    //   this.algoAmount = 0;
+    //   this.availAmount = 0;
     // }
-    console.log(this.algoAmount);
+    console.log(this.availAmount);
   }
 
   getMinusPlusValue($event: number) {
    console.log($event);
   }
+
+  mapViewModelToAppSettings(model: AssetViewModel) : DeployedAppSettings{
+    return {
+      asset_id: model.assetId,
+      contract_id: model.contractId,
+      contract_address: model.contractAddress,
+      buy_burn: model.buyBurn,
+      creator: model.deployerWallet,
+      decimals: model.decimals,
+      extra_fee_time: 300,
+      max_buy: model.maxBuy,
+      name: model.name,
+      unit: model.unitName,
+      sell_burn: model.sellBurn,
+      trading_start: model.tradingStart,
+      to_backing: model.backing,
+      to_lp: model.risingPriceFloor,
+      transfer_burn: model.sendBurn,
+      url: "",
+      initial_algo_liq: 0,
+      initial_algo_liq_with_fee: 0,
+      initial_token_liq: 0,
+      total_supply: 0,
+      presale_settings: {
+        hardcap: 0,
+        presale_end: 0,
+        presale_start: 0,
+        presale_token_amount: 0,
+        softcap: 0,
+        to_lp: 0,
+        walletcap: 0
+      }
+    }
+  }
+
+  async updateHoldingOfSelectedAsset(assetId: number) {
+    let client: Algodv2 = getAlgodClient()
+    const wallet = localStorage.getItem('wallet')!;
+    let accountInfo = await client.accountInformation(wallet).do()
+    let asset = accountInfo['assets'].find((el: any) => {
+      return el['asset-id'] == assetId
+    })
+    if(asset != null){
+      let assetInfo = await client.getAssetByID(assetId).do()
+      console.log(assetInfo)
+      console.log(asset)
+      this.availAmount = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
+      this.isOptedIn = true
+    } else {
+      this.availAmount  = 0
+      this.isOptedIn = false
+      console.log("Show Opt-In Button")
+    }
+
+  }
+
 }

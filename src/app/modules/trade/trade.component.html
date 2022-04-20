@@ -61,7 +61,7 @@
               >
                 <span class="thin-gray-text">Available:</span>
                 <span style="margin-left: 4px" class="amount">{{
-                  "2000"
+                  availAmount
                 }}</span>
               </div>
               <form [formGroup]="topForms">
@@ -77,7 +77,7 @@
                   type="number"
                   (click)="onUserInput(inputRef)"
                   class="input-costum"
-                  [value]="algoAmount"
+                  [value]="availAmount"
                   [class.d-none]="!isClickedOnBtn"
                   #inputRef
                 />
@@ -197,7 +197,7 @@
         </div>
       </div>
       <button
-        *ngIf="blockchainChecked"
+        *ngIf="isOptedIn"
         class="btn-secondary-costum unHover"
         style="
           margin: 25px auto;
@@ -209,7 +209,7 @@
         Swap
       </button>
       <button
-        *ngIf="!blockchainChecked"
+        *ngIf="!isOptedIn"
         class="btn-secondary-costum unHover"
         style="
           margin: 25px auto;
@@ -227,23 +227,23 @@
     <div class="selection-data">
       <div class="propery-pair">
         <span>Marketcap:</span>
-        <span class="thin-gray-text">999</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply}}</span>
       </div>
       <div class="propery-pair">
         <span>Total Supply:</span>
-        <span class="thin-gray-text">459</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>
       </div>
       <div class="propery-pair">
         <span>Liquidity:</span>
-        <span class="thin-gray-text">High</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }}</span>
       </div>
       <div class="propery-pair">
         <span>Backing:</span>
-        <span class="thin-gray-text">Yes</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }}</span>
       </div>
       <div class="propery-pair">
         <span>Max Buy:</span>
-        <span class="thin-gray-text">{{ selectedOption?.maxBuy }}</span>
+        <span class="thin-gray-text">{{ selectedOption!.maxBuy }}</span>
       </div>
       <button (click)="openPopUp()">Backing</button>
     </div>
