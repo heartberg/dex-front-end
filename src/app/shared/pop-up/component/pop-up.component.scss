@@ -218,3 +218,23 @@
   }
 }
 
+.blockchain-wrapper {
+  .top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+      width: 160px;
+    }
+  }
+  .bottom {
+    div {
+      h3 {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 32px;
+        color: #81007F;
+      }
+    }
+  }
+}

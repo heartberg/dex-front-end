@@ -25,6 +25,15 @@ export class DeployComponent implements OnInit {
   // @ts-ignore
   deployFormGroup: FormGroup;
 
+  ///
+  firstStepApi: boolean = false;
+  secondStepApi: boolean = false;
+  thirdStepApi: boolean = false;
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  ///
+
   constructor(
     private walletProviderService: WalletsConnectService,
     private deployedApp: DeployedApp,
@@ -63,6 +72,7 @@ export class DeployComponent implements OnInit {
   private checkPresale: ElementRef;
 
   imageURL: string = ''
+  closePopup: boolean = false;
 
   check() {
     if (this.checkbox.nativeElement.checked) {
@@ -198,8 +208,9 @@ export class DeployComponent implements OnInit {
     }
   }
 
-
   async onSubmit() {
+    this.closePopup = true;
+
     this.sessionWallet = this.walletProviderService.sessionWallet;
     localStorage.setItem('sessionWallet', this.sessionWallet);
     this.blockchainObjInitialize();
@@ -208,59 +219,94 @@ export class DeployComponent implements OnInit {
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
 
-    let response = await this.deployedApp.deploy(this.sessionWallet, this.blockchainObect!);
-    console.log(response)
+    let responseFirst = await this.deployedApp.deploy(this.sessionWallet, this.blockchainObect!);
+    console.log(responseFirst)
     // If successfull show popup: "Deployed Contract", send to backend
     if(this.presaleIsChecked){
       this.deployLib.presaleObj.contractId = this.deployedApp.settings.contract_id!
       this.deployLib.presaleObj.contractAddress = this.deployedApp.settings.contract_address!
-      this.deployLib.GetProjectPresaleCreate().subscribe(
-        (value: any) => {
-          console.log(value)
-          this.deployLib.projectId = value
-        }
-      )
+      // api call
+      if (responseFirst) {
+        this.deployLib.GetProjectPresaleCreate().subscribe(
+          (value: any) => {
+            console.log(value)
+            this.deployLib.projectId = value
+            this.firstStepApi = true;
+            this.isPending = true;
+          }
+        )
+      }
+      // api call
     } else {
       this.deployLib.withoutPresaleObj.contractId = this.deployedApp.settings.contract_id!
       this.deployLib.withoutPresaleObj.contractAddress = this.deployedApp.settings.contract_address!
-      this.deployLib.GetProjectWithoutPresaleCreate().subscribe(
-        (value: any) => {
-          console.log(value)
-          this.deployLib.projectId = value
-        }
-      )
+      // api call
+      if (responseFirst) {
+        this.deployLib.GetProjectWithoutPresaleCreate().subscribe(
+          (value: any) => {
+            console.log(value)
+            this.deployLib.projectId = value;
+            this.firstStepApi = true;
+            this.isPending = true;
+          }
+        )
+      }
+      // api call
     }
-    
-    response = await this.deployedApp.mint(this.sessionWallet, this.blockchainObect!)
-    console.log(response)
-    // If successfull show popup: "Minted", send to backend
-    this.deployLib.SetMintVars(this.deployedApp.settings)
-    console.log(this.deployLib.mintObj)
-    this.deployLib.GetProjectMint().subscribe(
-      (value: any) => {
-        console.log(value)
-      }
-    )
 
-    response = await this.deployedApp.payAndOptInBurn(this.sessionWallet, this.blockchainObect!)
-    // If successfull show popup: "Opted In Burn address", send to backend
-    this.deployLib.GetProjectBurnOptIn().subscribe(
-      (value: any) => {
-        console.log(value)
+    if (this.firstStepApi) {
+      let responseSecond = await this.deployedApp.mint(this.sessionWallet, this.blockchainObect!)
+      console.log(responseSecond)
+      // If successfull show popup: "Minted", send to backend
+      this.deployLib.SetMintVars(this.deployedApp.settings)
+      console.log(this.deployLib.mintObj)
+      if (responseSecond) {
+        this.deployLib.GetProjectMint().subscribe(
+          (value: any) => {
+            console.log(value)
+            this.secondStepApi = true;
+          }
+        )
       }
-    )
-
-    if(this.presaleIsChecked){
-      response = this.deployedApp.setupWithPresale(this.sessionWallet, this.blockchainObect!)
-    } else {
-      response = await this.deployedApp.setupNoPresale(this.sessionWallet, this.blockchainObect!)
     }
-    // If successfull show popup: "Smart Token successfully deployed!" and send to backend
-    this.deployLib.GetProjectSetup().subscribe(
-      (value: any) => {
-        console.log(value)
+
+    if (this.secondStepApi) {
+      let responseThird = await this.deployedApp.payAndOptInBurn(this.sessionWallet, this.blockchainObect!)
+      // If successfull show popup: "Opted In Burn address", send to backend
+      if (responseThird) {
+        this.deployLib.GetProjectBurnOptIn().subscribe(
+          (value: any) => {
+            console.log(value)
+            this.thirdStepApi = true;
+          }
+        )
       }
-    )
+    }
+
+    if (this.thirdStepApi) {
+
+      let finalResponse
+      if(this.presaleIsChecked){
+        finalResponse = await this.deployedApp.setupWithPresale(this.sessionWallet, this.blockchainObect!)
+      } else {
+        finalResponse = await this.deployedApp.setupNoPresale(this.sessionWallet, this.blockchainObect!)
+      }
+      // If successfull show popup: "Smart Token successfully deployed!" and send to backend
+      if (finalResponse) {
+        this.deployLib.GetProjectSetup().subscribe(
+          (value: any) => {
+            console.log(value)
+            this.isPending = false;
+            this.finalStepApi = true;
+          }
+        )
+      }
+      else {
+        this.isPending = false;
+        this.isFailed = true;
+      }
+    }
+
   }
 
   activatePurposeSection() {
@@ -287,4 +333,9 @@ export class DeployComponent implements OnInit {
     }
     reader.readAsDataURL(imageFile);
   }
+
+  closePopUp(event: boolean) {
+    this.closePopup = event;
+  }
+
 }

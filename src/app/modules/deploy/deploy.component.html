@@ -675,3 +675,5 @@
     </div>
   </div>
 </div>
+<app-pop-up [isD]="true" (isClosed)="closePopUp($event)" *ngIf="closePopup" [isDeployedSuccess]="finalStepApi" [isDeployedFaied]="isFailed" [isDeployedPending]="isPending"></app-pop-up>
+

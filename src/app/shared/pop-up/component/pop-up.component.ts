@@ -29,6 +29,14 @@ export class PopUpComponent implements OnInit {
 
   @Input() stacking: boolean = false;
   @Input() stackingISStake: boolean = false;
+  @Input() isD: boolean  = false;
+
+  //deployed logic
+  @Input() isDeployedSuccess: boolean = false;
+  @Input() isDeployedFaied: boolean = false;
+  @Input() isDeployedPending: boolean = false;
+
+  //deployed logic
   isActiveFirst = true;
   isActiveSecond = false;
 
