@@ -7,10 +7,10 @@ import {
 } from '@angular/forms';
 import { Algodv2 } from 'algosdk';
 import { pseudoRandomBytes } from 'crypto';
-import { env } from 'process';
+import {environment} from "../../../environments/environment";
 import { getAlgodClient, getGlobalState } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
-import { BlockchainInformation, DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import { ALGO_VIEWMODEL, BlockchainInformation, DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
@@ -25,6 +25,8 @@ export class TradeComponent implements OnInit {
   availAmount: number = 0;
   rotate: boolean = false;
   autoSlippage: boolean = true;
+  slippage: number = 0;
+  minOutput:number = 0
 
   firstDropValues: string[] = [];
   secondDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
@@ -54,7 +56,6 @@ export class TradeComponent implements OnInit {
   btnSecond: boolean = false;
   btnThird: boolean = false;
   btnFourth: boolean = false;
-  clickCounter: number = 0;
   isClickedOnBtn: boolean = false;
 
   checked: boolean = false;
@@ -97,13 +98,10 @@ export class TradeComponent implements OnInit {
 
     const wallet = localStorage.getItem('wallet')!;
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe(async (res) => {
-      // this.assetArr = res;
-      console.log(res)
       this.assetArr.push(await this.verseApp.getViewModel())
+      this.assetArr.push(ALGO_VIEWMODEL)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-      console.log(this.blockchainInfo)
       this.assetArr.push(...res);
-      console.log(this.assetArr);
       this.firstDropValues = this.dropValues;
       res.forEach((el) => {
         this.firstDropValues.push(el.name);
@@ -129,13 +127,15 @@ export class TradeComponent implements OnInit {
   }
 
   handleCheckboxUpdate(event: any) {
-    console.log(event, 'sjhdjksdhjkfhsjkdfhjksdfhjk')
     this.checked = event;
     if (event === true) {
       const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
-        // this.assetArr = res;
-        this.assetArr = res;
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
+        this.assetArr = []
+        this.assetArr.push(await this.verseApp.getViewModel())
+        this.assetArr.push(ALGO_VIEWMODEL)
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.assetArr.push(...res);
         this.firstDropValues = ['Verse', 'Algo'];
         res.forEach((el) => {
           this.firstDropValues.push(el.name);
@@ -147,9 +147,12 @@ export class TradeComponent implements OnInit {
       });
     } else if (event === false) {
       const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe((res) => {
-        // this.assetArr = res;
-        this.assetArr = res;
+      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe(async (res) => {
+        this.assetArr = []
+        this.assetArr.push(await this.verseApp.getViewModel())
+        this.assetArr.push(ALGO_VIEWMODEL)
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.assetArr.push(...res);
         this.firstDropValues = [];
         res.forEach((el) => {
           this.firstDropValues.push(el.name);
@@ -160,14 +163,13 @@ export class TradeComponent implements OnInit {
         // this.selectAsset(this.firstDropValues[0]);
       });
     }
-
   }
 
   dropdownSelected(value: string, index: number) {
     if (index === 1) {
       if (value === 'Algo') {
         this.secondDropValues = this.tokenArr;
-      } else if (value.includes('Token')) {
+      } else {
         this.secondDropValues = this.algoArr;
         this.selectedOptionAname = value;
         this.selectedOptionBname = value;
@@ -181,6 +183,7 @@ export class TradeComponent implements OnInit {
         this.selectedOptionBname = value;
       }
     }
+
   }
 
   async selectAsset(assetName: string) {
@@ -195,10 +198,7 @@ export class TradeComponent implements OnInit {
       this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings)
     }
-    console.log(this.selectedOption);
-    console.log(this.blockchainInfo);
     this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
-    console.log(this.availAmount)
   }  
 
   addFavorite(assetName: string){
@@ -206,7 +206,6 @@ export class TradeComponent implements OnInit {
       return el.name === assetName;
     });
     if (asset) {
-      console.log(typeof localStorage.getItem('wallet'));
       this.assetReqService.addFavoriteAsset(asset.assetId, localStorage.getItem('wallet')!)
         .subscribe(
         (response: any) => {
@@ -221,7 +220,6 @@ export class TradeComponent implements OnInit {
       return el.name === assetName;
     });
     if (asset) {
-      console.log(typeof localStorage.getItem('wallet'));
       this.assetReqService.removeFavoriteAsset(asset.assetId, localStorage.getItem('wallet')!)
         .subscribe(
         (response: any) => {
@@ -251,6 +249,7 @@ export class TradeComponent implements OnInit {
   }
 
   async getValueFromDropDown($event: any, index: number) {
+    console.log("value from dropdown")
     console.log($event);
     // console.log($event);
     // if (index === 1 && $event) {
@@ -263,14 +262,6 @@ export class TradeComponent implements OnInit {
     // }
 
     this.selectAsset($event);
-    console.log(this.selectedOption?.contractAddress);
-
-    // get blockchain information of contract
-
-    let globalState = await getGlobalState(4458)
-
-
-    console.log(globalState)
 
     // fill deployed app settings with information
     // create deployed app object
@@ -297,44 +288,31 @@ export class TradeComponent implements OnInit {
 
   getPercentOfButton(index: number, inputRef: HTMLInputElement) {
     this.isClickedOnBtn = true;
-    this.clickCounter++;
     if (index === 1) {
       this.btnFirst = true;
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      this.availAmount = 2000 / 4;
-      inputRef.value = this.availAmount.toString();
+      inputRef.value = (this.availAmount / 4).toString();
     } else if (index === 2) {
       this.btnSecond = true;
       this.btnFirst = false;
       this.btnThird = false;
       this.btnFourth = false;
-      this.availAmount = 2000 / 2;
-      inputRef.value = this.availAmount.toString();
+      inputRef.value = (this.availAmount / 2).toString();
     } else if (index === 3) {
       this.btnThird = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnFourth = false;
-      this.availAmount = (2000 / 4) * 3;
-      inputRef.value = this.availAmount.toString();
+      inputRef.value = (this.availAmount / 4 * 3).toString();
     } else if (index === 4) {
       this.btnFourth = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnThird = false;
-      this.availAmount = 2000;
       inputRef.value = this.availAmount.toString();
     }
-    // if (this.clickCounter % 2 === 0) {
-    //   this.btnFourth = false;
-    //   this.btnFirst = false;
-    //   this.btnSecond = false;
-    //   this.btnThird = false;
-    //   this.availAmount = 0;
-    // }
-    console.log(this.availAmount);
   }
 
   getMinusPlusValue($event: number) {
@@ -384,16 +362,46 @@ export class TradeComponent implements OnInit {
     })
     if(asset != null){
       let assetInfo = await client.getAssetByID(assetId).do()
-      console.log(assetInfo)
-      console.log(asset)
       this.availAmount = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
       this.isOptedIn = true
     } else {
       this.availAmount  = 0
       this.isOptedIn = false
-      console.log("Show Opt-In Button")
     }
 
+  }
+
+  optInAsset() {
+    // TODO: need real wallet object here for signing
+    const wallet = localStorage.getItem('wallet')!;
+    if(this.selectedOption?.name == 'Verse'){
+      //this.verseApp.optInAsset(wallet)
+    } else {
+      //this.deployedApp.optInAsset(wallet, this.deployedAppSettings)
+    }
+  }
+
+  getAutoSlippage(asset: AssetViewModel, buy: boolean) {
+    let accumulatedFees = asset.backing + +environment.Y_FEE! * 10000
+    if(buy){
+      accumulatedFees += asset.buyBurn
+    } else{
+      accumulatedFees += asset.sellBurn + asset.risingPriceFloor
+    }
+
+    if (asset.name != 'Verse'){
+      accumulatedFees += +environment.VERSE_FEE!
+    }
+    this.slippage = accumulatedFees
+  }
+
+  calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
+    return amountToBuy * liqA / liqB
+  }
+
+  setMinOutput(desiredOutput: number, slippage: number){
+    let output = desiredOutput - (desiredOutput * slippage / 10000)
+    this.minOutput = output
   }
 
 }

@@ -531,4 +531,15 @@ export class DeployedApp {
     }
   }
 
+  async optInAsset(wallet: Wallet, settings: DeployedAppSettings) {
+    this.settings = settings
+    const suggested = await getSuggested(10)
+    const addr = wallet.getDefaultAccount()
+    const optin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.asset_id!))
+    const [signed] = await wallet.signTxn([optin])
+    const result = await sendWait([signed])
+
+    return result
+  }
+
 }

@@ -116,12 +116,13 @@
           <app-drop-down-selector
             style="margin-top: 23px"
             (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
-            [dropDownValues]=""
+            [dropDownValues]="assetArr"
             [isNotAccordion]="false"
             [widthPX]="'255px'"
             [extraDropDown]="true"
             (dropDownValue)="getValueFromDropDown($event, 2)"
             [notCloseOnClick]="true"
+            [incomeData]="assetArr"
             #componentRefB
           >
           </app-drop-down-selector>
@@ -152,7 +153,6 @@
               <div class="d-flex align-items-center">
                 <span>Slippage:</span>
                 <input
-
                   type="number"
                   formControlName="slippageInput"
                   class=""
@@ -180,7 +180,8 @@
           </div>
           <div style="flex-direction: column" class="d-flex">
             <div>
-              <span>Minimum Output:</span>
+              <span>Minimum Output: </span>
+              <span>{{minOutput}}</span>
               <span class="color-violet" style="margin-left: 10px">{{
                 selectedOption?.unitName
               }}</span>
@@ -243,7 +244,7 @@
       </div>
       <div class="propery-pair">
         <span>Max Buy:</span>
-        <span class="thin-gray-text">{{ selectedOption!.maxBuy }}</span>
+        <span class="thin-gray-text">{{ selectedOption!.maxBuy / 1_000_000}}</span>
       </div>
       <button (click)="openPopUp()">Backing</button>
     </div>
@@ -252,21 +253,27 @@
   <div *ngIf="selectedOption?.name" class="selected-option position-right">
     <h4>{{ selectedOption?.name }} Fees</h4>
     <div class="selection-data">
+      <span class="thin-gray-text">Buying</span>
       <div class="propery-pair">
-        <span>Buy Tax:</span>
-        <span class="thin-gray-text">{{ selectedOption?.buyBurn }}</span>
-      </div>
-      <div class="propery-pair">
-        <span>Sell Tax:</span>
-        <span class="thin-gray-text">{{ selectedOption?.sellBurn }}</span>
+        <span>Buy Burn:</span>
+        <span class="thin-gray-text">{{ selectedOption!.buyBurn / 100}}%</span>
       </div>
       <div class="propery-pair">
         <span>Backing Tax:</span>
-        <span class="thin-gray-text">{{ selectedOption?.backing }}</span>
+        <span class="thin-gray-text">{{ selectedOption!.backing / 100}}%</span>
+      </div>
+      <span class="thin-gray-text">Selling</span>
+      <div class="propery-pair">
+        <span>Sell Burn:</span>
+        <span class="thin-gray-text">{{ selectedOption!.sellBurn / 100}}%</span>
       </div>
       <div class="propery-pair">
-        <span>Send Tax:</span>
-        <span class="thin-gray-text">{{ selectedOption?.sendBurn }}</span>
+        <span>Backing Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption!.backing / 100}}%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Rising Pricefloor:</span>
+        <span class="thin-gray-text">{{ selectedOption!.risingPriceFloor / 100}}%</span>
       </div>
     </div>
   </div>

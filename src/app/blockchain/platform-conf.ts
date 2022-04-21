@@ -1,4 +1,5 @@
 import {LogicSig} from 'algosdk/dist/types/src/logicsig';
+import { AssetViewModel } from '../models/assetView.model';
 
 
 type AlgodConf = {
@@ -100,7 +101,26 @@ type BlockchainInformation = {
     totalBorrowedAlgo: number
 }
 
+const ALGO_VIEWMODEL: AssetViewModel = {
+    assetId: 0,
+    backing: 0,
+    buyBurn: 0,
+    contractAddress: "",
+    contractId: 0,
+    decimals: 6,
+    deployerWallet: "MICALI",
+    image: "",
+    maxBuy: 0,
+    name: "Algo",
+    risingPriceFloor: 0,
+    sellBurn: 0,
+    sendBurn: 0,
+    totalSupply: 1_000_000_000_000_000,
+    tradingStart: 0,
+    unitName: "Algo"
+}
+
 const platform_settings = require("../../environments/config.json") as PlatformConf;
 
 
-export { platform_settings , DeployedAppSettings, BlockchainInformation}
+export { platform_settings , ALGO_VIEWMODEL, DeployedAppSettings, BlockchainInformation}

@@ -35,8 +35,6 @@ export class MyPresaleComponent implements OnInit {
       buyBurn: 3,
       sellBurn: 3,
       sendBurn: 2,
-      additionalFee: 2,
-      additionalFeeWallet: 'string',
       image: 'string',
       deployerWallet: 'string',
     },

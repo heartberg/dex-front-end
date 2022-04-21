@@ -171,7 +171,7 @@ export class DeployComponent implements OnInit {
       transfer_burn: +this.deployFormGroup.get('feesGroup.sendBurn')?.value * 100,
       to_lp: +this.deployFormGroup.get('feesGroup.risingPriceFloor')?.value * 100,
       to_backing: +this.deployFormGroup.get('feesGroup.backing')?.value * 100,
-      max_buy: +this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value,
+      max_buy: +this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
       name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
       unit: this.deployFormGroup.get('tokenInfoGroup.unitName')?.value || null,
       decimals: decimals,

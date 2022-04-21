@@ -6,7 +6,8 @@ import {
     encodeParam,
     get_app_closeout_txn,
     get_app_call_txn,
-    get_asa_xfer_txn
+    get_asa_xfer_txn,
+    get_asa_optin_txn
 } from "./transactions"
 import algosdk, { Algodv2, encodeUint64, Transaction } from 'algosdk';
 import { 
@@ -139,6 +140,16 @@ export class VerseApp {
         const result = await sendWait([signed])
 
         return result  
+    }
+
+    async optInAsset(wallet: Wallet): Promise<any> {
+        const suggested = await getSuggested(10)
+        const addr = wallet.getDefaultAccount()
+        const optin = new Transaction(get_asa_optin_txn(suggested, addr, ps.platform.verse_asset_id))
+        const [signed] = await wallet.signTxn([optin])
+        const result = await sendWait([signed])
+
+        return result
     }
 
     async buy(wallet: Wallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
