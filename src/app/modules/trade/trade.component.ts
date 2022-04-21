@@ -28,20 +28,10 @@ export class TradeComponent implements OnInit {
   slippage: number = 0;
   minOutput:number = 0
 
-  firstDropValues: string[] = [];
-  secondDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
-
-  algoArr: string[] = ['Algo'];
-  tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
-
   // my
   dropValues: string[] = ['Verse', 'Algo']
-  assetNames: string[] = ['Verse', 'Algo']
-
   assetArr: AssetViewModel[] = [];
 
-  selectedOptionAname: string = '';
-  selectedOptionBname: string = '';
   selectedOption: AssetViewModel | undefined;
 
   isOptedIn: boolean = true;
@@ -91,28 +81,24 @@ export class TradeComponent implements OnInit {
 
   // FORMS
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (this.slippageForm.get('slippageCheckBox')?.value) {
       this.slippageForm.get('slippageInput')?.disable();
     }
 
+    this.assetArr.push(await this.verseApp.getViewModel())
+    this.assetArr.push(ALGO_VIEWMODEL)
+    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+
     const wallet = localStorage.getItem('wallet')!;
-    this.assetReqService.getAssetPairs(false, '', wallet).subscribe(async (res) => {
-      this.assetArr.push(await this.verseApp.getViewModel())
-      this.assetArr.push(ALGO_VIEWMODEL)
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
       this.assetArr.push(...res);
-      this.firstDropValues = this.dropValues;
       res.forEach((el) => {
-        this.firstDropValues.push(el.name);
-        this.assetNames.push(el.name);
+        this.dropValues.push(el.name);
       });
-      this.secondDropValues = this.firstDropValues;
-      this.selectedOptionAname = this.firstDropValues[0];
-      this.selectedOptionBname = this.firstDropValues[1];
-      this.selectAsset(this.firstDropValues[0]);
     });
 
+    this.selectAsset(this.assetArr[0].assetId);
   }
 
   makeReverse() {
@@ -126,7 +112,7 @@ export class TradeComponent implements OnInit {
     this.btnFourth = false;
   }
 
-  handleCheckboxUpdate(event: any) {
+  async handleCheckboxUpdate(event: any) {
     this.checked = event;
     if (event === true) {
       const wallet = localStorage.getItem('wallet')!;
@@ -136,31 +122,23 @@ export class TradeComponent implements OnInit {
         this.assetArr.push(ALGO_VIEWMODEL)
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArr.push(...res);
-        this.firstDropValues = ['Verse', 'Algo'];
         res.forEach((el) => {
-          this.firstDropValues.push(el.name);
+          this.dropValues.push(el.name);
         });
-        this.secondDropValues = this.algoArr;
-        this.selectedOptionAname = this.firstDropValues[0];
-        this.selectedOptionBname = this.firstDropValues[0];
-        // this.selectAsset(this.firstDropValues[0]);
+        this.selectAsset(this.assetArr[0].assetId);
       });
     } else if (event === false) {
+      this.assetArr = []
+      this.assetArr.push(await this.verseApp.getViewModel())
+      this.assetArr.push(ALGO_VIEWMODEL)
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe(async (res) => {
-        this.assetArr = []
-        this.assetArr.push(await this.verseApp.getViewModel())
-        this.assetArr.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe((res) => {
         this.assetArr.push(...res);
-        this.firstDropValues = [];
         res.forEach((el) => {
-          this.firstDropValues.push(el.name);
+          this.dropValues.push(el.name);
         });
-        this.secondDropValues = this.algoArr;
-        this.selectedOptionAname = this.firstDropValues[0];
-        this.selectedOptionBname = this.firstDropValues[0];
-        // this.selectAsset(this.firstDropValues[0]);
+        this.selectAsset(this.assetArr[0].assetId);
       });
     }
   }
@@ -168,37 +146,44 @@ export class TradeComponent implements OnInit {
   dropdownSelected(value: string, index: number) {
     if (index === 1) {
       if (value === 'Algo') {
-        this.secondDropValues = this.tokenArr;
+        console.log("Show Verse on bottom")
       } else {
-        this.secondDropValues = this.algoArr;
-        this.selectedOptionAname = value;
-        this.selectedOptionBname = value;
+        console.log("Show Algo on bottom")
       }
     } else if (index === 2) {
       if (value === 'Algo') {
-        // this.firstDropValues = this.tokenArr;
-      } else if (value.includes('Token')) {
-        // this.firstDropValues = this.algoArr;
-        this.selectedOptionAname = value;
-        this.selectedOptionBname = value;
+        console.log("Show Verse on top")
+      } else {
+        console.log("Show Algo on top")
       }
     }
 
   }
 
-  async selectAsset(assetName: string) {
-    this.selectedOption = this.assetArr.find((el) => {
-      return el.name === assetName;
-    });
-    if(assetName == 'Verse'){
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-    } else if (assetName == 'Algo'){
-      
+  async selectAsset(assetId: number) {
+    console.log(assetId)
+    if(assetId == 0){
+      const wallet = localStorage.getItem('wallet')!;
+      let client: Algodv2 = getAlgodClient()
+      let accInfo = await client.accountInformation(wallet).do()
+      console.log(accInfo)
+      this.availAmount = accInfo['amount']
+      this.isOptedIn = true
     } else {
-      this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
-      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings)
+      this.selectedOption = this.assetArr.find((el) => {
+        return el.assetId === assetId;
+      });
+      if(assetId == ps.platform.verse_asset_id){
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      } else {
+        this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
+        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings)
+      }
+      this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
+  
+      console.log(this.selectedOption)
+      console.log(this.blockchainInfo)
     }
-    this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
   }  
 
   addFavorite(assetName: string){
@@ -260,8 +245,12 @@ export class TradeComponent implements OnInit {
     //   })
     //   console.log(this.secondDropValues);
     // }
-
-    this.selectAsset($event);
+    if($event != 'Algo') {
+      let asset = this.assetArr.find((el) => {
+        return el.name === $event;
+      });
+      this.selectAsset(asset!.assetId);
+    }
 
     // fill deployed app settings with information
     // create deployed app object
@@ -271,19 +260,19 @@ export class TradeComponent implements OnInit {
       // this.secondDropValues = this.tokenArr;
       // } else if ($event.includes('Token')) {
       // this.secondDropValues = this.algoArr;
-      this.selectedOptionAname = $event;
-      this.selectedOptionBname = $event;
+      // this.selectedOptionAname = $event;
+      // this.selectedOptionBname = $event;
       // }
     } else if (index === 2) {
       // if ($event === 'Algo') {
       // this.firstDropValues = this.tokenArr;
       // } else if ($event.includes('Token')) {
       // this.firstDropValues = this.algoArr;
-      this.selectedOptionAname = $event;
-      this.selectedOptionBname = $event;
+      // this.selectedOptionAname = $event;
+      // this.selectedOptionBname = $event;
       // }
     }
-    this.selectedOptionAname = $event;
+    // this.selectedOptionAname = $event;
   }
 
   getPercentOfButton(index: number, inputRef: HTMLInputElement) {
