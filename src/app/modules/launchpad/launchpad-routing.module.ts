@@ -5,14 +5,14 @@ import { LaunchpadComponent } from './launchpad.component';
 
 const routes: Routes = [
   { path: '', component: LaunchpadComponent },
-  {
-    path: 'launch-detail',
-    component: LaunchDetailComponent
-  }
   // {
-  //   path: 'launch-detail/:id',
+  //   path: 'launch-detail',
   //   component: LaunchDetailComponent
   // }
+  {
+    path: 'launch-detail/:id',
+    component: LaunchDetailComponent
+  }
 ];
 
 @NgModule({
