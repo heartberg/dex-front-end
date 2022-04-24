@@ -58,9 +58,12 @@ export class DeployLb {
      return this._deployService.projectSetup(this.projectId)
   }
 
-  initializeApiObj(form: any): void {
+  initializeApiObjWithPresale(form: any): void {
     console.log(form);
     let wallet = localStorage.getItem('wallet');
+
+    let presaleStartTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0))
+    let presaleEndTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0))
 
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
@@ -85,15 +88,19 @@ export class DeployLb {
         }
       ],
       presale: {
-        softCap: +form.get('presaleOptionsGroupDescription')?.value!,
-        hardCap: +form.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value!,
+        softCap: +form.get('createPresaleOptionGroup.presaleSettings.softCap')?.value! * 1_000_000,
+        hardCap: +form.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value! * 1_000_000,
         tokenAmount: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
-        walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value!,
-        startingTime: +form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value!,
-        endingTime: +form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value!,
+        walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value! * 1_000_000,
+        startingTime: presaleStartTime,
+        endingTime: presaleEndTime,
       }
     }
+    this.initializeMintObj(form)
+  }
 
+  initializeApiObjWithoutPresale(form: any): void {
+    let wallet = localStorage.getItem('wallet');
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
@@ -116,7 +123,10 @@ export class DeployLb {
         }
       ],
     }
+    this.initializeMintObj(form)
+  }
 
+  initializeMintObj(form: any): void {
     this.mintObj = {
       assetId: 0,
       projectId: 'tbd',
@@ -137,7 +147,5 @@ export class DeployLb {
       image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       deployerWallet: localStorage.getItem('wallet')!,
     }
-
   }
-
 }

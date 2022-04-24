@@ -185,9 +185,9 @@ export class DeployComponent implements OnInit {
         to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
         presale_start: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
         presale_end: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
-        softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value,
-        hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value,
-        walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value,
+        softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value * 1_000_000,
+        hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value * 1_000_000,
+        walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value * 1_000_000,
       } || null
     }
   }
@@ -198,16 +198,17 @@ export class DeployComponent implements OnInit {
     localStorage.setItem('sessionWallet', this.sessionWallet);
     this.blockchainObjInitialize();
 
-    this.deployLib.initializeApiObj(this.deployFormGroup);
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
 
     let response = await this.deployedApp.deploy(this.sessionWallet, this.blockchainObect!);
-    console.log(response)
+    //console.log(response)
     // If successfull show popup: "Deployed Contract", send to backend
     if(this.presaleIsChecked){
+      this.deployLib.initializeApiObjWithPresale(this.deployFormGroup)
       this.deployLib.presaleObj.contractId = this.deployedApp.settings.contract_id!
       this.deployLib.presaleObj.contractAddress = this.deployedApp.settings.contract_address!
+      console.log(this.deployLib.presaleObj)
       this.deployLib.GetProjectPresaleCreate().subscribe(
         (value: any) => {
           console.log(value)
@@ -215,6 +216,7 @@ export class DeployComponent implements OnInit {
         }
       )
     } else {
+      this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
       this.deployLib.withoutPresaleObj.contractId = this.deployedApp.settings.contract_id!
       this.deployLib.withoutPresaleObj.contractAddress = this.deployedApp.settings.contract_address!
       this.deployLib.GetProjectWithoutPresaleCreate().subscribe(

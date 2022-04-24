@@ -14,6 +14,8 @@ import { ALGO_VIEWMODEL, BlockchainInformation, DeployedAppSettings, platform_se
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { Wallet } from 'algorand-session-wallet';
+import { env } from 'process';
 
 
 @Component({
@@ -41,6 +43,8 @@ export class TradeComponent implements OnInit {
   @ViewChild('checkBox', { static: false })
   // @ts-ignore
   private checkBox: ElementRef;
+
+  @ViewChild('')
 
   btnFirst: boolean = false;
   btnSecond: boolean = false;
@@ -146,6 +150,7 @@ export class TradeComponent implements OnInit {
   dropdownSelected(value: string, index: number) {
     if (index === 1) {
       if (value === 'Algo') {
+        this.selectAsset(0)
         console.log("Show Verse on bottom")
       } else {
         console.log("Show Algo on bottom")
@@ -177,7 +182,7 @@ export class TradeComponent implements OnInit {
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       } else {
         this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
-        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings)
+        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
       }
       this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
   
@@ -381,7 +386,8 @@ export class TradeComponent implements OnInit {
     if (asset.name != 'Verse'){
       accumulatedFees += +environment.VERSE_FEE!
     }
-    this.slippage = accumulatedFees
+    // + 100 to give an extra 1% for slippage
+    this.slippage = accumulatedFees + 100
   }
 
   calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
@@ -391,6 +397,46 @@ export class TradeComponent implements OnInit {
   setMinOutput(desiredOutput: number, slippage: number){
     let output = desiredOutput - (desiredOutput * slippage / 10000)
     this.minOutput = output
+  }
+
+  async buy(wallet: Wallet, amount: number){
+    if(this.selectedOption!.name == 'Verse') {
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    } else {
+      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
+    }
+    let scaledAmount = Math.floor(amount * 1_000_000)
+    
+    let wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.tokenLiquidity, this.blockchainInfo.algoLiquidity)
+    await this.deployedApp.buy(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
+  }
+
+  async sell(wallet: Wallet, amount: number){
+    let scaledAmount = 0
+    let wantedReturn = 0
+    if(this.selectedOption!.name == 'Verse') {
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      scaledAmount = Math.floor(amount * ps.platform.verse_decimals)
+      wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
+    } else {
+      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
+      scaledAmount = Math.floor(amount * this.deployedAppSettings!.decimals)
+      wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
+      await this.deployedApp.sell(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
+    }
+  }
+
+  pow(decimals: number){
+    return Math.pow(10, decimals)
+  }
+
+  getMaxBuy(){
+    console.log((this.selectedOption!.maxBuy / Math.pow(10, this.selectedOption!.decimals)))
+    if( this.selectedOption!.maxBuy >= Number.MAX_SAFE_INTEGER ){
+      return "-"
+    } else {
+      return (this.selectedOption!.maxBuy / Math.pow(10, this.selectedOption!.decimals)).toFixed(2)
+    }
   }
 
 }

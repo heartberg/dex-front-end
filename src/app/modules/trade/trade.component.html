@@ -133,8 +133,8 @@
             >
               <span class="thin-gray-text">Spot Price:</span>
               <span style="margin-left: 4px" class="amount">{{
-                selectedOption?.unitName
-              }}</span>
+                (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity).toFixed(6)
+              }} Algo</span>
             </div>
             <input
               [formControl]="botInput"
@@ -228,23 +228,27 @@
     <div class="selection-data">
       <div class="propery-pair">
         <span>Marketcap:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply}}</span>
+        <span class="thin-gray-text">{{ (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
       </div>
       <div class="propery-pair">
         <span>Total Supply:</span>
         <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>
       </div>
       <div class="propery-pair">
-        <span>Liquidity:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }}</span>
+        <span>Algo Liquidity:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Token Liquidity:</span>
+        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>
       </div>
       <div class="propery-pair">
         <span>Backing:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }}</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>
       </div>
       <div class="propery-pair">
         <span>Max Buy:</span>
-        <span class="thin-gray-text">{{ selectedOption!.maxBuy / 1_000_000}}</span>
+        <span class="thin-gray-text">{{ getMaxBuy() }}</span>
       </div>
       <button (click)="openPopUp()">Backing</button>
     </div>

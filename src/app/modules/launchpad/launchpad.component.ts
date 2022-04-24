@@ -5,50 +5,19 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import {DeployedApp} from "../../blockchain/deployer_application";
 
+export type TimeTupel = {
+  startTime: Date,
+  endTime: Date
+}
+
 @Component({
   selector: 'app-launchpad',
   templateUrl: './launchpad.component.html',
   styleUrls: ['./launchpad.component.scss'],
 })
+
 export class LaunchpadComponent implements OnInit {
-  dummyProject: ProjectPreviewModel = {
-    projectId: 'string',
-    projectImage: 'string',
-    name: 'string',
-    description:
-      'string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad ',
-    asset: {
-      assetId: 4,
-      contractId: 3,
-      contractAddress: 'string',
-      decimals: 3,
-      name: 'string',
-      unitName: 'string',
-      totalSupply: 4,
-      url: 'string',
-      maxBuy: 5,
-      tradingStart: 1,
-      risingPriceFloor: 7,
-      backing: 4,
-      buyBurn: 3,
-      sellBurn: 3,
-      sendBurn: 2,
-      image: 'string',
-      deployerWallet: 'string',
-    },
-    presale: {
-      presaleId: 'string',
-      softCap: 4,
-      hardCap: 2,
-      walletCap: 2,
-      totalRaised: 45,
-      tokenAmount: 44,
-      startingTime: 32,
-      endingTime: 45,
-      adminClaimed: false,
-    },
-  };
-  array: ProjectPreviewModel[] = [this.dummyProject];
+  array: [ProjectPreviewModel, TimeTupel][] = [];
 
   wallet = localStorage.getItem('wallet');
 
@@ -84,10 +53,15 @@ export class LaunchpadComponent implements OnInit {
         .subscribe((res) => {
           console.log(res);
           res.forEach((el: ProjectPreviewModel) => {
-            this.array.push(el);
+            let tupel: TimeTupel = {
+              startTime: new Date(el.presale.startingTime * 1000),
+              endTime: new Date(el.presale.endingTime * 1000)
+            }
+            this.array.push([el, tupel]);
           });
         });
       // All
+      console.log(this.array);
     }
   }
 }
