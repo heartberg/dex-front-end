@@ -58,7 +58,7 @@
         height: isWallet ? 'calc(100vh - 285px)' : 'calc(100vh - 210px)'
       }"
     >
-      <app-card [data]="item" *ngFor="let item of array"></app-card>
+      <app-card [data]="item" *ngFor="let item of array" routerLink="../launchpad/launch-detail/{{item[0].projectId}}"></app-card>
     </div>
   </div>
 </div>

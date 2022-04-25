@@ -31,7 +31,7 @@
     <div class="content">
       <h3>Upcoming Projects</h3>
       <div class="scroll">
-        <app-card *ngFor="let item of arr;" [data]="item"></app-card>
+        <app-card *ngFor="let item of arr;" [data]="item" routerLink="../tokens/token-detail/{{item[0].projectId}}"></app-card>
       </div>
     </div>
   </div>
