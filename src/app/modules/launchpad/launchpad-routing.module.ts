@@ -5,12 +5,8 @@ import { LaunchpadComponent } from './launchpad.component';
 
 const routes: Routes = [
   { path: '', component: LaunchpadComponent },
-  // {
-  //   path: 'launch-detail',
-  //   component: LaunchDetailComponent
-  // }
   {
-    path: 'launch-detail/:id',
+    path: 'launchpad/launch-detail/:id',
     component: LaunchDetailComponent
   }
 ];

@@ -321,7 +321,7 @@
                                 class="color-violet"
                                 style="padding-left: 10px; font-size: 14px"
                               >
-                                X% of total supply
+                                {{tokenPresalePercentage.toFixed(2)}}% of total supply
                               </h4>
                             </div>
                           </div>
@@ -337,7 +337,7 @@
                                 class="color-violet"
                                 style="padding-left: 10px; font-size: 14px"
                               >
-                                X% of total supply
+                                {{tokenLiquidityPercentage.toFixed(2)}}% of total supply
                               </h4>
                             </div>
                           </div>
@@ -365,11 +365,11 @@
                         <!-- </div> -->
                         <div class="info-box">
                           <h6 class="color-violet">Presale Price:</h6>
-                          <h6>X Algo/Token</h6>
+                          <h6>{{presalePrice.toFixed(6)}} Algo/Token</h6>
                         </div>
                         <div class="info-box">
                           <h6 class="color-violet">Initial Price:</h6>
-                          <h6>X Algo/Token</h6>
+                          <h6> {{minInitialPrice.toFixed(6)}} Algo/Token - {{initialPrice.toFixed(6)}} Algo/Token</h6>
                         </div>
                       </ng-container>
                     </form>
@@ -390,7 +390,7 @@
                               class="color-violet"
                               style="padding-left: 10px; font-size: 14px"
                             >
-                              X% of total supply
+                              {{tokenLiquidityPercentage.toFixed(2)}}% of total supply
                             </h4>
                           </div>
                         </div>
@@ -409,7 +409,7 @@
                       <!-- </div> -->
                       <div class="info-box">
                         <h6 class="color-violet">Initial Price:</h6>
-                        <h6>X Algo/Token</h6>
+                        <h6>{{initialPrice.toFixed(6)}} Algo/Token</h6>
                       </div>
                     </ng-container>
                     <hr *ngIf="!presaleIsChecked" />

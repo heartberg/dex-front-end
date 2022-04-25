@@ -20,6 +20,13 @@ export class DeployComponent implements OnInit {
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
   fee = environment.Y_FEE;
+
+  tokenLiquidityPercentage = 0;
+  tokenPresalePercentage = 0;
+  initialPrice = 0;
+  minInitialPrice = 0;
+  presalePrice = 0;
+
   sessionWallet: any;
   blockchainObect: DeployedAppSettings | undefined;
   // @ts-ignore
@@ -143,6 +150,9 @@ export class DeployComponent implements OnInit {
       teamInfoCheck: this.fb.control(false),
     });
     // for form intitialize
+    this.deployFormGroup.valueChanges.subscribe(x => {
+      this.setPriceFields()
+  })
   }
 
   blockchainObjInitialize(): DeployedAppSettings {
@@ -194,6 +204,8 @@ export class DeployComponent implements OnInit {
 
 
   async onSubmit() {
+    this.setPriceFields()
+    return
     this.sessionWallet = this.walletProviderService.sessionWallet;
     localStorage.setItem('sessionWallet', this.sessionWallet);
     this.blockchainObjInitialize();
@@ -283,4 +295,54 @@ export class DeployComponent implements OnInit {
     }
     reader.readAsDataURL(imageFile);
   }
+
+  setPriceFields() {
+    let totalSupply = +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value
+    if(this.presaleIsChecked){
+      let hardCap = +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value
+      let softCap = +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value
+      let algoLiq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value
+      let presaleAlgoToLiq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value
+      let tokensInPresale = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value
+      let tokenLiq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value
+
+      if(tokenLiq == 0) {
+        this.initialPrice = 0
+        this.minInitialPrice = 0
+      } else {
+        this.initialPrice = (algoLiq + presaleAlgoToLiq * hardCap / 100) / tokenLiq
+        this.minInitialPrice = (algoLiq + presaleAlgoToLiq * softCap / 100) / tokenLiq
+      }
+      if(tokensInPresale == 0) {
+        this.presalePrice = 0
+      } else {
+        this.presalePrice = hardCap / tokensInPresale
+      }
+      if(totalSupply == 0){
+        this.tokenLiquidityPercentage = 0
+        this.tokenPresalePercentage = 0
+      } else {
+        this.tokenLiquidityPercentage = tokenLiq / totalSupply * 100
+        this.tokenPresalePercentage = tokensInPresale / totalSupply * 100
+      }
+
+    } else {
+      let algoLiq = +this.deployFormGroup.get('liquidity.algoToLiq')?.value
+      let tokenLiq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value
+      
+      if(tokenLiq == 0){
+        this.initialPrice = 0
+      } else {
+        this.initialPrice = algoLiq / tokenLiq
+      }
+      if(totalSupply == 0) {
+        this.tokenLiquidityPercentage = 0
+      } else {
+        this.tokenLiquidityPercentage = tokenLiq / totalSupply * 100 
+      }
+      
+    }
+
+  }
+
 }

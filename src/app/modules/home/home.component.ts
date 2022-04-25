@@ -16,7 +16,6 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.arr= [];
     this.projectReqService
         .getAllPresales(OrderingEnum.ending, 1)
         .subscribe((res) => {
