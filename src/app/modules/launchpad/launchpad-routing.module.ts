@@ -6,7 +6,7 @@ import { LaunchpadComponent } from './launchpad.component';
 const routes: Routes = [
   { path: '', component: LaunchpadComponent },
   {
-    path: 'launchpad/launch-detail/:id',
+    path: 'launch-detail/:id',
     component: LaunchDetailComponent
   }
 ];
