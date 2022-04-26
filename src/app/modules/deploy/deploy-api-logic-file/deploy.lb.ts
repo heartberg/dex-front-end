@@ -27,9 +27,11 @@ export class DeployLb {
   projectId: string;
   // ProjectID: any = '';
   // @ts-ignore
+  blockchainObj: DeployedAppSettings;
   sessionWallet: any;
-  constructor(private _deployService: deployService) {
+  constructor(private _deployService: deployService, private deployerBC: DeployedApp) {
   }
+
 
   SetMintVars(data: DeployedAppSettings) {
     this.mintObj.projectId = this.projectId
@@ -38,24 +40,160 @@ export class DeployLb {
     this.mintObj.assetId = data.asset_id!
   }
 
-  GetProjectPresaleCreate() {
-    return this._deployService.ProjectPresaleCreate(this.presaleObj)
+  DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
+    this.initializeApiObj(data);
+    // @ts-ignore
+    this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
+    // @ts-ignore
+    this.sessionWallet = JSON.parse(localStorage.getItem('sessionWallet'));
+
+    if (isPresaleChecked) {
+      this.GetProjectPresaleCreate(this.presaleObj);
+      this.presaleObj.contractId = this.deployerBC.settings.contract_id!
+      this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
+    }
+    else {
+      this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
+      this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
+      this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
+    }
+    // end of statement of false
   }
 
-  GetProjectWithoutPresaleCreate() {
-    return this._deployService.ProjectCreate(this.withoutPresaleObj)
+  // with presale
+  GetProjectPresaleCreate(project: projectPresaleCreateModel) {
+    of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        if (value) {
+          this._deployService.ProjectPresaleCreate(project).subscribe(
+            (value) => {
+              if (value) {
+                of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
+                  (value: any) => {
+                    if (2 === 2) {
+                      this.GetProjectMint(this.mintObj).subscribe(
+                        (value: any) => {
+                          if (2 === 2) {
+                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObj!)).subscribe(
+                              (value: any) => {
+                                if (2 === 2) {
+                                  this.GetProjectBurnOptIn(this.projectId).subscribe(
+                                    (value: any) => {
+                                      if (2 === 2) {
+                                        of (this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObj!)).subscribe(
+                                          (value: any) => {
+                                            if (value) {
+                                              this.GetProjectSetup(this.projectId).subscribe(
+                                                (value: any) => {
+                                                  this.finalStepPopUp();
+                                                  console.log('setup is done')
+                                                }
+                                              )
+                                            }
+                                          }
+                                        )
+                                      }
+                                    }
+                                  )
+                                }
+                              }
+                            )
+                          }
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            }
+          )
+        }
+      }
+    )
+  }
+  // without presale
+  GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
+    of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        this.isPending();
+        if (value) {
+          this._deployService.ProjectCreate(project).subscribe(
+            (value) => {
+              if (value) {
+                of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
+                  (value: any) => {
+                    if (2 === 2) {
+                      this.GetProjectMint(this.mintObj).subscribe(
+                        (value: any) => {
+                          if (2 === 2) {
+                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObj!)).subscribe(
+                              (value: any) => {
+                                if (2 === 2) {
+                                  this.GetProjectBurnOptIn(this.projectId).subscribe(
+                                    (value: any) => {
+                                      if (2 === 2) {
+                                        of (this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObj!)).subscribe(
+                                          (value: any) => {
+                                            if (value) {
+                                              this.GetProjectSetup(this.projectId).subscribe(
+                                                (value: any) => {
+                                                  console.log('setup is done')
+                                                }
+                                              )
+                                            } else {
+                                              this.isFailed();
+                                            }
+                                          }
+                                        )
+                                      }
+                                    }
+                                  )
+                                }
+                              }
+                            )
+                          }
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            }
+          )
+        }
+      }
+    )
   }
 
-   GetProjectMint() {
-     return this._deployService.projectMint(this.mintObj)
-   }
-  
-   GetProjectBurnOptIn() {
-     return this._deployService.projectburnOptIn(this.projectId)
-   }
-  
-   GetProjectSetup() {
-     return this._deployService.projectSetup(this.projectId)
+  finalStepPopUp(): boolean {
+    return true;
+  }
+
+  isPending(): boolean {
+    return true;
+  }
+
+  isFailed(): boolean {
+    return true;
+  }
+
+  GetProjectMint(project: projectMintModel) {
+    return this._deployService.projectMint(project)
+    // .subscribe( (value: projectMintModel) => {
+    // console.log(value, 'mint');
+    // return value;
+    // })
+  }
+
+  GetProjectBurnOptIn(projectId: string) {
+    return this._deployService.projectburnOptIn(projectId)
+    //   .subscribe( (value: any) => {
+    //   console.log(value, 'burnOptIn');
+    // })
+  }
+
+  GetProjectSetup(projectId: string) {
+    return this._deployService.projectSetup(projectId)
   }
 
   initializeApiObj(form: any): void {
