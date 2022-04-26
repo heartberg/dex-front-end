@@ -1,4 +1,4 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState, StateToObj } from "./algorand"
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState, StateToObj, getIndexer } from "./algorand"
 import * as fs from 'fs';
 import {
   get_app_optin_txn,
@@ -16,6 +16,7 @@ import {
 import { SessionWallet, Wallet } from "algorand-session-wallet"
 import { Injectable } from "@angular/core";
 import { compileProgram, getTransactionParams, waitForTransaction } from "../services/utils.algo";
+import { BlockchainTrackInfo } from "../modules/track/track.component";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -538,4 +539,45 @@ export class DeployedApp {
     return result
   }
 
+  async getTrackInfo(wallet: string, contractId: number) : Promise<BlockchainTrackInfo> {
+
+    let client: Algodv2 = getAlgodClient()
+    let globalState: any = await this.getContractGlobalState(contractId)
+    let appAccInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
+    let accountInfo: any = await client.accountInformation(wallet).do()
+    let assetInfo: any = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
+    console.log(appAccInfo)
+    let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+      return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
+    })
+    let holding = 0
+    if(asset){
+        holding = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
+    }
+
+    let algoLiquidity = globalState[StateKeys.algo_liq_key]['i'] / 1_000_000
+    let tokenLiquidity = globalState[StateKeys.token_liq_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let totalBacking = (appAccInfo['amount'] - algoLiquidity * 1_000_000 + globalState[StateKeys.total_borrowed_key]['i']) / 1_000_000
+    let marketCap = algoLiquidity / tokenLiquidity * totalSupply
+    let price = algoLiquidity / tokenLiquidity
+    let burned = globalState[StateKeys.burned_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let holders = 0
+
+    let trackInfo: BlockchainTrackInfo = {
+        algoLiq: algoLiquidity,
+        tokenLiq: tokenLiquidity,
+        totalSupply: totalSupply,
+        totalBacking: totalBacking,
+        marketCap: marketCap,
+        burned: burned,
+        holding: holding,
+        holders: holders,
+        price: price
+    }
+
+    console.log(trackInfo)
+
+    return trackInfo
+  }
 }
