@@ -443,4 +443,7 @@ export class TradeComponent implements OnInit {
     }
   }
 
+  handleCheckboxUpdateSecond($event: boolean) {
+    
+  }
 }
