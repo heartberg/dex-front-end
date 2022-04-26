@@ -41,7 +41,6 @@ export class DeployLb {
   }
 
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
-    this.initializeApiObj(data);
     // @ts-ignore
     this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
     // @ts-ignore
@@ -53,7 +52,7 @@ export class DeployLb {
       this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     else {
-      this.GetPorjectWithoutPresaleCreate(this.withoutPresaleObj);
+      this.GetProjectWithoutPresaleCreate(this.withoutPresaleObj);
       this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
       this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
@@ -112,7 +111,7 @@ export class DeployLb {
     )
   }
   // without presale
-  GetPorjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
+  GetProjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
         this.isPending();

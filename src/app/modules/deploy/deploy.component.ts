@@ -219,7 +219,13 @@ export class DeployComponent implements OnInit {
     localStorage.setItem('sessionWallet', this.sessionWallet);
     this.blockchainObjInitialize();
 
-    this.deployLib.initializeApiObj(this.deployFormGroup);
+    // this.deployLib.initializeApiObj(this.deployFormGroup);
+    if(this.presaleIsChecked){
+      this.deployLib.initializeApiObjWithPresale(this.deployFormGroup)
+    } else {
+      this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
+    }
+
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
   }
