@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {Component, DoCheck, ElementRef, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -24,10 +24,8 @@ export class TradeComponent implements OnInit {
   firstDropValues: string[] = [];
   secondDropValues: string[] = ['Algo', 'Token a', 'Token b', 'Token c'];
 
-  algoArr: string[] = ['Algo'];
-  tokenArr: string[] = ['Token a', 'Token b', 'Token c'];
-
   assetArr: AssetViewModel[] = [];
+  assetArrSecond: AssetViewModel[] = [];
 
   selectedOptionAname: string = '';
   selectedOptionBname: string = '';
@@ -49,6 +47,10 @@ export class TradeComponent implements OnInit {
   isClickedOnBtn: boolean = false;
 
   checked: boolean = false;
+  checkedSecond: boolean = false;
+
+  changeBottom: boolean = false;
+  changeTop: boolean = false;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -82,19 +84,28 @@ export class TradeComponent implements OnInit {
     if (this.slippageForm.get('slippageCheckBox')?.value) {
       this.slippageForm.get('slippageInput')?.disable();
     }
-    this.secondDropValues = this.tokenArr;
-    this.selectedOptionAname = this.tokenArr[0];
-    this.selectedOptionBname = this.tokenArr[0];
 
     const wallet = localStorage.getItem('wallet')!;
-    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-      // this.assetArr = res;
-      this.assetArr = res;
-      console.log(this.assetArr);
+    this.assetReqService.getAssetFavorites(wallet).subscribe((res) => {
+      // data
+      this.assetArr = [...res];
+      // pushing verse
+        // @ts-ignore
+      this.assetArr.unshift( {name: 'Algo'});
+      // @ts-ignore
+      this.assetArr.unshift( {name: 'Verse'});
+      // pushing algo
+      this.assetArrSecond = [...res];
+      // @ts-ignore
+      this.assetArrSecond.unshift( {name: 'Verse'});
+        // @ts-ignore
+      this.assetArrSecond.unshift( {name: 'Algo'});
+
+      // data
+
       res.forEach((el) => {
         this.firstDropValues.push(el.name);
       });
-      this.secondDropValues = this.algoArr;
       this.selectedOptionAname = this.firstDropValues[0];
       this.selectedOptionBname = this.firstDropValues[0];
       // this.selectAsset(this.firstDropValues[0]);
@@ -124,13 +135,15 @@ export class TradeComponent implements OnInit {
     if (event === true) {
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
-        // this.assetArr = res;
-        this.assetArr = res;
+        this.assetArr = [...res];
+        // @ts-ignore
+        this.assetArr.unshift( {name: 'Algo'});
+        // @ts-ignore
+        this.assetArr.unshift( {name: 'Verse'});
         this.firstDropValues = [];
         res.forEach((el) => {
           this.firstDropValues.push(el.name);
         });
-        this.secondDropValues = this.algoArr;
         this.selectedOptionAname = this.firstDropValues[0];
         this.selectedOptionBname = this.firstDropValues[0];
         // this.selectAsset(this.firstDropValues[0]);
@@ -139,12 +152,15 @@ export class TradeComponent implements OnInit {
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe((res) => {
         // this.assetArr = res;
-        this.assetArr = res;
+        this.assetArr = [...res];
+        // @ts-ignore
+        this.assetArr.unshift( {name: 'Algo'});
+        // @ts-ignore
+        this.assetArr.unshift( {name: 'Verse'});
         this.firstDropValues = [];
         res.forEach((el) => {
           this.firstDropValues.push(el.name);
         });
-        this.secondDropValues = this.algoArr;
         this.selectedOptionAname = this.firstDropValues[0];
         this.selectedOptionBname = this.firstDropValues[0];
         // this.selectAsset(this.firstDropValues[0]);
@@ -153,39 +169,62 @@ export class TradeComponent implements OnInit {
 
   }
 
-  dropdownSelected(value: string, index: number) {
-    if (index === 1) {
-      if (value === 'Algo') {
-        this.secondDropValues = this.tokenArr;
-      } else if (value.includes('Token')) {
-        this.secondDropValues = this.algoArr;
-        this.selectedOptionAname = value;
-        this.selectedOptionBname = value;
-      }
-    } else if (index === 2) {
-      if (value === 'Algo') {
-        // this.firstDropValues = this.tokenArr;
-      } else if (value.includes('Token')) {
-        // this.firstDropValues = this.algoArr;
-        this.selectedOptionAname = value;
-        this.selectedOptionBname = value;
-      }
+  handleCheckboxUpdateSecond(event: any): void {
+    this.checkedSecond = true;
+    if (event === true) {
+      const wallet = localStorage.getItem('wallet')!;
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
+        // this.assetArr = res;
+        this.assetArrSecond = [...res];
+        // @ts-ignore
+        this.assetArrSecond.unshift( {name: 'Verse'});
+        // @ts-ignore
+        this.assetArrSecond.unshift( {name: 'Algo'});
+        this.firstDropValues = [];
+        res.forEach((el) => {
+          this.firstDropValues.push(el.name);
+        });
+        this.selectedOptionAname = this.firstDropValues[0];
+        this.selectedOptionBname = this.firstDropValues[0];
+        // this.selectAsset(this.firstDropValues[0]);
+      });
+    } else {
+      const wallet = localStorage.getItem('wallet')!;
+      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe((res) => {
+        // this.assetArr = res;
+        // @ts-ignore
+        this.assetArrSecond = [...res];
+        // @ts-ignore
+        this.assetArrSecond.unshift( {name: 'Algo'});
+        // @ts-ignore
+        this.assetArrSecond.unshift( {name: 'Verse'});
+        this.firstDropValues = [];
+        res.forEach((el) => {
+          this.firstDropValues.push(el.name);
+        });
+        this.selectedOptionAname = this.firstDropValues[0];
+        this.selectedOptionBname = this.firstDropValues[0];
+        // this.selectAsset(this.firstDropValues[0]);
+      });
     }
   }
+
+  dropdownSelected(value: string, index: number) {}
 
   selectAsset(assetName: string) {
     this.selectedOption = this.assetArr.find((el) => {
       return el.name === assetName;
     });
     console.log(this.selectedOption);
-    if (this.selectedOption) {
-      console.log(typeof localStorage.getItem('wallet'));
-      this.assetReqService.addFavoriteAsset(this.selectedOption.assetId, localStorage.getItem('wallet')!)
-        .subscribe(
-        (response: any) => {
-          console.log(response, 'response on add in favorites')
-        }
-      )
+    if (assetName !== 'Algo') {
+      if (this.selectedOption) {
+        this.assetReqService.addFavoriteAsset(this.selectedOption.assetId, localStorage.getItem('wallet')!)
+          .subscribe(
+            (response: any) => {
+              console.log(response, 'response on add in favorites')
+            }
+          )
+      }
     }
   }
 
@@ -209,6 +248,19 @@ export class TradeComponent implements OnInit {
   }
 
   async getValueFromDropDown($event: any, index: number) {
+    if ($event !== 'Algo' && index === 1) {
+      this.changeBottom = true;
+      // sell
+    } else {
+      this.changeBottom = false;
+    }
+    // second check
+    if ($event !== 'Algo' && index === 2) {
+      this.changeTop = true;
+      // buy
+    } else {
+      this.changeTop = false;
+    }
     console.log($event);
     // console.log($event);
     // if (index === 1 && $event) {
@@ -220,12 +272,12 @@ export class TradeComponent implements OnInit {
     //   console.log(this.secondDropValues);
     // }
 
-    this.selectAsset($event);
+    // this.selectAsset($event);
     console.log(this.selectedOption?.contractAddress);
 
     // get blockchain information of contract
-
-    let globalState = await getGlobalState(4458)
+    let globalState
+    // globalState = await getGlobalState(4458)
 
 
     console.log(globalState)

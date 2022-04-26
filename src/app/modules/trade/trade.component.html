@@ -52,6 +52,7 @@
             (showAll)="handleCheckboxUpdate($event)"
             [checkBoxCheckTrade]="checked"
             [incomeData]="assetArr"
+            [buttonTradeChangedTop]="changeTop"
           ></app-drop-down-selector>
           <div class="input d-flex flex-column">
             <div class="input-field d-flex flex-column align-items-end">
@@ -116,12 +117,17 @@
           <app-drop-down-selector
             style="margin-top: 23px"
             (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
-            [dropDownValues]=""
+            [dropDownValuesSecond]="assetArrSecond"
             [isNotAccordion]="false"
             [widthPX]="'255px'"
             [extraDropDown]="true"
             (dropDownValue)="getValueFromDropDown($event, 2)"
             [notCloseOnClick]="true"
+            (showAll)="handleCheckboxUpdateSecond($event)"
+            [checkBoxCheckTrade]="checkedSecond"
+            [incomeData]="assetArrSecond"
+            [secondOnTrade]="true"
+            [buttonTradeChanged]="changeBottom"
             #componentRefB
           >
           </app-drop-down-selector>

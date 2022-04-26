@@ -20,6 +20,11 @@ import {take} from "rxjs/operators";
 })
 export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() public dropDownValues: AssetViewModel[] | any = [];
+  @Input() public dropDownValuesSecond: AssetViewModel[] | any = [];
+
+  @Input() public firstOnTrade: boolean = true;
+  @Input() public secondOnTrade: boolean = false;
+
   @Input() public isNotAccordion: boolean = true;
   @Input() public treeDots: boolean = false;
   // profile
@@ -46,6 +51,9 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   // for trade show all/show favs
   @Input() public checkBoxCheckTrade: boolean = false;
   @Input() incomeData: AssetViewModel[] = [];
+  @Input() buttonTradeChanged: boolean = false;
+  @Input() buttonTradeChangedTop: boolean = false;
+
   public favAssetsArr: AssetViewModel[] = [];
   public allAssetsArr: AssetViewModel[] = [];
   isPlus: boolean = false;
@@ -82,12 +90,20 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     private fb: FormBuilder
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   ngDoCheck() {
   }
 
   ngOnChanges() {
+    if (this.secondOnTrade) {
+      return
+    } else {
+      if (this.secondOnTrade) {
+        this.firstOnTrade = false;
+      }
+    }
     if (this.checkBoxCheckTrade) {
       this.allAssetsArr = this.incomeData;
       console.log(this.checkBoxCheckTrade, 'all')

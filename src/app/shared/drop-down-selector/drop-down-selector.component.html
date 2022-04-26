@@ -13,15 +13,36 @@
         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAPFBMVEX///8AAADw8PAoKCj09PTv7+8lJSWTk5OQkJArKyuMjIyZmZmSkpKWlpYhISGcnJyFhYXGxsY6OjpISEiJJhDdAAACyUlEQVR4nO3XbXebMAyG4TpNStY3su3//9eFOrQBS4pDzGxx7utrWx+eSkbi6QkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGCZ345OXaQL/Qqn9uG4wqmLdCGsELE/n9pIxGMYvBU+tf869bXwqYvEgKWr2F9ObSBiF8IKEfvvU6s36k/Ako3aX51aOeIxhBUi9pNTqzbqewgrROxnp1asYhfmPgqc+pacWi3ivIKD7uFTP4RTK0U8Co/yeBXTCla7i2mLlogoB6xSRamZHo+oBSzR/vc6/FIf5n3xofq/7flQ8Nkz7V+KV1Gv4Oe+6LNn2ulVXBZRD/hSoYKD3bP6SEsaVW/RWgHPjVryLhp3sEqLRnu9ive++4wK7lZ59kyHUhFbbNHIaNR7hrS2PpxbtGoFB0aj5keUNtxLBSvewZHxRs2NqFewdotGO3305y3MegU/mwho3sWciPI3yqDmmJgyFrjbjWpUsJmA5tC4FdF4yTTSopHxurEb9dVJwMV30cMdHBlzUY9otGj1QZ863D809Aq21qKR0agn8Q/0O1h/VZMZQ0OqolHB5u7gyPjqTyN6a9HIWODmjaq3aCurmiz7Lp7U32tvTEwZd/E6olHBxgOaC9xPRD+bjMRY4MaIeou2OOhTxnYTIxoVbL5FoxtVNAK6qODAWOBObsfElDE0/qg/aX1MTBlDQ62gq4DmAifzMCamjNfNNgKadzHl6w6OjLmYVNDNmJgyFjj/LRplNmqrX/Q5shrVy6omy3ij+m3RyPjqjzytarIbd9HnmJgyFzhvq5rMuIve7+BIjbiVgOpd3MIdHIlz0euqJhMWuO20aJQ0qudVTTZrVN+rmmzy1b+1Fo2uFjj/q5rs+y5uaUxMXRa4baxqsq+hsc07ODovcNsa9Kn9340HBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/8k/r0QS+70JmxMAAAAASUVORK5CYII="
         alt=""
       />
-      <ng-container *ngFor="let button of dropDownValues; let i = index">
-        <button class="btn-default" *ngIf="i === 0">
-          <ng-container *ngIf="showDropDownSelected === ''">
-            {{ button.name ? button.name : button }}
-          </ng-container>
-          <ng-container *ngIf="showDropDownSelected !== ''">
-            {{ showDropDownSelected }}
-          </ng-container>
-        </button>
+      <ng-container *ngIf="firstOnTrade">
+        <ng-container *ngFor="let button of dropDownValues; let i = index">
+          <button class="btn-default" *ngIf="i === 0">
+            <ng-container *ngIf="buttonTradeChangedTop">
+              {{ 'Algo' }}
+            </ng-container>
+            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChangedTop">
+              {{ button.name ? button.name : button }}
+            </ng-container>
+            <ng-container *ngIf="showDropDownSelected !== '' && !buttonTradeChangedTop">
+              {{ showDropDownSelected }}
+            </ng-container>
+          </button>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="secondOnTrade">
+        <ng-container *ngFor="let button of dropDownValuesSecond; let i = index">
+          <button class="btn-default" *ngIf="i === 0">
+            <ng-container *ngIf="buttonTradeChanged">
+              {{ 'Algo' }}
+            </ng-container>
+            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChanged">
+              {{ button.name ? button.name : button }}
+            </ng-container>
+            <ng-container *ngIf="showDropDownSelected !== '' && !buttonTradeChanged">
+              {{ showDropDownSelected }}
+            </ng-container>
+          </button>
+        </ng-container>
       </ng-container>
 
       <!--       main header for marketplac obj data-->
@@ -188,83 +209,170 @@
         </div>
       </div>
     </div>
-    <div
-      class="section"
-      *ngFor="let button of dropDownValues; let last = last; let i = index"
-      (click)="selectValue(button.name ? button.name : button, i + 1)"
-      [class.border-none]="last"
-      [class.no-border]="tree"
-      [class.unHover]="isProfileSection"
-    >
-      <!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
-      <button
-        class="btn-default"
-        [class.color-violet]="tree"
-        *ngIf="!isProfileSection && !extraDropDown"
+    <ng-container *ngIf="firstOnTrade">
+      <div
+        class="section"
+        *ngFor="let button of dropDownValues; let last = last; let i = index"
+        (click)="selectValue(button.name ? button.name : button, i + 1)"
+        [class.border-none]="last"
+        [class.no-border]="tree"
+        [class.unHover]="isProfileSection"
       >
-        {{ button }}
-      </button>
-      <ng-container *ngIf="!isProfileSection && extraDropDown">
+        <!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
         <button
           class="btn-default"
           [class.color-violet]="tree"
-          style="width: 100%"
+          *ngIf="!isProfileSection && !extraDropDown"
         >
-          <div
-            class="d-flex align-items-center justify-content-between"
-            style="white-space: nowrap"
-          >
-            <div>
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
-                alt=""
-                style="width: 40px; height: 35px"
-              />
-            </div>
-            <div style="font-size: 16px">
-              {{ button.name }}
-            </div>
-            <div>
-              <ng-container
-                (click)="addToFavourites(button, i)"
-                *ngIf="isPlus"
-              >
-                <img
-                  src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
-                  alt=""
-                  style="width: 23px; height: 23px"
-                />
-              </ng-container>
-              <ng-container *ngIf="!isPlus" (click)="removeFromFavourites(button)">
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
-                  alt=""
-                  style="width: 23px; height: 23px"
-                />
-              </ng-container>
-            </div>
-          </div>
+          {{ button }}
         </button>
-      </ng-container>
-      <ng-container *ngIf="isProfileSection">
-        <div class="dropDownWrapper">
-          <div class="section" [class.profileunHover]="isProfileSection">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="img">
-                  <img [src]="profileSectionImg" alt="" />
-                </div>
+        <ng-container *ngIf="!isProfileSection && extraDropDown">
+          <button
+            class="btn-default"
+            [class.color-violet]="tree"
+            style="width: 100%"
+          >
+            <div
+              class="d-flex align-items-center justify-content-between"
+              style="white-space: nowrap"
+            >
+              <div>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                  alt=""
+                  style="width: 40px; height: 35px"
+                />
               </div>
-              <div class="col-md-6">
-                <div class="info">
-                  <p>{{ profileSectionInfo }}</p>
+              <div style="font-size: 16px">
+                {{ button.name }}
+              </div>
+              <div>
+                <ng-container
+                  (click)="addToFavourites(button, i)"
+                  *ngIf="isPlus"
+                >
+                  <img
+                    src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                    alt=""
+                    style="width: 23px; height: 23px"
+                  />
+                </ng-container>
+                <ng-container *ngIf="!isPlus" (click)="removeFromFavourites(button)">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                    alt=""
+                    style="width: 23px; height: 23px"
+                  />
+                </ng-container>
+              </div>
+            </div>
+            <div class="id d-flex align-items-center justify-content-center">
+              <span class="color-violet">{{button?.assetId}}</span>
+            </div>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="isProfileSection">
+          <div class="dropDownWrapper">
+            <div class="section" [class.profileunHover]="isProfileSection">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="img">
+                    <img [src]="profileSectionImg" alt="" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info">
+                    <p>{{ profileSectionInfo }}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </ng-container>
-    </div>
+        </ng-container>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="secondOnTrade">
+      <div
+        class="section"
+        *ngFor="let button of dropDownValuesSecond; let last = last; let i = index"
+        (click)="selectValue(button.name ? button.name : button, i + 1)"
+        [class.border-none]="last"
+        [class.no-border]="tree"
+        [class.unHover]="isProfileSection"
+      >
+        <!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
+        <button
+          class="btn-default"
+          [class.color-violet]="tree"
+          *ngIf="!isProfileSection && !extraDropDown"
+        >
+          {{ button }}
+        </button>
+        <ng-container *ngIf="!isProfileSection && extraDropDown">
+          <button
+            class="btn-default"
+            [class.color-violet]="tree"
+            style="width: 100%"
+          >
+            <div
+              class="d-flex align-items-center justify-content-between"
+              style="white-space: nowrap"
+            >
+              <div>
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
+                  alt=""
+                  style="width: 40px; height: 35px"
+                />
+              </div>
+              <div style="font-size: 16px">
+                {{ button.name }}
+              </div>
+              <div>
+                <ng-container
+                  (click)="addToFavourites(button, i)"
+                  *ngIf="isPlus"
+                >
+                  <img
+                    src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                    alt=""
+                    style="width: 23px; height: 23px"
+                  />
+                </ng-container>
+                <ng-container *ngIf="!isPlus" (click)="removeFromFavourites(button)">
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                    alt=""
+                    style="width: 23px; height: 23px"
+                  />
+                </ng-container>
+              </div>
+            </div>
+            <div class="id d-flex align-items-center justify-content-center">
+              <span class="color-violet">{{button?.assetId}}</span>
+            </div>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="isProfileSection">
+          <div class="dropDownWrapper">
+            <div class="section" [class.profileunHover]="isProfileSection">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="img">
+                    <img [src]="profileSectionImg" alt="" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info">
+                    <p>{{ profileSectionInfo }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
     <ng-container *ngIf="dropDownIsTrue">
       <div
         class="section d-flex justify-content-between align-items-center"
