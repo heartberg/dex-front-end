@@ -201,66 +201,6 @@
                 />
               </div>
             </form>
-
-            <div class="wrapper-border">
-              <form formGroupName="additionalFeeOptionGroup">
-                <div
-                  class="d-flex align-items-center"
-                  (click)="activatePurposeSection()"
-                  [ngStyle]="{
-                    'margin-bottom': purposeIsChecked ? '8px' : '0px'
-                  }"
-                >
-                  <input
-                    type="checkbox"
-                    name="checkPurpose"
-                    id="checkPurpose"
-                    formControlName="addFeeCheck"
-                    #checkboxPurpose
-                  />
-                  <label
-                    for="checkPurpose"
-                    style="
-                      color: #81007f;
-                      font-weight: 700;
-                      margin-left: 5px;
-                      cursor: pointer;
-                      margin-bottom: 0px;
-                    "
-                  >Additional Fee</label
-                  >
-                </div>
-                <ng-container *ngIf="purposeIsChecked">
-                  <div class="createoffer">
-                    <h4 class="amountheader">Purpose</h4>
-                    <input
-                      type="text"
-                      placeholder="Marketing"
-                      class="input-costum"
-                      formControlName="purpose"
-                    />
-                  </div>
-                  <div class="createoffer">
-                    <h4 class="amountheader">Address</h4>
-                    <input
-                      type="text"
-                      placeholder="address"
-                      class="input-costum"
-                      formControlName="address"
-                    />
-                  </div>
-                  <div class="createoffer">
-                    <h4 class="amountheader">Fee</h4>
-                    <input
-                      type="text"
-                      placeholder="1"
-                      class="input-costum"
-                      formControlName="fee"
-                    />
-                  </div>
-                </ng-container>
-              </form>
-            </div>
           </div>
           <!-- </div> -->
 
@@ -320,7 +260,7 @@
                               <div class="d-flex align-items-center">
                                 <h4>Presale Start</h4>
                                 <input
-                                  type="date"
+                                  type="datetime-local"
                                   class="input-costum"
                                   formControlName="presaleStart"
                                 />
@@ -328,7 +268,7 @@
                               <div class="d-flex align-items-center">
                                 <h4>Presale End</h4>
                                 <input
-                                  type="date"
+                                  type="datetime-local"
                                   class="input-costum"
                                   formControlName="presaleEnd"
                                 />
@@ -381,7 +321,7 @@
                                 class="color-violet"
                                 style="padding-left: 10px; font-size: 14px"
                               >
-                                X% of total supply
+                                {{tokenPresalePercentage.toFixed(2)}}% of total supply
                               </h4>
                             </div>
                           </div>
@@ -397,7 +337,7 @@
                                 class="color-violet"
                                 style="padding-left: 10px; font-size: 14px"
                               >
-                                X% of total supply
+                                {{tokenLiquidityPercentage.toFixed(2)}}% of total supply
                               </h4>
                             </div>
                           </div>
@@ -425,11 +365,11 @@
                         <!-- </div> -->
                         <div class="info-box">
                           <h6 class="color-violet">Presale Price:</h6>
-                          <h6>X Algo/Token</h6>
+                          <h6>{{presalePrice.toFixed(6)}} Algo/Token</h6>
                         </div>
                         <div class="info-box">
                           <h6 class="color-violet">Initial Price:</h6>
-                          <h6>X Algo/Token</h6>
+                          <h6> {{minInitialPrice.toFixed(6)}} Algo/Token - {{initialPrice.toFixed(6)}} Algo/Token</h6>
                         </div>
                       </ng-container>
                     </form>
@@ -450,7 +390,7 @@
                               class="color-violet"
                               style="padding-left: 10px; font-size: 14px"
                             >
-                              X% of total supply
+                              {{tokenLiquidityPercentage.toFixed(2)}}% of total supply
                             </h4>
                           </div>
                         </div>
@@ -469,7 +409,7 @@
                       <!-- </div> -->
                       <div class="info-box">
                         <h6 class="color-violet">Initial Price:</h6>
-                        <h6>X Algo/Token</h6>
+                        <h6>{{initialPrice.toFixed(6)}} Algo/Token</h6>
                       </div>
                     </ng-container>
                     <hr *ngIf="!presaleIsChecked" />

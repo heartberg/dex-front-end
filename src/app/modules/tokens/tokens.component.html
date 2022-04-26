@@ -43,14 +43,14 @@
               <div class="col-md-2 unset-pd left-wrapper">
                 <div class="left-container">
                   <div class="left-texts-container">
-                    <span class="left-text">{{ item?.name }}</span>
-                    <span class="left-text">{{ item?.asset?.name }}</span>
+                    <span class="left-text">{{ item[0]?.name }}</span>
+                    <span class="left-text">{{ item[0]?.asset?.name }}</span>
                     <div
                       style="cursor: pointer"
                       (click)="copyContentToClipboard(content)"
                       class="asa-id-container left-text"
                     >
-                      <span #content>{{ item?.asset?.assetId }}</span>
+                      <span #content>{{ item[0]?.asset?.assetId }}</span>
                       <i
                         style="margin-left: 10px; font-size: 18px"
                         class="fas fa-clipboard-list"
@@ -58,9 +58,9 @@
                     </div>
                   </div>
                   <img
-                    routerLink="/tokens/token-detail/{{ item.projectId }}"
+                    routerLink="/tokens/token-detail/{{ item[0].projectId }}"
                     style="width: 65%; cursor: pointer"
-                    [src]="'data:image/jpeg;base64,' + item?.projectImage"
+                    [src]="'data:image/jpeg;base64,' + item[0]?.projectImage"
                     alt=""
                   />
                 </div>
@@ -68,27 +68,27 @@
               <!-- LEFT SIDE -->
               <!-- RIGHT SIDE -->
               <div
-                routerLink="/tokens/token-detail/{{ item.projectId }}"
+                routerLink="/tokens/token-detail/{{ item[0].projectId }}"
                 class="columns-container"
               >
                 <div class="column">
                   <div class="data-box">
                     <span class="property">Marketcap</span>
-                    <span class="value">XY Algo</span>
+                    <span class="value">{{ item[1].algoLiquidity / item[1].tokenLiquidity * item[1].totalsupply}}</span>
                   </div>
                   <div class="data-box">
                     <span class="property">Remaining Supply</span>
-                    <span class="value">X Token</span>
+                    <span class="value">{{ item[1].totalsupply }}</span>
                   </div>
                 </div>
                 <div class="column">
                   <div class="data-box">
-                    <span class="property">Price</span>
-                    <span class="value">XY Algo/Token</span>
+                    <span class="property">Price per Token</span>
+                    <span class="value"> {{ (item[1].algoLiquidity / item[1].tokenLiquidity).toFixed(6) }} Algo</span>
                   </div>
                   <div class="data-box">
                     <span class="property">Backing</span>
-                    <span class="value">{{ item?.asset?.backing }}</span>
+                    <span class="value">{{ item[1].totalBacking }}</span>
                   </div>
                 </div>
                 <!-- <div class="column"> -->
@@ -96,7 +96,7 @@
                 <!-- RIGHT SIDE -->
               </div>
               <div
-                routerLink="/tokens/token-detail/{{ item.projectId }}"
+                routerLink="/tokens/token-detail/{{ item[0].projectId }}"
                 class="chart"
               >
                 <span class="property">Price over last 7 Days</span>

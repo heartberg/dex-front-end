@@ -1,12 +1,12 @@
 <div class="main">
-  <div class="card" routerLink="launch-detail" style="cursor: pointer">
+  <div class="card" style="cursor: pointer">
     <div class="row">
       <div class="col-2">
-        <h6 class="color-violet">{{data?.name}}</h6>
-        <h6>{{data?.asset?.name}}</h6>
+        <h6 class="color-violet">{{data[0]?.name}}</h6>
+        <h6>{{data[0]?.asset?.name}}</h6>
         <img style="width: 100%; height: 150px;
         object-fit: cover;;"
-          [src]="'data:image/jpeg;base64,' + data?.projectImage"
+          [src]="'data:image/jpeg;base64,' + data[0]?.projectImage"
           alt="">
       </div>
       <div class="col-4">
@@ -14,21 +14,21 @@
           <div class="left-values">
             <div class="d-flex date">
               <h6 class="color-violet">Starts:</h6>
-              <span>{{data?.presale?.startingTime | date}}</span>
+              <span>{{data[1]?.startTime?.toDateString()}} {{data[1]?.startTime?.getHours()}}:{{data[1]?.startTime?.getMinutes()}}</span>
             </div>
             <div class="d-flex date">
               <h6 class="color-violet">Ends:</h6>
-              <span>{{data?.presale?.endingTime | date}}</span>
+              <span>{{data[1]?.endTime?.toDateString()}} {{data[1]?.endTime?.getHours()}}:{{data[1]?.endTime?.getMinutes()}}</span>
             </div>
           </div>
           <div class="right-values d-flex flex-column align-items-start">
             <div class="d-flex date">
               <h6 class="color-violet">Hardcap:</h6>
-              <span>{{data?.presale?.hardCap}}</span>
+              <span>{{(data[0]?.presale!.hardCap / 1_000_000).toFixed(0)}}</span>
             </div>
             <div class="d-flex date">
               <h6 class="color-violet">Softcap:</h6>
-              <span>{{data?.presale?.softCap}}</span>
+              <span>{{(data[0]?.presale!.softCap / 1_000_000).toFixed(0)}}</span>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
                   Raised:
                 </h6>
                 <span>
-                  {{data?.presale?.totalRaised}}
+                  {{(data[0]?.presale!.totalRaised / 1_000_000).toFixed(0)}}
                 </span>
               </div>
               <div class="progress-bar-right">
@@ -55,7 +55,7 @@
                   Max:
                 </h6>
                 <span>
-                  {{data?.presale?.hardCap}}
+                  {{(data[0]?.presale!.hardCap / 1_000_000).toFixed(0)}}
                 </span>
               </div>
             </div>
@@ -82,7 +82,7 @@
             <span #element>element.offsetWidth * 7 / 7.8element.offsetWidth * 7 / 7element.offsetWidth * 7 / 7 style="text-overflow: ellipsis;
               overflow: hidden; white-space: nowrap;".8.8</span>
           </div> -->
-          <span #textContainer>{{data?.description | textLimit:[665,textContainer]}}</span>
+          <span #textContainer>{{data[0]?.description | textLimit:[665,textContainer]}}</span>
           <div>
           </div>
         </div>

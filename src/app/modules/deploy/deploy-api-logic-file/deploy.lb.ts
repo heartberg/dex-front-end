@@ -196,9 +196,12 @@ export class DeployLb {
     return this._deployService.projectSetup(projectId)
   }
 
-  initializeApiObj(form: any): void {
+  initializeApiObjWithPresale(form: any): void {
     console.log(form);
     let wallet = localStorage.getItem('wallet');
+
+    let presaleStartTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0))
+    let presaleEndTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0))
 
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
@@ -223,15 +226,19 @@ export class DeployLb {
         }
       ],
       presale: {
-        softCap: +form.get('presaleOptionsGroupDescription')?.value!,
-        hardCap: +form.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value!,
+        softCap: +form.get('createPresaleOptionGroup.presaleSettings.softCap')?.value! * 1_000_000,
+        hardCap: +form.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value! * 1_000_000,
         tokenAmount: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
-        walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value!,
-        startingTime: +form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value!,
-        endingTime: +form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value!,
+        walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value! * 1_000_000,
+        startingTime: presaleStartTime,
+        endingTime: presaleEndTime,
       }
     }
+    this.initializeMintObj(form)
+  }
 
+  initializeApiObjWithoutPresale(form: any): void {
+    let wallet = localStorage.getItem('wallet');
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
@@ -254,7 +261,10 @@ export class DeployLb {
         }
       ],
     }
+    this.initializeMintObj(form)
+  }
 
+  initializeMintObj(form: any): void {
     this.mintObj = {
       assetId: 0,
       projectId: 'tbd',
@@ -265,19 +275,15 @@ export class DeployLb {
       unitName: form.get('tokenInfoGroup.unitName')?.value,
       totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value,
       url: form.get('tokenInfoGroup.URL')?.value,
-      maxBuy: form.get('tokenInfoGroup.maxBuy')?.value,
+      maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
       tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
-      risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value,
-      backing: form.get('feesGroup.backing')?.value,
-      buyBurn: form.get('feesGroup.buyBurn')?.value,
-      sellBurn: form.get('feesGroup.sellBurn')?.value,
-      sendBurn: form.get('feesGroup.sendBurn')?.value,
-      additionalFee: form.get('additionalFeeOptionGroup.fee')?.value,
-      additionalFeeWallet: form.get('additionalFeeOptionGroup.address')?.value,
+      risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+      backing: form.get('feesGroup.backing')?.value * 100,
+      buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
+      sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
+      sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
       image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       deployerWallet: localStorage.getItem('wallet')!,
     }
-
   }
-
 }

@@ -65,8 +65,6 @@ export interface projectMintModel {
   buyBurn: number;
   sellBurn: number;
   sendBurn: number;
-  additionalFee: null;
-  additionalFeeWallet: null;
   image: string;
   deployerWallet: string;
   decimals: number;

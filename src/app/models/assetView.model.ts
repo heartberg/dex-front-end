@@ -14,8 +14,6 @@ export interface AssetViewModel {
     buyBurn: number
     sellBurn: number
     sendBurn: number
-    additionalFee?: number
-    additionalFeeWallet?: string
     image: string
     deployerWallet: string
 }

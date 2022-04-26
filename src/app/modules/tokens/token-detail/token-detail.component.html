@@ -43,24 +43,24 @@
           <div class="avatar-info">
             <div class="data-box">
               <span class="property">Price</span>
-              <span class="value">XY Algo/Token</span>
+              <span class="value">{{ (this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity).toFixed(6)}} Algo/Token</span>
             </div>
             <div class="data-box">
               <span class="property">Marketcap</span>
-              <span class="value">XY Algo</span>
+              <span class="value">{{(this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity) * blockchainData.totalsupply}} Algo</span>
             </div>
             <div class="data-box">
               <span class="property">Remaining Supply</span>
-              <span class="value">X Token</span>
+              <span class="value">{{ blockchainData.totalsupply }}</span>
             </div>
             <div class="data-box">
-              <span class="property">burned</span>
-              <span class="value">X Token</span>
-              <span class="value">Value: X Algo</span>
+              <span class="property">Burned</span>
+              <span class="value">{{((projectData.asset.totalSupply - blockchainData.totalsupply) / pow(projectData.asset.decimals)).toFixed(2)}} Token</span>
+              <span class="value">Value: {{ ((projectData.asset.totalSupply - blockchainData.totalsupply) * this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity).toFixed(2)}} Algo</span>
             </div>
             <div class="data-box">
               <span class="property">Backing</span>
-              <span class="value">{{projectData?.asset?.backing}}</span>
+              <span class="value">{{blockchainData.totalBacking.toFixed(2)}}</span>
             </div>
             <div class="data-box">
               <span class="property">Holders</span>
@@ -106,45 +106,41 @@
               <div class="token-first">
                 <div class="d-flex">
                   <h6>ASA Id:</h6>
-                  <span>XY</span>
+                  <span>{{ projectData!.asset.assetId}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Contract Id:</h6>
+                  <span>{{ projectData!.asset.contractId}}</span>
                 </div>
                 <div class="d-flex">
                   <h6>Token Name:</h6>
-                  <span>XY</span>
+                  <span>{{ projectData!.asset.name}}</span>
                 </div>
                 <div class="d-flex">
                   <h6>Token Unit:</h6>
                   <span>{{projectData?.asset?.unitName}}</span>
                 </div>
                 <div class="d-flex">
-                  <h6>Token Supply:</h6>
-                  <span>XY</span>
+                  <h6>Initial Token Supply:</h6>
+                  <span>{{ projectData!.asset!.totalSupply}}</span>
                 </div>
               </div>
               <div class="token-second">
                 <div class="d-flex">
                   <h6>Buy Burn:</h6>
-                  <span>{{projectData?.asset?.buyBurn}}</span>
+                  <span>{{(projectData!.asset!.buyBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Sell Burn:</h6>
-                  <span>{{projectData?.asset?.sellBurn}}</span>
+                  <span>{{(projectData!.asset!.sellBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Send Burn:</h6>
-                  <span>{{projectData?.asset?.sendBurn}}</span>
+                  <span>{{(projectData!.asset!.sendBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Rising Pricefloor:</h6>
-                  <span>{{projectData?.asset?.risingPriceFloor}}</span>
-                </div>
-                <div class="d-flex">
-                  <h6>Additional Fee:</h6>
-                  <span>{{projectData?.asset?.additionalFee}}</span>
-                </div>
-                <div class="d-flex">
-                  <h6>Purpose:</h6>
-                  <span>Purpose Text</span>
+                  <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
                 <!-- <div class="d-flex">
                     <h6>Special Wallet:</h6>

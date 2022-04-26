@@ -8,10 +8,9 @@
             <div class="col-md-2 unset-pd left-wrapper">
               <div class="left-container">
                   <div class="left-texts-container">
-                      <span class="left-text">Project Name</span>
-                      <span class="left-text">Token</span>
+                      <span class="left-text">{{item.assetView.name}}</span>
                       <div style="cursor: pointer;" (click)="copyContentToClipboard(content)" class="asa-id-container left-text">
-                          <span #content>Asa ID</span>
+                          <span #content>{{item.assetView.assetId}}</span>
                           <i style="margin-left: 10px; font-size: 18px;"
                               class="fas fa-clipboard-list"></i>
                       </div>
@@ -27,11 +26,11 @@
               <div class="column">
                 <div class="data-box">
                   <span class="property">Price</span>
-                  <span class="value">XY Algo/Token</span>
+                  <span class="value">{{(item.blockchainTrackInfo.price).toFixed(6)}} Algo/Token</span>
                 </div>
                 <div class="data-box">
                   <span class="property">Your Holding</span>
-                  <span class="value">XY Token</span>
+                  <span class="value">{{item.blockchainTrackInfo.holding}} Token</span>
                 </div>
               </div>
               <div class="column">
@@ -41,17 +40,17 @@
                 </div>
                 <div class="data-box">
                   <span class="property">Value</span>
-                  <span class="value">XY Algo</span>
+                  <span class="value">{{(item.blockchainTrackInfo.holding * item.blockchainTrackInfo.price).toFixed(2)}} Algo</span>
                 </div>
               </div>
               <div class="column">
                 <div class="data-box">
                   <span class="property">Marketcap</span>
-                  <span class="value">XY Algo</span>
+                  <span class="value">{{(item.blockchainTrackInfo.marketCap).toFixed(0)}} Algo</span>
                 </div>
                 <div class="data-box">
                   <span class="property">Backing</span>
-                  <span class="value">XY Algo/Token</span>
+                  <span class="value">{{(item.blockchainTrackInfo.totalBacking / item.blockchainTrackInfo.totalSupply).toFixed(6)}} Algo/Token</span>
                 </div>
               </div>
               <!-- RIGHT SIDE -->
@@ -74,26 +73,26 @@
                 <div class="column">
                   <div class="data-box">
                     <span class="property">Remaining Supply</span>
-                    <span class="value">X Token</span>
+                    <span class="value">{{item.blockchainTrackInfo.totalSupply}} Token</span>
                   </div>
                   <div class="data-box">
                     <span class="property">Burned</span>
-                    <span class="value">X Token</span>
-                    <span class="value">Value: X Algo</span>
+                    <span class="value">{{(item.blockchainTrackInfo.burned).toFixed(2)}} Token</span>
+                    <span class="value">Value: {{(item.blockchainTrackInfo.burned * item.blockchainTrackInfo.price).toFixed(2)}} Algo</span>
                   </div>
                 </div>
                 <div class="column">
                   <div class="data-box">
                     <span class="property">holders</span>
-                    <span class="value">XY Address</span>
+                    <span class="value">{{item.blockchainTrackInfo.holders}} Address</span>
                   </div>
                   <div class="data-box">
                     <div>
                         <span class="property">Liquidity</span>
-                        <span style="margin-left: 10px;">X% of marketcap</span>
+                        <span style="margin-left: 10px;">{{(item.blockchainTrackInfo.algoLiq / item.blockchainTrackInfo.marketCap * 100).toFixed(2)}}% of marketcap</span>
                     </div>
-                    <span class="value">Token: amount</span>
-                    <span class="value">Algo: amount</span>
+                    <span class="value">Token: {{item.blockchainTrackInfo.tokenLiq}}</span>
+                    <span class="value">Algo: {{item.blockchainTrackInfo.algoLiq}}</span>
                 </div>
                 </div>
                 <div class="column">
@@ -103,7 +102,7 @@
                   </div>
                   <div class="data-box">
                     <span class="property">ASA URL</span>
-                    <span class="value">Link</span>
+                    <span class="value">{{item.assetView.url}}</span>
                   </div>
                 </div>
                 <div class="column">

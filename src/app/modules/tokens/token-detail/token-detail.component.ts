@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DeployedApp } from 'src/app/blockchain/deployer_application';
+import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 
@@ -15,19 +17,22 @@ export class TokenDetailComponent implements OnInit {
 
   currentProjectId: string = this.route.snapshot.paramMap.get('id')!;
   projectData!: ProjectViewModel;
+  blockchainData!: BlockchainInformation;
 
   constructor(
     private route: ActivatedRoute,
-    private projectsReqService: projectReqService
+    private projectsReqService: projectReqService,
+    private deployedApp: DeployedApp
   ) {}
 
   ngOnInit(): void {
     console.log(this.route.snapshot.paramMap.get('id'));
     this.projectsReqService
       .getProjectById(this.currentProjectId)
-      .subscribe((res) => {
+      .subscribe(async (res) => {
         this.projectData = res;
         console.log(this.projectData)
+        this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.contractId);
       });
   }
 
@@ -44,5 +49,9 @@ export class TokenDetailComponent implements OnInit {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+  }
+
+  pow(decimal: number){
+    return Math.pow(10, decimal)
   }
 }
