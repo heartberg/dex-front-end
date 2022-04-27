@@ -61,8 +61,6 @@ export class DeployLb {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (true) {
-          this.presaleObj.contractId = this.deployerBC.settings.contract_id!
-          this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
           this._deployService.ProjectPresaleCreate(project).subscribe(
             (value) => {
               if (true) {
@@ -114,8 +112,6 @@ export class DeployLb {
   GetProjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
-        this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
-        this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
         this.isPending();
         if (true) {
           this._deployService.ProjectCreate(project).subscribe(

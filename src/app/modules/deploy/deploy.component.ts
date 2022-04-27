@@ -221,10 +221,14 @@ export class DeployComponent implements OnInit {
 
     // this.deployLib.initializeApiObj(this.deployFormGroup);
     if(this.presaleIsChecked){
-      this.deployLib.initializeApiObjWithPresale(this.deployFormGroup)
+      this.deployLib.initializeApiObjWithPresale(this.deployFormGroup);
+      this.deployLib.presaleObj.contractId = this.deployedApp.settings.contract_id!
+      this.deployLib.presaleObj.contractAddress = this.deployedApp.settings.contract_address!
       this.deployLib.DeployFinalFunc(true, this.deployFormGroup);
     } else {
       this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
+      this.deployLib.withoutPresaleObj.contractId = this.deployedApp.settings.contract_id!
+      this.deployLib.withoutPresaleObj.contractAddress = this.deployedApp.settings.contract_address!
       this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }
 
