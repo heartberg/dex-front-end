@@ -222,8 +222,10 @@ export class DeployComponent implements OnInit {
     // this.deployLib.initializeApiObj(this.deployFormGroup);
     if(this.presaleIsChecked){
       this.deployLib.initializeApiObjWithPresale(this.deployFormGroup)
+      this.deployLib.DeployFinalFunc(true, this.deployFormGroup);
     } else {
       this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
+      this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }
 
     console.log(this.blockchainObect);
