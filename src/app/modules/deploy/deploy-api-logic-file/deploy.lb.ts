@@ -48,20 +48,24 @@ export class DeployLb {
     console.log(this.sessionWallet, 'ahahhahahahahhah')
 
     if (isPresaleChecked) {
-      this.GetProjectPresaleCreate(this.presaleObj);
+      this.GetProjectPresaleCreate();
     }
     else {
-      this.GetProjectWithoutPresaleCreate(this.withoutPresaleObj);
+      this.GetProjectWithoutPresaleCreate();
     }
     // end of statement of false
   }
 
   // with presale
-  GetProjectPresaleCreate(project: projectPresaleCreateModel) {
+  GetProjectPresaleCreate() {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (true) {
-          this._deployService.ProjectPresaleCreate(project).subscribe(
+          console.log("waiting is over in lib!")
+          this.projectId = value
+          this.presaleObj.contractId = this.deployerBC.settings.contract_id!
+          this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
+          this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
             (value) => {
               if (true) {
                 of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
@@ -109,12 +113,14 @@ export class DeployLb {
     )
   }
   // without presale
-  GetProjectWithoutPresaleCreate(project: projectWithoutPresaleCreateModel) {
+  GetProjectWithoutPresaleCreate() {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
+        this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
+        this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
         this.isPending();
         if (true) {
-          this._deployService.ProjectCreate(project).subscribe(
+          this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
             (value) => {
               if (true) {
                 of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
