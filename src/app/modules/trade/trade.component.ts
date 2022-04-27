@@ -185,7 +185,7 @@ export class TradeComponent implements OnInit {
       let client: Algodv2 = getAlgodClient()
       let accInfo = await client.accountInformation(wallet).do()
       console.log(accInfo)
-      this.availAmount = accInfo['amount']
+      this.availAmount = accInfo['amount'] / 1_000_000
       this.isOptedIn = true
     } else {
       this.selectedOption = this.assetArr.find((el) => {
@@ -437,7 +437,6 @@ export class TradeComponent implements OnInit {
   }
 
   getMaxBuy(){
-    console.log((this.selectedOption!.maxBuy / Math.pow(10, this.selectedOption!.decimals)))
     if( this.selectedOption!.maxBuy >= Number.MAX_SAFE_INTEGER ){
       return "-"
     } else {
