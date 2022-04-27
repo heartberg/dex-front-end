@@ -115,7 +115,7 @@ export class TradeComponent implements OnInit {
       // this.assetArrSecond.unshift( {name: 'Algo'});
 
       // data
-
+      this.removeVerse(res);
       this.assetArr.push(...res);
       // this.selectAsset(this.firstDropValues[0]);
     });
@@ -136,13 +136,14 @@ export class TradeComponent implements OnInit {
 
   async handleCheckboxUpdate(event: any) {
     this.checked = event;
+    const wallet = localStorage.getItem('wallet')!;
     if (event === true) {
-      const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArr = []
         this.assetArr.push(await this.verseApp.getViewModel())
         this.assetArr.push(ALGO_VIEWMODEL)
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.removeVerse(res)
         this.assetArr.push(...res);
       });
     } else if (event === false) {
@@ -151,7 +152,8 @@ export class TradeComponent implements OnInit {
       this.assetArr.push(ALGO_VIEWMODEL)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetFavorites(localStorage.getItem('wallet')).subscribe((res) => {
+      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+        this.removeVerse(res)
         this.assetArr.push(...res);
         this.selectAsset(this.assetArr[0].assetId)
       });
@@ -446,4 +448,11 @@ export class TradeComponent implements OnInit {
   handleCheckboxUpdateSecond($event: boolean) {
     
   }
+
+  removeVerse(arr: AssetViewModel[]){
+    arr.forEach( (item, index) => {
+      if(item.assetId === ps.platform.verse_asset_id) arr.splice(index,1);
+    });
+ }
+
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AssetViewModel } from 'src/app/models/assetView.model';
+import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
+import { TokenError } from '@angular/compiler/src/ml_parser/lexer';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +26,36 @@ export class AssetReqService {
         all: all,
       },
     });
+  }
+
+  getAverageEntries(wallet: string, assetId: number){
+    const url = `${this.baseUrl}/asset/get/entries/avg`;
+    return this._http.get<TokenEntryViewModel[]>(url, {
+      params: {
+        wallet: wallet,
+        assetId: +assetId
+      }
+    });
+  }
+
+  getAllEntries(wallet: string, assetId: number){
+    const url = `${this.baseUrl}/asset/get/entries/all`;
+    return this._http.get<TokenEntryViewModel[]>(url, {
+      params: {
+        wallet: wallet,
+        assetId: +assetId
+      }
+    });
+  }
+
+  postBuy(buy: TokenEntryViewModel){
+    const url = `${this.baseUrl}/asset/buy`;
+    return this._http.post<TokenEntryViewModel>(url, buy);
+  }
+
+  postSell(sell: TokenEntryViewModel){
+    const url = `${this.baseUrl}/asset/sell`;
+    return this._http.post<TokenEntryViewModel>(url, sell);
   }
 
   getAssetFavorites(wallet: string | any) {
