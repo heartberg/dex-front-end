@@ -45,16 +45,17 @@ export class DeployLb {
     this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
     // @ts-ignore
     this.sessionWallet = JSON.parse(localStorage.getItem('sessionWallet'));
+    console.log(this.sessionWallet, 'ahahhahahahahhah')
 
     if (isPresaleChecked) {
       this.GetProjectPresaleCreate(this.presaleObj);
-      this.presaleObj.contractId = this.deployerBC.settings.contract_id!
-      this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
+      // this.presaleObj.contractId = this.deployerBC.settings.contract_id!
+      // this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     else {
       this.GetProjectWithoutPresaleCreate(this.withoutPresaleObj);
-      this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
-      this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
+      // this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
+      // this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     // end of statement of false
   }
