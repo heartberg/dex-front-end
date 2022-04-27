@@ -49,13 +49,9 @@ export class DeployLb {
 
     if (isPresaleChecked) {
       this.GetProjectPresaleCreate(this.presaleObj);
-      // this.presaleObj.contractId = this.deployerBC.settings.contract_id!
-      // this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     else {
       this.GetProjectWithoutPresaleCreate(this.withoutPresaleObj);
-      // this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
-      // this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
     }
     // end of statement of false
   }
@@ -64,10 +60,10 @@ export class DeployLb {
   GetProjectPresaleCreate(project: projectPresaleCreateModel) {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
-        if (value) {
+        if (true) {
           this._deployService.ProjectPresaleCreate(project).subscribe(
             (value) => {
-              if (value) {
+              if (true) {
                 of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     this.SetMintVars(this.deployerBC.settings);
@@ -117,10 +113,10 @@ export class DeployLb {
     of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
       (value: any) => {
         this.isPending();
-        if (value) {
+        if (true) {
           this._deployService.ProjectCreate(project).subscribe(
             (value) => {
-              if (value) {
+              if (true) {
                 of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     this.SetMintVars(this.deployerBC.settings);
