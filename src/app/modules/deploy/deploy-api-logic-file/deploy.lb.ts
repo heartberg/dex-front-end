@@ -122,6 +122,7 @@ export class DeployLb {
               if (value) {
                 of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
                   (value: any) => {
+                    this.SetMintVars(this.deployerBC.settings);
                     if (2 === 2) {
                       this.GetProjectMint(this.mintObj).subscribe(
                         (value: any) => {
