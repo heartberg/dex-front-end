@@ -39,6 +39,7 @@ export class WalletsConnectService {
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
 
     this.sessionWallet = sw;
+    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
     console.log(this.sessionWallet, 'esaaa')
   }
 

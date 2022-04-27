@@ -30,6 +30,11 @@ export class DeployLb {
   // @ts-ignore
   blockchainObj: DeployedAppSettings;
   sessionWallet: SessionWallet | undefined;
+
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+
   constructor(private _deployService: deployService, private deployerBC: DeployedApp) {
   }
 
@@ -46,8 +51,6 @@ export class DeployLb {
     this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
     // @ts-ignore
     this.sessionWallet = JSON.parse(localStorage.getItem('sessionWallet'));
-    console.log(this.sessionWallet, 'ahahhahahahahhah')
-
     if (isPresaleChecked) {
       this.GetProjectPresaleCreate();
     }
@@ -59,10 +62,13 @@ export class DeployLb {
 
   // with presale
   GetProjectPresaleCreate() {
+    this.isPending = true;
+    this.isFailed = false;
+    this.finalStepApi = false;
     of(this.deployerBC.deploy(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
-        if (true) {
-          console.log("waiting is over in lib!")
+        setTimeout(() => {
+          if (value) {
           this.projectId = value
           this.presaleObj.contractId = this.deployerBC.settings.contract_id!
           this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
@@ -72,13 +78,13 @@ export class DeployLb {
                 of(this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     this.SetMintVars(this.deployerBC.settings);
-                    if (2 === 2) {
+                    if (value) {
                       this.GetProjectMint(this.mintObj).subscribe(
                         (value: any) => {
                           if (2 === 2) {
                             of(this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
                               (value: any) => {
-                                if (2 === 2) {
+                                if (value) {
                                   this.GetProjectBurnOptIn(this.projectId).subscribe(
                                     (value: any) => {
                                       if (2 === 2) {
@@ -87,99 +93,135 @@ export class DeployLb {
                                             if (value) {
                                               this.GetProjectSetup(this.projectId).subscribe(
                                                 (value: any) => {
-                                                  this.finalStepPopUp();
                                                   console.log('setup is done')
                                                 }
                                               )
                                             }
+                                          },
+                                          error => {
+                                            this.isPending = false;
+                                            this.isFailed = true;
+                                            this.finalStepApi = false;
                                           }
                                         )
                                       }
+                                    },
+                                    error => {
+                                      this.isPending = false;
+                                      this.isFailed = true;
+                                      this.finalStepApi = false;
                                     }
                                   )
                                 }
                               }
                             )
                           }
+                        },
+                        error => {
+                          this.isPending = false;
+                          this.isFailed = true;
+                          this.finalStepApi = false;
                         }
                       )
                     }
                   }
                 )
               }
+            },
+            error => {
+              this.isPending = false;
+              this.isFailed = true;
+              this.finalStepApi = false;
             }
           )
         }
+        }, 1200)
       }
     )
   }
+
   // without presale
   GetProjectWithoutPresaleCreate() {
+    this.isPending = true;
+    this.isFailed = false;
+    this.finalStepApi = false;
     of(this.deployerBC.deploy(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
         this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
-        this.isPending();
-        if (true) {
-          this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
-            (value) => {
-              if (true) {
-                of(this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
-                  (value: any) => {
-                    this.SetMintVars(this.deployerBC.settings);
-                    if (2 === 2) {
-                      this.GetProjectMint(this.mintObj).subscribe(
-                        (value: any) => {
-                          if (2 === 2) {
-                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
-                              (value: any) => {
-                                if (2 === 2) {
-                                  this.GetProjectBurnOptIn(this.projectId).subscribe(
-                                    (value: any) => {
-                                      if (2 === 2) {
-                                        of (this.deployerBC.setupNoPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
-                                          (value: any) => {
-                                            if (value) {
-                                              this.GetProjectSetup(this.projectId).subscribe(
-                                                (value: any) => {
-                                                  console.log('setup is done')
-                                                }
-                                              )
-                                            } else {
-                                              this.isFailed();
+        if (value) {
+          setTimeout(() => {
+            this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
+              (value) => {
+                if (value) {
+                  of(this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                    (value: any) => {
+                      this.SetMintVars(this.deployerBC.settings);
+                      if (value) {
+                        this.GetProjectMint(this.mintObj).subscribe(
+                          (value: any) => {
+                            if (2 === 2) {
+                              of(this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                                (value: any) => {
+                                  if (value) {
+                                    this.GetProjectBurnOptIn(this.projectId).subscribe(
+                                      (value: any) => {
+                                        if (2 === 2) {
+                                          of (this.deployerBC.setupNoPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                                            (value: any) => {
+                                              if (value) {
+                                                this.GetProjectSetup(this.projectId).subscribe(
+                                                  (value: any) => {
+                                                    if (value) {
+                                                      console.log('setup is done')
+                                                      this.finalStepApi = true;
+                                                      this.isPending = false;
+                                                      this.isFailed = false;
+                                                    }
+                                                  },
+                                                  error => {
+                                                    this.isPending = false;
+                                                    this.isFailed = true;
+                                                    this.finalStepApi = false;
+                                                  }
+                                                )
+                                              }
                                             }
-                                          }
-                                        )
+                                          )
+                                        }
+                                      },
+                                      error => {
+                                        this.isPending = false;
+                                        this.isFailed = true;
+                                        this.finalStepApi = false;
                                       }
-                                    }
-                                  )
+                                    )
+                                  }
                                 }
-                              }
-                            )
+                              )
+                            }
+                          },
+                          error => {
+                            this.isPending = false;
+                            this.isFailed = true;
+                            this.finalStepApi = false;
                           }
-                        }
-                      )
+                        )
+                      }
                     }
-                  }
-                )
+                  )
+                }
+              },
+              error => {
+                this.isPending = false;
+                this.isFailed = true;
+                this.finalStepApi = false;
               }
-            }
-          )
+            )
+          }, 1200)
         }
       }
     )
-  }
-
-  finalStepPopUp(): boolean {
-    return true;
-  }
-
-  isPending(): boolean {
-    return true;
-  }
-
-  isFailed(): boolean {
-    return true;
   }
 
   GetProjectMint(project: projectMintModel) {

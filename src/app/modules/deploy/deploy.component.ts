@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 // import {DeployedApp} from "../../blockchain/deployer_application";
 import {WalletsConnectService} from "../../services/wallets-connect.service";
 import { of } from 'rxjs';
@@ -13,7 +13,7 @@ import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
   templateUrl: './deploy.component.html',
   styleUrls: ['./deploy.component.scss']
 })
-export class DeployComponent implements OnInit {
+export class DeployComponent implements OnInit, DoCheck {
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
   extraFieldsArr: number[] = [1];
@@ -33,9 +33,6 @@ export class DeployComponent implements OnInit {
   deployFormGroup: FormGroup;
 
   ///
-  firstStepApi: boolean = false;
-  secondStepApi: boolean = false;
-  thirdStepApi: boolean = false;
   finalStepApi: boolean = false;
   isFailed: boolean = false;
   isPending: boolean = false;
@@ -48,10 +45,13 @@ export class DeployComponent implements OnInit {
     private deployLib: DeployLb
   ) {}
 
-  ngOnInit(): void {
-    this.sessionWallet = this.walletProviderService.sessionWallet;
-    console.log('sessionWallet', this.sessionWallet)
+  ngDoCheck() {
+    this.finalStepApi = this.deployLib.finalStepApi;
+    this.isFailed = this.deployLib.isFailed;
+    this.isPending = this.deployLib.isPending;
+  }
 
+  ngOnInit(): void {
     this.initiializeForm();
 
     // of(this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1)).subscribe(
@@ -216,19 +216,14 @@ export class DeployComponent implements OnInit {
   async onSubmit() {
     this.closePopup = true;
     this.sessionWallet = this.walletProviderService.sessionWallet;
-    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
     this.blockchainObjInitialize();
-
+    localStorage.setItem('blockchainObj', JSON.stringify(this.blockchainObect)!);
     // this.deployLib.initializeApiObj(this.deployFormGroup);
     if(this.presaleIsChecked){
       this.deployLib.initializeApiObjWithPresale(this.deployFormGroup);
-      this.deployLib.presaleObj.contractId = this.deployedApp.settings.contract_id!
-      this.deployLib.presaleObj.contractAddress = this.deployedApp.settings.contract_address!
       this.deployLib.DeployFinalFunc(true, this.deployFormGroup);
     } else {
       this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
-      this.deployLib.withoutPresaleObj.contractId = this.deployedApp.settings.contract_id!
-      this.deployLib.withoutPresaleObj.contractAddress = this.deployedApp.settings.contract_address!
       this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }
 

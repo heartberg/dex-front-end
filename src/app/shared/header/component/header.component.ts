@@ -120,6 +120,7 @@ export class HeaderComponent implements OnInit {
   disconnect() {
     this.isLoggedIn = false;
     localStorage.removeItem('wallet');
+    localStorage.removeItem('sessionWallet')
     this._walletsConnectService.disconnect()
   }
 
