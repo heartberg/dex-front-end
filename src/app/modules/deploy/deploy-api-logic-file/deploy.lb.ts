@@ -10,6 +10,7 @@ import {of} from "rxjs";
 import {DeployComponent} from "../deploy.component";
 import {DeployedAppSettings} from "../../../blockchain/platform-conf";
 import {DeployedApp} from "../../../blockchain/deployer_application";
+import { SessionWallet } from 'algorand-session-wallet';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,7 @@ export class DeployLb {
   // ProjectID: any = '';
   // @ts-ignore
   blockchainObj: DeployedAppSettings;
-  sessionWallet: any;
+  sessionWallet: SessionWallet | undefined;
   constructor(private _deployService: deployService, private deployerBC: DeployedApp) {
   }
 
@@ -58,7 +59,7 @@ export class DeployLb {
 
   // with presale
   GetProjectPresaleCreate() {
-    of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
+    of(this.deployerBC.deploy(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (true) {
           console.log("waiting is over in lib!")
@@ -68,20 +69,20 @@ export class DeployLb {
           this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
             (value) => {
               if (true) {
-                of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
+                of(this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     this.SetMintVars(this.deployerBC.settings);
                     if (2 === 2) {
                       this.GetProjectMint(this.mintObj).subscribe(
                         (value: any) => {
                           if (2 === 2) {
-                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObj!)).subscribe(
+                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
                               (value: any) => {
                                 if (2 === 2) {
                                   this.GetProjectBurnOptIn(this.projectId).subscribe(
                                     (value: any) => {
                                       if (2 === 2) {
-                                        of (this.deployerBC.setupWithPresale(this.sessionWallet, this.blockchainObj!)).subscribe(
+                                        of (this.deployerBC.setupWithPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
                                           (value: any) => {
                                             if (value) {
                                               this.GetProjectSetup(this.projectId).subscribe(
@@ -114,7 +115,7 @@ export class DeployLb {
   }
   // without presale
   GetProjectWithoutPresaleCreate() {
-    of(this.deployerBC.deploy(this.sessionWallet, this.blockchainObj!)).subscribe(
+    of(this.deployerBC.deploy(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
         this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
@@ -123,20 +124,20 @@ export class DeployLb {
           this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
             (value) => {
               if (true) {
-                of(this.deployerBC.mint(this.sessionWallet, this.blockchainObj!)).subscribe(
+                of(this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     this.SetMintVars(this.deployerBC.settings);
                     if (2 === 2) {
                       this.GetProjectMint(this.mintObj).subscribe(
                         (value: any) => {
                           if (2 === 2) {
-                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet, this.blockchainObj!)).subscribe(
+                            of(this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
                               (value: any) => {
                                 if (2 === 2) {
                                   this.GetProjectBurnOptIn(this.projectId).subscribe(
                                     (value: any) => {
                                       if (2 === 2) {
-                                        of (this.deployerBC.setupNoPresale(this.sessionWallet, this.blockchainObj!)).subscribe(
+                                        of (this.deployerBC.setupNoPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
                                           (value: any) => {
                                             if (value) {
                                               this.GetProjectSetup(this.projectId).subscribe(

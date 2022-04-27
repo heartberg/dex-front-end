@@ -139,7 +139,7 @@ export class DeployedApp {
     return result
   }
 
-  async mint(wallet: Wallet, settings: DeployedAppSettings) {
+  async mint(wallet: SessionWallet, settings: DeployedAppSettings) {
     const client = getAlgodClient()
     this.settings = settings;
     const suggested = await getSuggested(30)
@@ -165,7 +165,7 @@ export class DeployedApp {
     return result
   }
 
-  async payAndOptInBurn(wallet: Wallet, settings: DeployedAppSettings): Promise<any> {
+  async payAndOptInBurn(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
     let client = getAlgodClient()
     this.settings = settings;
     const suggested = await getSuggested(30)
@@ -193,7 +193,7 @@ export class DeployedApp {
     return result
   }
 
-  async setupNoPresale(wallet: Wallet, settings: DeployedAppSettings): Promise<any> {
+  async setupNoPresale(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings;
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
@@ -220,7 +220,7 @@ export class DeployedApp {
     return result
   }
 
-  async setupWithPresale(wallet: Wallet, settings: DeployedAppSettings): Promise<any> {
+  async setupWithPresale(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings;
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
