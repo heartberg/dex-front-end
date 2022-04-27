@@ -216,7 +216,7 @@ export class DeployComponent implements OnInit {
   async onSubmit() {
     this.closePopup = true;
     this.sessionWallet = this.walletProviderService.sessionWallet;
-    localStorage.setItem('sessionWallet', this.sessionWallet);
+    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
     this.blockchainObjInitialize();
 
     // this.deployLib.initializeApiObj(this.deployFormGroup);
