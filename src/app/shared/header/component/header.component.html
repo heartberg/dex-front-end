@@ -13,9 +13,10 @@
         <ul [ngClass]="{'clicked': isMenuRespoOpened}">
           <ng-container *ngIf="!changeRespoNavAndProfileIcons">
             <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLinkActive="active" routerLink="/trade">Trade</li>
-            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/tokens">Tokens</li>
-            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLinkActive="active" routerLink="/launchpad">Launchpad</li>
-            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLinkActive="active" routerLink="/stacking">Stacking</li>
+            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLinkActive="active" routerLink="/send">Send</li>
+            <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLinkActive="active" routerLink="/tokens">Tokens</li>
+            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/launchpad">Launchpad</li>
+            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/stacking">Stacking</li>
           </ng-container>
 <!--          <ng-container *ngIf="changeRespoNavAndProfileIcons">-->
 <!--            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLink="/profile">Profile</li>-->

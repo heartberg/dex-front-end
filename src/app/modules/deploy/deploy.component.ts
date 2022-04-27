@@ -124,6 +124,7 @@ export class DeployComponent implements OnInit, DoCheck {
         sellBurn: '',
         sendBurn: '',
       }),
+      projectName: this.fb.control(''),
       presaleOptionsGroupDescription: this.fb.control(''),
       createPresaleOptionGroup: this.fb.group({
         presaleSettings: this.fb.group({
@@ -214,6 +215,8 @@ export class DeployComponent implements OnInit, DoCheck {
 
 
   async onSubmit() {
+    console.log(this.deployFormGroup.value, 'form');
+    return
     this.closePopup = true;
     this.sessionWallet = this.walletProviderService.sessionWallet;
     this.blockchainObjInitialize();
