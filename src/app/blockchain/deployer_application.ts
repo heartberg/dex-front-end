@@ -127,15 +127,16 @@ export class DeployedApp {
     })
 
     const [signedTxns] = await wallet.signTxn([createApp])
-    const result = await getAlgodClient().sendRawTransaction(signedTxns.blob).do();
-    await waitForTransaction(getAlgodClient(), result.txId);
+    
+    //const result = await getAlgodClient().sendRawTransaction(signedTxns.blob).do();
+    //await waitForTransaction(getAlgodClient(), result.txId);
 
-    // const result = await sendWait([signed])
-    const txRes = await getAlgodClient().pendingTransactionInformation(result.txId).do();
-    console.log('appCreateResult', txRes);
+    const result = await sendWait([signedTxns])
+    //const txRes = await getAlgodClient().pendingTransactionInformation(result.txId).do();
+    //console.log('appCreateResult', txRes);
 
-    this.settings.contract_id = txRes['application-index'];
-    this.settings.contract_address = algosdk.getApplicationAddress(BigInt( txRes['application-index'] ));
+    this.settings.contract_id = result['application-index'];
+    this.settings.contract_address = algosdk.getApplicationAddress(BigInt( result['application-index'] ));
     return result
   }
 
