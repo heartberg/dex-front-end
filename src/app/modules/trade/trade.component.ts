@@ -60,6 +60,25 @@ export class TradeComponent implements OnInit {
   blockchainInfo: BlockchainInformation | undefined;
   deployedAppSettings: DeployedAppSettings | undefined;
 
+  blockchainTamplateInfo: any;
+  dummyAlgo: any = {
+    assetId: 0,
+    backing: 0,
+    buyBurn: 0,
+    contractAddress: "",
+    contractId: 0,
+    decimals: 6,
+    deployerWallet: "MICALI",
+    image: "",
+    maxBuy: 0,
+    name: "Algo",
+    risingPriceFloor: 0,
+    sellBurn: 0,
+    sendBurn: 0,
+    totalSupply: 1_000_000_000_000_000,
+    tradingStart: 0,
+    unitName: "Algo"
+  }
   constructor(
     private assetReqService: AssetReqService,
     private fb: FormBuilder,
@@ -88,14 +107,12 @@ export class TradeComponent implements OnInit {
 
   // FORMS
 
-  async ngOnInit(): Promise<void> {
+   ngOnInit() {
     if (this.slippageForm.get('slippageCheckBox')?.value) {
       this.slippageForm.get('slippageInput')?.disable();
     }
+    this.getBlockchainInfo();
 
-    this.assetArr.push(await this.verseApp.getViewModel())
-    this.assetArr.push(ALGO_VIEWMODEL)
-    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
 
     const wallet = localStorage.getItem('wallet')!;
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
@@ -117,10 +134,21 @@ export class TradeComponent implements OnInit {
       // data
       this.removeVerse(res);
       this.assetArr.push(...res);
+      this.assetArrSecond.push(...res);
       // this.selectAsset(this.firstDropValues[0]);
     });
 
-    this.selectAsset(this.assetArr[0].assetId);
+     this.selectAsset(this.assetArr[0].assetId);
+  }
+
+  async getBlockchainInfo() {
+    // this.assetArr.push(await this.verseApp.getViewModel())
+    // this.assetArr.push(ALGO_VIEWMODEL)
+    // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    // this.blockchainTamplateInfo = this.blockchainInfo.algoLiquidity / this.blockchainInfo!.tokenLiquidity
+    this.assetArr.push(this.dummyAlgo);
+    this.assetArrSecond.push(this.dummyAlgo);
+    // TODO uncomment for prod
   }
 
   makeReverse() {
@@ -138,23 +166,36 @@ export class TradeComponent implements OnInit {
     this.checked = event;
     const wallet = localStorage.getItem('wallet')!;
     if (event === true) {
-      this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
         this.assetArr = []
-        this.assetArr.push(await this.verseApp.getViewModel())
-        this.assetArr.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-        this.removeVerse(res)
+        this.assetArrSecond = [];
+        // this.assetArr.push(await this.verseApp.getViewModel())
+        // this.assetArr.push(ALGO_VIEWMODEL)
+        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        // this.removeVerse(res);
+        // TODO uncomment for prod
+        console.log(res, 'data');
+        this.assetArr.push(this.dummyAlgo);
+        this.assetArrSecond.push(this.dummyAlgo);
+        this.removeVerse(res);
         this.assetArr.push(...res);
+        this.assetArrSecond.push(...res);
       });
     } else if (event === false) {
-      this.assetArr = []
-      this.assetArr.push(await this.verseApp.getViewModel())
-      this.assetArr.push(ALGO_VIEWMODEL)
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      this.assetArr = [];
+      this.assetArrSecond = [];
+      // this.assetArr.push(await this.verseApp.getViewModel())
+      // this.assetArr.push(ALGO_VIEWMODEL)
+      // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+        // this.removeVerse(res)
+        // TODO uncomment for prod
         this.removeVerse(res)
+        this.assetArr.push(this.dummyAlgo);
+        this.assetArrSecond.push(this.dummyAlgo);
         this.assetArr.push(...res);
+        this.assetArrSecond.push(...res);
         this.selectAsset(this.assetArr[0].assetId)
       });
     }
@@ -445,7 +486,7 @@ export class TradeComponent implements OnInit {
   }
 
   handleCheckboxUpdateSecond($event: boolean) {
-    
+
   }
 
   removeVerse(arr: AssetViewModel[]){
