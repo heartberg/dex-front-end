@@ -215,8 +215,6 @@ export class DeployComponent implements OnInit, DoCheck {
 
 
   async onSubmit() {
-    console.log(this.deployFormGroup.value, 'form');
-    return
     this.closePopup = true;
     this.sessionWallet = this.walletProviderService.sessionWallet;
     this.blockchainObjInitialize();
