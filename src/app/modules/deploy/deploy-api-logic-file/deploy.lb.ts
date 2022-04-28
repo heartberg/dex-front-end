@@ -11,6 +11,7 @@ import {DeployComponent} from "../deploy.component";
 import {DeployedAppSettings} from "../../../blockchain/platform-conf";
 import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
+import {WalletsConnectService} from "../../../services/wallets-connect.service";
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,7 @@ export class DeployLb {
   isFailed: boolean = false;
   isPending: boolean = false;
 
-  constructor(private _deployService: deployService, private deployerBC: DeployedApp) {
+  constructor(private _deployService: deployService, private deployerBC: DeployedApp, private wallet: WalletsConnectService) {
   }
 
 
@@ -50,13 +51,15 @@ export class DeployLb {
     // @ts-ignore
     this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
     // @ts-ignore
-    this.sessionWallet = JSON.parse(localStorage.getItem('sessionWallet'));
-    if (isPresaleChecked) {
-      this.GetProjectPresaleCreate();
-    }
-    else {
-      this.GetProjectWithoutPresaleCreate();
-    }
+    this.sessionWallet = this.wallet.sessionWallet;
+    setTimeout(() => {
+      if (isPresaleChecked) {
+        this.GetProjectPresaleCreate();
+      }
+      else {
+        this.GetProjectWithoutPresaleCreate();
+      }
+    }, 2000);
     // end of statement of false
   }
 
