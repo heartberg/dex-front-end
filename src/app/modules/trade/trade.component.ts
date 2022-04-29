@@ -142,12 +142,15 @@ export class TradeComponent implements OnInit {
   }
 
   async getBlockchainInfo() {
-    // this.assetArr.push(await this.verseApp.getViewModel())
-    // this.assetArr.push(ALGO_VIEWMODEL)
-    // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-    // this.blockchainTamplateInfo = this.blockchainInfo.algoLiquidity / this.blockchainInfo!.tokenLiquidity
-    this.assetArr.push(this.dummyAlgo);
-    this.assetArrSecond.push(this.dummyAlgo);
+    this.assetArr.push(await this.verseApp.getViewModel())
+    this.assetArr.push(ALGO_VIEWMODEL)
+    this.assetArrSecond.push(await this.verseApp.getViewModel())
+    this.assetArrSecond.push(ALGO_VIEWMODEL)
+    //
+    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    this.blockchainTamplateInfo = this.blockchainInfo.algoLiquidity / this.blockchainInfo!.tokenLiquidity
+    // this.assetArr.push(this.dummyAlgo);
+    // this.assetArrSecond.push(this.dummyAlgo);
     // TODO uncomment for prod
   }
 
@@ -166,31 +169,31 @@ export class TradeComponent implements OnInit {
     this.checked = event;
     const wallet = localStorage.getItem('wallet')!;
     if (event === true) {
-      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArr = []
-        // this.assetArr.push(await this.verseApp.getViewModel())
-        // this.assetArr.push(ALGO_VIEWMODEL)
-        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-        // this.removeVerse(res);
-        // TODO uncomment for prod
-        console.log(res, 'data');
-        this.assetArr.push(this.dummyAlgo);
-        this.assetArr.push(...res);
         this.removeVerse(res);
+        this.assetArr.push(await this.verseApp.getViewModel())
+        this.assetArr.push(ALGO_VIEWMODEL)
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation();
+        this.assetArr.push(...res);
+        // TODO uncomment for prod
+        // this.assetArr.push(this.dummyAlgo);
+        // this.assetArr.push(...res);
+        // this.removeVerse(res);
       });
     } else if (event === false) {
       this.assetArr = [];
-      this.assetArrSecond = [];
-      // this.assetArr.push(await this.verseApp.getViewModel())
-      // this.assetArr.push(ALGO_VIEWMODEL)
-      // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      // this.assetArrSecond = [];
+      this.assetArr.push(await this.verseApp.getViewModel())
+      this.assetArr.push(ALGO_VIEWMODEL)
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         // this.removeVerse(res)
         // TODO uncomment for prod
-        this.assetArr.push(this.dummyAlgo);
-        this.assetArr.push(...res);
+        // this.assetArr.push(this.dummyAlgo);
         this.removeVerse(res)
+        this.assetArr.push(...res);
         this.selectAsset(this.assetArr[0].assetId)
       });
     }
@@ -200,29 +203,29 @@ export class TradeComponent implements OnInit {
     this.checkedSecond = event;
     const wallet = localStorage.getItem('wallet')!;
     if (event === true) {
-      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArrSecond = [];
-        // this.assetArr.push(await this.verseApp.getViewModel())
-        // this.assetArr.push(ALGO_VIEWMODEL)
-        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-        // this.removeVerse(res);
-        // TODO uncomment for prod
-        console.log(res, 'data');
-        this.assetArrSecond.push(this.dummyAlgo);
-        this.assetArrSecond.push(...res);
         this.removeVerse(res);
+        this.assetArrSecond.push(await this.verseApp.getViewModel())
+        this.assetArrSecond.push(ALGO_VIEWMODEL)
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.assetArrSecond.push(...res);
+        // TODO uncomment for prod
+        // console.log(res, 'data');
+        // this.assetArrSecond.push(this.dummyAlgo);
+        // this.removeVerse(res);
       });
     } else if (event === false) {
       this.assetArrSecond = [];
-      // this.assetArr.push(await this.verseApp.getViewModel())
-      // this.assetArr.push(ALGO_VIEWMODEL)
-      // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      this.assetArrSecond.push(await this.verseApp.getViewModel())
+      this.assetArrSecond.push(ALGO_VIEWMODEL)
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         // this.removeVerse(res)
         // TODO uncomment for prod
         this.removeVerse(res)
-        this.assetArrSecond.push(this.dummyAlgo);
+        // this.assetArrSecond.push(this.dummyAlgo);
         this.assetArrSecond.push(...res);
         this.selectAsset(this.assetArr[0].assetId)
       });

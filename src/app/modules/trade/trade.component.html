@@ -1,5 +1,5 @@
 <div class="main">
-  <div class="wrapper-border">
+  <div class="wrapper-border d-flex flex-column">
     <div class="exchanger">
       <div
         class="d-flex align-items-center wrapper-for-btns"
@@ -228,36 +228,175 @@
         Opt In
       </button>
     </div>
+<!--    // table-->
+    <div class="table" >
+        <h3 class="color-violet" style="text-align: center">Transactions</h3>
+      <div class="wrap-tab" style="display: unset">
+        <table class="table table-dark">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">Asset</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Price</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          <tr>
+            <th scope="row">4</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>@twitter</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+<!--    // table-->
   </div>
   <div *ngIf="selectedOption?.name" class="selected-option position-left">
     <h4>{{ selectedOption?.name }} Information</h4>
-<!--    <div class="selection-data">-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Marketcap:</span>-->
-<!--        <span class="thin-gray-text">{{ (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Total Supply:</span>-->
-<!--        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Algo Liquidity:</span>-->
-<!--        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }} Algo</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Token Liquidity:</span>-->
-<!--        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Backing:</span>-->
-<!--        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Max Buy:</span>-->
-<!--        <span class="thin-gray-text">{{ getMaxBuy() }}</span>-->
-<!--      </div>-->
-<!--      <button (click)="openPopUp()">Backing</button>-->
-<!--    </div>-->
+    <div class="selection-data">
+      <div class="propery-pair">
+        <span>Marketcap:</span>
+        <span class="thin-gray-text">{{ (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Total Supply:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Algo Liquidity:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Token Liquidity:</span>
+        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Max Buy:</span>
+        <span class="thin-gray-text">{{ getMaxBuy() }}</span>
+      </div>
+      <button (click)="openPopUp()">Backing</button>
+    </div>
   </div>
 
   <div *ngIf="selectedOption?.name" class="selected-option position-right">

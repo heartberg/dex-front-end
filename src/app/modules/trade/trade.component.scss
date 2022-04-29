@@ -1,7 +1,7 @@
 .main {
   display: flex;
   justify-content: center;
-  height: calc(100vh - 80px);
+  //height: calc(100vh - 80px);
   .exchanger {
     display: flex;
     flex-direction: column;
@@ -160,4 +160,42 @@ app-drop-down-selector {
 
 .top-text {
   position: relative;
+}
+.table {
+  margin-top: 50px;
+  h3 {
+    font-size: 26px;
+  }
+  .table-dark {
+    background: #fff !important;
+    color: #1c1c1e !important;
+    font-weight: bold;
+    font-family: secondary;
+    thead {
+      th {
+        color: #81007F;
+        border-bottom: 2px solid #81007F;
+        border-color: unset !important;
+      }
+    }
+  }
+  table {
+    td {
+      border-top: unset;
+    }
+    th {
+      border-top: unset;
+    }
+    tbody {
+      tr {
+        border-bottom: 1px solid #81007F;
+      }
+    }
+  }
+}
+.wrap-tab {
+  height: 500px;
+  overflow-y: scroll;
+  display: block !important;
+  margin-top: 20px;
 }
