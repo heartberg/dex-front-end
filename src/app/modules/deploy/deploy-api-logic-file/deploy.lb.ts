@@ -152,11 +152,12 @@ export class DeployLb {
         if (value) {
           setTimeout(() => {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
-              async (value) => {
+              async (value: any) => {
                 if (value) {
                   this.isPending = true;
                   this.isFailed = false;
                   this.finalStepApi = false;
+                  this.projectId = value;
                   of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                     (value: any) => {
                       this.SetMintVars(this.deployerBC.settings);
