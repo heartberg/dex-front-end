@@ -211,6 +211,7 @@
           width: 160px;
           font-size: 20px;
         "
+        (click)="swap()"
       >
         Swap
       </button>
@@ -223,40 +224,40 @@
           width: 160px;
           font-size: 20px;
         "
-      >
+      (click)="optIn()">
         Opt In
       </button>
     </div>
   </div>
   <div *ngIf="selectedOption?.name" class="selected-option position-left">
     <h4>{{ selectedOption?.name }} Information</h4>
-    <div class="selection-data">
-      <div class="propery-pair">
-        <span>Marketcap:</span>
-        <span class="thin-gray-text">{{ (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
-      </div>
-      <div class="propery-pair">
-        <span>Total Supply:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>
-      </div>
-      <div class="propery-pair">
-        <span>Algo Liquidity:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }} Algo</span>
-      </div>
-      <div class="propery-pair">
-        <span>Token Liquidity:</span>
-        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>
-      </div>
-      <div class="propery-pair">
-        <span>Backing:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>
-      </div>
-      <div class="propery-pair">
-        <span>Max Buy:</span>
-        <span class="thin-gray-text">{{ getMaxBuy() }}</span>
-      </div>
-      <button (click)="openPopUp()">Backing</button>
-    </div>
+<!--    <div class="selection-data">-->
+<!--      <div class="propery-pair">-->
+<!--        <span>Marketcap:</span>-->
+<!--        <span class="thin-gray-text">{{ (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>-->
+<!--      </div>-->
+<!--      <div class="propery-pair">-->
+<!--        <span>Total Supply:</span>-->
+<!--        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>-->
+<!--      </div>-->
+<!--      <div class="propery-pair">-->
+<!--        <span>Algo Liquidity:</span>-->
+<!--        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }} Algo</span>-->
+<!--      </div>-->
+<!--      <div class="propery-pair">-->
+<!--        <span>Token Liquidity:</span>-->
+<!--        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>-->
+<!--      </div>-->
+<!--      <div class="propery-pair">-->
+<!--        <span>Backing:</span>-->
+<!--        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>-->
+<!--      </div>-->
+<!--      <div class="propery-pair">-->
+<!--        <span>Max Buy:</span>-->
+<!--        <span class="thin-gray-text">{{ getMaxBuy() }}</span>-->
+<!--      </div>-->
+<!--      <button (click)="openPopUp()">Backing</button>-->
+<!--    </div>-->
   </div>
 
   <div *ngIf="selectedOption?.name" class="selected-option position-right">

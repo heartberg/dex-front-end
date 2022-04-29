@@ -168,7 +168,6 @@ export class TradeComponent implements OnInit {
     if (event === true) {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
         this.assetArr = []
-        this.assetArrSecond = [];
         // this.assetArr.push(await this.verseApp.getViewModel())
         // this.assetArr.push(ALGO_VIEWMODEL)
         // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
@@ -176,10 +175,8 @@ export class TradeComponent implements OnInit {
         // TODO uncomment for prod
         console.log(res, 'data');
         this.assetArr.push(this.dummyAlgo);
-        this.assetArrSecond.push(this.dummyAlgo);
-        this.removeVerse(res);
         this.assetArr.push(...res);
-        this.assetArrSecond.push(...res);
+        this.removeVerse(res);
       });
     } else if (event === false) {
       this.assetArr = [];
@@ -191,10 +188,41 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         // this.removeVerse(res)
         // TODO uncomment for prod
-        this.removeVerse(res)
         this.assetArr.push(this.dummyAlgo);
-        this.assetArrSecond.push(this.dummyAlgo);
         this.assetArr.push(...res);
+        this.removeVerse(res)
+        this.selectAsset(this.assetArr[0].assetId)
+      });
+    }
+  }
+
+  async handleCheckboxUpdateSecond(event: boolean) {
+    this.checkedSecond = event;
+    const wallet = localStorage.getItem('wallet')!;
+    if (event === true) {
+      this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
+        this.assetArrSecond = [];
+        // this.assetArr.push(await this.verseApp.getViewModel())
+        // this.assetArr.push(ALGO_VIEWMODEL)
+        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        // this.removeVerse(res);
+        // TODO uncomment for prod
+        console.log(res, 'data');
+        this.assetArrSecond.push(this.dummyAlgo);
+        this.assetArrSecond.push(...res);
+        this.removeVerse(res);
+      });
+    } else if (event === false) {
+      this.assetArrSecond = [];
+      // this.assetArr.push(await this.verseApp.getViewModel())
+      // this.assetArr.push(ALGO_VIEWMODEL)
+      // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      const wallet = localStorage.getItem('wallet')!;
+      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+        // this.removeVerse(res)
+        // TODO uncomment for prod
+        this.removeVerse(res)
+        this.assetArrSecond.push(this.dummyAlgo);
         this.assetArrSecond.push(...res);
         this.selectAsset(this.assetArr[0].assetId)
       });
@@ -293,19 +321,19 @@ export class TradeComponent implements OnInit {
   }
 
   async getValueFromDropDown($event: any, index: number) {
-    // if ($event !== 'Algo' && index === 1) {
-    //   this.changeBottom = true;
-    //   // sell
-    // } else {
-    //   this.changeBottom = false;
-    // }
-    // // second check
-    // if ($event !== 'Algo' && index === 2) {
-    //   this.changeTop = true;
-    //   // buy
-    // } else {
-    //   this.changeTop = false;
-    // }
+    if ($event !== 'Algo' && index === 1) {
+      this.changeBottom = true;
+      // sell
+    } else {
+      this.changeBottom = false;
+    }
+    // second check
+    if ($event !== 'Algo' && index === 2) {
+      this.changeTop = true;
+      // buy
+    } else {
+      this.changeTop = false;
+    }
     console.log($event);
     // console.log($event);
     // if (index === 1 && $event) {
@@ -485,14 +513,25 @@ export class TradeComponent implements OnInit {
     }
   }
 
-  handleCheckboxUpdateSecond($event: boolean) {
-
-  }
 
   removeVerse(arr: AssetViewModel[]){
     arr.forEach( (item, index) => {
       if(item.assetId === ps.platform.verse_asset_id) arr.splice(index,1);
     });
  }
+  // swap && optIn
+  swap() {
+    console.log(this.changeTop, this.changeBottom);
+    if (this.changeTop) {
+      // buy
+      console.log('buy')
+    } else {
+      // sel
+      console.log('sell')
+    }
+  }
 
+  optIn() {
+
+  }
 }

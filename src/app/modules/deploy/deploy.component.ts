@@ -38,6 +38,9 @@ export class DeployComponent implements OnInit, DoCheck {
   isPending: boolean = false;
   ///
 
+  teamInfo: any[] = [
+  ];
+
   constructor(
     private walletProviderService: WalletsConnectService,
     private deployedApp: DeployedApp,
