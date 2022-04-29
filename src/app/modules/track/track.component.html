@@ -31,16 +31,17 @@
                 <div class="data-box">
                   <span class="property">Your Holding</span>
                   <span class="value">{{item.blockchainTrackInfo.holding}} Token</span>
+                  <span class="value">≈ {{(item.blockchainTrackInfo.holding * item.blockchainTrackInfo.price).toFixed(2)}} Algo</span>
                 </div>
               </div>
               <div class="column">
                 <div class="data-box">
-                  <span class="property">Entry Price</span>
-                  <span class="value">X Algo/Token (+X%)</span>
+                  <span class="property">Average Buy Price</span>
+                  <span class="value">{{item.price.avgBuyEntry.toFixed(6)}} Algo/Token ({{item.price.buyChange}}%)</span>
                 </div>
                 <div class="data-box">
-                  <span class="property">Value</span>
-                  <span class="value">{{(item.blockchainTrackInfo.holding * item.blockchainTrackInfo.price).toFixed(2)}} Algo</span>
+                  <span class="property">Average Sell Price</span>
+                  <span class="value">{{item.price.avgSellEntry.toFixed(6)}} Algo/Token ({{item.price.sellChange}}%)</span>
                 </div>
               </div>
               <div class="column">

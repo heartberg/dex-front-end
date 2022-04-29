@@ -8,7 +8,7 @@ import {
   get_app_call_txn,
   get_asa_optin_txn
 } from "./transactions"
-import algosdk, { Algodv2, getApplicationAddress, Transaction } from 'algosdk';
+import algosdk, { Algodv2, getApplicationAddress, Indexer, Transaction } from 'algosdk';
 import {
   DeployedAppSettings,
   platform_settings as ps
@@ -563,7 +563,13 @@ export class DeployedApp {
     let marketCap = algoLiquidity / tokenLiquidity * totalSupply
     let price = algoLiquidity / tokenLiquidity
     let burned = globalState[StateKeys.burned_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
-    let holders = 0
+    let tradingStart = globalState[StateKeys.trading_start_key]['i']
+    let indexer: Indexer = getIndexer()
+
+    let holderInfo = await indexer.lookupAssetBalances(globalState[StateKeys.asset_id_key]['i']).do()
+    console.log(holderInfo)
+    let holders = holderInfo.length
+    console.log(holders)
 
     let trackInfo: BlockchainTrackInfo = {
         algoLiq: algoLiquidity,
@@ -574,7 +580,8 @@ export class DeployedApp {
         burned: burned,
         holding: holding,
         holders: holders,
-        price: price
+        price: price,
+        tradingStart: tradingStart
     }
 
     console.log(trackInfo)

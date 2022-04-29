@@ -460,7 +460,8 @@ export class VerseApp {
             burned: burned,
             holding: holding,
             holders: holders,
-            price: price
+            price: price,
+            tradingStart: 0
         }
 
         return trackInfo

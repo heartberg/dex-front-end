@@ -72,11 +72,11 @@ export class DeployLb {
       (value: any) => {
         setTimeout(() => {
           if (value) {
-          this.projectId = value
           this.presaleObj.contractId = this.deployerBC.settings.contract_id!
           this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
           this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
-            async (value) => {
+            async (value: any) => {
+              this.projectId = value
               if (true) {
                 of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
