@@ -431,7 +431,8 @@ export class VerseApp {
         let backingState = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
         let assetInfo: any = await client.getAssetByID(ps.platform.verse_asset_id).do()
         let accountInfo: any = await client.accountInformation(wallet).do()
-
+        
+        let tradingStart = verseState[verseStateKeys.trading_start_key]['i']
         let algoLiquidity = verseState[verseStateKeys.algo_liq_key]['i'] / Math.pow(10, 6)
         let tokenLiquidity = verseState[verseStateKeys.token_liq_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
         let totalSupply = verseState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
@@ -439,9 +440,12 @@ export class VerseApp {
         let marketCap = algoLiquidity / tokenLiquidity * totalSupply
         let price = algoLiquidity / tokenLiquidity
         let burned = verseState[verseStateKeys.burned_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
+        
+        let indexer = getIndexer()
+        //console.log(await indexer.lookupAssetByID(ps.platform.verse_asset_id).do())
+        //let holder = await indexer.lookupAssetBalances(ps.platform.verse_asset_id).currencyGreaterThan(0).do()
+        //console.log(holder)
         let holders = 0
-
-
         console.log(accountInfo)
         let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
             return el['asset-id'] == ps.platform.verse_asset_id
@@ -461,7 +465,7 @@ export class VerseApp {
             holding: holding,
             holders: holders,
             price: price,
-            tradingStart: 0
+            tradingStart: tradingStart
         }
 
         return trackInfo

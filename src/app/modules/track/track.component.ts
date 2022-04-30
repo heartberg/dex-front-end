@@ -73,7 +73,7 @@ export class TrackComponent implements OnInit {
       avgSellEntry: 0,
       sellChange: "-",
       buyChange: "-",
-      tradingStart: new Date()
+      tradingStart: new Date(verseTrackInfo.tradingStart * 1000)
     };
 
     this.assetReqService.getAverageEntries(wallet!, verseView.assetId).subscribe(
@@ -131,7 +131,7 @@ export class TrackComponent implements OnInit {
       avgSellEntry: 0,
       sellChange: "-",
       buyChange: "-",
-      tradingStart: new Date()
+      tradingStart: new Date(info.tradingStart * 1000)
     };
 
     res.forEach(entry => {

@@ -17,6 +17,7 @@ import { SessionWallet, Wallet } from "algorand-session-wallet"
 import { Injectable } from "@angular/core";
 import { compileProgram, getTransactionParams, waitForTransaction } from "../services/utils.algo";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
+import { PresaleBlockchainInformation } from "../modules/launchpad/launch-detail/launch-detail.component";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -566,7 +567,9 @@ export class DeployedApp {
     let tradingStart = globalState[StateKeys.trading_start_key]['i']
     let indexer: Indexer = getIndexer()
 
-    let holderInfo = await indexer.lookupAssetBalances(globalState[StateKeys.asset_id_key]['i']).do()
+    const health = await indexer.makeHealthCheck().do()
+    console.log(health)
+    let holderInfo = await indexer.lookupAssetBalances(globalState[StateKeys.asset_id_key]['i']).currencyGreaterThan(0).do()
     console.log(holderInfo)
     let holders = holderInfo.length
     console.log(holders)
@@ -587,5 +590,46 @@ export class DeployedApp {
     console.log(trackInfo)
 
     return trackInfo
+  }
+
+  async getPresaleInfo(contractId: number): Promise<PresaleBlockchainInformation> {
+    let client: Algodv2 = getAlgodClient()
+    let globalState: any = await this.getContractGlobalState(contractId)
+    let appAccInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
+    let assetInfo: any = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
+
+    let algoLiquidity = globalState[StateKeys.algo_liq_key]['i'] / 1_000_000
+    let tokenLiquidity = globalState[StateKeys.token_liq_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let price = algoLiquidity / tokenLiquidity
+    let burned = globalState[StateKeys.burned_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let tradingStart = globalState[StateKeys.trading_start_key]['i']
+    let tokensInPresale = globalState[StateKeys.presale_token_amount]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+    let presaleFundsToLiquidityPercentage = globalState[StateKeys.presale_to_liq_key]['i'] / 10000
+    let saleEnd = globalState[StateKeys.presale_end_key]['i']
+    let saleStart = globalState[StateKeys.presale_start_key]['i']
+    let softCap = globalState[StateKeys.presale_soft_cap_key]['i'] / 1_000_000
+    let hardCap = globalState[StateKeys.presale_hard_cap_key]['i'] / 1_000_000
+    let walletCap = globalState[StateKeys.presale_wallet_cap_key]['i'] / 1_000_000
+    let totalRaised = globalState[StateKeys.presale_total_raised]['i'] / 1_000_000
+
+    
+    let presaleInfo: PresaleBlockchainInformation = {
+      algoLiq: algoLiquidity,
+      tokenLiq: tokenLiquidity,
+      burned: burned,
+      tokensInPresale: tokensInPresale,
+      presaleFundsToLiqPercentage: presaleFundsToLiquidityPercentage,
+      price: price,
+      totalSupply: totalSupply,
+      tradingStart: new Date(tradingStart * 1000),
+      saleEnd: new Date(saleEnd * 1000),
+      saleStart: new Date(saleStart * 1000),
+      softCap: softCap,
+      hardCap: hardCap,
+      walletCap: walletCap,
+      totalRaised: totalRaised
+    }
+    return presaleInfo;
   }
 }
