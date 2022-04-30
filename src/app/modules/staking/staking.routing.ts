@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {StackingComponent} from "./stacking.component";
+import {StakingComponent} from "./staking.component";
 
-const routes: Routes = [{ path: '', component: StackingComponent }];
+const routes: Routes = [{ path: '', component: StakingComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class StackingRouting { }
+export class StakingRouting { }

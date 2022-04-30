@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-stacking',
-  templateUrl: './stacking.component.html',
-  styleUrls: ['./stacking.component.scss']
+  templateUrl: './staking.component.html',
+  styleUrls: ['./staking.component.scss']
 })
-export class StackingComponent implements OnInit {
+export class StakingComponent implements OnInit {
   closePopup: boolean | undefined;
   isStake: boolean = true;
   constructor() { }
