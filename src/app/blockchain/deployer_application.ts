@@ -368,14 +368,13 @@ export class DeployedApp {
   }
   // presale page ended here
   // token page  (your wallet)
-  async removeMaxBuy(wallet: Wallet,settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async removeMaxBuy(wallet: SessionWallet, contractId: number): Promise<any> {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(Method.RemoveMaxBuy))]
 
-    const remove = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, undefined, undefined))
+    const remove = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, undefined, undefined))
 
     const signedRemove = await wallet.signTxn([remove])
     const result = await sendWait(signedRemove)

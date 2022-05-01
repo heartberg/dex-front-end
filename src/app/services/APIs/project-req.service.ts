@@ -27,6 +27,16 @@ export class projectReqService {
     });
   }
 
+  getCreatedProjects(wallet: string | any, page: number) {
+    const url = `${this.baseUrl}/project/get/created/`;
+    return this._http.get<ProjectPreviewModel[]>(url, {
+      params: {
+        wallet: wallet,
+        page: page,
+      },
+    });
+  }
+
   getParticipatedPresales(wallet: string | any, page: number) {
     const url = `${this.baseUrl}/project/presale/get/participated/`;
     return this._http.get<ProjectPreviewModel[]>(url, {

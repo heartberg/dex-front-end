@@ -78,7 +78,7 @@
               <span>{{presaleData.totalRaised.toFixed(0)}} Algo</span> <span>/</span> <span>{{presaleData.hardCap.toFixed(0)}} Algo</span>
             </div>
             <div class="between d-flex">
-              <span>Filled:</span> <span>{{presaleData.totalRaised / presaleData.hardCap * 100}}%</span>
+              <span>Filled:</span> <span>{{(presaleData.totalRaised / presaleData.hardCap * 100).toFixed(2)}}%</span>
             </div>
             <div class="button">
               <button class="btn-secondary-costum" (click)="openPopUp()">

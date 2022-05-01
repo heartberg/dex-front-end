@@ -13,44 +13,6 @@ export class MyPresaleComponent implements OnInit {
   // arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
   arr: ProjectPreviewModel[] = [];
 
-  dummyProject: ProjectPreviewModel = {
-    projectId: 'string',
-    projectImage: 'string',
-    name: 'string',
-    description:
-      'string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad ',
-    asset: {
-      assetId: 4,
-      contractId: 3,
-      decimals: 2,
-      contractAddress: 'string',
-      name: 'string',
-      unitName: 'string',
-      totalSupply: 4,
-      url: 'string',
-      maxBuy: 5,
-      tradingStart: 1,
-      risingPriceFloor: 7,
-      backing: 4,
-      buyBurn: 3,
-      sellBurn: 3,
-      sendBurn: 2,
-      image: 'string',
-      deployerWallet: 'string',
-    },
-    presale: {
-      presaleId: 'string',
-      softCap: 4,
-      hardCap: 2,
-      walletCap: 2,
-      totalRaised: 45,
-      tokenAmount: 44,
-      startingTime: +new Date(),
-      endingTime: +new Date(),
-      adminClaimed: false,
-    },
-  };
-
   isPopUpOpen: boolean = false;
   isRestart: boolean = false;
   isFair: boolean = false;
@@ -99,8 +61,6 @@ export class MyPresaleComponent implements OnInit {
     this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
       console.log(res);
       this.arr = res;
-      this.arr.push(this.dummyProject);
     });
-    this.arr.push(this.dummyProject);
   }
 }

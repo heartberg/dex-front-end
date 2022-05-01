@@ -61,7 +61,6 @@ export class LaunchpadComponent implements OnInit {
           });
         });
       // All
-      console.log(this.array);
     }
   }
 }

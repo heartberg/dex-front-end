@@ -7,5 +7,8 @@ export interface ProjectPreviewModel {
     name: string
     description: string
     asset: AssetViewModel
-    presale: presaleViewModel
+    presale: presaleViewModel,
+    setup: boolean,
+    minted: boolean,
+    burnOptIn: boolean
 }
