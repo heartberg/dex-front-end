@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Algodv2 } from 'algosdk';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
-import {DeployedApp} from "../../blockchain/deployer_application";
+import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
+import {DeployedApp, StateKeys} from "../../blockchain/deployer_application";
 
 export type TimeTupel = {
   startTime: Date,
@@ -62,5 +65,11 @@ export class LaunchpadComponent implements OnInit {
         });
       // All
     }
+  }
+
+  async getParticipatedAmount(model: ProjectPreviewModel): Promise<number> {
+    let client: Algodv2 = getAlgodClient()
+    let amount = await getAppLocalStateByKey(client, model.asset.contractId, this.wallet!, StateKeys.presale_contribution_key)
+    return amount
   }
 }

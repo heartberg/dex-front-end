@@ -1,8 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { SessionWallet } from 'algorand-session-wallet';
+import { Algodv2 } from 'algosdk';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
+import { DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 @Component({
   selector: 'app-my-presale',
@@ -19,10 +26,13 @@ export class MyPresaleComponent implements OnInit {
 
   isPresaleEnded: boolean = true;
   isSoldOut: boolean = false;
+  wallet: SessionWallet | undefined
 
   constructor(
     private projectReqService: projectReqService,
-    private assetReqService: AssetReqService
+    private assetReqService: AssetReqService,
+    private app: DeployedApp,
+    private walletService: WalletsConnectService
   ) {}
 
   openPopUp(version: string) {
@@ -40,7 +50,9 @@ export class MyPresaleComponent implements OnInit {
     this.isPopUpOpen = event;
   }
 
-  removeMaxBuy(assetId: number) {
+  async removeMaxBuy(assetId: number, contractId: number) {
+    this.wallet = this.walletService.sessionWallet!
+    let response = await this.app.removeMaxBuy(this.wallet, contractId);
     this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
       console.log(res);
     });
@@ -63,4 +75,14 @@ export class MyPresaleComponent implements OnInit {
       this.arr = res;
     });
   }
+
+  pow(decimal: number): number {
+    return Math.pow(10, decimal)
+  }
+
+  toDate(timestamp: number): string{
+    let date = new Date(timestamp * 1000)
+    return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
+  }
+
 }
