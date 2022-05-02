@@ -14,7 +14,7 @@ import { ALGO_VIEWMODEL, BlockchainInformation, DeployedAppSettings, platform_se
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
-import { Wallet } from 'algorand-session-wallet';
+import { SessionWallet, Wallet } from 'algorand-session-wallet';
 import { env } from 'process';
 
 
@@ -405,7 +405,7 @@ export class TradeComponent implements OnInit {
     this.minOutput = output
   }
 
-  async buy(wallet: Wallet, amount: number){
+  async buy(wallet: SessionWallet, amount: number){
     if(this.selectedOption!.name == 'Verse') {
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
     } else {
@@ -417,7 +417,7 @@ export class TradeComponent implements OnInit {
     await this.deployedApp.buy(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
   }
 
-  async sell(wallet: Wallet, amount: number){
+  async sell(wallet: SessionWallet, amount: number){
     let scaledAmount = 0
     let wantedReturn = 0
     if(this.selectedOption!.name == 'Verse') {

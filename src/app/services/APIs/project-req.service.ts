@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,7 @@ export class projectReqService {
     });
   }
 
-  getParticipatedPresales(wallet: string | any, page: number) {
+  getParticipatedPresales(wallet: string | any, page: number): Observable<ProjectPreviewModel[]> {
     const url = `${this.baseUrl}/project/presale/get/participated/`;
     return this._http.get<ProjectPreviewModel[]>(url, {
       params: {
