@@ -47,7 +47,13 @@ export class LaunchpadComponent implements OnInit {
       this.projectReqService
         .getParticipatedPresales(this.wallet, 1)
         .subscribe((res) => {
-          console.log(res);
+          res.forEach((el: ProjectPreviewModel) => {
+            let tupel: TimeTupel = {
+              startTime: new Date(el.presale.startingTime * 1000),
+              endTime: new Date(el.presale.endingTime * 1000)
+            }
+            this.array.push([el, tupel]);
+          });
         });
     } else if (!this.isWallet) {
       console.log('not wallet');
