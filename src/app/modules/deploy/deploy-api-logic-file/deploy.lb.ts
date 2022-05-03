@@ -12,6 +12,7 @@ import {DeployedAppSettings} from "../../../blockchain/platform-conf";
 import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
 import {WalletsConnectService} from "../../../services/wallets-connect.service";
+import { TeamMemberViewModel } from 'src/app/models/TeamMemberView.model';
 
 @Injectable({
   providedIn: 'root',
@@ -337,4 +338,18 @@ export class DeployLb {
       deployerWallet: localStorage.getItem('wallet')!,
     }
   }
+
+  mapTeamMembers(members: any[]) {
+    let mapped: TeamMemberViewModel[] = []
+    members.forEach(element => {
+      let member: TeamMemberViewModel = {
+        image: element.image,
+        name: element.name,
+        role: element.role,
+        social: element.social
+      }
+      mapped.push(member)
+    });
+  }
+
 }
