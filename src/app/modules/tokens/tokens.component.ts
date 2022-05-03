@@ -6,6 +6,7 @@ import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
+import { AssetViewModel } from 'src/app/models/assetView.model';
 
 @Component({
   selector: 'app-tokens',
@@ -61,6 +62,24 @@ export class TokensComponent implements OnInit {
 
   copyContentToClipboard(content: HTMLElement) {
     navigator.clipboard.writeText(content.innerText);
+  }
+
+  pow(decimals: number){
+    return Math.pow(10, decimals)
+  }
+
+  getPrice(item: [ProjectPreviewModel, BlockchainInformation]) {
+    let diff = 0
+    let price = item[1].algoLiquidity / item[1].tokenLiquidity
+    if(item[0].asset.decimals > 6) {
+      diff = item[0].asset.decimals - 6
+      price = price * Math.pow(10, diff)
+
+    } else if(item[0].asset.decimals < 6) {
+      diff = 6 - item[0].asset.decimals
+      price = price / Math.pow(10, diff)
+    }
+    return price
   }
 
 }

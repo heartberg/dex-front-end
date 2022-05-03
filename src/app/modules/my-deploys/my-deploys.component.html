@@ -18,14 +18,14 @@
             </div> -->
             <div class="left-container">
               <div class="left-texts-container">
-                <span class="left-text">Project Name</span>
-                <span class="left-text">Token</span>
+                <span class="left-text">{{item.name}}</span>
+                <span class="left-text">{{item.asset.name}}</span>
                 <div
                   style="cursor: pointer"
                   (click)="copyContentToClipboard(content)"
                   class="asa-id-container left-text"
                 >
-                  <span #content>ASA ID</span>
+                  <span #content>{{item.asset.assetId}}</span>
                   <i
                     style="margin-left: 10px; font-size: 18px"
                     class="fas fa-clipboard-list"

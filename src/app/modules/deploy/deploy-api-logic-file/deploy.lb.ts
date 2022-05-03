@@ -258,7 +258,7 @@ export class DeployLb {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
       contractId: 0,
-      projectName: form.get('tokenInfoGroup.tokenName')?.value,
+      projectName: form.get('projectName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage').value, // ask
       creatorWallet: wallet!,
       roadmap: form.get('addRoadMapOptionGroup.roadmapDescription')?.value,
@@ -294,7 +294,7 @@ export class DeployLb {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
       contractId: 0,
-      projectName: form.get('tokenInfoGroup.tokenName')?.value,
+      projectName: form.get('projectName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       creatorWallet: wallet!,
       roadmap: form.get('addRoadMapOptionGroup.roadmapDescription')?.value,
