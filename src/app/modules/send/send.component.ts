@@ -51,43 +51,44 @@ export class SendComponent implements OnInit {
 
   async ngOnInit() {
     this.wallet = this.walletService.sessionWallet!;
-    this.accInfo = await this.getAccInfo()
-    console.log(this.accInfo!['assets']);
-    this.assetService.getAssetPairs(true, '', this.wallet.getDefaultAccount()).subscribe(
-      (res) => {
-        res.forEach(element => {
-          let asset = this.accInfo!['assets'].find((el: { [x: string]: number; }) => {
-            return el['asset-id'] == element.assetId
+    if(this.wallet) {
+      this.accInfo = await this.getAccInfo()
+      this.assetService.getAssetPairs(true, '', this.wallet.getDefaultAccount()).subscribe(
+        (res) => {
+          res.forEach(element => {
+            let asset = this.accInfo!['assets'].find((el: { [x: string]: number; }) => {
+              return el['asset-id'] == element.assetId
+            });
+            if(asset) {
+              this.tokens.push(element);
+              this.selectAsset(this.tokens[0]);
+            }
           });
-          if(asset) {
-            this.tokens.push(element);
-            this.selectAsset(this.tokens[0]);
-          }
-        });
-      }
-    )
-    console.log(this.tokens);
-    this.sendForm.get("addressInput")!.valueChanges.subscribe(
-      async x => {
-        console.log(x)
-        if(x){
-          if(x.length != 58){
-            this.invalidAddress = true;
-          } else {
-            if(isValidAddress(x)){
-              if(!await isOptedIntoAsset(x, this.selectedOption!.assetId)){
-                this.addressNotOptedIn = true;
-              } else {
-                this.addressNotOptedIn = false;
-              }
-              this.invalidAddress = false;
-            } else {
+        }
+      )
+      console.log(this.tokens);
+      this.sendForm.get("addressInput")!.valueChanges.subscribe(
+        async x => {
+          console.log(x)
+          if(x){
+            if(x.length != 58){
               this.invalidAddress = true;
+            } else {
+              if(isValidAddress(x)){
+                if(!await isOptedIntoAsset(x, this.selectedOption!.assetId)){
+                  this.addressNotOptedIn = true;
+                } else {
+                  this.addressNotOptedIn = false;
+                }
+                this.invalidAddress = false;
+              } else {
+                this.invalidAddress = true;
+              }
             }
           }
         }
-      }
-    );
+      );
+    }
   }
 
   selectAsset(asset: AssetViewModel) {

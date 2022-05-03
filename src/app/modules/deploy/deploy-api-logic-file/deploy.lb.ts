@@ -324,7 +324,7 @@ export class DeployLb {
       decimals: +form.get('tokenInfoGroup.decimals')?.value,
       name: form.get('tokenInfoGroup.tokenName')?.value,
       unitName: form.get('tokenInfoGroup.unitName')?.value,
-      totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value,
+      totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
       url: form.get('tokenInfoGroup.URL')?.value,
       maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
       tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),

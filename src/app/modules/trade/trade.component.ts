@@ -28,7 +28,8 @@ export class TradeComponent implements OnInit {
   rotate: boolean = false;
   autoSlippage: boolean = true;
   slippage: number = 0;
-  minOutput:number = 0
+  minOutput: number = 0;
+  priceImapct: number = 0;
 
   // my
   assetArr: AssetViewModel[] = [];
@@ -173,6 +174,7 @@ export class TradeComponent implements OnInit {
         console.log("Show Verse on top")
       } else {
         console.log("Show Algo on top")
+        this.calcPriceImpact(true)
       }
     }
 
@@ -392,8 +394,8 @@ export class TradeComponent implements OnInit {
     if (asset.name != 'Verse'){
       accumulatedFees += +environment.VERSE_FEE!
     }
-    // + 100 to give an extra 1% for slippage
-    this.slippage = accumulatedFees + 100
+    // + 200 to give an extra 2% for slippage
+    this.slippage = accumulatedFees + 200
   }
 
   calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
@@ -403,6 +405,31 @@ export class TradeComponent implements OnInit {
   setMinOutput(desiredOutput: number, slippage: number){
     let output = desiredOutput - (desiredOutput * slippage / 10000)
     this.minOutput = output
+  }
+
+  calcPriceImpact(buy: boolean){
+    let tokenLiq = this.blockchainInfo!.tokenLiquidity;
+    let algoLiq = this.blockchainInfo!.algoLiquidity;
+    let amount = this.topForms.get("topInput")!.value;
+    console.log(amount)
+
+    if(buy){
+      let price = algoLiq / tokenLiq;
+      let buyAmount = price * amount;
+      let newAlgoLiq = algoLiq + amount;
+      let newTokenLiq = tokenLiq - buyAmount;
+      let newPrice = newAlgoLiq / newTokenLiq;
+      this.priceImapct = newPrice / price * 100
+      console.log(this.priceImapct)
+    } else {
+      let price = tokenLiq / algoLiq;
+      let sellAmount = price * amount;
+      let newAlgoLiq = algoLiq - sellAmount;
+      let newTokenLiq = tokenLiq + amount;
+      let newPrice = newAlgoLiq / newTokenLiq;
+      this.priceImapct = (1 - newPrice / price) * 100
+      console.log(this.priceImapct)
+    }
   }
 
   async buy(wallet: SessionWallet, amount: number){

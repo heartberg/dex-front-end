@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { VerseApp } from 'src/app/blockchain/verse_application';
 
 @Component({
   selector: 'app-tokens',
@@ -24,7 +26,8 @@ export class TokensComponent implements OnInit {
   constructor(
     private projectsReqService: projectReqService,
     private fb: FormBuilder,
-    private deployedApp: DeployedApp
+    private deployedApp: DeployedApp,
+    private verseApp: VerseApp
   ) { }
 
   ngOnInit(): void {
@@ -32,16 +35,19 @@ export class TokensComponent implements OnInit {
       (res) => {
         this.arr = []
         res.forEach(async element => {
-          let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.contractId)
-          this.arr.push([element, bcInfo])
+          if(element.asset.assetId == ps.platform.verse_asset_id) {
+            let bcInfo = await this.verseApp.getBlockchainInformation();
+            this.arr.push([element, bcInfo])
+          } else {
+            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.contractId)
+            this.arr.push([element, bcInfo])
+          }
         });
         console.log(this.arr);
       }
     )
     this.isActiveFirst = true;
   }
-
-
 
   activeFirst() {
     this.isActiveFirst = true;

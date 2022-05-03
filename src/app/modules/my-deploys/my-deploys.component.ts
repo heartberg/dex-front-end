@@ -25,13 +25,18 @@ export class MyDeploysComponent implements OnInit {
   ngOnInit(): void {
     this.wallet = this.walletService.sessionWallet;
     const addr = this.wallet?.getDefaultAccount()
-    this.projectService.getCreatedProjects(addr, 1).subscribe(
-      (res: ProjectPreviewModel[]) => {
-        res.forEach(element => {
-          this.arr.push(element)
+    if(addr) {
+      this.projectService.getCreatedProjects(addr, 1).subscribe(
+        (res: ProjectPreviewModel[]) => {
+          res.forEach(element => {
+            this.arr.push(element)
+          });
+          console.log(res);
         });
-        console.log(res);
-      });
+    } else {
+      console.log("please connect wallet")
+    }
+
   }
 
   copyContentToClipboard(content: HTMLElement) {
