@@ -85,4 +85,31 @@ export class MyPresaleComponent implements OnInit {
     return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
   }
 
+  isFailed(model: ProjectPreviewModel): boolean{
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised < model.presale.softCap) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isSuccessFull(model: ProjectPreviewModel): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised > model.presale.softCap) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isOngoing(model: ProjectPreviewModel): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(model.presale.endingTime > currentTimeStamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }
