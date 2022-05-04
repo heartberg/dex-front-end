@@ -106,8 +106,12 @@ export class TradeComponent implements OnInit {
   });
 
   // FORMS
+  // trade
+  tradeTopChanger: string = 'Algo';
+  tradeBottomChanger: string = 'Algo';
+  globalStateOfTrade: string = '';
 
-   ngOnInit() {
+  ngOnInit() {
     if (this.slippageForm.get('slippageCheckBox')?.value) {
       this.slippageForm.get('slippageInput')?.disable();
     }
@@ -116,26 +120,9 @@ export class TradeComponent implements OnInit {
 
     const wallet = localStorage.getItem('wallet')!;
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-      // data
-
-      // this.assetArr = [...res];
-      // // pushing verse
-      //   // @ts-ignore
-      // this.assetArr.unshift( {name: 'Algo'});
-      // // @ts-ignore
-      // this.assetArr.unshift( {name: 'Verse'});
-      // // pushing algo
-      // this.assetArrSecond = [...res];
-      // // @ts-ignore
-      // this.assetArrSecond.unshift( {name: 'Verse'});
-      //   // @ts-ignore
-      // this.assetArrSecond.unshift( {name: 'Algo'});
-
-      // data
       this.removeVerse(res);
       this.assetArr.push(...res);
       this.assetArrSecond.push(...res);
-      // this.selectAsset(this.firstDropValues[0]);
     });
 
      this.selectAsset(this.assetArr[0].assetId);
@@ -236,15 +223,15 @@ export class TradeComponent implements OnInit {
     if (index === 1) {
       if (value === 'Algo') {
         this.selectAsset(0)
-        console.log("Show Verse on bottom")
+        // console.log("Show Verse on bottom")
       } else {
-        console.log("Show Algo on bottom")
+        // console.log("Show Algo on bottom")
       }
     } else if (index === 2) {
       if (value === 'Algo') {
-        console.log("Show Verse on top")
+        // console.log("Show Verse on top")
       } else {
-        console.log("Show Algo on top")
+        // console.log("Show Algo on top")
       }
     }
 
@@ -326,16 +313,23 @@ export class TradeComponent implements OnInit {
   async getValueFromDropDown($event: any, index: number) {
     if ($event !== 'Algo' && index === 1) {
       this.changeBottom = true;
+      this.changeTop = false;
       // sell
-    } else {
-      this.changeBottom = false;
     }
     // second check
     if ($event !== 'Algo' && index === 2) {
       this.changeTop = true;
+      this.changeBottom = false;
       // buy
-    } else {
+    }
+    if ($event === 'Algo' && index === 1) {
+      this.changeTop = true;
+      this.changeBottom = false;
+      // console.log('pirveli unda sheicvalos')
+    } else if ($event === 'Algo' && index === 2) {
+      this.changeBottom = true;
       this.changeTop = false;
+      // console.log('meore unda sheicvalos', this.changeBottom, this.changeTop)
     }
     console.log($event);
     // console.log($event);

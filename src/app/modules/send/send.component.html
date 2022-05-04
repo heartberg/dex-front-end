@@ -7,9 +7,12 @@
           <div class="d-flex">
             <app-drop-down-selector
               [isNotAccordion]="false"
-              [dropDownValues]="['Token a', 'Token b', 'Token c']"
-              [widthPX]="'170px'"
+              [dropDownValues]="assetArr"
+              [widthPX]="'255px'"
               [extraDropDown]="true"
+              (showAll)="handleCheckboxUpdateSecond($event)"
+              (dropDownValue)="getValueFromDropDown($event, 2)"
+              [buttonTradeChangedTop]="false"
             ></app-drop-down-selector>
             <div class="d-flex flex-column align-items-end">
               <div>

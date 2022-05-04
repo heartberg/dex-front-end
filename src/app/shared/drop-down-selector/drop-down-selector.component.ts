@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {Observable, of} from 'rxjs';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import {take} from "rxjs/operators";
+import {AssetReqService} from "../../services/APIs/assets-req.service";
 
 @Component({
   selector: 'app-drop-down-selector',
@@ -51,9 +52,13 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   // for trade show all/show favs
   @Input() public checkBoxCheckTrade: boolean = false;
   @Input() incomeData: AssetViewModel[] = [];
+  // trade
   @Input() buttonTradeChanged: boolean = false;
   @Input() buttonTradeChangedTop: boolean = false;
 
+  @Input() buttonTradeChangedValue: string = 'Algo';
+  @Input() buttonTradeChangedTopValue: string = 'Algo';
+  //trade
   public favAssetsArr: AssetViewModel[] = [];
   public allAssetsArr: AssetViewModel[] = [];
   isPlus: boolean = false;
@@ -63,9 +68,12 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   public isDropDownOpenedCounter = 1;
   public showDropDownSelected: string = '';
 
+  tradeSelectedTop: string = '';
+  tradeSelectedBottom: string = '';
   //  for while
   publicTradeIsAdded: boolean = false;
 
+  saveStore: string = '';
   // isMinus: boolean = true;
   // isPlus: boolean = false;
 
@@ -87,7 +95,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private req: AssetReqService
   ) {}
 
   ngOnInit(): void {
@@ -106,12 +115,10 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     }
     if (this.checkBoxCheckTrade) {
       this.allAssetsArr = this.incomeData;
-      console.log(this.checkBoxCheckTrade, 'all')
       this.isPlus = true;
     } else {
       this.favAssetsArr = this.incomeData;
       this.isPlus = false;
-      console.log(this.checkBoxCheckTrade, 'fav')
     }
 
     // this.showDropDownSelected = this.dropDownValueTitleForObj;
@@ -130,13 +137,30 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     if (this.notCloseOnClick) {
       // this.isDropDownOpenedCounter +=1;
       this.openDropDown();
-      this.showDropDownSelected = value;
+      if (value !== 'Algo') {
+        this.saveStore = value;
+      }
+      this.showDropDownSelected = value
+      // logic for trade
+        if (id === '1'  && this.tradeSelectedTop !== 'Algo') {
+          this.tradeSelectedTop = this.showDropDownSelected;
+      } else
+        if (id === '2' && this.tradeSelectedBottom !== 'Algo') {
+          this.tradeSelectedBottom = this.showDropDownSelected;
+        }
+      // logic for trade
+
+
+
       this.dropDownValue.emit(value);
       this.publicTradeIsAdded = !this.publicTradeIsAdded;
     } else {
       // this.isDropDownOpenedCounter +=1;
       this.openDropDown();
       this.showDropDownSelected = value;
+      this.tradeSelectedTop = value;
+      // this.tradeSelectedTop = this.showDropDownSelected;
+      // this.tradeSelectedBottom = this.showDropDownSelected;
       this.dropDownValue.emit(value);
       this.isDropDownOpened = false;
     }
@@ -153,11 +177,15 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   addToFavourites(button: AssetViewModel, i: number) {
+    let wallet = localStorage.getItem('wallet')
     console.log(button.assetId);
+    this.req.addFavoriteAsset(button.assetId, wallet!).subscribe((item) => console.log(item) )
   }
 
   removeFromFavourites(button: AssetViewModel) {
+    let wallet = localStorage.getItem('wallet')
     console.log(button.assetId);
+    this.req.removeFavoriteAsset(button.assetId, wallet!).subscribe((item) => console.log(item) )
   }
 
   emitCollectionIdAndWallet(
