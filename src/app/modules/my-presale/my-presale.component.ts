@@ -1,8 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { SessionWallet } from 'algorand-session-wallet';
+import { Algodv2 } from 'algosdk';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
+import { DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 @Component({
   selector: 'app-my-presale',
@@ -13,54 +20,19 @@ export class MyPresaleComponent implements OnInit {
   // arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
   arr: ProjectPreviewModel[] = [];
 
-  dummyProject: ProjectPreviewModel = {
-    projectId: 'string',
-    projectImage: 'string',
-    name: 'string',
-    description:
-      'string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad dsad string string sadasda string sdad dsad ',
-    asset: {
-      assetId: 4,
-      contractId: 3,
-      decimals: 2,
-      contractAddress: 'string',
-      name: 'string',
-      unitName: 'string',
-      totalSupply: 4,
-      url: 'string',
-      maxBuy: 5,
-      tradingStart: 1,
-      risingPriceFloor: 7,
-      backing: 4,
-      buyBurn: 3,
-      sellBurn: 3,
-      sendBurn: 2,
-      image: 'string',
-      deployerWallet: 'string',
-    },
-    presale: {
-      presaleId: 'string',
-      softCap: 4,
-      hardCap: 2,
-      walletCap: 2,
-      totalRaised: 45,
-      tokenAmount: 44,
-      startingTime: +new Date(),
-      endingTime: +new Date(),
-      adminClaimed: false,
-    },
-  };
-
   isPopUpOpen: boolean = false;
   isRestart: boolean = false;
   isFair: boolean = false;
 
   isPresaleEnded: boolean = true;
   isSoldOut: boolean = false;
+  wallet: SessionWallet | undefined
 
   constructor(
     private projectReqService: projectReqService,
-    private assetReqService: AssetReqService
+    private assetReqService: AssetReqService,
+    private app: DeployedApp,
+    private walletService: WalletsConnectService
   ) {}
 
   openPopUp(version: string) {
@@ -78,7 +50,9 @@ export class MyPresaleComponent implements OnInit {
     this.isPopUpOpen = event;
   }
 
-  removeMaxBuy(assetId: number) {
+  async removeMaxBuy(assetId: number, contractId: number) {
+    this.wallet = this.walletService.sessionWallet!
+    let response = await this.app.removeMaxBuy(this.wallet, contractId);
     this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
       console.log(res);
     });
@@ -99,8 +73,43 @@ export class MyPresaleComponent implements OnInit {
     this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
       console.log(res);
       this.arr = res;
-      this.arr.push(this.dummyProject);
     });
-    this.arr.push(this.dummyProject);
   }
+
+  pow(decimal: number): number {
+    return Math.pow(10, decimal)
+  }
+
+  toDate(timestamp: number): string{
+    let date = new Date(timestamp * 1000)
+    return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
+  }
+
+  isFailed(model: ProjectPreviewModel): boolean{
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised < model.presale.softCap) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isSuccessFull(model: ProjectPreviewModel): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised > model.presale.softCap) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isOngoing(model: ProjectPreviewModel): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(model.presale.endingTime > currentTimeStamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }

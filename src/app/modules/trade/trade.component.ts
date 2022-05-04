@@ -28,7 +28,8 @@ export class TradeComponent implements OnInit {
   rotate: boolean = false;
   autoSlippage: boolean = true;
   slippage: number = 0;
-  minOutput:number = 0
+  minOutput: number = 0;
+  priceImapct: number = 0;
 
   // my
   assetArr: AssetViewModel[] = [];
@@ -60,25 +61,6 @@ export class TradeComponent implements OnInit {
   blockchainInfo: BlockchainInformation | undefined;
   deployedAppSettings: DeployedAppSettings | undefined;
 
-  blockchainTamplateInfo: any;
-  dummyAlgo: any = {
-    assetId: 0,
-    backing: 0,
-    buyBurn: 0,
-    contractAddress: "",
-    contractId: 0,
-    decimals: 6,
-    deployerWallet: "MICALI",
-    image: "",
-    maxBuy: 0,
-    name: "Algo",
-    risingPriceFloor: 0,
-    sellBurn: 0,
-    sendBurn: 0,
-    totalSupply: 1_000_000_000_000_000,
-    tradingStart: 0,
-    unitName: "Algo"
-  }
   constructor(
     private assetReqService: AssetReqService,
     private fb: FormBuilder,
@@ -106,39 +88,40 @@ export class TradeComponent implements OnInit {
   });
 
   // FORMS
-  // trade
-  tradeTopChanger: string = 'Algo';
-  tradeBottomChanger: string = 'Algo';
-  globalStateOfTrade: string = '';
 
-  ngOnInit() {
+  async ngOnInit(): Promise<void> {
     if (this.slippageForm.get('slippageCheckBox')?.value) {
       this.slippageForm.get('slippageInput')?.disable();
     }
-    this.getBlockchainInfo();
 
+    this.assetArr.push(await this.verseApp.getViewModel())
+    this.assetArr.push(ALGO_VIEWMODEL)
+    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
 
     const wallet = localStorage.getItem('wallet')!;
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+      // data
+
+      // this.assetArr = [...res];
+      // // pushing verse
+      //   // @ts-ignore
+      // this.assetArr.unshift( {name: 'Algo'});
+      // // @ts-ignore
+      // this.assetArr.unshift( {name: 'Verse'});
+      // // pushing algo
+      // this.assetArrSecond = [...res];
+      // // @ts-ignore
+      // this.assetArrSecond.unshift( {name: 'Verse'});
+      //   // @ts-ignore
+      // this.assetArrSecond.unshift( {name: 'Algo'});
+
+      // data
       this.removeVerse(res);
       this.assetArr.push(...res);
       this.assetArrSecond.push(...res);
     });
 
-     this.selectAsset(this.assetArr[0].assetId);
-  }
-
-  async getBlockchainInfo() {
-    this.assetArr.push(await this.verseApp.getViewModel())
-    this.assetArr.push(ALGO_VIEWMODEL)
-    this.assetArrSecond.push(await this.verseApp.getViewModel())
-    this.assetArrSecond.push(ALGO_VIEWMODEL)
-    //
-    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-    this.blockchainTamplateInfo = this.blockchainInfo.algoLiquidity / this.blockchainInfo!.tokenLiquidity
-    // this.assetArr.push(this.dummyAlgo);
-    // this.assetArrSecond.push(this.dummyAlgo);
-    // TODO uncomment for prod
+    this.selectAsset(this.assetArr[0].assetId);
   }
 
   makeReverse() {
@@ -161,24 +144,16 @@ export class TradeComponent implements OnInit {
         this.removeVerse(res);
         this.assetArr.push(await this.verseApp.getViewModel())
         this.assetArr.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation();
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArr.push(...res);
-        // TODO uncomment for prod
-        // this.assetArr.push(this.dummyAlgo);
-        // this.assetArr.push(...res);
-        // this.removeVerse(res);
       });
     } else if (event === false) {
-      this.assetArr = [];
-      // this.assetArrSecond = [];
+      this.assetArr = []
       this.assetArr.push(await this.verseApp.getViewModel())
       this.assetArr.push(ALGO_VIEWMODEL)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-        // this.removeVerse(res)
-        // TODO uncomment for prod
-        // this.assetArr.push(this.dummyAlgo);
         this.removeVerse(res)
         this.assetArr.push(...res);
         this.selectAsset(this.assetArr[0].assetId)
@@ -232,6 +207,7 @@ export class TradeComponent implements OnInit {
         // console.log("Show Verse on top")
       } else {
         // console.log("Show Algo on top")
+        this.calcPriceImpact(true)
       }
     }
 
@@ -458,8 +434,8 @@ export class TradeComponent implements OnInit {
     if (asset.name != 'Verse'){
       accumulatedFees += +environment.VERSE_FEE!
     }
-    // + 100 to give an extra 1% for slippage
-    this.slippage = accumulatedFees + 100
+    // + 200 to give an extra 2% for slippage
+    this.slippage = accumulatedFees + 200
   }
 
   calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
@@ -471,7 +447,32 @@ export class TradeComponent implements OnInit {
     this.minOutput = output
   }
 
-  async buy(wallet: Wallet, amount: number){
+  calcPriceImpact(buy: boolean){
+    let tokenLiq = this.blockchainInfo!.tokenLiquidity;
+    let algoLiq = this.blockchainInfo!.algoLiquidity;
+    let amount = this.topForms.get("topInput")!.value;
+    console.log(amount)
+
+    if(buy){
+      let price = algoLiq / tokenLiq;
+      let buyAmount = price * amount;
+      let newAlgoLiq = algoLiq + amount;
+      let newTokenLiq = tokenLiq - buyAmount;
+      let newPrice = newAlgoLiq / newTokenLiq;
+      this.priceImapct = newPrice / price * 100
+      console.log(this.priceImapct)
+    } else {
+      let price = tokenLiq / algoLiq;
+      let sellAmount = price * amount;
+      let newAlgoLiq = algoLiq - sellAmount;
+      let newTokenLiq = tokenLiq + amount;
+      let newPrice = newAlgoLiq / newTokenLiq;
+      this.priceImapct = (1 - newPrice / price) * 100
+      console.log(this.priceImapct)
+    }
+  }
+
+  async buy(wallet: SessionWallet, amount: number){
     if(this.selectedOption!.name == 'Verse') {
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
     } else {
@@ -483,7 +484,7 @@ export class TradeComponent implements OnInit {
     await this.deployedApp.buy(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
   }
 
-  async sell(wallet: Wallet, amount: number){
+  async sell(wallet: SessionWallet, amount: number){
     let scaledAmount = 0
     let wantedReturn = 0
     if(this.selectedOption!.name == 'Verse') {
@@ -509,7 +510,6 @@ export class TradeComponent implements OnInit {
       return (this.selectedOption!.maxBuy / Math.pow(10, this.selectedOption!.decimals)).toFixed(2)
     }
   }
-
 
   removeVerse(arr: AssetViewModel[]){
     arr.forEach( (item, index) => {

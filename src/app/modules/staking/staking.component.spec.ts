@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StackingComponent } from './stacking.component';
+import { StakingComponent } from './staking.component';
 
-describe('StackingComponent', () => {
-  let component: StackingComponent;
-  let fixture: ComponentFixture<StackingComponent>;
+describe('StakingComponent', () => {
+  let component: StakingComponent;
+  let fixture: ComponentFixture<StakingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StackingComponent ]
+      declarations: [ StakingComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StackingComponent);
+    fixture = TestBed.createComponent(StakingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

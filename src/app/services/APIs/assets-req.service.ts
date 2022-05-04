@@ -38,11 +38,20 @@ export class AssetReqService {
     });
   }
 
-  getAllEntries(wallet: string, assetId: number){
-    const url = `${this.baseUrl}/asset/get/entries/all`;
+  getAllEntriesForWallet(wallet: string, assetId: number){
+    const url = `${this.baseUrl}/asset/get/entries/all/wallet`;
     return this._http.get<TokenEntryViewModel[]>(url, {
       params: {
         wallet: wallet,
+        assetId: +assetId
+      }
+    });
+  }
+
+  getAllEntries(assetId: number){
+    const url = `${this.baseUrl}/asset/get/entries/all`;
+    return this._http.get<TokenEntryViewModel[]>(url, {
+      params: {
         assetId: +assetId
       }
     });

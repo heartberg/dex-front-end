@@ -12,6 +12,7 @@ import {DeployedAppSettings} from "../../../blockchain/platform-conf";
 import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
 import {WalletsConnectService} from "../../../services/wallets-connect.service";
+import { TeamMemberViewModel } from 'src/app/models/TeamMemberView.model';
 
 @Injectable({
   providedIn: 'root',
@@ -72,11 +73,11 @@ export class DeployLb {
       (value: any) => {
         setTimeout(() => {
           if (value) {
-          this.projectId = value
           this.presaleObj.contractId = this.deployerBC.settings.contract_id!
           this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
           this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
-            async (value) => {
+            async (value: any) => {
+              this.projectId = value
               if (true) {
                 of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
@@ -152,11 +153,12 @@ export class DeployLb {
         if (value) {
           setTimeout(() => {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
-              async (value) => {
+              async (value: any) => {
                 if (value) {
                   this.isPending = true;
                   this.isFailed = false;
                   this.finalStepApi = false;
+                  this.projectId = value;
                   of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                     (value: any) => {
                       this.SetMintVars(this.deployerBC.settings);
@@ -257,7 +259,7 @@ export class DeployLb {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
       contractId: 0,
-      projectName: form.get('tokenInfoGroup.tokenName')?.value,
+      projectName: form.get('projectName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage').value, // ask
       creatorWallet: wallet!,
       roadmap: form.get('addRoadMapOptionGroup.roadmapDescription')?.value,
@@ -293,7 +295,7 @@ export class DeployLb {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
       contractId: 0,
-      projectName: form.get('tokenInfoGroup.tokenName')?.value,
+      projectName: form.get('projectName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       creatorWallet: wallet!,
       roadmap: form.get('addRoadMapOptionGroup.roadmapDescription')?.value,
@@ -323,7 +325,7 @@ export class DeployLb {
       decimals: +form.get('tokenInfoGroup.decimals')?.value,
       name: form.get('tokenInfoGroup.tokenName')?.value,
       unitName: form.get('tokenInfoGroup.unitName')?.value,
-      totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value,
+      totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
       url: form.get('tokenInfoGroup.URL')?.value,
       maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
       tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
@@ -336,4 +338,18 @@ export class DeployLb {
       deployerWallet: localStorage.getItem('wallet')!,
     }
   }
+
+  mapTeamMembers(members: any[]) {
+    let mapped: TeamMemberViewModel[] = []
+    members.forEach(element => {
+      let member: TeamMemberViewModel = {
+        image: element.image,
+        name: element.name,
+        role: element.role,
+        social: element.social
+      }
+      mapped.push(member)
+    });
+  }
+
 }

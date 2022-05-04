@@ -74,7 +74,7 @@
                 <div class="column">
                   <div class="data-box">
                     <span class="property">Marketcap</span>
-                    <span class="value">{{ item[1].algoLiquidity / item[1].tokenLiquidity * item[1].totalsupply}}</span>
+                    <span class="value">{{ getPrice(item) * item[1].totalsupply}}</span>
                   </div>
                   <div class="data-box">
                     <span class="property">Remaining Supply</span>
@@ -84,7 +84,7 @@
                 <div class="column">
                   <div class="data-box">
                     <span class="property">Price per Token</span>
-                    <span class="value"> {{ (item[1].algoLiquidity / item[1].tokenLiquidity).toFixed(6) }} Algo</span>
+                    <span class="value"> {{ (getPrice(item)).toFixed(6) }} Algo</span>
                   </div>
                   <div class="data-box">
                     <span class="property">Backing</span>

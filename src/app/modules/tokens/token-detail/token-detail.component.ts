@@ -54,4 +54,18 @@ export class TokenDetailComponent implements OnInit {
   pow(decimal: number){
     return Math.pow(10, decimal)
   }
+
+  getPrice() {
+    let diff = 0
+    let price = this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity
+    if(this.projectData.asset.decimals > 6) {
+      diff = this.projectData.asset.decimals - 6
+      price = price * Math.pow(10, diff)
+
+    } else if(this.projectData.asset.decimals < 6) {
+      diff = 6 - this.projectData.asset.decimals
+      price = price / Math.pow(10, diff)
+    }
+    return price
+  }
 }

@@ -43,20 +43,20 @@
           <div class="avatar-info">
             <div class="data-box">
               <span class="property">Price</span>
-              <span class="value">{{ (this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity).toFixed(6)}} Algo/Token</span>
+              <span class="value">{{ getPrice().toFixed(6)}} Algo/Token</span>
             </div>
             <div class="data-box">
               <span class="property">Marketcap</span>
-              <span class="value">{{(this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity) * blockchainData.totalsupply}} Algo</span>
+              <span class="value">{{(getPrice() * blockchainData.totalsupply).toFixed(2)}} Algo</span>
             </div>
             <div class="data-box">
               <span class="property">Remaining Supply</span>
-              <span class="value">{{ blockchainData.totalsupply }}</span>
+              <span class="value">{{ blockchainData.totalsupply.toFixed(2) }}</span>
             </div>
             <div class="data-box">
               <span class="property">Burned</span>
-              <span class="value">{{((projectData.asset.totalSupply - blockchainData.totalsupply) / pow(projectData.asset.decimals)).toFixed(2)}} Token</span>
-              <span class="value">Value: {{ ((projectData.asset.totalSupply - blockchainData.totalsupply) * this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity).toFixed(2)}} Algo</span>
+              <span class="value">{{((projectData.asset.totalSupply / pow(projectData.asset.decimals) - blockchainData.totalsupply)).toFixed(2)}} Token</span>
+              <span class="value">Value: {{ ((projectData.asset.totalSupply / pow(projectData.asset.decimals) - blockchainData.totalsupply) * getPrice()).toFixed(2)}} Algo</span>
             </div>
             <div class="data-box">
               <span class="property">Backing</span>
@@ -122,7 +122,7 @@
                 </div>
                 <div class="d-flex">
                   <h6>Initial Token Supply:</h6>
-                  <span>{{ projectData!.asset!.totalSupply}}</span>
+                  <span>{{(projectData!.asset!.totalSupply / pow(projectData!.asset!.decimals)).toFixed(projectData!.asset!.decimals)}}</span>
                 </div>
               </div>
               <div class="token-second">

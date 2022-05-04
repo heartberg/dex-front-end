@@ -30,11 +30,11 @@
                       <div class="left-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                          <span>{{item?.presale?.startingTime}}</span>
+                          <span>{{toDate(item.presale.startingTime)}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                          <span>{{item?.presale?.endingTime}}</span>
+                          <span>{{toDate(item.presale.endingTime)}}</span>
                         </div>
                       </div>
                       <!-- <div class="d-flex flex-column align-items-start right-values">
@@ -57,7 +57,7 @@
                         </div>
                         <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%"
+                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{(item.presale.totalRaised /item.presale.hardCap).toFixed(0)}}%"
                               aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
@@ -67,7 +67,7 @@
                               Raised:
                             </h6>
                             <span style="margin-left: 6px">
-                              {{item?.presale?.totalRaised}}
+                              {{(item.presale.totalRaised / pow(6)).toFixed(0)}}
                             </span>
                           </div>
                           <div class="d-flex align-items-center">
@@ -75,7 +75,7 @@
                               Max:
                             </h6>
                             <span style="margin-left: 6px">
-                              {{item?.presale?.hardCap}}
+                              {{(item.presale.hardCap / pow(6)).toFixed(0)}}
                             </span>
                           </div>
                         </div>
@@ -94,7 +94,7 @@
                   </ng-container>
                 </div>
                 <div class="unset-pd">
-                  <button (click)="removeMaxBuy(item.asset.assetId)" class="bottom-btn btn-secondary-costum">
+                  <button (click)="removeMaxBuy(item.asset.assetId, item.asset.contractId)" class="bottom-btn btn-secondary-costum">
                     Remove Max Buy
                   </button>
                 </div>
@@ -128,11 +128,11 @@
                       <div class="left-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                          <span>{{item?.presale?.startingTime}}</span>
+                          <span>{{toDate(item.presale.startingTime)}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                          <span>{{item?.presale?.endingTime}}</span>
+                          <span>{{toDate(item.presale.endingTime)}}</span>
                         </div>
                       </div>
                       <!-- <div class="d-flex flex-column align-items-start right-values">
@@ -155,7 +155,7 @@
                         </div>
                         <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%"
+                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{(item.presale.totalRaised /item.presale.hardCap).toFixed(0)}}%"
                               aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
@@ -165,7 +165,7 @@
                               Raised:
                             </h6>
                             <span style="margin-left: 6px">
-                              {{item?.presale?.totalRaised}}
+                              {{(item.presale.totalRaised / pow(6)).toFixed(0)}}
                             </span>
                           </div>
                           <div class="d-flex align-items-center">
@@ -173,7 +173,7 @@
                               Max:
                             </h6>
                             <span style="margin-left: 6px">
-                              {{item?.presale?.hardCap}}
+                              {{(item.presale.hardCap / pow(6)).toFixed(0)}}
                             </span>
                           </div>
                         </div>
@@ -238,11 +238,11 @@
                       <div class="left-values">
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Starts:</h4>
-                          <span>{{item?.presale?.startingTime}}</span>
+                          <span>{{toDate(item.presale.startingTime)}}</span>
                         </div>
                         <div class="d-flex align-items-center">
                           <h4 style="margin-right: 5px; color: #81007F">Ends:</h4>
-                          <span>{{item?.presale?.endingTime}}</span>
+                          <span>{{toDate(item.presale.endingTime)}}</span>
                         </div>
                       </div>
                       <!-- <div class="d-flex flex-column align-items-start right-values">
@@ -265,7 +265,7 @@
                         </div>
                         <div class="progress-progress-bar" style="height: 15px; width: 100%; margin: 4px 0px;">
                           <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%"
+                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{(item.presale.totalRaised /item.presale.hardCap).toFixed(0)}}%"
                               aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
@@ -275,7 +275,7 @@
                               Raised:
                             </h6>
                             <span style="margin-left: 6px">
-                              {{item?.presale?.totalRaised}}
+                              {{(item.presale.totalRaised / pow(6)).toFixed(0)}}
                             </span>
                           </div>
                           <div class="d-flex align-items-center">
@@ -283,7 +283,7 @@
                               Max:
                             </h6>
                             <span style="margin-left: 6px">
-                              {{item?.presale?.hardCap}}
+                              {{(item.presale.hardCap / pow(6)).toFixed(0)}}
                             </span>
                           </div>
                         </div>
