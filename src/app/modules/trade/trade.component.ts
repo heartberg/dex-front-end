@@ -16,6 +16,7 @@ import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import {SessionWallet, Wallet} from 'algorand-session-wallet';
 import { env } from 'process';
+import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class TradeComponent implements OnInit {
   selectedOption: AssetViewModel | undefined;
 
   isOptedIn: boolean = true;
-
+  isShowAll: boolean = true;
   isPopUpOpen: boolean = false;
 
   @ViewChild('checkBox', { static: false })
@@ -60,6 +61,8 @@ export class TradeComponent implements OnInit {
 
   blockchainInfo: BlockchainInformation | undefined;
   deployedAppSettings: DeployedAppSettings | undefined;
+
+  buysAndSells: TokenEntryViewModel[] | undefined;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -232,8 +235,8 @@ export class TradeComponent implements OnInit {
         this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
         this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
       }
+      this.getAllBuysAndSells()
       this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
-
       console.log(this.selectedOption)
       console.log(this.blockchainInfo)
     }
@@ -544,6 +547,27 @@ export class TradeComponent implements OnInit {
       price = price / Math.pow(10, diff)
     }
     return price
+  }
+
+  getAllBuysAndSells(){
+    this.buysAndSells = []
+    if(this.isShowAll) {
+      this.assetReqService.getAllEntries(this.selectedOption!.assetId).subscribe(
+        (res) => {
+          console.log(res)
+          this.buysAndSells = res
+        }
+      )
+    } else {
+      const wallet = localStorage.getItem('wallet')!
+      this.assetReqService.getAllEntriesForWallet(wallet, this.selectedOption!.assetId).subscribe(
+        (res) => {
+          console.log(res)
+          this.buysAndSells = res
+        }
+      )
+    }
+
   }
 
 }

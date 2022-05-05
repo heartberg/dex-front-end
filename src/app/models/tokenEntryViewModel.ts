@@ -1,6 +1,6 @@
 export interface TokenEntryViewModel {
     assetId: number
-    userWallet: number
+    userWallet: string
     price: number,
     amount: number,
     buy: boolean,
