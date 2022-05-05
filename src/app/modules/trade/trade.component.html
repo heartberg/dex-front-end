@@ -138,7 +138,7 @@
             >
               <span class="thin-gray-text">Spot Price:</span>
               <span style="margin-left: 4px" class="amount">{{
-                getPrice()?.toFixed(6)
+                spotPrice.toFixed(6)
               }} Algo</span>
             </div>
             <input
@@ -224,7 +224,7 @@
           width: 160px;
           font-size: 20px;
         "
-      (click)="optIn()">
+      (click)="optInAsset()">
         Opt In
       </button>
     </div>
@@ -244,12 +244,13 @@
 <!--          you transactions checkbox-->
         </div>
       <ng-container>
-        <div class="wrap-tab" style="display: unset" [class.d-none]="transactionChecker">
+        <div class="wrap-tab" style="display: unset" *ngIf="!transactionChecker">
           <table class="table table-dark">
             <thead>
             <tr>
               <th scope="col">Date</th>
               <th scope="col">Asset</th>
+              <th scope="col">Type</th>
               <th scope="col">Wallet</th>
               <th scope="col">Amount</th>
               <th scope="col">Price</th>
@@ -258,8 +259,14 @@
             <tbody>
             <div *ngFor="let item of buysAndSells">
               <tr>
-                <td>{{item.date}}</td>
+                <td>{{toDate(item.date)}}</td>
                 <td>{{selectedOption?.name}} - {{item.assetId}}</td>
+                <div *ngIf="item.buy">
+                  <td>Buy</td>
+                </div>
+                <div *ngIf="!item.buy">
+                  <td>Sell</td>
+                </div>
                 <td>{{item.userWallet.slice(0, 8)}}...</td>
                 <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
                 <td>{{item.price}}</td>
@@ -271,12 +278,13 @@
       </ng-container>
     <!--      your transactions table-->
       <ng-container>
-        <div class="wrap-tab" style="display: unset" [class.d-block]="transactionChecker">
+        <div class="wrap-tab" style="display: unset" *ngIf="transactionChecker">
           <table class="table table-dark">
             <thead>
             <tr>
               <th scope="col">Date</th>
               <th scope="col">Asset</th>
+              <th scope="col">Type</th>
               <th scope="col">Wallet</th>
               <th scope="col">Amount</th>
               <th scope="col">Price</th>
@@ -285,8 +293,14 @@
             <tbody>
             <div *ngFor="let item of buysAndSells">
               <tr>
-                <td>{{item.date}}</td>
+                <td>{{toDate(item.date)}}</td>
                 <td>{{selectedOption?.name}} - {{item.assetId}}</td>
+                <div *ngIf="item.buy">
+                  <td>Buy</td>
+                </div>
+                <div *ngIf="!item.buy">
+                  <td>Sell</td>
+                </div>
                 <td>{{item.userWallet.slice(0, 8)}}...</td>
                 <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
                 <td>{{item.price}}</td>
@@ -305,7 +319,7 @@
     <div class="selection-data">
       <div class="propery-pair">
         <span>Marketcap:</span>
-        <span class="thin-gray-text">{{ (getPrice() * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
+        <span class="thin-gray-text">{{ (spotPrice * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
       </div>
       <div class="propery-pair">
         <span>Total Supply:</span>
