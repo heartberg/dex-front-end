@@ -17,6 +17,7 @@ import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import {SessionWallet, Wallet} from 'algorand-session-wallet';
 import { env } from 'process';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 
 @Component({
@@ -64,8 +65,12 @@ export class TradeComponent implements OnInit {
 
   buysAndSells: TokenEntryViewModel[] | undefined;
 
+  topInput: number = 0;
+  bottomInput: number = 0;
+
   constructor(
     private assetReqService: AssetReqService,
+    private walletService: WalletsConnectService,
     private fb: FormBuilder,
     private deployedApp: DeployedApp,
     private verseApp: VerseApp
@@ -97,34 +102,26 @@ export class TradeComponent implements OnInit {
       this.slippageForm.get('slippageInput')?.disable();
     }
 
-    this.assetArr.push(await this.verseApp.getViewModel())
-    this.assetArr.push(ALGO_VIEWMODEL)
-    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    if(localStorage.getItem('wallet')){
 
-    const wallet = localStorage.getItem('wallet')!;
-    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-      // data
 
-      // this.assetArr = [...res];
-      // // pushing verse
-      //   // @ts-ignore
-      // this.assetArr.unshift( {name: 'Algo'});
-      // // @ts-ignore
-      // this.assetArr.unshift( {name: 'Verse'});
-      // // pushing algo
-      // this.assetArrSecond = [...res];
-      // // @ts-ignore
-      // this.assetArrSecond.unshift( {name: 'Verse'});
-      //   // @ts-ignore
-      // this.assetArrSecond.unshift( {name: 'Algo'});
+      this.assetArr.push(await this.verseApp.getViewModel())
+      this.assetArr.push(ALGO_VIEWMODEL)
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+  
+      const wallet = localStorage.getItem('wallet')!;
+      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+        this.removeVerse(res);
+        this.assetArr.push(...res);
+        this.assetArrSecond.push(...res);
+      });
+  
+      this.selectAsset(this.assetArr[0].assetId);
 
-      // data
-      this.removeVerse(res);
-      this.assetArr.push(...res);
-      this.assetArrSecond.push(...res);
-    });
+    } else {
+      console.log("connect wallet!")
+    }
 
-    this.selectAsset(this.assetArr[0].assetId);
   }
 
   makeReverse() {
@@ -520,15 +517,20 @@ export class TradeComponent implements OnInit {
     });
  }
   // swap && optIn
-  swap() {
+  async swap() {
     console.log(this.changeTop, this.changeBottom);
-    if (this.changeTop) {
-      // buy
-      console.log('buy')
-    } else {
-      // sel
-      console.log('sell')
+    const wallet = this.walletService.sessionWallet;
+    if(wallet){
+      if (this.changeTop) {
+        await this.buy(wallet, this.topInput)
+        console.log('buy')
+      } else {
+        // sel
+        await this.sell(wallet, this.topInput)
+        console.log('sell')
+      }
     }
+
   }
 
   optIn() {
