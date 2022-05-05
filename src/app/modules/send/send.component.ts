@@ -16,7 +16,6 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
 export class SendComponent implements OnInit {
   addressNotOptedIn: boolean = false;
   invalidAddress: boolean = false;
-  assetArr: AssetViewModel[] = [];
   walletUsual = localStorage.getItem('wallet')
   wallet: SessionWallet | undefined;
   tokens: AssetViewModel[] = []
@@ -67,6 +66,7 @@ export class SendComponent implements OnInit {
   getValueFromDropDown(event: string, number: number) {
     console.log(event);
   }
+
   async ngOnInit() {
     this.wallet = this.walletService.sessionWallet!;
     if(this.wallet) {
