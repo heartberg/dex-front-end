@@ -546,6 +546,7 @@ export class DeployedApp {
     let accountInfo: any = await client.accountInformation(wallet).do()
     let assetInfo: any = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
     console.log(appAccInfo)
+
     let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
       return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
     })
@@ -557,7 +558,7 @@ export class DeployedApp {
     let algoLiquidity = globalState[StateKeys.algo_liq_key]['i'] / 1_000_000
     let tokenLiquidity = globalState[StateKeys.token_liq_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
     let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
-    let totalBacking = (appAccInfo['amount'] - algoLiquidity * 1_000_000 + globalState[StateKeys.total_borrowed_key]['i']) / 1_000_000
+    let totalBacking = (appAccInfo['amount'] - appAccInfo['min-balance'] - algoLiquidity * 1_000_000 + globalState[StateKeys.total_borrowed_key]['i']) / 1_000_000
     let marketCap = algoLiquidity / tokenLiquidity * totalSupply
     let price = algoLiquidity / tokenLiquidity
     let burned = globalState[StateKeys.burned_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
