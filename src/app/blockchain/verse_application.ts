@@ -14,7 +14,7 @@ import {
     BlockchainInformation,
     platform_settings as ps
 } from "./platform-conf";
-import { SessionWallet, Wallet } from "algorand-session-wallet"
+import { SessionWallet } from "algorand-session-wallet"
 import { encode } from "querystring";
 import { sign } from "crypto";
 import { toBase64String } from "@angular/compiler/src/output/source_map";
@@ -124,7 +124,7 @@ export class VerseApp {
     constructor(){
     }
 
-    async optIn(wallet: Wallet): Promise<boolean> {
+    async optIn(wallet: SessionWallet): Promise<boolean> {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
@@ -135,7 +135,7 @@ export class VerseApp {
         return result  
     }
 
-    async optOut(wallet: Wallet): Promise<boolean> {
+    async optOut(wallet: SessionWallet): Promise<boolean> {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
@@ -146,7 +146,7 @@ export class VerseApp {
         return result  
     }
 
-    async optInAsset(wallet: Wallet): Promise<any> {
+    async optInAsset(wallet: SessionWallet): Promise<any> {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
         const optin = new Transaction(get_asa_optin_txn(suggested, addr, ps.platform.verse_asset_id))
@@ -156,7 +156,7 @@ export class VerseApp {
         return result
     }
 
-    async buy(wallet: Wallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
+    async buy(wallet: SessionWallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
@@ -178,7 +178,7 @@ export class VerseApp {
         return result
     }
 
-    async sell(wallet: Wallet , tokenAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
+    async sell(wallet: SessionWallet , tokenAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
@@ -195,7 +195,7 @@ export class VerseApp {
     }
 
 
-    async transfer(wallet: Wallet , tokenAmount: bigint, to: string): Promise<boolean> {
+    async transfer(wallet: SessionWallet , tokenAmount: bigint, to: string): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
@@ -212,7 +212,7 @@ export class VerseApp {
     }
 
 
-    async getBacking(wallet: Wallet , tokenAmount: bigint): Promise<boolean> {
+    async getBacking(wallet: SessionWallet , tokenAmount: bigint): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
@@ -239,7 +239,7 @@ export class VerseApp {
     }
 
 
-    async borrow(wallet: Wallet , tokenAmount: bigint, assetIds: number[]): Promise<boolean> {
+    async borrow(wallet: SessionWallet , tokenAmount: bigint, assetIds: number[]): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
@@ -257,7 +257,7 @@ export class VerseApp {
         return result
     }
 
-    async repay(wallet: Wallet , algoAmount: bigint, assetIds: number[], assetAmount: number[]): Promise<boolean> {
+    async repay(wallet: SessionWallet , algoAmount: bigint, assetIds: number[], assetAmount: number[]): Promise<boolean> {
         if(assetAmount.length != assetIds.length) return false
 
         const suggested = await getSuggested(10)
@@ -291,7 +291,7 @@ export class VerseApp {
         return result
     }
 
-    async stake(wallet: Wallet, amount: number): Promise<boolean> {
+    async stake(wallet: SessionWallet, amount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
@@ -314,7 +314,7 @@ export class VerseApp {
         return result
     }
 
-    async withdraw(wallet: Wallet, amount: number): Promise<boolean> {
+    async withdraw(wallet: SessionWallet, amount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
         

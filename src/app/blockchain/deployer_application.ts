@@ -13,7 +13,7 @@ import {
   DeployedAppSettings,
   platform_settings as ps
 } from "./platform-conf";
-import { SessionWallet, Wallet } from "algorand-session-wallet"
+import { SessionWallet } from "algorand-session-wallet"
 import { Injectable } from "@angular/core";
 import { compileProgram, getTransactionParams, waitForTransaction } from "../services/utils.algo";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
@@ -528,11 +528,10 @@ export class DeployedApp {
     }
   }
 
-  async optInAsset(wallet: SessionWallet, settings: DeployedAppSettings) {
-    this.settings = settings
+  async optInAsset(wallet: SessionWallet, assetId: number) {
     const suggested = await getSuggested(10)
     const addr = wallet.getDefaultAccount()
-    const optin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.asset_id!))
+    const optin = new Transaction(get_asa_optin_txn(suggested, addr, assetId))
     const [signed] = await wallet.signTxn([optin])
     const result = await sendWait([signed])
 

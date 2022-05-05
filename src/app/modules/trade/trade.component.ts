@@ -414,13 +414,15 @@ export class TradeComponent implements OnInit {
   }
 
   optInAsset() {
-    // TODO: need real wallet object here for signing
-    const wallet = localStorage.getItem('wallet')!;
-    if(this.selectedOption?.name == 'Verse'){
-      //this.verseApp.optInAsset(wallet)
-    } else {
-      //this.deployedApp.optInAsset(wallet, this.deployedAppSettings)
+    const wallet = this.walletService.sessionWallet;
+    if(wallet){
+      if(this.selectedOption?.name == 'Verse'){
+        this.verseApp.optInAsset(wallet)
+      } else {
+        this.deployedApp.optInAsset(wallet, this.selectedOption!.assetId)
+      }
     }
+
   }
 
   getAutoSlippage(asset: AssetViewModel, buy: boolean) {
