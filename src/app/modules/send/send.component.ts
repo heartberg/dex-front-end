@@ -53,13 +53,13 @@ export class SendComponent implements OnInit {
 
   handleCheckboxUpdateSecond(event: boolean) {
     if (event === true) {
-      this.assetService.getAssetPairs(true, '', this.wallet!).subscribe(async (res) => {
-        this.assetArr.push(...res);
+      this.assetService.getAssetPairs(true, '', this.walletUsual!).subscribe(async (res) => {
+        this.tokens.push(...res);
       });
     } else if (event === false) {
-      this.assetService.getAssetPairs(false, '', this.wallet!).subscribe((res) => {
+      this.assetService.getAssetPairs(false, '', this.walletUsual!).subscribe((res) => {
         // TODO uncomment for prod
-        this.assetArr.push(...res);
+        this.tokens.push(...res);
       });
     }
   }

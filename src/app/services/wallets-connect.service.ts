@@ -46,6 +46,7 @@ export class WalletsConnectService {
 
   disconnect(): void{
     this.sessionWallet!.disconnect()
+    this.sessionWallet = undefined;
     //setConnected(false)
     this.myAlgoAddress = []
   }

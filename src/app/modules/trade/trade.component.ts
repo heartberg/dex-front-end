@@ -14,7 +14,7 @@ import { ALGO_VIEWMODEL, BlockchainInformation, DeployedAppSettings, platform_se
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
-import { Wallet } from 'algorand-session-wallet';
+import {SessionWallet, Wallet} from 'algorand-session-wallet';
 import { env } from 'process';
 
 
@@ -531,4 +531,19 @@ export class TradeComponent implements OnInit {
   optIn() {
 
   }
+
+  getPrice() {
+    let diff = 0
+    let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
+    if(this.selectedOption!.decimals > 6) {
+      diff = this.selectedOption!.decimals - 6
+      price = price * Math.pow(10, diff)
+
+    } else if(this.selectedOption!.decimals < 6) {
+      diff = 6 - this.selectedOption!.decimals
+      price = price / Math.pow(10, diff)
+    }
+    return price
+  }
+
 }

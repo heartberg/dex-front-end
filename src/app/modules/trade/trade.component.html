@@ -138,7 +138,7 @@
             >
               <span class="thin-gray-text">Spot Price:</span>
               <span style="margin-left: 4px" class="amount">{{
-                blockchainTamplateInfo?.toFixed(6)
+                getPrice()?.toFixed(6)
               }} Algo</span>
             </div>
             <input
@@ -373,7 +373,7 @@
     <div class="selection-data">
       <div class="propery-pair">
         <span>Marketcap:</span>
-        <span class="thin-gray-text">{{ (blockchainInfo!.algoLiquidity / blockchainInfo!.tokenLiquidity * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
+        <span class="thin-gray-text">{{ (getPrice() * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
       </div>
       <div class="propery-pair">
         <span>Total Supply:</span>
@@ -381,7 +381,7 @@
       </div>
       <div class="propery-pair">
         <span>Algo Liquidity:</span>
-        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1_000_000 }} Algo</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1000000 }} Algo</span>
       </div>
       <div class="propery-pair">
         <span>Token Liquidity:</span>
