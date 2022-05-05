@@ -63,6 +63,14 @@ export class TradeComponent implements OnInit {
   deployedAppSettings: DeployedAppSettings | undefined;
 
   buysAndSells: TokenEntryViewModel[] | undefined;
+  // your transactions
+  chechboxHandler: number = 1;
+  transactionChecker: boolean = false;
+  // your transactions
+
+  // rotate checker
+  trackReverser: number = 1;
+  // rotate checker
 
   constructor(
     private assetReqService: AssetReqService,
@@ -128,6 +136,12 @@ export class TradeComponent implements OnInit {
   }
 
   makeReverse() {
+    this.trackReverser++;
+    if (this.trackReverser % 2 === 0) {
+      // top input is on bottom
+    } else {
+      // normal statement
+    }
     this.rotate = !this.rotate;
   }
 
@@ -570,4 +584,12 @@ export class TradeComponent implements OnInit {
 
   }
 
+  handleCheckBox() {
+    this.chechboxHandler ++;
+    if (this.chechboxHandler % 2 === 0) {
+      this.transactionChecker = true;
+    } else {
+      this.transactionChecker = false;
+    }
+  }
 }

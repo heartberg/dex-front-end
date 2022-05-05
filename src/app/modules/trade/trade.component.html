@@ -229,32 +229,74 @@
       </button>
     </div>
 <!--    // table-->
-    <div class="table" >
+    <div class="table">
         <h3 class="color-violet" style="text-align: center">Transactions</h3>
-      <div class="wrap-tab" style="display: unset">
-        <table class="table table-dark">
-          <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Asset</th>
-            <th scope="col">Wallet</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Price</th>
-          </tr>
-          </thead>
-          <tbody>
-            <div *ngFor="let item of buysAndSells">
+        <div class="d-flex justify-content-center align-items-center" style="margin-top: 30px">
+<!--        your transactions chechbox-->
+          <span style="margin-right: 20px">Your Transactions</span>
+          <input
+            (click)="handleCheckBox()"
+            type="checkbox"
+            name="check"
+            id="check"
+            style="width: 16px; height: 16px; cursor: pointer"
+          />
+<!--          you transactions checkbox-->
+        </div>
+      <ng-container>
+        <div class="wrap-tab" style="display: unset" [class.d-none]="transactionChecker">
+          <table class="table table-dark">
+            <thead>
             <tr>
-              <td>{{item.date}}</td>
-              <td>{{selectedOption?.name}} - {{item.assetId}}</td>
-              <td>{{item.userWallet.slice(0, 8)}}...</td>
-              <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
-              <td>{{item.price}}</td>
+              <th scope="col">Date</th>
+              <th scope="col">Asset</th>
+              <th scope="col">Wallet</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Price</th>
             </tr>
-          </div>
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+            <div *ngFor="let item of buysAndSells">
+              <tr>
+                <td>{{item.date}}</td>
+                <td>{{selectedOption?.name}} - {{item.assetId}}</td>
+                <td>{{item.userWallet.slice(0, 8)}}...</td>
+                <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
+                <td>{{item.price}}</td>
+              </tr>
+            </div>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    <!--      your transactions table-->
+      <ng-container>
+        <div class="wrap-tab" style="display: unset" [class.d-block]="transactionChecker">
+          <table class="table table-dark">
+            <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Asset</th>
+              <th scope="col">Wallet</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <div *ngFor="let item of buysAndSells">
+              <tr>
+                <td>{{item.date}}</td>
+                <td>{{selectedOption?.name}} - {{item.assetId}}</td>
+                <td>{{item.userWallet.slice(0, 8)}}...</td>
+                <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
+                <td>{{item.price}}</td>
+              </tr>
+            </div>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+      <!--      your transactions table-->
     </div>
 <!--    // table-->
   </div>
