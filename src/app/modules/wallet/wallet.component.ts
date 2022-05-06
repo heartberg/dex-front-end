@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { getIndexer } from 'src/app/blockchain/algorand';
 import { TrackComponent } from '../track/track.component';
 
 @Component({
@@ -16,7 +17,14 @@ export class WalletComponent implements OnInit {
     private route: ActivatedRoute,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    const wallet = localStorage.getItem("wallet");
+    if(wallet){
+      console.log(wallet)
+      let indexer = getIndexer()
+      console.log(await indexer.makeHealthCheck().do())
+      console.log("indexer checked!")
+    }
     if (this.route.snapshot.routeConfig?.path === 'entries') {
       this.activeSecond();
     } else if (this.route.snapshot.routeConfig?.path === 'wallet') {
