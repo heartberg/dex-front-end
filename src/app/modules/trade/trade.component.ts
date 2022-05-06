@@ -18,6 +18,7 @@ import {SessionWallet, Wallet} from 'algorand-session-wallet';
 import { env } from 'process';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import { min } from 'rxjs/operators';
 
 
 @Component({
@@ -546,12 +547,13 @@ export class TradeComponent implements OnInit {
       if (this.changeTop) {
         await this.buy(wallet, this.topInput)
         let tokenEntryViewModel: TokenEntryViewModel = {
-          amount: this.topInput,
+          tokenAmount: this.bottomInput,
+          algoAmount: this.topInput,
           assetId: this.selectedOption!.assetId,
           buy: true,
           price: this.spotPrice,
           userWallet: wallet.getDefaultAccount(),
-          date: new Date()
+          date: 0
         }
         this.assetReqService.postBuy(tokenEntryViewModel);
         console.log('buy')
@@ -560,14 +562,15 @@ export class TradeComponent implements OnInit {
         await this.sell(wallet, this.topInput)
         console.log('sell')
         let tokenEntryViewModel: TokenEntryViewModel = {
-          amount: this.topInput,
+          tokenAmount: this.topInput,
+          algoAmount: this.bottomInput,
           assetId: this.selectedOption!.assetId,
           buy: false,
           price: this.spotPrice,
           userWallet: wallet.getDefaultAccount(),
-          date: new Date()
+          date: 0
         }
-        this.assetReqService.postBuy(tokenEntryViewModel);
+        this.assetReqService.postSell(tokenEntryViewModel);
       }
     }
   }
@@ -619,9 +622,49 @@ export class TradeComponent implements OnInit {
     this.getAllBuysAndSells()
   }
 
-  toDate(dateObj: Date): string{
-    let date = new Date(dateObj)
-    let dateString = date.toLocaleString()
-    return dateString
+  toDate(date: number): string{
+    let now = Math.floor(new Date().getTime() / 1000)
+
+    // get total seconds between the times
+    var delta = Math.abs(now - date);
+
+    // calculate (and subtract) whole days
+    var days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    // calculate (and subtract) whole hours
+    var hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    // calculate (and subtract) whole minutes
+    var minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    // what's left is seconds
+    var seconds = delta % 60;  // in theory the modulus is not required
+
+    if(days > 0) {
+      if(days == 1){
+        return days.toString() + " day ago";
+      } else {
+        return days.toString() + " days ago";
+      }
+    } else if(hours > 0) {
+      if(hours == 1) {
+        return hours.toString() + " hour ago";
+      } else {
+        return hours.toString() + "hours ago";
+      }
+    } else if(minutes > 0) {
+      if(minutes == 1){
+        return "a minute ago"
+      } else {
+        return minutes.toString() + " minutes ago"
+      }
+    } else if(seconds > 0) {
+      return "Some seconds ago"
+    } else {
+      return "Some time ago"
+    }
   }
 }

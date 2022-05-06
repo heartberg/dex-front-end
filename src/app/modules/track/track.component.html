@@ -38,10 +38,12 @@
                 <div class="data-box">
                   <span class="property">Average Buy Price</span>
                   <span class="value">{{item.price.avgBuyEntry.toFixed(6)}} Algo/Token ({{item.price.buyChange}}%)</span>
+                  <span class="value">For {{item.price.algoBuyAmount.toFixed(6)}} Algo</span>
                 </div>
                 <div class="data-box">
                   <span class="property">Average Sell Price</span>
                   <span class="value">{{item.price.avgSellEntry.toFixed(6)}} Algo/Token ({{item.price.sellChange}}%)</span>
+                  <span class="value">For {{item.price.algoSellAmount.toFixed(6)}} Algo</span>
                 </div>
               </div>
               <div class="column">
@@ -84,7 +86,7 @@
                 </div>
                 <div class="column">
                   <div class="data-box">
-                    <span class="property">holders</span>
+                    <span class="property">Holders</span>
                     <span class="value">{{item.blockchainTrackInfo.holders}} Address</span>
                   </div>
                   <div class="data-box">

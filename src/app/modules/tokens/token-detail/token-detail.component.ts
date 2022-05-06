@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf'; 
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { VerseApp } from 'src/app/blockchain/verse_application';
 
 @Component({
   selector: 'app-token-detail',
@@ -22,7 +24,8 @@ export class TokenDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projectsReqService: projectReqService,
-    private deployedApp: DeployedApp
+    private deployedApp: DeployedApp,
+    private verseApp: VerseApp
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +35,11 @@ export class TokenDetailComponent implements OnInit {
       .subscribe(async (res) => {
         this.projectData = res;
         console.log(this.projectData)
-        this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.contractId);
+        if(this.projectData.asset.assetId == ps.platform.verse_asset_id) {
+          this.blockchainData = await this.verseApp.getBlockchainInformation();
+        } else {
+          this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.contractId);
+        }
       });
   }
 

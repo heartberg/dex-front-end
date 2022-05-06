@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TrackComponent } from '../track/track.component';
 
 @Component({
   selector: 'app-wallet',
@@ -9,9 +10,10 @@ import { ActivatedRoute } from '@angular/router';
 export class WalletComponent implements OnInit {
   public isActiveFirst: boolean = false;
   public isActiveSecond: boolean = false;
+  private totalAlgoValue = 0;
 
   constructor(
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {

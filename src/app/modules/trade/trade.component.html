@@ -248,28 +248,31 @@
           <table class="table table-dark">
             <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Asset</th>
               <th scope="col">Type</th>
+              <th scope="col">Amount {{selectedOption?.name}}</th>
+              <th scope="col">Amount Algo</th>
+              <th scope="col">Price (Algo/Token)</th>
               <th scope="col">Wallet</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Price</th>
+              <th scope="col">Time</th>
             </tr>
             </thead>
             <tbody>
+              
             <div *ngFor="let item of buysAndSells">
               <tr>
-                <td>{{toDate(item.date)}}</td>
-                <td>{{selectedOption?.name}} - {{item.assetId}}</td>
                 <div *ngIf="item.buy">
                   <td>Buy</td>
                 </div>
                 <div *ngIf="!item.buy">
                   <td>Sell</td>
                 </div>
-                <td>{{item.userWallet.slice(0, 8)}}...</td>
-                <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
-                <td>{{item.price}}</td>
+                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+                <td>{{item.price.toFixed(6)}}</td>
+                <td>
+                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+                </td>
+                <td>{{toDate(item.date)}}</td>
               </tr>
             </div>
             </tbody>
@@ -282,28 +285,30 @@
           <table class="table table-dark">
             <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Asset</th>
               <th scope="col">Type</th>
+              <th scope="col">Amount {{selectedOption?.name}}</th>
+              <th scope="col">Amount Algo</th>
+              <th scope="col">Price (Algo/Token)</th>
               <th scope="col">Wallet</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Price</th>
+              <th scope="col">Time</th>
             </tr>
             </thead>
             <tbody>
             <div *ngFor="let item of buysAndSells">
               <tr>
-                <td>{{toDate(item.date)}}</td>
-                <td>{{selectedOption?.name}} - {{item.assetId}}</td>
                 <div *ngIf="item.buy">
                   <td>Buy</td>
                 </div>
                 <div *ngIf="!item.buy">
                   <td>Sell</td>
                 </div>
-                <td>{{item.userWallet.slice(0, 8)}}...</td>
-                <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
-                <td>{{item.price}}</td>
+                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+                <td>{{item.price.toFixed(6)}}</td>
+                <td>
+                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+                </td>
+                <td>{{toDate(item.date)}}</td>
               </tr>
             </div>
             </tbody>
