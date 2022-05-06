@@ -73,8 +73,10 @@ export class TradeComponent implements OnInit {
   trackReverser: number = 1;
   // rotate checker
 
-  topInput: number = 0;
-  bottomInput: number = 0;
+  // @ts-ignore
+  topInput: any = 'default';
+  // @ts-ignore
+  bottomInput: number;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -99,8 +101,12 @@ export class TradeComponent implements OnInit {
   });
 
   topForms = this.fb.group({
-    zeroInput: [0],
-    topInput: [],
+    topInput: ['', Validators.required],
+    topInputSecond: ['', Validators.required],
+  });
+
+  bottomForms = this.fb.group({
+    bottomInput: ['', Validators.required],
   });
 
   // FORMS
@@ -116,14 +122,14 @@ export class TradeComponent implements OnInit {
       this.assetArr.push(await this.verseApp.getViewModel())
       this.assetArr.push(ALGO_VIEWMODEL)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-  
+
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         this.removeVerse(res);
         this.assetArr.push(...res);
         this.assetArrSecond.push(...res);
       });
-  
+
       this.selectAsset(this.assetArr[0].assetId);
 
     } else {
@@ -555,16 +561,16 @@ export class TradeComponent implements OnInit {
 
   getPrice() {
     let diff = 0
-    let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
-    if(this.selectedOption!.decimals > 6) {
-      diff = this.selectedOption!.decimals - 6
-      price = price * Math.pow(10, diff)
-
-    } else if(this.selectedOption!.decimals < 6) {
-      diff = 6 - this.selectedOption!.decimals
-      price = price / Math.pow(10, diff)
-    }
-    return price
+    // let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
+    // if(this.selectedOption!.decimals > 6) {
+    //   diff = this.selectedOption!.decimals - 6
+    //   price = price * Math.pow(10, diff)
+    //
+    // } else if(this.selectedOption!.decimals < 6) {
+    //   diff = 6 - this.selectedOption!.decimals
+    //   price = price / Math.pow(10, diff)
+    // }
+    // return price
   }
 
   getAllBuysAndSells(){
@@ -596,4 +602,14 @@ export class TradeComponent implements OnInit {
       this.transactionChecker = false;
     }
   }
+      // this.topForms.value
+
+  getTopInput() {
+    console.log(this.topForms.value, 'first');
+  }
+
+  getBottomInput() {
+    console.log(this.bottomForms.value, 'second');
+  }
+
 }
