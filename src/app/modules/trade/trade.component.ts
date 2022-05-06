@@ -18,6 +18,7 @@ import {SessionWallet, Wallet} from 'algorand-session-wallet';
 import { env } from 'process';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import { min } from 'rxjs/operators';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class TradeComponent implements OnInit {
   slippage: number = 0;
   minOutput: number = 0;
   priceImapct: number = 0;
+  spotPrice: number = 0;
 
   // my
   assetArr: AssetViewModel[] = [];
@@ -235,13 +237,18 @@ export class TradeComponent implements OnInit {
 
   async selectAsset(assetId: number) {
     console.log(assetId)
+    const wallet = localStorage.getItem('wallet')!;
     if(assetId == 0){
-      const wallet = localStorage.getItem('wallet')!;
-      let client: Algodv2 = getAlgodClient()
-      let accInfo = await client.accountInformation(wallet).do()
-      console.log(accInfo)
-      this.availAmount = accInfo['amount'] / 1_000_000
-      this.isOptedIn = true
+      if(wallet){
+        let client: Algodv2 = getAlgodClient();
+        let accInfo = await client.accountInformation(wallet).do();
+        console.log(accInfo);
+        this.availAmount = accInfo['amount'] / 1_000_000;
+        this.isOptedIn = true;
+      } else {
+        this.availAmount = 0;
+        this.isOptedIn = true;
+      }
     } else {
       this.selectedOption = this.assetArr.find((el) => {
         return el.assetId === assetId;
@@ -253,6 +260,7 @@ export class TradeComponent implements OnInit {
         this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
       }
       this.getAllBuysAndSells()
+      this.getPrice()
       this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
       console.log(this.selectedOption)
       console.log(this.blockchainInfo)
@@ -418,17 +426,22 @@ export class TradeComponent implements OnInit {
   async updateHoldingOfSelectedAsset(assetId: number) {
     let client: Algodv2 = getAlgodClient()
     const wallet = localStorage.getItem('wallet')!;
-    let accountInfo = await client.accountInformation(wallet).do()
-    let asset = accountInfo['assets'].find((el: any) => {
-      return el['asset-id'] == assetId
-    })
-    if(asset != null){
-      let assetInfo = await client.getAssetByID(assetId).do()
-      this.availAmount = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
-      this.isOptedIn = true
+    if(wallet){
+      let accountInfo = await client.accountInformation(wallet).do()
+      let asset = accountInfo['assets'].find((el: any) => {
+        return el['asset-id'] == assetId
+      })
+      if(asset != null){
+        let assetInfo = await client.getAssetByID(assetId).do()
+        this.availAmount = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
+        this.isOptedIn = true
+      } else {
+        this.availAmount = 0
+        this.isOptedIn = false
+      }
     } else {
-      this.availAmount  = 0
-      this.isOptedIn = false
+      this.availAmount = 0
+      this.isOptedIn = true
     }
 
   }
@@ -495,7 +508,7 @@ export class TradeComponent implements OnInit {
   }
 
   async buy(wallet: SessionWallet, amount: number){
-    if(this.selectedOption!.name == 'Verse') {
+    if(this.selectedOption!.assetId == ps.platform.verse_asset_id) {
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
     } else {
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
@@ -503,6 +516,7 @@ export class TradeComponent implements OnInit {
     let scaledAmount = Math.floor(amount * 1_000_000)
 
     let wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.tokenLiquidity, this.blockchainInfo.algoLiquidity)
+    console.log(this.deployedAppSettings)
     await this.deployedApp.buy(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
   }
 
@@ -513,6 +527,7 @@ export class TradeComponent implements OnInit {
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       scaledAmount = Math.floor(amount * ps.platform.verse_decimals)
       wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
+      await this.verseApp.sell(wallet, scaledAmount, this.slippage, wantedReturn)
     } else {
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
       scaledAmount = Math.floor(amount * this.deployedAppSettings!.decimals)
@@ -545,37 +560,52 @@ export class TradeComponent implements OnInit {
     if(wallet){
       if (this.changeTop) {
         await this.buy(wallet, this.topInput)
+        let tokenEntryViewModel: TokenEntryViewModel = {
+          tokenAmount: this.bottomInput,
+          algoAmount: this.topInput,
+          assetId: this.selectedOption!.assetId,
+          buy: true,
+          price: this.spotPrice,
+          userWallet: wallet.getDefaultAccount(),
+          date: 0
+        }
+        this.assetReqService.postBuy(tokenEntryViewModel);
         console.log('buy')
       } else {
         // sel
         await this.sell(wallet, this.topInput)
         console.log('sell')
+        let tokenEntryViewModel: TokenEntryViewModel = {
+          tokenAmount: this.topInput,
+          algoAmount: this.bottomInput,
+          assetId: this.selectedOption!.assetId,
+          buy: false,
+          price: this.spotPrice,
+          userWallet: wallet.getDefaultAccount(),
+          date: 0
+        }
+        this.assetReqService.postSell(tokenEntryViewModel);
       }
     }
-
-  }
-
-  optIn() {
-
   }
 
   getPrice() {
     let diff = 0
-    // let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
-    // if(this.selectedOption!.decimals > 6) {
-    //   diff = this.selectedOption!.decimals - 6
-    //   price = price * Math.pow(10, diff)
-    //
-    // } else if(this.selectedOption!.decimals < 6) {
-    //   diff = 6 - this.selectedOption!.decimals
-    //   price = price / Math.pow(10, diff)
-    // }
-    // return price
+    let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
+    if(this.selectedOption!.decimals > 6) {
+      diff = this.selectedOption!.decimals - 6
+      price = price * Math.pow(10, diff)
+
+    } else if(this.selectedOption!.decimals < 6) {
+      diff = 6 - this.selectedOption!.decimals
+      price = price / Math.pow(10, diff)
+    }
+    return price
   }
 
   getAllBuysAndSells(){
     this.buysAndSells = []
-    if(this.isShowAll) {
+    if(!this.transactionChecker) {
       this.assetReqService.getAllEntries(this.selectedOption!.assetId).subscribe(
         (res) => {
           console.log(res)
@@ -584,12 +614,14 @@ export class TradeComponent implements OnInit {
       )
     } else {
       const wallet = localStorage.getItem('wallet')!
-      this.assetReqService.getAllEntriesForWallet(wallet, this.selectedOption!.assetId).subscribe(
-        (res) => {
-          console.log(res)
-          this.buysAndSells = res
-        }
-      )
+      if(wallet){
+        this.assetReqService.getAllEntriesForWallet(wallet, this.selectedOption!.assetId).subscribe(
+          (res) => {
+            console.log(res)
+            this.buysAndSells = res
+          }
+        )
+      }
     }
 
   }
@@ -600,6 +632,53 @@ export class TradeComponent implements OnInit {
       this.transactionChecker = true;
     } else {
       this.transactionChecker = false;
+    }
+    this.getAllBuysAndSells()
+  }
+
+  toDate(date: number): string{
+    let now = Math.floor(new Date().getTime() / 1000)
+
+    // get total seconds between the times
+    var delta = Math.abs(now - date);
+
+    // calculate (and subtract) whole days
+    var days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    // calculate (and subtract) whole hours
+    var hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    // calculate (and subtract) whole minutes
+    var minutes = Math.floor(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    // what's left is seconds
+    var seconds = delta % 60;  // in theory the modulus is not required
+
+    if(days > 0) {
+      if(days == 1){
+        return days.toString() + " day ago";
+      } else {
+        return days.toString() + " days ago";
+      }
+    } else if(hours > 0) {
+      if(hours == 1) {
+        return hours.toString() + " hour ago";
+      } else {
+        return hours.toString() + "hours ago";
+      }
+    } else if(minutes > 0) {
+      if(minutes == 1){
+        return "a minute ago"
+      } else {
+        return minutes.toString() + " minutes ago"
+      }
+    } else if(seconds > 0) {
+      return "Some seconds ago"
+    } else {
+      return "Some time ago"
     }
   }
       // this.topForms.value

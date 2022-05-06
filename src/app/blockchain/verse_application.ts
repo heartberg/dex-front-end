@@ -178,7 +178,7 @@ export class VerseApp {
         return result
     }
 
-    async sell(wallet: SessionWallet , tokenAmount: bigint, slippage: number, wantedReturn: bigint): Promise<boolean> {
+    async sell(wallet: SessionWallet , tokenAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
@@ -195,7 +195,7 @@ export class VerseApp {
     }
 
 
-    async transfer(wallet: SessionWallet , tokenAmount: bigint, to: string): Promise<boolean> {
+    async transfer(wallet: SessionWallet , tokenAmount: number, to: string): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()

@@ -137,10 +137,10 @@
               [ngStyle]="{ bottom: rotate ? '-200px' : '0' }"
               class="bot-text"
             >
-<!--              <span class="thin-gray-text">Spot Price:</span>-->
-<!--              <span style="margin-left: 4px" class="amount">{{-->
-<!--                getPrice()?.toFixed(6)-->
-<!--              }} Algo</span>-->
+              <span class="thin-gray-text">Spot Price:</span>
+              <span style="margin-left: 4px" class="amount">{{
+                getPrice()?.toFixed(6)
+              }} Algo</span>
             </div>
             <form action="" [formGroup]="bottomForms">            <input
               type="number"
@@ -226,7 +226,7 @@
           width: 160px;
           font-size: 20px;
         "
-      (click)="optIn()">
+      (click)="optInAsset()">
         Opt In
       </button>
     </div>
@@ -250,21 +250,31 @@
           <table class="table table-dark">
             <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Asset</th>
+              <th scope="col">Type</th>
+              <th scope="col">Amount {{selectedOption?.name}}</th>
+              <th scope="col">Amount Algo</th>
+              <th scope="col">Price (Algo/Token)</th>
               <th scope="col">Wallet</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Price</th>
+              <th scope="col">Time</th>
             </tr>
             </thead>
             <tbody>
+
             <div *ngFor="let item of buysAndSells">
               <tr>
-                <td>{{item.date}}</td>
-                <td>{{selectedOption?.name}} - {{item.assetId}}</td>
-                <td>{{item.userWallet.slice(0, 8)}}...</td>
-                <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
-                <td>{{item.price}}</td>
+                <div *ngIf="item.buy">
+                  <td>Buy</td>
+                </div>
+                <div *ngIf="!item.buy">
+                  <td>Sell</td>
+                </div>
+                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+                <td>{{item.price.toFixed(6)}}</td>
+                <td>
+                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+                </td>
+                <td>{{toDate(item.date)}}</td>
               </tr>
             </div>
             </tbody>
@@ -273,25 +283,34 @@
       </ng-container>
     <!--      your transactions table-->
       <ng-container>
-        <div class="wrap-tab" style="display: unset" [class.d-block]="transactionChecker">
+        <div class="wrap-tab" style="display: unset" *ngIf="transactionChecker">
           <table class="table table-dark">
             <thead>
             <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Asset</th>
+              <th scope="col">Type</th>
+              <th scope="col">Amount {{selectedOption?.name}}</th>
+              <th scope="col">Amount Algo</th>
+              <th scope="col">Price (Algo/Token)</th>
               <th scope="col">Wallet</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Price</th>
+              <th scope="col">Time</th>
             </tr>
             </thead>
             <tbody>
             <div *ngFor="let item of buysAndSells">
               <tr>
-                <td>{{item.date}}</td>
-                <td>{{selectedOption?.name}} - {{item.assetId}}</td>
-                <td>{{item.userWallet.slice(0, 8)}}...</td>
-                <td>{{item.amount / pow(selectedOption!.decimals)}}</td>
-                <td>{{item.price}}</td>
+                <div *ngIf="item.buy">
+                  <td>Buy</td>
+                </div>
+                <div *ngIf="!item.buy">
+                  <td>Sell</td>
+                </div>
+                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+                <td>{{item.price.toFixed(6)}}</td>
+                <td>
+                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+                </td>
+                <td>{{toDate(item.date)}}</td>
               </tr>
             </div>
             </tbody>
@@ -302,64 +321,64 @@
     </div>
 <!--    // table-->
   </div>
-<!--  <div *ngIf="selectedOption?.name" class="selected-option position-left">-->
-<!--    <h4>{{ selectedOption?.name }} Information</h4>-->
-<!--    <div class="selection-data">-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Marketcap:</span>-->
-<!--        <span class="thin-gray-text">{{ (getPrice() * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Total Supply:</span>-->
-<!--        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Algo Liquidity:</span>-->
-<!--        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1000000 }} Algo</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Token Liquidity:</span>-->
-<!--        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Backing:</span>-->
-<!--        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Max Buy:</span>-->
-<!--        <span class="thin-gray-text">{{ getMaxBuy() }}</span>-->
-<!--      </div>-->
-<!--      <button (click)="openPopUp()">Backing</button>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div *ngIf="selectedOption?.name" class="selected-option position-left">
+    <h4>{{ selectedOption?.name }} Information</h4>
+    <div class="selection-data">
+      <div class="propery-pair">
+        <span>Marketcap:</span>
+        <span class="thin-gray-text">{{ (getPrice() * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Total Supply:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalsupply }}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Algo Liquidity:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.algoLiquidity / 1000000 }} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Token Liquidity:</span>
+        <span class="thin-gray-text">{{ (blockchainInfo!.tokenLiquidity / pow(selectedOption!.decimals)).toFixed(selectedOption!.decimals) }} {{ selectedOption!.unitName}}</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing:</span>
+        <span class="thin-gray-text">{{ blockchainInfo!.totalBacking }} Algo</span>
+      </div>
+      <div class="propery-pair">
+        <span>Max Buy:</span>
+        <span class="thin-gray-text">{{ getMaxBuy() }}</span>
+      </div>
+      <button (click)="openPopUp()">Backing</button>
+    </div>
+  </div>
 
-<!--  <div *ngIf="selectedOption?.name" class="selected-option position-right">-->
-<!--    <h4>{{ selectedOption?.name }} Fees</h4>-->
-<!--    <div class="selection-data">-->
-<!--      <span class="thin-gray-text">Buying</span>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Buy Burn:</span>-->
-<!--        <span class="thin-gray-text">{{ selectedOption!.buyBurn / 100}}%</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Backing Tax:</span>-->
-<!--        <span class="thin-gray-text">{{ selectedOption!.backing / 100}}%</span>-->
-<!--      </div>-->
-<!--      <span class="thin-gray-text">Selling</span>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Sell Burn:</span>-->
-<!--        <span class="thin-gray-text">{{ selectedOption!.sellBurn / 100}}%</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Backing Tax:</span>-->
-<!--        <span class="thin-gray-text">{{ selectedOption!.backing / 100}}%</span>-->
-<!--      </div>-->
-<!--      <div class="propery-pair">-->
-<!--        <span>Rising Pricefloor:</span>-->
-<!--        <span class="thin-gray-text">{{ selectedOption!.risingPriceFloor / 100}}%</span>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div *ngIf="selectedOption?.name" class="selected-option position-right">
+    <h4>{{ selectedOption?.name }} Fees</h4>
+    <div class="selection-data">
+      <span class="thin-gray-text">Buying</span>
+      <div class="propery-pair">
+        <span>Buy Burn:</span>
+        <span class="thin-gray-text">{{ selectedOption!.buyBurn / 100}}%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption!.backing / 100}}%</span>
+      </div>
+      <span class="thin-gray-text">Selling</span>
+      <div class="propery-pair">
+        <span>Sell Burn:</span>
+        <span class="thin-gray-text">{{ selectedOption!.sellBurn / 100}}%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Backing Tax:</span>
+        <span class="thin-gray-text">{{ selectedOption!.backing / 100}}%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Rising Pricefloor:</span>
+        <span class="thin-gray-text">{{ selectedOption!.risingPriceFloor / 100}}%</span>
+      </div>
+    </div>
+  </div>
 </div>
 <app-pop-up
   [isTrade]="true"
