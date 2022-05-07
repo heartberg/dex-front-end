@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { getIndexer } from 'src/app/blockchain/algorand';
 import { TrackComponent } from '../track/track.component';
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 
 @Component({
   selector: 'app-wallet',
@@ -23,6 +24,7 @@ export class WalletComponent implements OnInit {
       console.log(wallet)
       let indexer = getIndexer()
       console.log(await indexer.makeHealthCheck().do())
+      console.log(await indexer.lookupAssetBalances(ps.platform.verse_asset_id).do())
       console.log("indexer checked!")
     }
     if (this.route.snapshot.routeConfig?.path === 'entries') {

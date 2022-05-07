@@ -116,7 +116,10 @@ export class TradeComponent implements OnInit {
     this.assetArr.push(ALGO_VIEWMODEL)
     this.blockchainInfo = await this.verseApp.getBlockchainInformation()
 
-    const wallet = localStorage.getItem('wallet')!;
+    let wallet = localStorage.getItem('wallet')!;
+    if(!wallet){
+      wallet = "default"
+    }
     this.assetReqService.getAssetPairs(true, '', wallet).subscribe((res) => {
       this.removeVerse(res);
       this.assetArr.push(...res);
@@ -641,7 +644,7 @@ export class TradeComponent implements OnInit {
     delta -= minutes * 60;
 
     // what's left is seconds
-    var seconds = delta % 60;  // in theory the modulus is not required
+    var seconds = delta % 60;
 
     if(days > 0) {
       if(days == 1){

@@ -12,7 +12,8 @@ export interface projectPresaleCreateModel {
   instagram:string,
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
-  presale: projectPresaleCreatePresaleModel
+  presale: projectPresaleCreatePresaleModel,
+  asset: projectMintModel
 }
 
 interface projectrPresaleCreateTeamModel {
@@ -46,6 +47,7 @@ export interface projectWithoutPresaleCreateModel {
   instagram:string,
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
+  asset: projectMintModel
 }
 // withoutPresale
 

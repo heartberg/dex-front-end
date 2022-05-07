@@ -70,22 +70,24 @@ export class MyPresaleComponent implements OnInit {
 
   ngOnInit(): void {
     const wallet = localStorage.getItem('wallet');
-    this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
-      console.log(res);
-      this.arr = res;
-    });
+    if(wallet){
+      this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
+        console.log(res);
+        this.arr = res;
+      });
+    }
   }
 
   pow(decimal: number): number {
     return Math.pow(10, decimal)
   }
 
-  toDate(timestamp: number): string{
+  toDate(timestamp: number): string {
     let date = new Date(timestamp * 1000)
     return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
   }
 
-  isFailed(model: ProjectPreviewModel): boolean{
+  isFailed(model: ProjectPreviewModel): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
     if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised < model.presale.softCap) {
       return true;

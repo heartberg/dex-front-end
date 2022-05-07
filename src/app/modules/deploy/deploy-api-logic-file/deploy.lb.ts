@@ -75,15 +75,16 @@ export class DeployLb {
           if (value) {
           this.presaleObj.contractId = this.deployerBC.settings.contract_id!
           this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
+          this.presaleObj.asset.contractId = this.deployerBC.settings.contract_id!
+          this.presaleObj.asset.contractAddress = this.deployerBC.settings.contract_address!
           this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
             async (value: any) => {
               this.projectId = value
               if (true) {
                 of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
-                    this.SetMintVars(this.deployerBC.settings);
                     if (value) {
-                      this.GetProjectMint(this.mintObj).subscribe(
+                      this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
                         async (value: any) => {
                           if (2 === 2) {
                             of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
@@ -150,6 +151,8 @@ export class DeployLb {
       (value: any) => {
         this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
         this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
+        this.withoutPresaleObj.asset.contractId = this.deployerBC.settings.contract_id!
+        this.withoutPresaleObj.asset.contractAddress = this.deployerBC.settings.contract_address!
         if (value) {
           setTimeout(() => {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
@@ -161,9 +164,8 @@ export class DeployLb {
                   this.projectId = value;
                   of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                     (value: any) => {
-                      this.SetMintVars(this.deployerBC.settings);
                       if (value) {
-                        this.GetProjectMint(this.mintObj).subscribe(
+                        this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
                           async (value: any) => {
                             if (2 === 2) {
                               of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
@@ -229,8 +231,8 @@ export class DeployLb {
     )
   }
 
-  GetProjectMint(project: projectMintModel) {
-    return this._deployService.projectMint(project)
+  GetProjectMint(projectId: string, assetId: number) {
+    return this._deployService.projectMint(projectId, assetId)
     // .subscribe( (value: projectMintModel) => {
     // console.log(value, 'mint');
     // return value;
@@ -284,9 +286,28 @@ export class DeployLb {
         walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value! * 1_000_000,
         startingTime: presaleStartTime,
         endingTime: presaleEndTime,
+      },
+      asset: {
+        assetId: 0,
+        projectId: '00000000-0000-0000-0000-000000000000',
+        contractId: 0,
+        contractAddress: 'tbd',
+        decimals: +form.get('tokenInfoGroup.decimals')?.value,
+        name: form.get('tokenInfoGroup.tokenName')?.value,
+        unitName: form.get('tokenInfoGroup.unitName')?.value,
+        totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
+        url: form.get('tokenInfoGroup.URL')?.value,
+        maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
+        tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
+        risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+        backing: form.get('feesGroup.backing')?.value * 100,
+        buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
+        sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
+        sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
+        image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
+        deployerWallet: localStorage.getItem('wallet')!,
       }
     }
-    this.initializeMintObj(form)
   }
 
   initializeApiObjWithoutPresale(form: any): void {
@@ -312,30 +333,26 @@ export class DeployLb {
           social: 'dksdfkldf'
         }
       ],
-    }
-    this.initializeMintObj(form)
-  }
-
-  initializeMintObj(form: any): void {
-    this.mintObj = {
-      assetId: 0,
-      projectId: 'tbd',
-      contractId: 0,
-      contractAddress: 'tbd',
-      decimals: +form.get('tokenInfoGroup.decimals')?.value,
-      name: form.get('tokenInfoGroup.tokenName')?.value,
-      unitName: form.get('tokenInfoGroup.unitName')?.value,
-      totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
-      url: form.get('tokenInfoGroup.URL')?.value,
-      maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
-      tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
-      risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
-      backing: form.get('feesGroup.backing')?.value * 100,
-      buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
-      sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
-      sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
-      image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
-      deployerWallet: localStorage.getItem('wallet')!,
+      asset: {
+        assetId: 0,
+        projectId: '00000000-0000-0000-0000-000000000000',
+        contractId: 0,
+        contractAddress: 'tbd',
+        decimals: +form.get('tokenInfoGroup.decimals')?.value,
+        name: form.get('tokenInfoGroup.tokenName')?.value,
+        unitName: form.get('tokenInfoGroup.unitName')?.value,
+        totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
+        url: form.get('tokenInfoGroup.URL')?.value,
+        maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
+        tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
+        risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+        backing: form.get('feesGroup.backing')?.value * 100,
+        buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
+        sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
+        sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
+        image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
+        deployerWallet: localStorage.getItem('wallet')!,
+      }
     }
   }
 
