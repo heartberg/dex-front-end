@@ -67,19 +67,21 @@
               </div>
               <form [formGroup]="topForms">
                 <input
-                  formControlName="zeroInput"
                   type="number"
                   class="input-costum"
                   [class.d-none]="isClickedOnBtn"
+                  formControlName="topInputValue"
+                  (blur)="getTopInputValue()"
                 />
 
                 <input
-                  formControlName="topInput"
+                  formControlName="topInputValue"
                   type="number"
                   (click)="onUserInput(inputRef)"
                   class="input-costum"
                   [value]="availAmount"
                   [class.d-none]="!isClickedOnBtn"
+                  (blur)="getTopInputValue()"
                   #inputRef
                 />
               </form>
@@ -141,11 +143,14 @@
                 spotPrice.toFixed(6)
               }} Algo</span>
             </div>
-            <input
-              [formControl]="botInput"
-              type="number"
-              class="input-costum"
-            />
+            <form action="" [formGroup]="bottomForms">
+              <input
+                formControlName="bottomInputValue"
+                type="number"
+                class="input-costum"
+                (blur)="getBottomInput()"
+              />
+            </form>
           </div>
         </div>
       </div>
@@ -257,7 +262,7 @@
             </tr>
             </thead>
             <tbody>
-              
+
             <div *ngFor="let item of buysAndSells">
               <tr>
                 <div *ngIf="item.buy">

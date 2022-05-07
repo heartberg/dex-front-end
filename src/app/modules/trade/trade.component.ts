@@ -101,8 +101,11 @@ export class TradeComponent implements OnInit {
   });
 
   topForms = this.fb.group({
-    zeroInput: [0],
-    topInput: [],
+    topInputValue: [0],
+  });
+
+  bottomForms = this.fb.group({
+    bottomInputValue: [0],
   });
 
   // FORMS
@@ -666,5 +669,13 @@ export class TradeComponent implements OnInit {
     } else {
       return "Some time ago"
     }
+  }
+
+  getTopInputValue() {
+    console.log(this.topForms.value)
+  }
+
+  getBottomInput() {
+    console.log(this.bottomForms.value)
   }
 }
