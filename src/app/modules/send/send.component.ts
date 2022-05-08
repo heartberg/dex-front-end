@@ -91,7 +91,10 @@ export class SendComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const wallet = localStorage.getItem("wallet")
+    let wallet = localStorage.getItem("wallet")
+    if(!wallet){
+      wallet = "default";
+    }
     this.assetService.getAssetPairs(false, '', wallet!).subscribe(
       async (res) => {
         this.removeVerse(res);

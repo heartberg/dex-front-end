@@ -263,23 +263,23 @@
             </thead>
             <tbody>
 
-            <div *ngFor="let item of buysAndSells">
-              <tr>
+            <tr *ngFor="let item of buysAndSells">
+              <td>
                 <div *ngIf="item.buy">
-                  <td>Buy</td>
+                  Buy
                 </div>
                 <div *ngIf="!item.buy">
-                  <td>Sell</td>
+                  Sell
                 </div>
-                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
-                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
-                <td>{{item.price.toFixed(6)}}</td>
-                <td>
-                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
-                </td>
-                <td>{{toDate(item.date)}}</td>
-              </tr>
-            </div>
+              </td>
+              <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+              <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+              <td>{{item.price.toFixed(6)}}</td>
+              <td>
+                <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+              </td>
+              <td>{{toDate(item.date)}}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -299,23 +299,23 @@
             </tr>
             </thead>
             <tbody>
-            <div *ngFor="let item of buysAndSells">
-              <tr>
+            <tr *ngFor="let item of buysAndSells">
+              <td>
                 <div *ngIf="item.buy">
-                  <td>Buy</td>
+                  Buy
                 </div>
                 <div *ngIf="!item.buy">
-                  <td>Sell</td>
+                  Sell
                 </div>
-                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
-                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
-                <td>{{item.price.toFixed(6)}}</td>
-                <td>
-                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
-                </td>
-                <td>{{toDate(item.date)}}</td>
-              </tr>
-            </div>
+              </td>
+              <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+              <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+              <td>{{item.price.toFixed(6)}}</td>
+              <td>
+                <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+              </td>
+              <td>{{toDate(item.date)}}</td>
+            </tr>
             </tbody>
           </table>
         </div>
