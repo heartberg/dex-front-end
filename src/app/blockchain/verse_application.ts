@@ -227,7 +227,7 @@ export class VerseApp {
 
         //TODO: finish
         let globalState = StateToObj(await getGlobalState(ps.platform.backing_id), Method)
-        console.log(globalState)
+        //console.log(globalState)
 
         assets = [ps.platform.verse_asset_id]
 
@@ -355,7 +355,7 @@ export class VerseApp {
 
     async getContractGlobalState(){
         var globalState = StateToObj(await getGlobalState(ps.platform.verse_app_id), verseStateKeys)
-        console.log(globalState)
+        //console.log(globalState)
         return globalState
     }
 
@@ -426,7 +426,7 @@ export class VerseApp {
         //let holder = await indexer.lookupAssetBalances(ps.platform.verse_asset_id).currencyGreaterThan(0).do()
         //console.log(holder)
         let holders = 0
-        console.log(accountInfo)
+        //console.log(accountInfo)
         let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
             return el['asset-id'] == ps.platform.verse_asset_id
         })
