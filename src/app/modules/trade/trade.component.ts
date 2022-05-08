@@ -211,13 +211,16 @@ export class TradeComponent implements OnInit {
     if (index === 1) {
       if (value === 'Algo') {
         this.selectAsset(0)
+        this.calcPriceImpact(true)
         // console.log("Show Verse on bottom")
       } else {
         // console.log("Show Algo on bottom")
+        this.calcPriceImpact(false)
       }
     } else if (index === 2) {
       if (value === 'Algo') {
         // console.log("Show Verse on top")
+        this.calcPriceImpact(false)
       } else {
         // console.log("Show Algo on top")
         this.calcPriceImpact(true)
@@ -676,9 +679,37 @@ export class TradeComponent implements OnInit {
 
   getTopInputValue() {
     console.log(this.topForms.value)
+    if (this.changeTop) {
+      this.topInput = this.topForms.value['bottomInputValue']
+    } else {
+      this.topInput = this.topForms.value['topInputValue']
+    }
+    if(this.topInput) {
+      // if is buy
+      this.bottomInput = this.calcDesiredOutput(this.topInput * this.pow(6), this.blockchainInfo!.tokenLiquidity, this.blockchainInfo!.algoLiquidity)
+      // if is sell
+      //this.bottomInput = this.calcDesiredOutput(this.topInput * this.pow(this.selectedOption!.decimals), this.blockchainInfo!.algoLiquidity, this.blockchainInfo!.tokenLiquidity)
+      //this.bottomForms.get("bottomInputValue") = this.bottomInput
+    }
+    console.log(this.topInput)
+    console.log(this.bottomInput)
   }
 
   getBottomInput() {
     console.log(this.bottomForms.value)
+    if (this.changeTop) {
+      this.bottomInput = this.bottomForms.value['topInputValue']
+    } else {
+      this.bottomInput = this.bottomForms.value['bottomInputValue']
+    }
+    if(this.bottomInput) {
+      // if is buy
+      this.topInput = this.calcDesiredOutput(this.bottomInput * this.pow(this.selectedOption!.decimals), this.blockchainInfo!.tokenLiquidity, this.blockchainInfo!.algoLiquidity)
+      // if is sell
+      //this.bottomInput = this.calcDesiredOutput(this.topInput * this.pow(this.selectedOption!.decimals), this.blockchainInfo!.algoLiquidity, this.blockchainInfo!.tokenLiquidity)
+      //this.bottomForms.get("bottomInputValue") = this.bottomInput
+    }
+    console.log(this.topInput)
+    console.log(this.bottomInput)
   }
 }

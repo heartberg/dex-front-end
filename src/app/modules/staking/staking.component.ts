@@ -8,7 +8,7 @@ export type StakingInfo = {
   userAddedWeek: number,
   usersHolding: number,
   verseRewards: number,
-  nextClaimableDate: Date
+  nextClaimableDate: Date | undefined
 }
 
 @Component({
@@ -20,7 +20,13 @@ export class StakingComponent implements OnInit {
   closePopup: boolean | undefined;
   isStake: boolean = true;
   sessionWallet: SessionWallet | undefined;
-  userInfo: StakingInfo | undefined;
+  userInfo: StakingInfo = {
+    usersStake: 0,
+    userAddedWeek: 0,
+    usersHolding: 0,
+    verseRewards: 0,
+    nextClaimableDate: undefined
+  };
   constructor(
     private verse: VerseApp,
     private walletService: WalletsConnectService
@@ -34,7 +40,10 @@ export class StakingComponent implements OnInit {
 
   ngOnInit() {
     this.sessionWallet = this.walletService.sessionWallet;
-    this.getUserInfo();
+    const wallet = localStorage.getItem("wallet");
+    if(wallet){
+      this.getUserInfo();
+    }
   }
 
   closePopUp(event: boolean) {
@@ -46,6 +55,14 @@ export class StakingComponent implements OnInit {
       this.isStake = true;
     } else {
       this.isStake = false;
+    }
+  }
+
+  formatDate(date: Date | undefined): string {
+    if (date){
+      return date.toDateString() + "-" + date.getHours() + ":" + date.getMinutes()
+    } else {
+      return "-"
     }
   }
 
