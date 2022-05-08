@@ -7,28 +7,28 @@
       >
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(1, inputRef)"
+          (click)="getPercentOfButton(1)"
           [class.btn-secondary-costum]="btnFirst"
         >
           25%
         </button>
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(2, inputRef)"
+          (click)="getPercentOfButton(2)"
           [class.btn-secondary-costum]="btnSecond"
         >
           50%
         </button>
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(3, inputRef)"
+          (click)="getPercentOfButton(3)"
           [class.btn-secondary-costum]="btnThird"
         >
           75%
         </button>
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(4, inputRef)"
+          (click)="getPercentOfButton(4)"
           [class.btn-secondary-costum]="btnFourth"
         >
           100%
@@ -40,7 +40,6 @@
           [ngStyle]="{ 'margin-bottom': !rotate ? '32px' : '0px' }"
         >
           <app-drop-down-selector
-            (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
             [dropDownValues]="assetArr"
             [isNotAccordion]="false"
             [widthPX]="'255px'"
@@ -66,21 +65,19 @@
                 }}</span>
               </div>
               <form [formGroup]="topForms">
-                <input
+                <!-- <input
                   type="number"
                   class="input-costum"
                   [class.d-none]="isClickedOnBtn"
                   formControlName="topInputValue"
-                  (blur)="getTopInputValue()"
-                />
+                /> -->
 
                 <input
                   formControlName="topInputValue"
                   type="number"
                   (click)="onUserInput(inputRef)"
                   class="input-costum"
-                  [value]="availAmount"
-                  [class.d-none]="!isClickedOnBtn"
+                  [value]="0"
                   #inputRef
                 />
               </form>
@@ -117,7 +114,6 @@
         >
           <app-drop-down-selector
             style="margin-top: 23px"
-            (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
             [dropDownValuesSecond]="assetArrSecond"
             [isNotAccordion]="false"
             [widthPX]="'255px'"

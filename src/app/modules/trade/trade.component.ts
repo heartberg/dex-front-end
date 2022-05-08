@@ -73,10 +73,6 @@ export class TradeComponent implements OnInit {
   transactionChecker: boolean = false;
   // your transactions
 
-  // rotate checker
-  trackReverser: number = 1;
-  // rotate checker
-
   topInput: number = 0;
   bottomInput: number = 0;
 
@@ -90,7 +86,6 @@ export class TradeComponent implements OnInit {
 
   // FORMS
 
-  botInput = this.fb.control([0]);
   // slippageInput = this.fb.control([]);
 
   slippageForm = this.fb.group({
@@ -135,39 +130,38 @@ export class TradeComponent implements OnInit {
     this.selectAsset(this.assetArr[0].assetId);
 
 
-    this.topForms.get("topInputValue")!.valueChanges.subscribe(
-      (input: any) => {
-        if(!this.rotate){
-          console.log("top:" + input)
-          this.topInput = input
-        } else {
-          console.log("bottom input: " + input)
-        }
-      }
-    );
+    // this.topForms.get("topInputValue")!.valueChanges.subscribe(
+    //   (input: any) => {
+    //     if(!this.rotate){
+    //       console.log("top:" + input)
+    //       this.topInput = input
+    //     } else {
+    //       console.log("bottom input: " + input)
+    //       this.bottomInput = input
+    //     }
+    //   }
+    // );
 
-    this.bottomForms.get("bottomInputValue")!.valueChanges.subscribe(
-      (input: any) => {
-        if(!this.rotate){
-          console.log("bottom:" + input)
-          this.bottomInput = input
-        } else {
-          console.log("top input: " + input)
-          this.topInput = input
-        }
-      }
-    )
+    // this.bottomForms.get("bottomInputValue")!.valueChanges.subscribe(
+    //   (input: any) => {
+    //     if(!this.rotate){
+    //       console.log("bottom:" + input)
+    //       this.bottomInput = input
+    //     } else {
+    //       console.log("top input: " + input)
+    //       this.topInput = input
+    //     }
+    //   }
+    // )
 
   }
 
   makeReverse() {
-    this.trackReverser++;
-    if (this.trackReverser % 2 === 0) {
-      // top input is on bottom
-    } else {
-      // normal statement
-    }
     this.rotate = !this.rotate;
+
+    //let tmp = this.topInput;
+    //this.topInput = this.bottomInput;
+    //this.bottomInput = tmp;
   
     this.isBuy = !this.isBuy;
     this.updateHoldingOfSelectedAsset();
@@ -405,32 +399,48 @@ export class TradeComponent implements OnInit {
     console.log("getValueFromDropDown: " + $event + " index: " + index + " isBuy: " + this.isBuy)
   }
 
-  getPercentOfButton(index: number, inputRef: HTMLInputElement) {
+  getPercentOfButton(index: number) {
     this.isClickedOnBtn = true;
     if (index === 1) {
       this.btnFirst = true;
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      inputRef.value = (this.availAmount / 4).toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount / 4);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 4);
+      }
     } else if (index === 2) {
       this.btnSecond = true;
       this.btnFirst = false;
       this.btnThird = false;
       this.btnFourth = false;
-      inputRef.value = (this.availAmount / 2).toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount / 2);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 2);
+      }
     } else if (index === 3) {
       this.btnThird = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnFourth = false;
-      inputRef.value = (this.availAmount / 4 * 3).toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount / 4 * 3);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 4 * 3);
+      }
     } else if (index === 4) {
       this.btnFourth = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnThird = false;
-      inputRef.value = this.availAmount.toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount);
+      }
     }
   }
 
@@ -761,41 +771,5 @@ export class TradeComponent implements OnInit {
     } else {
       return "Some time ago"
     }
-  }
-
-  getTopInputValue() {
-    //console.log(this.topForms.value)
-    if (this.changeTop) {
-      this.topInput = this.topForms.value['bottomInputValue']
-    } else {
-      this.topInput = this.topForms.value['topInputValue']
-    }
-    if(this.topInput) {
-      // if is buy
-      this.bottomInput = this.calcDesiredOutput(this.topInput * this.pow(6), this.blockchainInfo!.tokenLiquidity, this.blockchainInfo!.algoLiquidity)
-      // if is sell
-      //this.bottomInput = this.calcDesiredOutput(this.topInput * this.pow(this.selectedOption!.decimals), this.blockchainInfo!.algoLiquidity, this.blockchainInfo!.tokenLiquidity)
-      //this.bottomForms.get("bottomInputValue") = this.bottomInput
-    }
-    //console.log(this.topInput)
-    //console.log(this.bottomInput)
-  }
-
-  getBottomInput() {
-    //console.log(this.bottomForms.value)
-    if (this.changeTop) {
-      this.bottomInput = this.bottomForms.value['topInputValue']
-    } else {
-      this.bottomInput = this.bottomForms.value['bottomInputValue']
-    }
-    if(this.bottomInput) {
-      // if is buy
-      this.topInput = this.calcDesiredOutput(this.bottomInput * this.pow(this.selectedOption!.decimals), this.blockchainInfo!.tokenLiquidity, this.blockchainInfo!.algoLiquidity)
-      // if is sell
-      //this.bottomInput = this.calcDesiredOutput(this.topInput * this.pow(this.selectedOption!.decimals), this.blockchainInfo!.algoLiquidity, this.blockchainInfo!.tokenLiquidity)
-      //this.bottomForms.get("bottomInputValue") = this.bottomInput
-    }
-    //console.log(this.topInput)
-    //console.log(this.bottomInput)
   }
 }

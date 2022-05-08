@@ -54,6 +54,8 @@ export class TrackComponent implements OnInit {
   accInfo: Record<string, any> | undefined;
   totalAlgoValue = 0.00;
 
+  // TODO SABA: Show on wallet page
+
   constructor(
     private assetReqService: AssetReqService,
     private walletService: WalletsConnectService,
