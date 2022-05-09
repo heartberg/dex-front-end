@@ -135,16 +135,18 @@ export class TradeComponent implements OnInit {
     this.topForms.get("topInputValue")!.valueChanges.subscribe(
       (input: any) => {
         if(!this.rotate){
-          console.log("top:" + input);
+          //console.log("top:" + input);
           this.topInput = input;
           let output = this.calcOtherFieldOutput(true);
           //this.bottomForms.get("bottomInputValue")!.setValue(output);
         } else {
-          console.log("bottom input: " + input);
+          //console.log("bottom input: " + input);
           this.bottomInput = input;
           let output = this.calcOtherFieldOutput(false);
           //this.bottomForms.get("bottomInputValue")!.setValue(output)
         }
+        this.calcPriceImpact()
+        this.setMinOutput()
       }
     );
 
@@ -161,6 +163,8 @@ export class TradeComponent implements OnInit {
           let output = this.calcOtherFieldOutput(true);
           //this.topForms.get("topInputValue")!.setValue(output);
         }
+        this.calcPriceImpact()
+        this.setMinOutput()
       }
     )
 
@@ -550,8 +554,14 @@ export class TradeComponent implements OnInit {
     return amountToBuy * liqA / liqB
   }
 
-  setMinOutput(desiredOutput: number, slippage: number){
-    let output = desiredOutput - (desiredOutput * slippage / 10000)
+  setMinOutput(){
+    let desiredOutput = 0
+    if (this.isBuy){
+      desiredOutput = 1 / this.spotPrice * this.topInput
+    } else {
+      desiredOutput = this.spotPrice * this.topInput
+    }
+    let output = desiredOutput - (desiredOutput * this.slippage / 10000)
     this.minOutput = output
   }
 
@@ -569,22 +579,22 @@ export class TradeComponent implements OnInit {
     this.spotPrice = price
   }
 
-  calcPriceImpact(buy: boolean){
+  calcPriceImpact(){
     let tokenLiq = this.blockchainInfo!.tokenLiquidity;
     let algoLiq = this.blockchainInfo!.algoLiquidity;
     let amount = this.topInput;
-    if(this.changeTop){
-
-    }
     let diff = 0;
     //console.log(amount)
 
-    if(buy){
-      let price = 1 / this.spotPrice;
-      let buyAmount = price * amount;
-      let newAlgoLiq = algoLiq + amount;
+    if(this.isBuy){
+      let price = this.spotPrice;
+      let buyAmount = Math.floor(1 / price * amount * Math.pow(10, this.selectedOption!.decimals));
+      console.log(buyAmount)
+      let newAlgoLiq = algoLiq + amount * Math.pow(10, 6);
       let newTokenLiq = tokenLiq - buyAmount;
-      let newPrice = newTokenLiq / newAlgoLiq;
+      console.log("new algo: " + newAlgoLiq + " new token: " + newTokenLiq)
+      let newPrice = newAlgoLiq / newTokenLiq;
+      console.log("buy new price: " + newPrice)
 
       if(this.selectedOption!.decimals > 6) {
         diff = this.selectedOption!.decimals - 6
@@ -594,23 +604,28 @@ export class TradeComponent implements OnInit {
         newPrice = price * Math.pow(10, diff)
       }
 
-      this.priceImapct = newPrice / price * 100
+      this.priceImapct = (newPrice / price) * 100 - 100
     } else {
       let price = this.spotPrice;
-      let sellAmount = price * amount;
-      let newAlgoLiq = algoLiq - sellAmount;
-      let newTokenLiq = tokenLiq + amount;
+      let algoReturnAmount = Math.floor(price * amount * Math.pow(10, 6));
+      console.log(algoLiq)
+      console.log(algoReturnAmount)
+      let newAlgoLiq = algoLiq - algoReturnAmount;
+      let newTokenLiq = tokenLiq + amount * this.selectedOption!.decimals;
       let newPrice = newAlgoLiq / newTokenLiq;
+      console.log("new price before scaling: " + newPrice)
 
       if(this.selectedOption!.decimals > 6) {
         diff = this.selectedOption!.decimals - 6
-        newPrice = price * Math.pow(10, diff)
+        newPrice = newPrice * Math.pow(10, diff)
       } else if(this.selectedOption!.decimals < 6) {
         diff = 6 - this.selectedOption!.decimals
-        newPrice = price / Math.pow(10, diff)
+        newPrice = newPrice / Math.pow(10, diff)
       }
 
-      this.priceImapct = newPrice / price * 100
+      console.log("sell new price: " + newPrice);
+
+      this.priceImapct = (1 - newPrice / price) * 100
     }
     console.log("price impact: " + this.priceImapct)
   }

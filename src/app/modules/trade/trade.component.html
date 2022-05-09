@@ -186,10 +186,13 @@
           <div style="flex-direction: column" class="d-flex">
             <div>
               <span>Minimum Output: </span>
-              <span>{{minOutput}}</span>
-              <span class="color-violet" style="margin-left: 10px">{{
+              <span>{{minOutput.toFixed(2)}}</span>
+              <span *ngIf="isBuy" class="color-violet" style="margin-left: 10px">{{
                 selectedOption?.unitName
               }}</span>
+              <span *ngIf="!isBuy" class="color-violet" style="margin-left: 10px">
+                Algo
+              </span>
             </div>
             <!-- <div>
               <span style="position: relative;

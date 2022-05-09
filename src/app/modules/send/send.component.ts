@@ -55,8 +55,8 @@ export class SendComponent implements OnInit {
 
   async getAccInfo() {
     let client: Algodv2 = getAlgodClient()
-    const wallet = this.walletService.sessionWallet;
-    return await client.accountInformation(wallet!.getDefaultAccount()).do();
+    const wallet = localStorage.getItem("wallet");
+    return await client.accountInformation(wallet!).do();
   }
 
   handleCheckboxUpdateSecond(event: boolean) {
