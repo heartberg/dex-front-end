@@ -75,7 +75,7 @@
                 <input
                   formControlName="topInputValue"
                   type="number"
-                  (click)="onUserInput(inputRef)"
+                  (click)="onUserInput()"
                   class="input-costum"
                   [value]="0"
                   #inputRef
@@ -143,6 +143,7 @@
                 formControlName="bottomInputValue"
                 type="number"
                 class="input-costum"
+                (click)="onUserInput()"
               />
             </form>
           </div>

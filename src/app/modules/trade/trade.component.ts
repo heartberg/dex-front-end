@@ -76,6 +76,8 @@ export class TradeComponent implements OnInit {
   topInput: number = 0;
   bottomInput: number = 0;
 
+  calcWithFees = false;
+
   constructor(
     private assetReqService: AssetReqService,
     private walletService: WalletsConnectService,
@@ -130,29 +132,37 @@ export class TradeComponent implements OnInit {
     this.selectAsset(this.assetArr[0].assetId);
 
 
-    // this.topForms.get("topInputValue")!.valueChanges.subscribe(
-    //   (input: any) => {
-    //     if(!this.rotate){
-    //       console.log("top:" + input)
-    //       this.topInput = input
-    //     } else {
-    //       console.log("bottom input: " + input)
-    //       this.bottomInput = input
-    //     }
-    //   }
-    // );
+    this.topForms.get("topInputValue")!.valueChanges.subscribe(
+      (input: any) => {
+        if(!this.rotate){
+          console.log("top:" + input);
+          this.topInput = input;
+          let output = this.calcOtherFieldOutput(true);
+          //this.bottomForms.get("bottomInputValue")!.setValue(output);
+        } else {
+          console.log("bottom input: " + input);
+          this.bottomInput = input;
+          let output = this.calcOtherFieldOutput(false);
+          //this.bottomForms.get("bottomInputValue")!.setValue(output)
+        }
+      }
+    );
 
-    // this.bottomForms.get("bottomInputValue")!.valueChanges.subscribe(
-    //   (input: any) => {
-    //     if(!this.rotate){
-    //       console.log("bottom:" + input)
-    //       this.bottomInput = input
-    //     } else {
-    //       console.log("top input: " + input)
-    //       this.topInput = input
-    //     }
-    //   }
-    // )
+    this.bottomForms.get("bottomInputValue")!.valueChanges.subscribe(
+      (input: any) => {
+        if(!this.rotate){
+          console.log("bottom:" + input)
+          this.bottomInput = input
+          let output = this.calcOtherFieldOutput(false);
+          //this.topForms.get("topInputValue")!.setValue(output);
+        } else {
+          console.log("top input: " + input)
+          this.topInput = input
+          let output = this.calcOtherFieldOutput(true);
+          //this.topForms.get("topInputValue")!.setValue(output);
+        }
+      }
+    )
 
   }
 
@@ -167,7 +177,7 @@ export class TradeComponent implements OnInit {
     this.updateHoldingOfSelectedAsset();
   }
 
-  onUserInput(input: HTMLInputElement) {
+  onUserInput() {
     this.btnFirst = false;
     this.btnSecond = false;
     this.btnThird = false;
@@ -231,32 +241,6 @@ export class TradeComponent implements OnInit {
         //this.selectAsset(this.assetArr[0].assetId)
       });
     }
-  }
-
-  dropdownSelected(value: string, index: number) {
-    // console.log("dropdownselected: " + value + " index: " + index)
-    // if (index === 1) {
-    //   if (value === 'Algo') {
-    //     this.isBuy = true;
-    //     this.calcPriceImpact(true)
-    //     // console.log("Show Verse on bottom")
-    //   } else {
-    //     // console.log("Show Algo on bottom")
-    //     this.isBuy = false;
-    //     this.calcPriceImpact(false)
-    //   }
-    // } else if (index === 2) {
-    //   if (value === 'Algo') {
-    //     // console.log("Show Verse on top")
-    //     this.isBuy = false;
-    //     this.calcPriceImpact(false)
-    //   } else {
-    //     // console.log("Show Algo on top")
-    //     this.isBuy = true;
-    //     this.calcPriceImpact(true)
-    //   }
-    // }
-    // console.log("dropdownselected is buy: " + this.isBuy)
   }
 
   async selectAsset(assetId: number) {
@@ -523,7 +507,6 @@ export class TradeComponent implements OnInit {
         this.deployedApp.optInAsset(wallet, this.selectedOption!.assetId)
       }
     }
-
   }
 
   getAutoSlippage(buy: boolean) {
@@ -541,6 +524,26 @@ export class TradeComponent implements OnInit {
     // + 200 to give an extra 2% for slippage
     this.slippage = accumulatedFees + 200
     console.log("slippage: ", this.slippage)
+  }
+
+  calcOtherFieldOutput(inputTop: boolean) {
+    console.log("top: " + inputTop + " isbuy: " + this.isBuy + " spot: " + this.spotPrice);
+    let output = 0;
+    if(this.isBuy){
+      if(inputTop){
+        output = 1 / this.spotPrice * this.topInput;
+      } else {
+        output = this.spotPrice * this.bottomInput;
+      }
+    } else {
+      if(inputTop){
+        output = this.spotPrice * this.topInput;
+      } else {
+        output = 1 / this.spotPrice * this.bottomInput;
+      }
+    }
+    console.log(output)
+    return output
   }
 
   calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
