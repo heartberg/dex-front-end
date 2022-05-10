@@ -7,28 +7,28 @@
       >
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(1, inputRef)"
+          (click)="getPercentOfButton(1)"
           [class.btn-secondary-costum]="btnFirst"
         >
           25%
         </button>
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(2, inputRef)"
+          (click)="getPercentOfButton(2)"
           [class.btn-secondary-costum]="btnSecond"
         >
           50%
         </button>
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(3, inputRef)"
+          (click)="getPercentOfButton(3)"
           [class.btn-secondary-costum]="btnThird"
         >
           75%
         </button>
         <button
           class="btn-primary-costum btn-extra"
-          (click)="getPercentOfButton(4, inputRef)"
+          (click)="getPercentOfButton(4)"
           [class.btn-secondary-costum]="btnFourth"
         >
           100%
@@ -40,7 +40,6 @@
           [ngStyle]="{ 'margin-bottom': !rotate ? '32px' : '0px' }"
         >
           <app-drop-down-selector
-            (click)="dropdownSelected(componentRefA.showDropDownSelected, 1)"
             [dropDownValues]="assetArr"
             [isNotAccordion]="false"
             [widthPX]="'255px'"
@@ -66,21 +65,19 @@
                 }}</span>
               </div>
               <form [formGroup]="topForms">
-                <input
-                  formControlName="topInput"
+                <!-- <input
                   type="number"
                   class="input-costum"
                   [class.d-none]="isClickedOnBtn"
-                  (blur)="getTopInput()"
-                />
+                  formControlName="topInputValue"
+                /> -->
 
                 <input
-                  formControlName="topInputSecond"
+                  formControlName="topInputValue"
                   type="number"
-                  (click)="onUserInput(inputRef)"
+                  (click)="onUserInput()"
                   class="input-costum"
-                  [value]="availAmount"
-                  [class.d-none]="!isClickedOnBtn"
+                  [value]="0"
                   #inputRef
                 />
               </form>
@@ -117,7 +114,6 @@
         >
           <app-drop-down-selector
             style="margin-top: 23px"
-            (click)="dropdownSelected(componentRefB.showDropDownSelected, 2)"
             [dropDownValuesSecond]="assetArrSecond"
             [isNotAccordion]="false"
             [widthPX]="'255px'"
@@ -139,15 +135,17 @@
             >
               <span class="thin-gray-text">Spot Price:</span>
               <span style="margin-left: 4px" class="amount">{{
-                getPrice()?.toFixed(6)
+                spotPrice.toFixed(6)
               }} Algo</span>
             </div>
-            <form action="" [formGroup]="bottomForms">            <input
-              type="number"
-              formControlName="bottomInput"
-              class="input-costum"
-              (blur)="getBottomInput()"
-            /></form>
+            <form action="" [formGroup]="bottomForms">
+              <input
+                formControlName="bottomInputValue"
+                type="number"
+                class="input-costum"
+                (click)="onUserInput()"
+              />
+            </form>
           </div>
         </div>
       </div>
@@ -188,10 +186,13 @@
           <div style="flex-direction: column" class="d-flex">
             <div>
               <span>Minimum Output: </span>
-              <span>{{minOutput}}</span>
-              <span class="color-violet" style="margin-left: 10px">{{
+              <span>{{minOutput.toFixed(2)}}</span>
+              <span *ngIf="isBuy" class="color-violet" style="margin-left: 10px">{{
                 selectedOption?.unitName
               }}</span>
+              <span *ngIf="!isBuy" class="color-violet" style="margin-left: 10px">
+                Algo
+              </span>
             </div>
             <!-- <div>
               <span style="position: relative;
@@ -246,7 +247,7 @@
 <!--          you transactions checkbox-->
         </div>
       <ng-container>
-        <div class="wrap-tab" style="display: unset" [class.d-none]="transactionChecker">
+        <div class="wrap-tab" style="display: unset" *ngIf="!transactionChecker">
           <table class="table table-dark">
             <thead>
             <tr>
@@ -260,23 +261,23 @@
             </thead>
             <tbody>
 
-            <div *ngFor="let item of buysAndSells">
-              <tr>
+            <tr *ngFor="let item of buysAndSells">
+              <td>
                 <div *ngIf="item.buy">
-                  <td>Buy</td>
+                  Buy
                 </div>
                 <div *ngIf="!item.buy">
-                  <td>Sell</td>
+                  Sell
                 </div>
-                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
-                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
-                <td>{{item.price.toFixed(6)}}</td>
-                <td>
-                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
-                </td>
-                <td>{{toDate(item.date)}}</td>
-              </tr>
-            </div>
+              </td>
+              <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+              <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+              <td>{{item.price.toFixed(6)}}</td>
+              <td>
+                <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+              </td>
+              <td>{{toDate(item.date)}}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -296,23 +297,23 @@
             </tr>
             </thead>
             <tbody>
-            <div *ngFor="let item of buysAndSells">
-              <tr>
+            <tr *ngFor="let item of buysAndSells">
+              <td>
                 <div *ngIf="item.buy">
-                  <td>Buy</td>
+                  Buy
                 </div>
                 <div *ngIf="!item.buy">
-                  <td>Sell</td>
+                  Sell
                 </div>
-                <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
-                <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
-                <td>{{item.price.toFixed(6)}}</td>
-                <td>
-                  <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
-                </td>
-                <td>{{toDate(item.date)}}</td>
-              </tr>
-            </div>
+              </td>
+              <td>{{(item.tokenAmount / pow(selectedOption!.decimals)).toFixed(2)}}</td>
+              <td>{{(item.algoAmount / pow(6)).toFixed(2)}}</td>
+              <td>{{item.price.toFixed(6)}}</td>
+              <td>
+                <a href="https://algoexplorer.io/address/{{item.userWallet}}">{{item.userWallet.slice(0, 8)}}...</a>
+              </td>
+              <td>{{toDate(item.date)}}</td>
+            </tr>
             </tbody>
           </table>
         </div>
@@ -326,7 +327,7 @@
     <div class="selection-data">
       <div class="propery-pair">
         <span>Marketcap:</span>
-        <span class="thin-gray-text">{{ (getPrice() * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
+        <span class="thin-gray-text">{{ (spotPrice * blockchainInfo!.totalsupply).toFixed(2)}} Algo</span>
       </div>
       <div class="propery-pair">
         <span>Total Supply:</span>

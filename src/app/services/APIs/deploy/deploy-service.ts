@@ -26,9 +26,21 @@ export class deployService {
     return this._http.post<projectWithoutPresaleCreateModel>(url, project);
   }
 
-  projectMint(project:projectMintModel): Observable<projectMintModel>{
+  projectMint(projectId:string, assetId: number): Observable<projectMintModel>{
     const url = `${this.baseUrl}/project/mint`;
-    return this._http.post<projectMintModel>(url, project);
+    return this._http.post<projectMintModel>(url, {
+      params: {
+        projectId: projectId,
+        assetId: assetId
+      }
+    },
+    {
+      params: {
+        projectId: projectId,
+        assetId: assetId
+      }
+    }
+    );
   }
 
   projectburnOptIn(projectId: any): Observable<any>{

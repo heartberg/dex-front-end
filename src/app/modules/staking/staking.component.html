@@ -1,6 +1,6 @@
 <div class="main">
   <div class="wrapper-border" style="min-height: calc(100vh - 120px)">
-    <h3>Stacking</h3>
+    <h3>Staking</h3>
     <div class="action-section">
       <div class="wrapper-border">
           <div class="row">
@@ -30,7 +30,7 @@
                   </div>
                   <div class="d-flex align-items-center justify-content-between">
                     <h6>Next claimable time:</h6>
-                    <input type="text" class="input-costum" placeholder="{{userInfo!.nextClaimableDate.toDateString()}} - {{userInfo!.nextClaimableDate.getHours()}}:{{userInfo!.nextClaimableDate.getMinutes()}}">
+                    <input type="text" class="input-costum" placeholder="{{formatDate(userInfo!.nextClaimableDate)}}">
                   </div>
                 </div>
                 <div class="button d-flex align-items-center justify-content-between">

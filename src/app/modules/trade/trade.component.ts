@@ -62,6 +62,8 @@ export class TradeComponent implements OnInit {
   changeBottom: boolean = false;
   changeTop: boolean = false;
 
+  isBuy: boolean = false;
+
   blockchainInfo: BlockchainInformation | undefined;
   deployedAppSettings: DeployedAppSettings | undefined;
 
@@ -71,14 +73,10 @@ export class TradeComponent implements OnInit {
   transactionChecker: boolean = false;
   // your transactions
 
-  // rotate checker
-  trackReverser: number = 1;
-  // rotate checker
+  topInput: number = 0;
+  bottomInput: number = 0;
 
-  // @ts-ignore
-  topInput: any = 'default';
-  // @ts-ignore
-  bottomInput: number;
+  calcWithFees = false;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -90,7 +88,6 @@ export class TradeComponent implements OnInit {
 
   // FORMS
 
-  botInput = this.fb.control([0]);
   // slippageInput = this.fb.control([]);
 
   slippageForm = this.fb.group({
@@ -103,12 +100,11 @@ export class TradeComponent implements OnInit {
   });
 
   topForms = this.fb.group({
-    topInput: ['', Validators.required],
-    topInputSecond: ['', Validators.required],
+    topInputValue: [0],
   });
 
   bottomForms = this.fb.group({
-    bottomInput: ['', Validators.required],
+    bottomInputValue: [0],
   });
 
   // FORMS
@@ -118,39 +114,74 @@ export class TradeComponent implements OnInit {
       this.slippageForm.get('slippageInput')?.disable();
     }
 
-    if(localStorage.getItem('wallet')){
+    this.assetArr.push(await this.verseApp.getViewModel())
+    this.assetArr.push(ALGO_VIEWMODEL)
+    this.assetArrSecond.push(await this.verseApp.getViewModel())
+    this.assetArrSecond.push(ALGO_VIEWMODEL)
+    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
 
-
-      this.assetArr.push(await this.verseApp.getViewModel())
-      this.assetArr.push(ALGO_VIEWMODEL)
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-
-      const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-        this.removeVerse(res);
-        this.assetArr.push(...res);
-        this.assetArrSecond.push(...res);
-      });
-
-      this.selectAsset(this.assetArr[0].assetId);
-
-    } else {
-      console.log("connect wallet!")
+    let wallet = localStorage.getItem('wallet')!;
+    if(!wallet){
+      wallet = "default"
     }
+    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
+      this.removeVerse(res);
+      this.assetArr.push(...res);
+      this.assetArrSecond.push(...res);
+    });
+    this.selectAsset(this.assetArr[0].assetId);
+
+
+    this.topForms.get("topInputValue")!.valueChanges.subscribe(
+      (input: any) => {
+        if(!this.rotate){
+          //console.log("top:" + input);
+          this.topInput = input;
+          let output = this.calcOtherFieldOutput(true);
+          //this.bottomForms.get("bottomInputValue")!.setValue(output);
+        } else {
+          //console.log("bottom input: " + input);
+          this.bottomInput = input;
+          let output = this.calcOtherFieldOutput(false);
+          //this.bottomForms.get("bottomInputValue")!.setValue(output)
+        }
+        this.calcPriceImpact()
+        this.setMinOutput()
+      }
+    );
+
+    this.bottomForms.get("bottomInputValue")!.valueChanges.subscribe(
+      (input: any) => {
+        if(!this.rotate){
+          console.log("bottom:" + input)
+          this.bottomInput = input
+          let output = this.calcOtherFieldOutput(false);
+          //this.topForms.get("topInputValue")!.setValue(output);
+        } else {
+          console.log("top input: " + input)
+          this.topInput = input
+          let output = this.calcOtherFieldOutput(true);
+          //this.topForms.get("topInputValue")!.setValue(output);
+        }
+        this.calcPriceImpact()
+        this.setMinOutput()
+      }
+    )
 
   }
 
   makeReverse() {
-    this.trackReverser++;
-    if (this.trackReverser % 2 === 0) {
-      // top input is on bottom
-    } else {
-      // normal statement
-    }
     this.rotate = !this.rotate;
+
+    //let tmp = this.topInput;
+    //this.topInput = this.bottomInput;
+    //this.bottomInput = tmp;
+  
+    this.isBuy = !this.isBuy;
+    this.updateHoldingOfSelectedAsset();
   }
 
-  onUserInput(input: HTMLInputElement) {
+  onUserInput() {
     this.btnFirst = false;
     this.btnSecond = false;
     this.btnThird = false;
@@ -178,7 +209,7 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         this.removeVerse(res)
         this.assetArr.push(...res);
-        this.selectAsset(this.assetArr[0].assetId)
+        //this.selectAsset(this.assetArr[0].assetId)
       });
     }
   }
@@ -211,40 +242,22 @@ export class TradeComponent implements OnInit {
         this.removeVerse(res)
         // this.assetArrSecond.push(this.dummyAlgo);
         this.assetArrSecond.push(...res);
-        this.selectAsset(this.assetArr[0].assetId)
+        //this.selectAsset(this.assetArr[0].assetId)
       });
     }
   }
 
-  dropdownSelected(value: string, index: number) {
-    if (index === 1) {
-      if (value === 'Algo') {
-        this.selectAsset(0)
-        // console.log("Show Verse on bottom")
-      } else {
-        // console.log("Show Algo on bottom")
-      }
-    } else if (index === 2) {
-      if (value === 'Algo') {
-        // console.log("Show Verse on top")
-      } else {
-        // console.log("Show Algo on top")
-        this.calcPriceImpact(true)
-      }
-    }
-
-  }
-
   async selectAsset(assetId: number) {
-    console.log(assetId)
+    //console.log(assetId)
     const wallet = localStorage.getItem('wallet')!;
     if(assetId == 0){
       if(wallet){
         let client: Algodv2 = getAlgodClient();
         let accInfo = await client.accountInformation(wallet).do();
-        console.log(accInfo);
-        this.availAmount = accInfo['amount'] / 1_000_000;
-        this.isOptedIn = true;
+        //console.log(accInfo);
+        if(this.isBuy){
+          this.availAmount = accInfo['amount'] / 1_000_000;
+        }
       } else {
         this.availAmount = 0;
         this.isOptedIn = true;
@@ -261,7 +274,8 @@ export class TradeComponent implements OnInit {
       }
       this.getAllBuysAndSells()
       this.getPrice()
-      this.updateHoldingOfSelectedAsset(this.selectedOption!.assetId)
+      this.updateHoldingOfSelectedAsset()
+      this.getAutoSlippage(this.isBuy)
       console.log(this.selectedOption)
       console.log(this.blockchainInfo)
     }
@@ -318,24 +332,40 @@ export class TradeComponent implements OnInit {
     if ($event !== 'Algo' && index === 1) {
       this.changeBottom = true;
       this.changeTop = false;
-      // sell
+      if(!this.rotate){
+        this.isBuy = false;
+      } else {
+        this.isBuy = true;
+      }
     }
     // second check
     if ($event !== 'Algo' && index === 2) {
       this.changeTop = true;
       this.changeBottom = false;
-      // buy
+      if(!this.rotate){
+        this.isBuy = true;
+      } else {
+        this.isBuy= false;
+      }
     }
     if ($event === 'Algo' && index === 1) {
       this.changeTop = true;
       this.changeBottom = false;
-      // console.log('pirveli unda sheicvalos')
+      if(!this.rotate){
+        this.isBuy = true;
+      } else {
+        this.isBuy = false;
+      }
     } else if ($event === 'Algo' && index === 2) {
       this.changeBottom = true;
       this.changeTop = false;
-      // console.log('meore unda sheicvalos', this.changeBottom, this.changeTop)
+      if(!this.rotate){
+        this.isBuy = false;
+      } else {
+        this.isBuy = true;
+      }
     }
-    console.log($event);
+    //console.log($event);
     // console.log($event);
     // if (index === 1 && $event) {
     //   this.secondDropValues.find( (item, i) =>  {
@@ -349,39 +379,56 @@ export class TradeComponent implements OnInit {
       let asset = this.assetArr.find((el) => {
         return el.name === $event;
       });
+      console.log("event: " + $event)
       this.selectAsset(asset!.assetId);
+    } else {
+      this.selectAsset(0);
     }
-
-    // fill deployed app settings with information
-    // create deployed app object
+    console.log("getValueFromDropDown: " + $event + " index: " + index + " isBuy: " + this.isBuy)
   }
 
-  getPercentOfButton(index: number, inputRef: HTMLInputElement) {
+  getPercentOfButton(index: number) {
     this.isClickedOnBtn = true;
     if (index === 1) {
       this.btnFirst = true;
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      inputRef.value = (this.availAmount / 4).toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount / 4);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 4);
+      }
     } else if (index === 2) {
       this.btnSecond = true;
       this.btnFirst = false;
       this.btnThird = false;
       this.btnFourth = false;
-      inputRef.value = (this.availAmount / 2).toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount / 2);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 2);
+      }
     } else if (index === 3) {
       this.btnThird = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnFourth = false;
-      inputRef.value = (this.availAmount / 4 * 3).toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount / 4 * 3);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 4 * 3);
+      }
     } else if (index === 4) {
       this.btnFourth = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnThird = false;
-      inputRef.value = this.availAmount.toString();
+      if(!this.rotate){
+        this.topForms.get("topInputValue")!.setValue(this.availAmount);
+      } else {
+        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount);
+      }
     }
   }
 
@@ -423,27 +470,36 @@ export class TradeComponent implements OnInit {
     }
   }
 
-  async updateHoldingOfSelectedAsset(assetId: number) {
-    let client: Algodv2 = getAlgodClient()
+  async updateHoldingOfSelectedAsset() {
+    let assetId = this.selectedOption!.assetId
     const wallet = localStorage.getItem('wallet')!;
     if(wallet){
+      let client: Algodv2 = getAlgodClient()
       let accountInfo = await client.accountInformation(wallet).do()
       let asset = accountInfo['assets'].find((el: any) => {
         return el['asset-id'] == assetId
       })
-      if(asset != null){
-        let assetInfo = await client.getAssetByID(assetId).do()
-        this.availAmount = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
-        this.isOptedIn = true
+
+      if(!this.isBuy){
+        if(asset != null){
+          this.availAmount = asset['amount'] / Math.pow(10, this.selectedOption!.decimals)
+          this.isOptedIn = true
+        } else {
+          this.availAmount = 0
+          this.isOptedIn = false
+        }
       } else {
-        this.availAmount = 0
-        this.isOptedIn = false
+        this.availAmount = accountInfo['amount'] / 1_000_000;
+        if(asset != null){
+          this.isOptedIn = true;
+        } else {
+          this.isOptedIn = false;
+        }
       }
     } else {
       this.availAmount = 0
       this.isOptedIn = true
     }
-
   }
 
   optInAsset() {
@@ -455,56 +511,123 @@ export class TradeComponent implements OnInit {
         this.deployedApp.optInAsset(wallet, this.selectedOption!.assetId)
       }
     }
-
   }
 
-  getAutoSlippage(asset: AssetViewModel, buy: boolean) {
-    let accumulatedFees = asset.backing + +environment.Y_FEE! * 10000
+  getAutoSlippage(buy: boolean) {
+    let accumulatedFees = this.selectedOption!.backing + +environment.Y_FEE! * 10000
+    //console.log(accumulatedFees)
     if(buy){
-      accumulatedFees += asset.buyBurn
+      accumulatedFees += this.selectedOption!.buyBurn
     } else{
-      accumulatedFees += asset.sellBurn + asset.risingPriceFloor
+      accumulatedFees += this.selectedOption!.sellBurn + this.selectedOption!.risingPriceFloor
     }
 
-    if (asset.name != 'Verse'){
+    if (this.selectedOption!.name != 'Verse'){
       accumulatedFees += +environment.VERSE_FEE!
     }
     // + 200 to give an extra 2% for slippage
     this.slippage = accumulatedFees + 200
+    console.log("slippage: ", this.slippage)
+  }
+
+  calcOtherFieldOutput(inputTop: boolean) {
+    console.log("top: " + inputTop + " isbuy: " + this.isBuy + " spot: " + this.spotPrice);
+    let output = 0;
+    if(this.isBuy){
+      if(inputTop){
+        output = 1 / this.spotPrice * this.topInput;
+      } else {
+        output = this.spotPrice * this.bottomInput;
+      }
+    } else {
+      if(inputTop){
+        output = this.spotPrice * this.topInput;
+      } else {
+        output = 1 / this.spotPrice * this.bottomInput;
+      }
+    }
+    console.log(output)
+    return output
   }
 
   calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
     return amountToBuy * liqA / liqB
   }
 
-  setMinOutput(desiredOutput: number, slippage: number){
-    let output = desiredOutput - (desiredOutput * slippage / 10000)
+  setMinOutput(){
+    let desiredOutput = 0
+    if (this.isBuy){
+      desiredOutput = 1 / this.spotPrice * this.topInput
+    } else {
+      desiredOutput = this.spotPrice * this.topInput
+    }
+    let output = desiredOutput - (desiredOutput * this.slippage / 10000)
     this.minOutput = output
   }
 
-  calcPriceImpact(buy: boolean){
+  getPrice() {
+    let diff = 0
+    let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
+    if(this.selectedOption!.decimals > 6) {
+      diff = this.selectedOption!.decimals - 6
+      price = price * Math.pow(10, diff)
+
+    } else if(this.selectedOption!.decimals < 6) {
+      diff = 6 - this.selectedOption!.decimals
+      price = price / Math.pow(10, diff)
+    }
+    this.spotPrice = price
+  }
+
+  calcPriceImpact(){
     let tokenLiq = this.blockchainInfo!.tokenLiquidity;
     let algoLiq = this.blockchainInfo!.algoLiquidity;
-    let amount = this.topForms.get("topInput")!.value;
-    console.log(amount)
+    let amount = this.topInput;
+    let diff = 0;
+    //console.log(amount)
 
-    if(buy){
-      let price = algoLiq / tokenLiq;
-      let buyAmount = price * amount;
-      let newAlgoLiq = algoLiq + amount;
+    if(this.isBuy){
+      let price = this.spotPrice;
+      let buyAmount = Math.floor(1 / price * amount * Math.pow(10, this.selectedOption!.decimals));
+      console.log(buyAmount)
+      let newAlgoLiq = algoLiq + amount * Math.pow(10, 6);
       let newTokenLiq = tokenLiq - buyAmount;
+      console.log("new algo: " + newAlgoLiq + " new token: " + newTokenLiq)
       let newPrice = newAlgoLiq / newTokenLiq;
-      this.priceImapct = newPrice / price * 100
-      console.log(this.priceImapct)
+      console.log("buy new price: " + newPrice)
+
+      if(this.selectedOption!.decimals > 6) {
+        diff = this.selectedOption!.decimals - 6
+        newPrice = price / Math.pow(10, diff)
+      } else if(this.selectedOption!.decimals < 6) {
+        diff = 6 - this.selectedOption!.decimals
+        newPrice = price * Math.pow(10, diff)
+      }
+
+      this.priceImapct = (newPrice / price) * 100 - 100
     } else {
-      let price = tokenLiq / algoLiq;
-      let sellAmount = price * amount;
-      let newAlgoLiq = algoLiq - sellAmount;
-      let newTokenLiq = tokenLiq + amount;
+      let price = this.spotPrice;
+      let algoReturnAmount = Math.floor(price * amount * Math.pow(10, 6));
+      console.log(algoLiq)
+      console.log(algoReturnAmount)
+      let newAlgoLiq = algoLiq - algoReturnAmount;
+      let newTokenLiq = tokenLiq + amount * this.selectedOption!.decimals;
       let newPrice = newAlgoLiq / newTokenLiq;
+      console.log("new price before scaling: " + newPrice)
+
+      if(this.selectedOption!.decimals > 6) {
+        diff = this.selectedOption!.decimals - 6
+        newPrice = newPrice * Math.pow(10, diff)
+      } else if(this.selectedOption!.decimals < 6) {
+        diff = 6 - this.selectedOption!.decimals
+        newPrice = newPrice / Math.pow(10, diff)
+      }
+
+      console.log("sell new price: " + newPrice);
+
       this.priceImapct = (1 - newPrice / price) * 100
-      console.log(this.priceImapct)
     }
+    console.log("price impact: " + this.priceImapct)
   }
 
   async buy(wallet: SessionWallet, amount: number){
@@ -555,7 +678,7 @@ export class TradeComponent implements OnInit {
  }
   // swap && optIn
   async swap() {
-    console.log(this.changeTop, this.changeBottom);
+   // console.log(this.changeTop, this.changeBottom);
     const wallet = this.walletService.sessionWallet;
     if(wallet){
       if (this.changeTop) {
@@ -570,11 +693,11 @@ export class TradeComponent implements OnInit {
           date: 0
         }
         this.assetReqService.postBuy(tokenEntryViewModel);
-        console.log('buy')
+        //console.log('buy')
       } else {
-        // sel
+        // sell
         await this.sell(wallet, this.topInput)
-        console.log('sell')
+        //console.log('sell')
         let tokenEntryViewModel: TokenEntryViewModel = {
           tokenAmount: this.topInput,
           algoAmount: this.bottomInput,
@@ -589,26 +712,12 @@ export class TradeComponent implements OnInit {
     }
   }
 
-  getPrice() {
-    let diff = 0
-    let price = this.blockchainInfo!.algoLiquidity / this.blockchainInfo!.tokenLiquidity
-    if(this.selectedOption!.decimals > 6) {
-      diff = this.selectedOption!.decimals - 6
-      price = price * Math.pow(10, diff)
-
-    } else if(this.selectedOption!.decimals < 6) {
-      diff = 6 - this.selectedOption!.decimals
-      price = price / Math.pow(10, diff)
-    }
-    return price
-  }
-
   getAllBuysAndSells(){
     this.buysAndSells = []
     if(!this.transactionChecker) {
       this.assetReqService.getAllEntries(this.selectedOption!.assetId).subscribe(
         (res) => {
-          console.log(res)
+          //console.log(res)
           this.buysAndSells = res
         }
       )
@@ -617,19 +726,19 @@ export class TradeComponent implements OnInit {
       if(wallet){
         this.assetReqService.getAllEntriesForWallet(wallet, this.selectedOption!.assetId).subscribe(
           (res) => {
-            console.log(res)
+            //console.log(res)
             this.buysAndSells = res
           }
         )
       }
     }
-
   }
 
   handleCheckBox() {
     this.chechboxHandler ++;
     if (this.chechboxHandler % 2 === 0) {
       this.transactionChecker = true;
+
     } else {
       this.transactionChecker = false;
     }
@@ -655,7 +764,7 @@ export class TradeComponent implements OnInit {
     delta -= minutes * 60;
 
     // what's left is seconds
-    var seconds = delta % 60;  // in theory the modulus is not required
+    var seconds = delta % 60;
 
     if(days > 0) {
       if(days == 1){
@@ -681,14 +790,4 @@ export class TradeComponent implements OnInit {
       return "Some time ago"
     }
   }
-      // this.topForms.value
-
-  getTopInput() {
-    console.log(this.topForms.value, 'first');
-  }
-
-  getBottomInput() {
-    console.log(this.bottomForms.value, 'second');
-  }
-
 }

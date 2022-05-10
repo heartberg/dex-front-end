@@ -92,10 +92,10 @@ export class DeployedApp {
 
     this.settings = settings;
     const suggested = await getSuggested(30)
-    console.log(suggested)
-    console.log('wallet', wallet)
+    // console.log(suggested)
+    // console.log('wallet', wallet)
     const addr = wallet.getDefaultAccount()
-    console.log('addr', addr)
+    // console.log('addr', addr)
     
     const args = [algosdk.encodeUint64(this.settings.total_supply), algosdk.encodeUint64(this.settings.buy_burn), algosdk.encodeUint64(this.settings.sell_burn),
                   algosdk.encodeUint64(this.settings.transfer_burn), algosdk.encodeUint64(this.settings.to_lp), algosdk.encodeUint64(this.settings.to_backing),
@@ -105,9 +105,9 @@ export class DeployedApp {
     const apps = [ps.platform.verse_app_id, ps.platform.backing_id]
 
     const approval = await (await fetch('../../assets/contracts/deployer_token_approval.teal')).text()
-    //console.log('approval', approval)
+    //// console.log('approval', approval)
     const clear = await (await fetch('../../assets/contracts/deployer_token_clear.teal')).text()
-    //console.log('clear', clear)
+    //// console.log('clear', clear)
 
     const createApp = algosdk.makeApplicationCreateTxnFromObject({
         from: wallet.getDefaultAccount(),
@@ -134,7 +134,7 @@ export class DeployedApp {
 
     const result = await sendWait([signedTxns])
     //const txRes = await getAlgodClient().pendingTransactionInformation(result.txId).do();
-    //console.log('appCreateResult', txRes);
+    //// console.log('appCreateResult', txRes);
 
     this.settings.contract_id = result['application-index'];
     this.settings.contract_address = algosdk.getApplicationAddress(BigInt( result['application-index'] ));
@@ -161,7 +161,7 @@ export class DeployedApp {
     const result = await sendWait([signedPay, signedMint])
     const txId = mint.txID()
     let pending = await client.pendingTransactionInformation(txId).do()
-    console.log(pending)
+    // console.log(pending)
     this.settings.asset_id = pending['inner-txns'][0]['asset-index']
 
     return result
@@ -207,7 +207,7 @@ export class DeployedApp {
     const accounts = [ps.platform.fee_addr, ps.platform.burn_addr]
     const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, assets, accounts))
 
-    console.log(this.settings.initial_algo_liq_with_fee)
+    // console.log(this.settings.initial_algo_liq_with_fee)
     suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
     const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, this.settings.initial_algo_liq_with_fee))
 
@@ -503,7 +503,7 @@ export class DeployedApp {
 
   async getContractGlobalState(contractId: number){
     var globalState = StateToObj(await getGlobalState(contractId), StateKeys)
-    console.log(globalState)
+    // console.log(globalState)
     return globalState
   }
 
@@ -545,7 +545,7 @@ export class DeployedApp {
     let appAccInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
     let accountInfo: any = await client.accountInformation(wallet).do()
     let assetInfo: any = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
-    console.log(appAccInfo)
+    // console.log(appAccInfo)
 
     let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
       return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
@@ -566,11 +566,11 @@ export class DeployedApp {
     let indexer: Indexer = getIndexer()
 
     const health = await indexer.makeHealthCheck().do()
-    console.log(health)
+    // console.log(health)
     let holderInfo = await indexer.lookupAssetBalances(globalState[StateKeys.asset_id_key]['i']).currencyGreaterThan(0).do()
-    console.log(holderInfo)
+    // console.log(holderInfo)
     let holders = holderInfo.length
-    console.log(holders)
+    // console.log(holders)
 
     let trackInfo: BlockchainTrackInfo = {
         algoLiq: algoLiquidity,
@@ -585,7 +585,7 @@ export class DeployedApp {
         tradingStart: tradingStart
     }
 
-    console.log(trackInfo)
+    // console.log(trackInfo)
 
     return trackInfo
   }
