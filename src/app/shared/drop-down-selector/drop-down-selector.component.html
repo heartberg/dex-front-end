@@ -17,13 +17,13 @@
         <ng-container *ngFor="let button of dropDownValues; let i = index">
           <button class="btn-default" *ngIf="i === 0">
             <ng-container *ngIf="buttonTradeChangedTop || showDropDownSelected === ''">
-              {{ buttonTradeChangedValue }}
+              {{ buttonTradeChangedValue }} {{'def'}}
             </ng-container>
 <!--            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChangedTop">-->
 <!--              {{ button.name ? button.name : button }} {{'default'}}-->
 <!--            </ng-container>-->
             <ng-container *ngIf="showDropDownSelected !== '' && !buttonTradeChangedTop">
-              {{ tradeSelectedTop }}
+              {{ tradeSelectedTop }} {{'select'}}
             </ng-container>
           </button>
         </ng-container>
@@ -32,14 +32,14 @@
       <ng-container *ngIf="secondOnTrade">
         <ng-container *ngFor="let button of dropDownValuesSecond; let i = index">
           <button class="btn-default" *ngIf="i === 0">
-            <ng-container *ngIf="buttonTradeChanged || showDropDownSelected === ''">
-              {{ buttonTradeChangedTopValue }}
+            <ng-container *ngIf="buttonTradeChanged">
+              {{ buttonTradeChangedTopValue }} {{'def'}}
             </ng-container>
 <!--            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChanged">-->
 <!--              {{ button.name ? button.name : button }} {{'default'}}-->
 <!--            </ng-container>-->
-            <ng-container *ngIf="showDropDownSelected !== '' && !buttonTradeChanged">
-              {{ tradeSelectedBottom }}
+            <ng-container *ngIf="!buttonTradeChanged">
+              {{ tradeSelectedBottom }} {{'select2'}}
             </ng-container>
           </button>
         </ng-container>

@@ -100,9 +100,14 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   ) {}
 
   ngOnInit(): void {
+   setTimeout(() => {
+     this.incomeData.find( (item: AssetViewModel) => item.assetId === 4357 ? this.tradeSelectedBottom = item.name : null)
+   }, 500)
+    console.log(this.incomeData);
   }
 
   ngDoCheck() {
+
   }
 
   ngOnChanges() {
@@ -137,17 +142,23 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     if (this.notCloseOnClick) {
       // this.isDropDownOpenedCounter +=1;
       this.openDropDown();
+      console.log(value, 'ssssss', id)
       if (value !== 'Algo') {
         this.saveStore = value;
       }
       this.showDropDownSelected = value
       // logic for trade
         if (id === '1'  && this.tradeSelectedTop !== 'Algo') {
-          this.tradeSelectedTop = this.showDropDownSelected;
+          this.tradeSelectedTop = this.saveStore;
       } else
         if (id === '2' && this.tradeSelectedBottom !== 'Algo') {
-          this.tradeSelectedBottom = this.showDropDownSelected;
+          this.tradeSelectedBottom = this.saveStore;
+        } else if (id === '1' && this.buttonTradeChangedTop) {
+          // @ts-ignore
+        } else if (id === '2' && value === 'Algo') {
+          // @ts-ignore
         }
+      console.log(this.tradeSelectedTop, 'ifis garet ')
       // logic for trade
 
 

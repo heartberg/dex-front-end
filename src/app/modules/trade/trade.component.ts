@@ -77,7 +77,6 @@ export class TradeComponent implements OnInit {
   bottomInput: number = 0;
 
   calcWithFees = false;
-
   constructor(
     private assetReqService: AssetReqService,
     private walletService: WalletsConnectService,
@@ -114,23 +113,29 @@ export class TradeComponent implements OnInit {
       this.slippageForm.get('slippageInput')?.disable();
     }
 
-    this.assetArr.push(await this.verseApp.getViewModel())
+    // this.assetArr.push(await this.verseApp.getViewModel())
     this.assetArr.push(ALGO_VIEWMODEL)
-    this.assetArrSecond.push(await this.verseApp.getViewModel())
+    // this.assetArrSecond.push(await this.verseApp.getViewModel())
     this.assetArrSecond.push(ALGO_VIEWMODEL)
-    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
 
     let wallet = localStorage.getItem('wallet')!;
     if(!wallet){
       wallet = "default"
     }
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-      this.removeVerse(res);
+      // this.removeVerse(res);
       this.assetArr.push(...res);
       this.assetArrSecond.push(...res);
     });
     this.selectAsset(this.assetArr[0].assetId);
 
+    this.assetReqService.getAssetPairs(true, '', wallet).subscribe( (res) => {
+      res.find( (item: AssetViewModel) => item.assetId === 4357 ? this.assetArrSecond.push(...[item]) : null);
+    })
+
+    this.changeBottom = false;
+    this.changeTop = true;
 
     this.topForms.get("topInputValue")!.valueChanges.subscribe(
       (input: any) => {
@@ -143,9 +148,10 @@ export class TradeComponent implements OnInit {
           //console.log("bottom input: " + input);
           this.bottomInput = input;
           let output = this.calcOtherFieldOutput(false);
+          console.log(output, 'this one')
           //this.bottomForms.get("bottomInputValue")!.setValue(output)
         }
-        this.calcPriceImpact()
+        // this.calcPriceImpact()
         this.setMinOutput()
       }
     );
@@ -161,9 +167,10 @@ export class TradeComponent implements OnInit {
           console.log("top input: " + input)
           this.topInput = input
           let output = this.calcOtherFieldOutput(true);
+          console.log(output, 'this one 2')
           //this.topForms.get("topInputValue")!.setValue(output);
         }
-        this.calcPriceImpact()
+        // this.calcPriceImpact()
         this.setMinOutput()
       }
     )
@@ -176,7 +183,7 @@ export class TradeComponent implements OnInit {
     //let tmp = this.topInput;
     //this.topInput = this.bottomInput;
     //this.bottomInput = tmp;
-  
+
     this.isBuy = !this.isBuy;
     this.updateHoldingOfSelectedAsset();
   }
@@ -195,16 +202,16 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArr = []
         this.removeVerse(res);
-        this.assetArr.push(await this.verseApp.getViewModel())
+        // this.assetArr.push(await this.verseApp.getViewModel())
         this.assetArr.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArr.push(...res);
       });
     } else if (event === false) {
       this.assetArr = []
-      this.assetArr.push(await this.verseApp.getViewModel())
+      // this.assetArr.push(await this.verseApp.getViewModel())
       this.assetArr.push(ALGO_VIEWMODEL)
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         this.removeVerse(res)
@@ -220,10 +227,10 @@ export class TradeComponent implements OnInit {
     if (event === true) {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArrSecond = [];
-        this.removeVerse(res);
-        this.assetArrSecond.push(await this.verseApp.getViewModel())
+        // this.removeVerse(res);
+        // this.assetArrSecond.push(await this.verseApp.getViewModel())
         this.assetArrSecond.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArrSecond.push(...res);
         // TODO uncomment for prod
         // console.log(res, 'data');
@@ -232,14 +239,14 @@ export class TradeComponent implements OnInit {
       });
     } else if (event === false) {
       this.assetArrSecond = [];
-      this.assetArrSecond.push(await this.verseApp.getViewModel())
+      // this.assetArrSecond.push(await this.verseApp.getViewModel())
       this.assetArrSecond.push(ALGO_VIEWMODEL)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         // this.removeVerse(res)
         // TODO uncomment for prod
-        this.removeVerse(res)
+        // this.removeVerse(res)
         // this.assetArrSecond.push(this.dummyAlgo);
         this.assetArrSecond.push(...res);
         //this.selectAsset(this.assetArr[0].assetId)
@@ -252,11 +259,11 @@ export class TradeComponent implements OnInit {
     const wallet = localStorage.getItem('wallet')!;
     if(assetId == 0){
       if(wallet){
-        let client: Algodv2 = getAlgodClient();
-        let accInfo = await client.accountInformation(wallet).do();
+        // let client: Algodv2 = getAlgodClient();
+        // let accInfo = await client.accountInformation(wallet).do();
         //console.log(accInfo);
         if(this.isBuy){
-          this.availAmount = accInfo['amount'] / 1_000_000;
+          // this.availAmount = accInfo['amount'] / 1_000_000;
         }
       } else {
         this.availAmount = 0;
@@ -267,15 +274,15 @@ export class TradeComponent implements OnInit {
         return el.assetId === assetId;
       });
       if(assetId == ps.platform.verse_asset_id){
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       } else {
-        this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
-        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
+        // this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
+        // this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
       }
-      this.getAllBuysAndSells()
-      this.getPrice()
-      this.updateHoldingOfSelectedAsset()
-      this.getAutoSlippage(this.isBuy)
+      // this.getAllBuysAndSells()
+      // this.getPrice()
+      // this.updateHoldingOfSelectedAsset()
+      // this.getAutoSlippage(this.isBuy)
       console.log(this.selectedOption)
       console.log(this.blockchainInfo)
     }
@@ -546,7 +553,6 @@ export class TradeComponent implements OnInit {
         output = 1 / this.spotPrice * this.bottomInput;
       }
     }
-    console.log(output)
     return output
   }
 
@@ -790,4 +796,5 @@ export class TradeComponent implements OnInit {
       return "Some time ago"
     }
   }
+
 }
