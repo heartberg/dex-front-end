@@ -162,7 +162,7 @@ export class VerseApp {
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from("buy")), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
         const assets = [ps.platform.verse_asset_id]
 
         const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
@@ -184,7 +184,7 @@ export class VerseApp {
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
         const assets = [ps.platform.verse_asset_id]
 
         const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))

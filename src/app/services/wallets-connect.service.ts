@@ -35,6 +35,7 @@ export class WalletsConnectService {
     if (!await sw.connect()) return alert("Couldnt connect")
 
     this.myAlgoAddress = sw.accountList()
+    console.log("AlgoAddress: " + this.myAlgoAddress)
     localStorage.setItem('wallet', this.myAlgoAddress[0])
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
 

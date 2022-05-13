@@ -197,6 +197,7 @@ export async function sendWait(signed: any[]): Promise<any> {
         return result
     } catch (error) {
         //showNetworkError("", error)
+        console.log("error in txn: " + error)
     }
 
     return undefined
