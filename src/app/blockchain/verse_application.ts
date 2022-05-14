@@ -459,7 +459,7 @@ export class VerseApp {
             let nextClaimabletime = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.next_claimable_time_key)
             let usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key)
             let usersWeekStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.week_stake_amount)
-    
+
             let claimableAmount = (((usersStake - usersWeekStake) * globalState[stakingStateKeys.distribution_asset_amount_key]['i']) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
     
             let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
@@ -474,7 +474,7 @@ export class VerseApp {
             usersStake = usersStake / Math.pow(10, ps.platform.verse_decimals)
             usersWeekStake = usersWeekStake / Math.pow(10, ps.platform.verse_decimals)
             let stakingInfo: StakingInfo = {
-                nextClaimableDate: new Date(nextClaimabletime * 1000),
+                nextClaimableDate: nextClaimabletime,
                 usersHolding: holding,
                 usersStake: usersStake,
                 verseRewards: claimableAmount,
@@ -483,7 +483,7 @@ export class VerseApp {
             return stakingInfo
         } else {
             let stakingInfo: StakingInfo = {
-                nextClaimableDate: new Date(),
+                nextClaimableDate: 0,
                 usersHolding: 0,
                 usersStake: 0,
                 verseRewards: 0,

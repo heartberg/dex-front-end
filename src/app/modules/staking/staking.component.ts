@@ -1,5 +1,7 @@
+import { InvokeFunctionExpr } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
+import { nextTick } from 'process';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
@@ -8,7 +10,7 @@ export type StakingInfo = {
   userAddedWeek: number,
   usersHolding: number,
   verseRewards: number,
-  nextClaimableDate: Date | undefined
+  nextClaimableDate: number
 }
 
 @Component({
@@ -25,7 +27,7 @@ export class StakingComponent implements OnInit {
     userAddedWeek: 0,
     usersHolding: 0,
     verseRewards: 0,
-    nextClaimableDate: undefined
+    nextClaimableDate: 0
   };
   constructor(
     private verse: VerseApp,
@@ -58,12 +60,23 @@ export class StakingComponent implements OnInit {
     }
   }
 
-  formatDate(date: Date | undefined): string {
-    if (date){
-      return date.toDateString() + "-" + date.getHours() + ":" + date.getMinutes()
-    } else {
-      return "-"
-    }
+  formatDate(date: number): string {
+    console.log(date);
+    console.log(new Date(date * 1000));
+    console.log(new Date())
+    console.log(Math.floor(new Date().getTime() * 1000))
+
+    if (date > 0){
+      let now = Math.floor(new Date().getTime() * 1000)
+      let nextClaimableTime = new Date(date - now)
+      if(nextClaimableTime.getHours() > 0){
+          return nextClaimableTime.getHours() + "h " + nextClaimableTime.getMinutes() + "min"
+        } else {
+          return nextClaimableTime.getMinutes() + "min"
+        }
+      } else {
+        return "-"
+      }
   }
 
   async claim(): Promise<void> {

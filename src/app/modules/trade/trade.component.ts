@@ -114,18 +114,18 @@ export class TradeComponent implements OnInit {
       this.slippageForm.get('slippageInput')?.disable();
     }
 
-    // this.assetArr.push(await this.verseApp.getViewModel())
+    this.assetArr.push(await this.verseApp.getViewModel())
     this.assetArr.push(ALGO_VIEWMODEL)
-    // this.assetArrSecond.push(await this.verseApp.getViewModel())
+    this.assetArrSecond.push(await this.verseApp.getViewModel())
     this.assetArrSecond.push(ALGO_VIEWMODEL)
-    // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
 
     let wallet = localStorage.getItem('wallet')!;
     if(!wallet){
       wallet = "default"
     }
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-      // this.removeVerse(res);
+      this.removeVerse(res);
       this.assetArr.push(...res);
       this.assetArrSecond.push(...res);
     });
@@ -156,7 +156,7 @@ export class TradeComponent implements OnInit {
           console.log(output, 'this one')
           //this.bottomForms.get("bottomInputValue")!.setValue(output)
         }
-        // this.calcPriceImpact()
+        this.calcPriceImpact()
         this.setMinOutput()
       }
     );
@@ -175,7 +175,7 @@ export class TradeComponent implements OnInit {
           console.log(output, 'this one 2')
           //this.topForms.get("topInputValue")!.setValue(output);
         }
-        // this.calcPriceImpact()
+        this.calcPriceImpact()
         this.setMinOutput()
       }
     )
