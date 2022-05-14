@@ -148,6 +148,7 @@ export class TrackComponent implements OnInit {
       )
     }
     console.log(this.totalAlgoValue);
+    localStorage.setItem('algo', JSON.stringify(this.totalAlgoValue));
   }
   mapEntries(res: TokenEntryViewModel[], info: BlockchainTrackInfo): PriceData {
     let priceData: PriceData = {
