@@ -149,6 +149,8 @@ export class DeployComponent implements OnInit, DoCheck {
         algoToLiq: '',
       }),
       tradingStart: this.fb.control(''),
+      // added field
+      extraFeeTime: this.fb.control(''),
       addRoadMapOptionGroup: this.fb.group({
         roadmapDescription: '',
         roadmapImage: '',

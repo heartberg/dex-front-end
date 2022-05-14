@@ -11,12 +11,12 @@
                   <div class="d-flex align-items-center justify-content-between">
                   <h6>Staked Verse:</h6>
                   <input type="text" class="input-costum" readonly placeholder="{{userInfo!.usersStake}}">
-                  <span>Added Stake this week: {{userInfo!.userAddedWeek}}</span>
+                  <span style="font-size: 12px;" class="color-violet">Added Stake this week: {{userInfo!.userAddedWeek}}</span>
                 </div>
                 </div>
                 <div class="button top d-flex align-items-center justify-content-between">
-                  <button class="btn-primary-costum" (click)="openPopUp('stake')">Stake</button>
-                  <button class="btn-secondary-costum" (click)="openPopUp('withdraw')">Withdraw</button>
+                  <button class="btn-secondary-costum" (click)="openPopUp('stake')">Stake</button>
+                  <button class="btn-primary-costum" (click)="openPopUp('withdraw')">Withdraw</button>
                 </div>
               </div>
             </div>
@@ -34,7 +34,7 @@
                   </div>
                 </div>
                 <div class="button d-flex align-items-center justify-content-between">
-                  <button class="btn-primary-costum" (click)="claim()">Claim</button>
+                  <button class="btn-secondary-costum" (click)="claim()">Claim</button>
                 </div>
               </div>
             </div>
