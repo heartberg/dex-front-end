@@ -33,13 +33,13 @@
         <ng-container *ngFor="let button of dropDownValuesSecond; let i = index">
           <button class="btn-default" *ngIf="i === 0">
             <ng-container *ngIf="buttonTradeChanged">
-              {{ buttonTradeChangedTopValue }} {{'def'}}
+              {{ buttonTradeChangedTopValue }}
             </ng-container>
 <!--            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChanged">-->
 <!--              {{ button.name ? button.name : button }} {{'default'}}-->
 <!--            </ng-container>-->
             <ng-container *ngIf="!buttonTradeChanged">
-              {{ tradeSelectedBottom }} {{'select2'}}
+              {{ tradeSelectedBottom }}
             </ng-container>
           </button>
         </ng-container>
