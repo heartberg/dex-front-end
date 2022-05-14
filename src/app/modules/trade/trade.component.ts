@@ -209,16 +209,16 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArr = []
         this.removeVerse(res);
-        // this.assetArr.push(await this.verseApp.getViewModel())
+        this.assetArr.push(await this.verseApp.getViewModel())
         this.assetArr.push(ALGO_VIEWMODEL)
-        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArr.push(...res);
       });
     } else if (event === false) {
       this.assetArr = []
-      // this.assetArr.push(await this.verseApp.getViewModel())
+      this.assetArr.push(await this.verseApp.getViewModel())
       this.assetArr.push(ALGO_VIEWMODEL)
-      // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         this.removeVerse(res)
@@ -233,19 +233,19 @@ export class TradeComponent implements OnInit {
     if (event === true) {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArrSecond = [];
-        // this.removeVerse(res);
-        // this.assetArrSecond.push(await this.verseApp.getViewModel())
+        this.removeVerse(res);
+        this.assetArrSecond.push(await this.verseApp.getViewModel())
         this.assetArrSecond.push(ALGO_VIEWMODEL)
-        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArrSecond.push(...res);
         // TODO uncomment for prod
-        // console.log(res, 'data');
+        console.log(res, 'data');
         // this.assetArrSecond.push(this.dummyAlgo);
         // this.removeVerse(res);
       });
     } else if (event === false) {
       this.assetArrSecond = [];
-      // this.assetArrSecond.push(await this.verseApp.getViewModel())
+      this.assetArrSecond.push(await this.verseApp.getViewModel())
       this.assetArrSecond.push(ALGO_VIEWMODEL)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       const wallet = localStorage.getItem('wallet')!;
@@ -253,7 +253,7 @@ export class TradeComponent implements OnInit {
         this.removeVerse(res)
         this.assetArrSecond.push(...res);
         // this.assetArrSecond.push(this.dummyAlgo);
-        //this.selectAsset(this.assetArr[0].assetId)
+        this.selectAsset(this.assetArr[0].assetId)
       });
     }
   }
@@ -263,11 +263,11 @@ export class TradeComponent implements OnInit {
     const wallet = localStorage.getItem('wallet')!;
     if(assetId == 0){
       if(wallet){
-        // let client: Algodv2 = getAlgodClient();
-        // let accInfo = await client.accountInformation(wallet).do();
+        let client: Algodv2 = getAlgodClient();
+        let accInfo = await client.accountInformation(wallet).do();
         //console.log(accInfo);
         if(this.isBuy){
-          // this.availAmount = accInfo['amount'] / 1_000_000;
+          this.availAmount = accInfo['amount'] / 1_000_000;
         }
       } else {
         this.availAmount = 0;
@@ -278,10 +278,10 @@ export class TradeComponent implements OnInit {
         return el.assetId === assetId;
       });
       if(assetId == ps.platform.verse_asset_id){
-        // this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       } else {
-        // this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
-        // this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
+        this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
+        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
       }
     }
     this.getAllBuysAndSells()
