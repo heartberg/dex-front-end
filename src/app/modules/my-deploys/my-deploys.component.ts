@@ -5,6 +5,7 @@ import { AssetViewModel } from 'src/app/models/assetView.model';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import {of} from "rxjs";
 
 @Component({
   selector: 'app-my-deploys',
@@ -61,7 +62,9 @@ export class MyDeploysComponent implements OnInit {
 
   removeMaxBuy(contractId: number) {
     //TODO: DO IT IN BACKEND
-    this.app.removeMaxBuy(this.wallet!, contractId)
+    of(this.app.removeMaxBuy(this.wallet!, contractId)).subscribe( (item) => {
+      console.log(item);
+    })
   }
 
   // TODO SABA:
