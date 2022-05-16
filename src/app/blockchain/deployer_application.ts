@@ -641,7 +641,8 @@ export class DeployedApp {
     let appInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
     let totalBacking = (appInfo['amount'] - appInfo['min-balance'] - globalState[StateKeys.algo_liq_key]['i'] + globalState[StateKeys.total_borrowed_key]['i']) / Math.pow(10, 6)
 
-    let totalBorrowed = globalState[StateKeys.total_borrowed_key]['i']
+    let totalBorrowed = globalState[StateKeys.total_borrowed_key]['i'] / Math.pow(10, 6)
+    let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetDecimals)
 
     if(await isOptedIntoApp(wallet, contractId)) {
         let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
@@ -662,7 +663,8 @@ export class DeployedApp {
             contractId: contractId,
             userSupplied: userSupplied,
             totalBacking: totalBacking,
-            totalBorrowed: totalBorrowed
+            totalBorrowed: totalBorrowed,
+            totalSupply: totalSupply
         }
 
     } else {
@@ -674,7 +676,8 @@ export class DeployedApp {
             contractId: contractId,
             userSupplied: 0,
             totalBacking: totalBacking,
-            totalBorrowed: totalBorrowed
+            totalBorrowed: totalBorrowed,
+            totalSupply: totalSupply
         }
     }
   }

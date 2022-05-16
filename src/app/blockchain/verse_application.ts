@@ -497,13 +497,15 @@ export class VerseApp {
     async getSmartToolData(wallet: string): Promise<SmartToolData> {
         let client: Algodv2 = getAlgodClient()
         let accountInfo: any = await client.accountInformation(wallet).do()
-        let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
+        let verseState: any = StateToObj(await getGlobalState(ps.platform.verse_app_id), verseStateKeys)
+        let globalState: any = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
 
         let appInfo: any = await client.accountInformation(ps.platform.backing_addr).do()
         let totalBacking = (appInfo['amount'] - appInfo['min-balance'] + globalState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
 
+        let totalSupply = verseState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
         let totalBorrowed = globalState[backingStateKeys.total_algo_borrowed_key]['i'] / Math.pow(10, 6)
-        let algos = accountInfo['amount']
+        let algos = accountInfo['amount'] / Math.pow(10, 6)
         
         if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
             let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
@@ -525,7 +527,8 @@ export class VerseApp {
                 contractId: ps.platform.verse_app_id,
                 userSupplied: userSupplied,
                 totalBacking: totalBacking,
-                totalBorrowed: totalBorrowed
+                totalBorrowed: totalBorrowed,
+                totalSupply: totalSupply
             }
             
         } else {
@@ -537,7 +540,8 @@ export class VerseApp {
                 contractId: ps.platform.verse_app_id,
                 userSupplied: 0,
                 totalBacking: totalBacking,
-                totalBorrowed: totalBorrowed
+                totalBorrowed: totalBorrowed,
+                totalSupply: totalSupply
             }
         }
     }

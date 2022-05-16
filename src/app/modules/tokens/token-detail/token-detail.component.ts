@@ -28,7 +28,8 @@ export class TokenDetailComponent implements OnInit {
     userBorrowed: 0,
     userSupplied: 0,
     totalBacking: 0,
-    totalBorrowed: 0
+    totalBorrowed: 0,
+    totalSupply: 0,
   }
 
   currentProjectId: string = this.route.snapshot.paramMap.get('id')!;
