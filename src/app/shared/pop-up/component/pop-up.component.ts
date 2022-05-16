@@ -44,7 +44,9 @@ export class PopUpComponent implements OnInit {
   // trade new popup flows
   @Input() isTradeLend: boolean = false;
   @Input() isTradeBacking: boolean = true;
-  @Input() isTradeTrade: boolean = false;
+
+  @Input() isTradeLendVerse: boolean = false;
+  @Input() isTradeBackingVerse: boolean = false;
   // trade new popup flows
 
   tokenDetailBorrowForm = this.fb.group({
@@ -84,6 +86,51 @@ export class PopUpComponent implements OnInit {
   });
 
   // FORMS
+
+  // tradelendVerse
+  lendVerse = [
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      BackingPerToken: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    },
+    {
+      name: 'Algo',
+      totalBanking: 'Y Algo',
+      Backing: 'X Algo'
+    }
+  ]
+  // #tradelendVerse
 
   onSubmit(formName: string) {
     if (formName === 'myPresaleRestartForm') {
@@ -243,15 +290,14 @@ export class PopUpComponent implements OnInit {
     if (id === 1) {
       this.isTradeLend = false;
       this.isTradeBacking = false;
-      this.isTradeTrade = true;
+      this.isTradeLendVerse = false;
+      this.isTradeBackingVerse = true;
+
     } else if (id === 2) {
-      this.isTradeLend = true;
-      this.isTradeBacking = false;
-      this.isTradeTrade = false;
-    } else if (id === 3) {
+      this.isTradeLendVerse = true;
       this.isTradeLend = false;
-      this.isTradeBacking = true;
-      this.isTradeTrade = false;
+      this.isTradeBacking = false;
+      this.isTradeBackingVerse = false;
     }
   }
 }
