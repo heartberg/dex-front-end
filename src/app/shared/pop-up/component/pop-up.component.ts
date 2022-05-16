@@ -11,7 +11,8 @@ import { DeployedApp } from 'src/app/blockchain/deployer_application';
 
 export type SmartToolData = {
   userSupplied: number,
-  availableAmount: number,
+  availableTokenAmount: number,
+  availableAlgoAmount: number,
   userBorrowed: number,
   assetDecimals: number,
   contractId: number,
@@ -56,7 +57,8 @@ export class PopUpComponent implements OnInit {
   @Input()
   smartToolData: SmartToolData = {
     assetDecimals: 0,
-    availableAmount: 0,
+    availableTokenAmount: 0,
+    availableAlgoAmount: 0,
     contractId: 0,
     userBorrowed: 0,
     userSupplied: 0,

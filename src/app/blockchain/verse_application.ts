@@ -503,7 +503,7 @@ export class VerseApp {
         let totalBacking = (appInfo['amount'] - appInfo['min-balance'] + globalState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
 
         let totalBorrowed = globalState[backingStateKeys.total_algo_borrowed_key]['i'] / Math.pow(10, 6)
-
+        let algos = accountInfo['amount']
         
         if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
             let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
@@ -520,7 +520,8 @@ export class VerseApp {
             return {
                 userBorrowed: userBorrowed,
                 assetDecimals: ps.platform.verse_decimals,
-                availableAmount: holding,
+                availableTokenAmount: holding,
+                availableAlgoAmount: algos,
                 contractId: ps.platform.verse_app_id,
                 userSupplied: userSupplied,
                 totalBacking: totalBacking,
@@ -531,7 +532,8 @@ export class VerseApp {
             return {
                 userBorrowed: 0,
                 assetDecimals: ps.platform.verse_decimals,
-                availableAmount: 0,
+                availableTokenAmount: 0,
+                availableAlgoAmount: algos,
                 contractId: ps.platform.verse_app_id,
                 userSupplied: 0,
                 totalBacking: totalBacking,

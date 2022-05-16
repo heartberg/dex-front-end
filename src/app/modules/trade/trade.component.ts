@@ -82,7 +82,8 @@ export class TradeComponent implements OnInit {
 
   smartToolData: SmartToolData = {
     assetDecimals: 0,
-    availableAmount: 0,
+    availableTokenAmount: 0,
+    availableAlgoAmount: 0,
     contractId: 0,
     userBorrowed: 0,
     userSupplied: 0,

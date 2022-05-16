@@ -635,6 +635,7 @@ export class DeployedApp {
   async getSmartToolData(wallet: string, contractId: number, assetDecimals: number): Promise<SmartToolData> {
     let client: Algodv2 = getAlgodClient()
     let accountInfo: any = await client.accountInformation(wallet).do()
+    let algos: number = accountInfo['amount']
     let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
 
     let appInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
@@ -656,7 +657,8 @@ export class DeployedApp {
         return {
             userBorrowed: userBorrowed,
             assetDecimals: assetDecimals,
-            availableAmount: holding,
+            availableTokenAmount: holding,
+            availableAlgoAmount: algos,
             contractId: contractId,
             userSupplied: userSupplied,
             totalBacking: totalBacking,
@@ -667,7 +669,8 @@ export class DeployedApp {
         return {
             userBorrowed: 0,
             assetDecimals: assetDecimals,
-            availableAmount: 0,
+            availableTokenAmount: 0,
+            availableAlgoAmount: algos,
             contractId: contractId,
             userSupplied: 0,
             totalBacking: totalBacking,
