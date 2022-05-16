@@ -6,6 +6,9 @@ import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
+import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
+import { TemplateBindingParseResult } from '@angular/compiler';
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 @Component({
   selector: 'app-token-detail',
@@ -17,6 +20,14 @@ export class TokenDetailComponent implements OnInit {
   isBorrow: boolean = false;
   isBacking: boolean = false;
 
+  smartToolData: SmartToolData = {
+    assetDecimals: 0,
+    availableAmount: 0,
+    contractId: 0,
+    userBorrowed: 0,
+    userSupplied: 0
+  }
+
   currentProjectId: string = this.route.snapshot.paramMap.get('id')!;
   projectData!: ProjectViewModel;
   blockchainData!: BlockchainInformation;
@@ -25,10 +36,11 @@ export class TokenDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private projectsReqService: projectReqService,
     private deployedApp: DeployedApp,
-    private verseApp: VerseApp
+    private verseApp: VerseApp,
+    private walletConnect: WalletsConnectService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     console.log(this.route.snapshot.paramMap.get('id'));
     this.projectsReqService
       .getProjectById(this.currentProjectId)
@@ -41,9 +53,11 @@ export class TokenDetailComponent implements OnInit {
           this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.contractId);
         }
       });
+      await this.getSmartToolData();
   }
 
-  openPopUp(version: string) {
+  async openPopUp(version: string) {
+    console.log(this.smartToolData)
     this.isPopUpOpen = true;
     if (version === 'isBorrow') {
       this.isBorrow = true;
@@ -51,6 +65,21 @@ export class TokenDetailComponent implements OnInit {
     } else if (version === 'isBacking') {
       this.isBorrow = false;
       this.isBacking = true;
+    }
+  }
+
+  async getSmartToolData() {
+    let wallet = this.walletConnect.sessionWallet;
+    if(wallet){
+      console.log("wallet")
+      let address = localStorage.getItem("wallet")
+      if(this.projectData.asset.contractId != ps.platform.verse_app_id){
+        console.log("deployer app")
+        this.smartToolData = await this.deployedApp.getSmartToolData(address!, this.projectData.asset.contractId, this.projectData.asset.decimals);
+      } else {
+        this.smartToolData = await this.verseApp.getSmartToolData(address!)
+      }
+      console.log(this.smartToolData)
     }
   }
 

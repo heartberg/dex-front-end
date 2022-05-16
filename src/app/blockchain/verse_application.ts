@@ -25,6 +25,7 @@ import { BlockchainTrackInfo } from "../modules/track/track.component";
 import { StakingInfo } from "../modules/staking/staking.component";
 import { getAppLocalStateByKey } from "../services/utils.algo";
 import { StateKeys } from "./deployer_application";
+import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -491,6 +492,42 @@ export class VerseApp {
             }
             return stakingInfo
         }
-        
     }
+
+    async getSmartToolData(wallet: string): Promise<SmartToolData> {
+        if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
+            let client: Algodv2 = getAlgodClient()
+            let accountInfo: any = await client.accountInformation(wallet).do()
+            let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
+
+            let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+                return el['asset-id'] == ps.platform.verse_asset_id
+            })
+            let holding = 0
+            if(asset){
+                holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
+            }
+
+            let userSupplied = globalState[StateKeys.user_supplied_key]['i']
+
+            return {
+                userBorrowed: 1,
+                assetDecimals: ps.platform.verse_decimals,
+                availableAmount: holding,
+                contractId: ps.platform.verse_app_id,
+                userSupplied: userSupplied
+            }
+            
+
+        } else {
+            return {
+                userBorrowed: 0,
+                assetDecimals: 0,
+                availableAmount: 0,
+                contractId: 0,
+                userSupplied: 0
+            }
+        }
+    }
+
 }

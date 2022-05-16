@@ -4,6 +4,18 @@ import { WalletsConnectService } from '../../../services/wallets-connect.service
 import { AuthService } from '../../../services/authService.service';
 import { User } from '../../../models/user.model';
 import { Form, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { VerseApp } from 'src/app/blockchain/verse_application';
+import { DeployedAppSettings } from 'src/app/blockchain/platform-conf';
+import { DeployedApp } from 'src/app/blockchain/deployer_application';
+
+
+export type SmartToolData = {
+  userSupplied: number,
+  availableAmount: number,
+  userBorrowed: number,
+  assetDecimals: number,
+  contractId: number
+}
 
 @Component({
   selector: 'app-pop-up',
@@ -39,6 +51,15 @@ export class PopUpComponent implements OnInit {
   isActiveFirst = true;
   isActiveSecond = false;
 
+  @Input()
+  smartToolData: SmartToolData = {
+    assetDecimals: 0,
+    availableAmount: 0,
+    contractId: 0,
+    userBorrowed: 0,
+    userSupplied: 0
+  }
+
   // FORMS
 
   // trade new popup flows
@@ -48,8 +69,8 @@ export class PopUpComponent implements OnInit {
   // trade new popup flows
 
   tokenDetailBorrowForm = this.fb.group({
-    tokenName: [],
-    borrowedAmount: [],
+    supplyAmount: [],
+    borrowAmount: [],
   });
 
   tokenDetailRepayForm = this.fb.group({
@@ -100,7 +121,9 @@ export class PopUpComponent implements OnInit {
   constructor(
     private _walletsConnectService: WalletsConnectService,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private verseApp: VerseApp,
+    private deployedApp: DeployedApp
   ) {}
 
   ngOnInit(): void {}
@@ -253,5 +276,13 @@ export class PopUpComponent implements OnInit {
       this.isTradeBacking = true;
       this.isTradeTrade = false;
     }
+  }
+
+  pow(decimals: number) {
+    return Math.pow(10, decimals)
+  }
+
+  borrow() {
+    console.log("borrow")
   }
 }

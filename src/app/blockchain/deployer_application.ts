@@ -1,4 +1,4 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState, StateToObj, getIndexer } from "./algorand"
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getAlgodClient, getGlobalState, StateToObj, getIndexer, isOptedIntoApp } from "./algorand"
 import * as fs from 'fs';
 import {
   get_app_optin_txn,
@@ -15,9 +15,10 @@ import {
 } from "./platform-conf";
 import { SessionWallet } from "algorand-session-wallet"
 import { Injectable } from "@angular/core";
-import { compileProgram, getTransactionParams, waitForTransaction } from "../services/utils.algo";
+import { compileProgram, getAppLocalStateByKey, getTransactionParams, waitForTransaction } from "../services/utils.algo";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
 import { PresaleBlockchainInformation } from "../modules/launchpad/launch-detail/launch-detail.component";
+import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -394,7 +395,7 @@ export class DeployedApp {
     const assets = [this.settings.asset_id, ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id]
 
-    const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
+    const buy = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, apps, assets, accounts))
     const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, algoAmount))
 
     const grouped = [pay, buy]
@@ -410,14 +411,14 @@ export class DeployedApp {
   async sell(wallet: SessionWallet, tokenAmount: number, slippage: number, wantedReturn: number, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings
     const suggested = await getSuggested(30)
-    suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
+    suggested.fee = 6 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(Method.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.verse_app_addr]
-    const assets = [this.settings.asset_id]
+    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
+    const assets = [this.settings.asset_id, ps.platform.verse_asset_id]
 
-    const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+    const sell = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, assets, accounts))
     const [signed] = await wallet.signTxn([sell])
     const result = await sendWait([signed])
 
@@ -630,4 +631,40 @@ export class DeployedApp {
     }
     return presaleInfo;
   }
+
+  async getSmartToolData(wallet: string, contractId: number, assetDecimals: number): Promise<SmartToolData> {
+    if(await isOptedIntoApp(wallet, contractId)) {
+        let client: Algodv2 = getAlgodClient()
+        let accountInfo: any = await client.accountInformation(wallet).do()
+        let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+
+        let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+            return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
+        })
+        let holding = 0
+        if(asset){
+            holding = asset['amount'] / Math.pow(10, assetDecimals)
+        }
+        let userSupplied = globalState[StateKeys.user_supplied_key]['i']
+        let userBorrowed = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_borrowed_key)
+
+        return {
+            userBorrowed: userBorrowed,
+            assetDecimals: assetDecimals,
+            availableAmount: holding,
+            contractId: contractId,
+            userSupplied: userSupplied
+        }
+
+    } else {
+        return {
+            userBorrowed: 0,
+            assetDecimals: 0,
+            availableAmount: 0,
+            contractId: 0,
+            userSupplied: 0
+        }
+    }
+  }
+
 }

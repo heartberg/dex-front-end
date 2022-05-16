@@ -441,22 +441,22 @@
           >
             <div class="d-flex flex-column">
               <span style="align-self: flex-end" class="thin-gray-text"
-              >Available: 2000</span
+              >Available: {{smartToolData.availableAmount / pow(smartToolData.assetDecimals)}}</span
               >
               <div class="input-box">
-                <label for="token-name">Token Name:</label>
+                <label for="supply-amount">Supply Amount:</label>
                 <input
-                  formControlName="tokenName"
-                  id="token-name"
-                  type="text"
+                  formControlName="supplyAmount"
+                  id="supply-amount"
+                  type="number"
                 />
               </div>
             </div>
             <div class="d-flex flex-row">
               <div class="input-box">
-                <label for="borrow-amount">Borrowed Amount:</label>
+                <label for="borrow-amount">Borrow Amount:</label>
                 <input
-                  formControlName="borrowedAmount"
+                  formControlName="borrowAmount"
                   id="borrow-amount"
                   type="number"
                 />
@@ -475,6 +475,7 @@
                 align-self: center;
               "
               class="btn-secondary-costum"
+              (click)="borrow"
             >
               Borrow
             </button>

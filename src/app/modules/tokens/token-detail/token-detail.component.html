@@ -209,9 +209,11 @@
   [isBorrow]="isBorrow"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBorrow"
+  [smartToolData]="smartToolData"
 ></app-pop-up>
 <app-pop-up
   [isBacking]="isBacking"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBacking"
+  [smartToolData]="smartToolData"
 ></app-pop-up>

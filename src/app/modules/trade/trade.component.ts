@@ -63,7 +63,7 @@ export class TradeComponent implements OnInit {
   changeBottom: boolean = false;
   changeTop: boolean = false;
 
-  isBuy: boolean = false;
+  isBuy: boolean = true;
 
   blockchainInfo: BlockchainInformation | undefined;
   deployedAppSettings: DeployedAppSettings | undefined;
@@ -129,7 +129,9 @@ export class TradeComponent implements OnInit {
       this.assetArr.push(...res);
       this.assetArrSecond.push(...res);
     });
-    await this.selectAsset(this.assetArr[0].assetId);
+
+    this.selectedOption = this.assetArr[0]
+    await this.selectAsset(this.assetArr[1].assetId);
 
     this.slippageForm.get("slippageInput")!.valueChanges.subscribe(
       (input: any) => {
@@ -211,7 +213,6 @@ export class TradeComponent implements OnInit {
         this.removeVerse(res);
         this.assetArr.push(await this.verseApp.getViewModel())
         this.assetArr.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
         this.assetArr.push(...res);
       });
     } else if (event === false) {
@@ -562,17 +563,8 @@ export class TradeComponent implements OnInit {
   }
 
   calcDesiredOutput(amountToBuy:number, liqA: number, liqB: number) {
-    let diff = 0
     let price = liqA / liqB
-    if(this.selectedOption!.decimals > 6) {
-      diff = this.selectedOption!.decimals - 6
-      price = price * Math.pow(10, diff)
-
-    } else if(this.selectedOption!.decimals < 6) {
-      diff = 6 - this.selectedOption!.decimals
-      price = price / Math.pow(10, diff)
-    }
-    return Math.floor(amountToBuy * liqA / liqB)
+    return Math.floor(amountToBuy * price)
   }
 
   setMinOutput(){
@@ -605,25 +597,29 @@ export class TradeComponent implements OnInit {
     let algoLiq = this.blockchainInfo!.algoLiquidity;
     let amount = this.topInput;
     let diff = 0;
-    //console.log(amount)
+    console.log("amoount: " + amount)
 
     if(this.isBuy){
       let price = this.spotPrice;
+      console.log("price: " + price)
       let buyAmount = Math.floor(1 / price * amount * Math.pow(10, this.selectedOption!.decimals));
+      console.log("buy aamount: " + buyAmount)
       let newAlgoLiq = algoLiq + amount * Math.pow(10, 6);
       let newTokenLiq = tokenLiq - buyAmount;
       // console.log("new algo: " + newAlgoLiq + " new token: " + newTokenLiq)
       let newPrice = newAlgoLiq / newTokenLiq;
-      // console.log("buy new price: " + newPrice)
-
+      console.log("buy new price: " + newPrice)
+      console.log("new price: " + newPrice)
       if(this.selectedOption!.decimals > 6) {
         diff = this.selectedOption!.decimals - 6
-        newPrice = price / Math.pow(10, diff)
+        newPrice = newPrice * Math.pow(10, diff)
       } else if(this.selectedOption!.decimals < 6) {
         diff = 6 - this.selectedOption!.decimals
-        newPrice = price * Math.pow(10, diff)
+        newPrice = newPrice / Math.pow(10, diff)
       }
+      console.log("new price: " + newPrice)
       this.priceImapct = (newPrice / price) * 100 - 100
+      console.log("price impact: " + this.priceImapct)
     } else {
       let price = this.spotPrice;
       let algoReturnAmount = Math.floor(price * amount * Math.pow(10, 6));
@@ -656,8 +652,9 @@ export class TradeComponent implements OnInit {
     } else {
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
     }
-    let scaledAmount = Math.floor(amount * 1_000_000)
 
+    let scaledAmount = Math.floor(amount * 1_000_000)
+    console.log(this.blockchainInfo)
     let wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.tokenLiquidity, this.blockchainInfo.algoLiquidity)
     console.log(wantedReturn)
     if(this.selectedOption!.assetId == ps.platform.verse_asset_id) {
@@ -683,8 +680,10 @@ export class TradeComponent implements OnInit {
     } else {
       // same same here
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
-      scaledAmount = Math.floor(amount * this.deployedAppSettings!.decimals)
+      scaledAmount = Math.floor(amount * Math.pow(10, this.deployedAppSettings!.decimals))
       wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
+      console.log(scaledAmount)
+      console.log(wantedReturn)
       let response = await this.deployedApp.sell(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
       return response;
     }
