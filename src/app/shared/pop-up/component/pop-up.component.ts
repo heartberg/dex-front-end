@@ -7,6 +7,7 @@ import { Form, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { DeployedAppSettings } from 'src/app/blockchain/platform-conf';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
+import { PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
 
 
 export type SmartToolData = {
@@ -66,6 +67,17 @@ export class PopUpComponent implements OnInit {
     totalBacking: 0,
     totalBorrowed: 0,
     totalSupply: 0,
+  }
+  
+  @Input()
+  presaleEntryData: PresaleEntryData = {
+    assetId: 0,
+    availableAmount: 0,
+    contractId: 0,
+    filledAmount: 0,
+    hardCap: 0,
+    presalePrice: 0,
+    walletCap: 0
   }
 
   // FORMS
