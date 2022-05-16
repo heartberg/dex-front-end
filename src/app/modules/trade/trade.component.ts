@@ -358,6 +358,7 @@ export class TradeComponent implements OnInit {
   }
 
   openPopUp() {
+    this.getSmartToolData()
     this.isPopUpOpen = true;
   }
 

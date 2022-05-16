@@ -61,6 +61,7 @@ export class TokenDetailComponent implements OnInit {
   }
 
   async openPopUp(version: string) {
+    await this.getSmartToolData()
     console.log(this.smartToolData)
     this.isPopUpOpen = true;
     if (version === 'isBorrow') {

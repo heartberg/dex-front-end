@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
@@ -7,6 +9,16 @@ import { projectReqService } from 'src/app/services/APIs/project-req.service';
 // import { ActivatedRoute } from '@angular/router';
 // import { ProjectViewModel } from 'src/app/models/projectView.model';
 // import { projectReqService } from 'src/app/services/APIs/project-req.service';
+
+export type PresaleEntryData = {
+  presalePrice: number,
+  availableAmount: number,
+  hardCap: number,
+  walletCap: number,
+  filledAmount: number,
+  contractId: number,
+  assetId: number
+}
 
 export type PresaleBlockchainInformation = {
   tokenLiq: number,
@@ -35,6 +47,15 @@ export class LaunchDetailComponent implements OnInit {
   currentProjectId: string = this.route.snapshot.paramMap.get('id')!;
   projectData!: ProjectViewModel;
   presaleData!: PresaleBlockchainInformation;
+  presaleEntryData: PresaleEntryData = {
+    availableAmount: 0,
+    filledAmount: 0,
+    hardCap: 0,
+    presalePrice: 0,
+    walletCap: 0,
+    assetId: 0,
+    contractId: 0
+  };
   minLaunchPrice: number = 0;
   maxLaunchPrice: number = 0;
 
@@ -65,8 +86,22 @@ export class LaunchDetailComponent implements OnInit {
     this.closePopup = event;
   }
 
-  openPopUp() {
+  async openPopUp() {
+    await this.setEntryData()
     this.closePopup = true;
+  }
+
+  async setEntryData() {
+    let wallet = localStorage.getItem("wallet")!
+    let client: AlgodClient = getAlgodClient()
+    let accInfo = await client.accountInformation(wallet).do()
+    this.presaleEntryData.availableAmount = accInfo['amount']
+    this.presaleEntryData.presalePrice = this.presaleData.price
+    this.presaleEntryData.filledAmount = this.presaleData.totalRaised
+    this.presaleEntryData.hardCap = this.presaleData.hardCap
+    this.presaleEntryData.walletCap = this.presaleData.walletCap
+    this.presaleEntryData.assetId = this.projectData.asset.assetId
+    this.presaleEntryData.contractId = this.projectData.asset.contractId
   }
 
   pow(decimal: number){
