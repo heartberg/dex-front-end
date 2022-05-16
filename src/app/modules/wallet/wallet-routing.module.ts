@@ -5,7 +5,7 @@ import { WalletComponent } from './wallet.component';
 const routes: Routes = [
   { path: '', component: WalletComponent },
   {
-    path: 'entries',
+    path: '',
     component: WalletComponent
   },
 ];

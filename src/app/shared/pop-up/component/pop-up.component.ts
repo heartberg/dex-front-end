@@ -35,12 +35,17 @@ export class PopUpComponent implements OnInit {
   @Input() isDeployedSuccess: boolean = false;
   @Input() isDeployedFaied: boolean = false;
   @Input() isDeployedPending: boolean = false;
-
   //deployed logic
   isActiveFirst = true;
   isActiveSecond = false;
 
   // FORMS
+
+  // trade new popup flows
+  @Input() isTradeLend: boolean = false;
+  @Input() isTradeBacking: boolean = true;
+  @Input() isTradeTrade: boolean = false;
+  // trade new popup flows
 
   tokenDetailBorrowForm = this.fb.group({
     tokenName: [],
@@ -74,6 +79,8 @@ export class PopUpComponent implements OnInit {
   myPresaleFairLaunchForm = this.fb.group({
     tradingStart: [],
     additionalAlgo: [],
+    fairLaunchToken: [],
+    algoLiq: [],
   });
 
   // FORMS
@@ -230,5 +237,21 @@ export class PopUpComponent implements OnInit {
 
   triggetLiquidity() {
     this.isLiquiditied.emit(true);
+  }
+
+  activateLandAndTrade(id: number) {
+    if (id === 1) {
+      this.isTradeLend = false;
+      this.isTradeBacking = false;
+      this.isTradeTrade = true;
+    } else if (id === 2) {
+      this.isTradeLend = true;
+      this.isTradeBacking = false;
+      this.isTradeTrade = false;
+    } else if (id === 3) {
+      this.isTradeLend = false;
+      this.isTradeBacking = true;
+      this.isTradeTrade = false;
+    }
   }
 }

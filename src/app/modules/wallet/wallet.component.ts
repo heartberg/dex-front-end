@@ -12,13 +12,14 @@ import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 export class WalletComponent implements OnInit {
   public isActiveFirst: boolean = false;
   public isActiveSecond: boolean = false;
-  private totalAlgoValue = 0;
+  public totalAlgoValue = 0;
 
   constructor(
     private route: ActivatedRoute,
   ) { }
 
   async ngOnInit(): Promise<void> {
+    this.totalAlgoValue = JSON.parse(localStorage.getItem('algo')!);
     const wallet = localStorage.getItem("wallet");
     if(wallet){
       console.log(wallet)
