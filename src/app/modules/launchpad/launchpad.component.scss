@@ -46,3 +46,10 @@ input {
   // top: 3px;
   // left: 4px;
 }
+
+
+@media (max-width: 490px) {
+  .input-width{
+    width: 170px;
+  }
+}

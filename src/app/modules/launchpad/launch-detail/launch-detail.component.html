@@ -1,54 +1,69 @@
 <div class="main">
-  <div class="wrapper-border unscrollable-section">
-    <div class="row">
-      <div class="col-md-4">
-        <div class="wrapper-border unscrollable-left-section">
-          <div class="avatar-section">
-            <div class="row">
-              <div class="col-md-6">
-                <img style="width: 100%;"
-                  src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
-                  alt="">
-              </div>
-              <div class="col-md-6">
-                <h6>{{projectData.projectName}}</h6>
-                <h6>{{projectData.website}}</h6>
+<div>
+    <div class="row" >
+      <div class="col-md-5"> 
+        <div class="wrapper-border ">
+          <div class="row">
+            <div class="col-md-6">
+              <img style="width: 100%;"
+                      src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+                      alt="">
+            </div>
+            <div class="col-md-6">
+              <h6>{{projectData.projectName}}</h6>
+              <h6>{{projectData.website}}</h6>
+              <div class="row">
                 <div class="d-flex socLinks align-items-center">
-                  <div class="">
-                    <img src="https://1000logos.net/wp-content/uploads/2021/04/Telegram-logo.png" alt="">
-                  </div>
-                  <div class="">
-                    <img src="https://1000logos.net/wp-content/uploads/2021/04/Twitter-logo.png" alt="">
-                  </div>
-                  <div class="">
-                    <img src="https://image.similarpng.com/very-thumbnail/2020/05/Glossy-Instagram-icon-PNG.png" alt=""
-                      style="width: 40px; height: 40px;">
-                  </div>
+                  <div class="col-md-4">
+                  <img
+                        src="https://1000logos.net/wp-content/uploads/2021/04/Telegram-logo.png"
+                        alt=""
+                      />
                 </div>
+                <div class="col-md-4">
+                  <img
+                        src="https://1000logos.net/wp-content/uploads/2021/04/Twitter-logo.png"
+                        alt=""
+                      />
+                </div>
+                <div class="col-md-4">
+                  <img
+                        src="https://image.similarpng.com/very-thumbnail/2020/05/Glossy-Instagram-icon-PNG.png"
+                        alt=""
+                        style="width: 40px; height: 40px"
+                      />
+                </div>
+                </div>
+                
               </div>
             </div>
           </div>
-          <div class="avatar-info">
-            <div class="d-flex">
-              <h6>Sale Start:</h6>
-              <span>{{presaleData.saleStart.toDateString()}} - {{presaleData.saleStart.getHours()}}:{{presaleData.saleStart.getMinutes()}}</span>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="avatar-info">
+                <div class="d-flex">
+                  <h6>Sale Start:</h6>
+                  <span>{{presaleData.saleStart.toDateString()}} - {{presaleData.saleStart.getHours()}}:{{presaleData.saleStart.getMinutes()}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Sale End:</h6>
+                  <span>{{presaleData.saleEnd.toDateString()}} - {{presaleData.saleEnd.getHours()}}:{{presaleData.saleEnd.getMinutes()}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Trading start: </h6>
+                  <span>{{presaleData.tradingStart.toDateString()}} - {{presaleData.tradingStart.getHours()}}:{{presaleData.tradingStart.getMinutes()}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Presale Price: </h6>
+                  <span>{{presaleData.price.toFixed(6)}} Algo/{{projectData.asset.unitName}} </span>
+                </div>
+                <div class="d-flex">
+                  <h6>Tokens in Presale: </h6>
+                  <span>{{presaleData.tokensInPresale}} {{projectData.asset.unitName}} ({{presaleData.tokensInPresale / projectData.asset.totalSupply * pow(projectData.asset.decimals) * 100}}% of total supply)</span>
+                </div>
+              </div>
             </div>
-            <div class="d-flex">
-              <h6>Sale End:</h6>
-              <span>{{presaleData.saleEnd.toDateString()}} - {{presaleData.saleEnd.getHours()}}:{{presaleData.saleEnd.getMinutes()}}</span>
-            </div>
-            <div class="d-flex">
-              <h6>Trading start: </h6>
-              <span>{{presaleData.tradingStart.toDateString()}} - {{presaleData.tradingStart.getHours()}}:{{presaleData.tradingStart.getMinutes()}}</span>
-            </div>
-            <div class="d-flex">
-              <h6>Presale Price: </h6>
-              <span>{{presaleData.price.toFixed(6)}} Algo/{{projectData.asset.unitName}} </span>
-            </div>
-            <div class="d-flex">
-              <h6>Tokens in Presale: </h6>
-              <span>{{presaleData.tokensInPresale}} {{projectData.asset.unitName}} ({{presaleData.tokensInPresale / projectData.asset.totalSupply * pow(projectData.asset.decimals) * 100}}% of total supply)</span>
-            </div>
+            
           </div>
           <div class="avatar-progress">
             <h4>Allocation</h4>
@@ -58,7 +73,7 @@
                 <span>{{presaleData.softCap}} Algo</span>
               </div>
               <div class="d-flex align-items-center justify-content-between">
-                <h6>Hard Cap: </h6>
+                <h6>Hard Cap123: </h6>
                 <span>{{presaleData.hardCap}} Algo</span>
               </div>
               <div class="d-flex align-items-center justify-content-between">
@@ -87,8 +102,9 @@
             </div>
           </div>
         </div>
+      
       </div>
-      <div class="col-md-8">
+      <div class="col-md-7" >
         <div class="wrapper-border desc-section">
           <div class="first-section">
             <h3>Project Description</h3>
@@ -224,8 +240,8 @@
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
 </div>
-<app-pop-up (isClosed)="closePopUp($event)" *ngIf="closePopup"></app-pop-up>

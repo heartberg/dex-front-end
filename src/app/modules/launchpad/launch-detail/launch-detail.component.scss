@@ -7,9 +7,7 @@
     // }
   }
 }
-.main {
-  height: calc(100vh - 80px);
-}
+
 .avatar-info {
   margin-top: 20px;
   div {
@@ -181,6 +179,7 @@
 
 .socLinks {
   margin-top: 10px;
+  width: 100%;
   img {
       cursor: pointer;
       max-width: 50px;
@@ -196,3 +195,8 @@
       max-height: 300px;
   }
 }
+
+.section-left {
+  height: 67.5%
+}
+
