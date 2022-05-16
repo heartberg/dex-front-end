@@ -597,19 +597,14 @@ export class TradeComponent implements OnInit {
     let algoLiq = this.blockchainInfo!.algoLiquidity;
     let amount = this.topInput;
     let diff = 0;
-    console.log("amoount: " + amount)
 
     if(this.isBuy){
       let price = this.spotPrice;
-      console.log("price: " + price)
       let buyAmount = Math.floor(1 / price * amount * Math.pow(10, this.selectedOption!.decimals));
-      console.log("buy aamount: " + buyAmount)
       let newAlgoLiq = algoLiq + amount * Math.pow(10, 6);
       let newTokenLiq = tokenLiq - buyAmount;
       // console.log("new algo: " + newAlgoLiq + " new token: " + newTokenLiq)
       let newPrice = newAlgoLiq / newTokenLiq;
-      console.log("buy new price: " + newPrice)
-      console.log("new price: " + newPrice)
       if(this.selectedOption!.decimals > 6) {
         diff = this.selectedOption!.decimals - 6
         newPrice = newPrice * Math.pow(10, diff)
@@ -617,18 +612,13 @@ export class TradeComponent implements OnInit {
         diff = 6 - this.selectedOption!.decimals
         newPrice = newPrice / Math.pow(10, diff)
       }
-      console.log("new price: " + newPrice)
       this.priceImapct = (newPrice / price) * 100 - 100
-      console.log("price impact: " + this.priceImapct)
     } else {
       let price = this.spotPrice;
       let algoReturnAmount = Math.floor(price * amount * Math.pow(10, 6));
-      // console.log(algoLiq)
-      // console.log(algoReturnAmount)
       let newAlgoLiq = algoLiq - algoReturnAmount;
       let newTokenLiq = tokenLiq + amount * this.selectedOption!.decimals;
       let newPrice = newAlgoLiq / newTokenLiq;
-      // console.log("new price before scaling: " + newPrice)
 
       if(this.selectedOption!.decimals > 6) {
         diff = this.selectedOption!.decimals - 6
@@ -637,13 +627,8 @@ export class TradeComponent implements OnInit {
         diff = 6 - this.selectedOption!.decimals
         newPrice = newPrice / Math.pow(10, diff)
       }
-
-      // console.log("sell new price: " + newPrice);
-      console.log("new price: " + newPrice)
-      console.log("price: " + price)
       this.priceImapct = (1 - newPrice / price) * 100
     }
-    // console.log("price impact: " + this.priceImapct)
   }
 
   async buy(wallet: SessionWallet, amount: number){
@@ -654,9 +639,7 @@ export class TradeComponent implements OnInit {
     }
 
     let scaledAmount = Math.floor(amount * 1_000_000)
-    console.log(this.blockchainInfo)
     let wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.tokenLiquidity, this.blockchainInfo.algoLiquidity)
-    console.log(wantedReturn)
     if(this.selectedOption!.assetId == ps.platform.verse_asset_id) {
       let response = await this.verseApp.buy(wallet, scaledAmount, this.slippage, wantedReturn)
       return response
@@ -673,7 +656,6 @@ export class TradeComponent implements OnInit {
       // maybe delete this to make it use current prices / shown prices? (more transparent and user friendly)
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       scaledAmount = Math.floor(amount * Math.pow(10, ps.platform.verse_decimals))
-      console.log(scaledAmount)
       wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
       let response = await this.verseApp.sell(wallet, scaledAmount, this.slippage, wantedReturn)
       return response;
@@ -682,8 +664,6 @@ export class TradeComponent implements OnInit {
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
       scaledAmount = Math.floor(amount * Math.pow(10, this.deployedAppSettings!.decimals))
       wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
-      console.log(scaledAmount)
-      console.log(wantedReturn)
       let response = await this.deployedApp.sell(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
       return response;
     }
@@ -708,17 +688,11 @@ export class TradeComponent implements OnInit {
  }
   // swap && optIn
   async swap() {
-   // console.log(this.changeTop, this.changeBottom);
-   console.log("swap")
     const wallet = this.walletService.sessionWallet;
     if(wallet){
-      console.log("wallet")
-      console.log(this.topInput)
       if (this.isBuy) {
-        console.log("start bc buy")
         let response = await this.buy(wallet, this.topInput)
         if(response){
-          console.log("bc buy done")
           //if(response['confirmed' ??? ]){}
           let tokenEntryViewModel: TokenEntryViewModel = {
             tokenAmount: this.bottomInput * Math.pow(10, this.selectedOption!.decimals),
@@ -729,19 +703,15 @@ export class TradeComponent implements OnInit {
             userWallet: wallet.getDefaultAccount(),
             date: 0
           }
-          console.log("post buy http start")
           this.assetReqService.postBuy(tokenEntryViewModel).subscribe(
             (value: any) => {
-              console.log("post buy http done")
               this.getAllBuysAndSells()
             }
           );
         }
       } else {
         // sell
-        console.log("started bc sell")
         let response = await this.sell(wallet, this.topInput)
-        console.log('bc sell done')
         if(response){
           let tokenEntryViewModel: TokenEntryViewModel = {
             tokenAmount: this.topInput * Math.pow(10, this.selectedOption!.decimals),
@@ -752,22 +722,27 @@ export class TradeComponent implements OnInit {
             userWallet: wallet.getDefaultAccount(),
             date: 0
           }
-          console.log("post sell http")
-          console.log(tokenEntryViewModel)
           this.assetReqService.postSell(tokenEntryViewModel).subscribe(
             (value: any) => {
-              console.log("post sell http done")
               this.getAllBuysAndSells()
             }
           );
-          console.log('sell done');
         }
       }
       await this.updateBlockchainInfo()
       this.updateHoldingOfSelectedAsset()
       this.getPrice()
+      this.emptyInputs()
+      this.calcPriceImpact()
       // clear input top and bottom
     }
+  }
+
+  emptyInputs(){
+    this.topForms.get("topInputValue")?.setValue(0)
+    this.bottomForms.get("bottomInputValue")?.setValue(0);
+    this.topInput = 0;
+    this.bottomInput = 0;
   }
 
   getAllBuysAndSells(){
