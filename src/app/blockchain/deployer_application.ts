@@ -633,11 +633,16 @@ export class DeployedApp {
   }
 
   async getSmartToolData(wallet: string, contractId: number, assetDecimals: number): Promise<SmartToolData> {
-    if(await isOptedIntoApp(wallet, contractId)) {
-        let client: Algodv2 = getAlgodClient()
-        let accountInfo: any = await client.accountInformation(wallet).do()
-        let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+    let client: Algodv2 = getAlgodClient()
+    let accountInfo: any = await client.accountInformation(wallet).do()
+    let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
 
+    let appInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
+    let totalBacking = (appInfo['amount'] - appInfo['min-balance'] - globalState[StateKeys.algo_liq_key]['i'] + globalState[StateKeys.total_borrowed_key]['i']) / Math.pow(10, 6)
+
+    let totalBorrowed = globalState[StateKeys.total_borrowed_key]['i']
+
+    if(await isOptedIntoApp(wallet, contractId)) {
         let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
             return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
         })
@@ -653,16 +658,20 @@ export class DeployedApp {
             assetDecimals: assetDecimals,
             availableAmount: holding,
             contractId: contractId,
-            userSupplied: userSupplied
+            userSupplied: userSupplied,
+            totalBacking: totalBacking,
+            totalBorrowed: totalBorrowed
         }
 
     } else {
         return {
             userBorrowed: 0,
-            assetDecimals: 0,
+            assetDecimals: assetDecimals,
             availableAmount: 0,
-            contractId: 0,
-            userSupplied: 0
+            contractId: contractId,
+            userSupplied: 0,
+            totalBacking: totalBacking,
+            totalBorrowed: totalBorrowed
         }
     }
   }

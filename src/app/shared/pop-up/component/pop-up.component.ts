@@ -14,7 +14,9 @@ export type SmartToolData = {
   availableAmount: number,
   userBorrowed: number,
   assetDecimals: number,
-  contractId: number
+  contractId: number,
+  totalBacking: number,
+  totalBorrowed: number
 }
 
 @Component({
@@ -57,7 +59,9 @@ export class PopUpComponent implements OnInit {
     availableAmount: 0,
     contractId: 0,
     userBorrowed: 0,
-    userSupplied: 0
+    userSupplied: 0,
+    totalBacking: 0,
+    totalBorrowed: 0
   }
 
   // FORMS

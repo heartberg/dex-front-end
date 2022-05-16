@@ -495,11 +495,17 @@ export class VerseApp {
     }
 
     async getSmartToolData(wallet: string): Promise<SmartToolData> {
-        if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
-            let client: Algodv2 = getAlgodClient()
-            let accountInfo: any = await client.accountInformation(wallet).do()
-            let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
+        let client: Algodv2 = getAlgodClient()
+        let accountInfo: any = await client.accountInformation(wallet).do()
+        let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
 
+        let appInfo: any = await client.accountInformation(ps.platform.backing_addr).do()
+        let totalBacking = (appInfo['amount'] - appInfo['min-balance'] + globalState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
+
+        let totalBorrowed = globalState[backingStateKeys.total_algo_borrowed_key]['i'] / Math.pow(10, 6)
+
+        
+        if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
             let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
                 return el['asset-id'] == ps.platform.verse_asset_id
             })
@@ -508,24 +514,28 @@ export class VerseApp {
                 holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
             }
 
-            let userSupplied = globalState[StateKeys.user_supplied_key]['i']
+            let userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key)
+            let userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_algo_borrowed_key)
 
             return {
-                userBorrowed: 1,
+                userBorrowed: userBorrowed,
                 assetDecimals: ps.platform.verse_decimals,
                 availableAmount: holding,
                 contractId: ps.platform.verse_app_id,
-                userSupplied: userSupplied
+                userSupplied: userSupplied,
+                totalBacking: totalBacking,
+                totalBorrowed: totalBorrowed
             }
             
-
         } else {
             return {
                 userBorrowed: 0,
-                assetDecimals: 0,
+                assetDecimals: ps.platform.verse_decimals,
                 availableAmount: 0,
-                contractId: 0,
-                userSupplied: 0
+                contractId: ps.platform.verse_app_id,
+                userSupplied: 0,
+                totalBacking: totalBacking,
+                totalBorrowed: totalBorrowed
             }
         }
     }

@@ -20,6 +20,7 @@ import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import { min } from 'rxjs/operators';
 import { ThisReceiver } from '@angular/compiler';
+import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
 
 
 @Component({
@@ -78,6 +79,17 @@ export class TradeComponent implements OnInit {
   bottomInput: number = 0;
 
   calcWithFees = false;
+
+  smartToolData: SmartToolData = {
+    assetDecimals: 0,
+    availableAmount: 0,
+    contractId: 0,
+    userBorrowed: 0,
+    userSupplied: 0,
+    totalBacking: 0,
+    totalBorrowed: 0
+  };
+
   constructor(
     private assetReqService: AssetReqService,
     private walletService: WalletsConnectService,
@@ -677,7 +689,7 @@ export class TradeComponent implements OnInit {
     if( this.selectedOption!.maxBuy >= Number.MAX_SAFE_INTEGER){
       return "-"
     } else {
-      return (this.selectedOption!.maxBuy / Math.pow(10, this.selectedOption!.decimals)).toFixed(2)
+      return (this.selectedOption!.maxBuy / Math.pow(10, 6)).toFixed(2)
     }
   }
 
@@ -827,6 +839,21 @@ export class TradeComponent implements OnInit {
       this.blockchainInfo = await this.verseApp.getBlockchainInformation();
     } else {
       this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.selectedOption!.contractId);
+    }
+  }
+
+  async getSmartToolData() {
+    let wallet = this.walletService.sessionWallet;
+    if(wallet){
+      console.log("wallet")
+      let address = localStorage.getItem("wallet")
+      if(this.selectedOption!.contractId != ps.platform.verse_app_id){
+        console.log("deployer app")
+        this.smartToolData = await this.deployedApp.getSmartToolData(address!, this.selectedOption!.contractId, this.selectedOption!.decimals);
+      } else {
+        this.smartToolData = await this.verseApp.getSmartToolData(address!)
+      }
+      console.log(this.smartToolData)
     }
   }
 
