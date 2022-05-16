@@ -1,7 +1,7 @@
 .main {
   display: flex;
   justify-content: center;
-  //height: calc(100vh - 80px);
+ 
   .exchanger {
     display: flex;
     flex-direction: column;
@@ -28,13 +28,9 @@
   margin-bottom: 20px;
 }
 .wrapper-for-btns {
-  position: relative;
-    top: 110px;
-    left: 80px;
-
-
+  
   margin-top: 10px;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 app-drop-down-selector {
   margin-top: 5px;
@@ -159,7 +155,8 @@ app-drop-down-selector {
 }
 
 .top-text {
-  position: relative;
+  
+  
 }
 .table {
   margin-top: 50px;
@@ -205,4 +202,50 @@ app-drop-down-selector {
 }
 .d-block {
   display: block !important;
+}
+
+
+
+
+
+
+
+
+.centered-items {
+  
+}
+
+.first-col-5 {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.centered-buttons {
+  margin-top: 10px;
+}
+
+
+.second-col-7 {
+  justify-content: center;
+  display: grid;
+}
+
+
+
+
+
+
+@media screen and (max-width: 460px) {
+  .input-costum{
+    width: 100%;
+  }
+  
+}
+
+@media  (max-width: 767px) {
+  .third-section {
+    justify-content: center;
+    display: grid;
+  }
 }

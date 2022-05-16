@@ -1,4 +1,225 @@
 <div class="main">
+
+  <div class="row">
+    
+    <div class="col-md-5 ">
+      <div class="wrapper-border section-height">
+        <div class="row">
+          <div class="col-md-6">
+            <!-- <img
+                    style="width: 100%"
+                    [src]="'data:image/jpeg;base64,' + projectData?.projectImage"
+                    alt="https://miro.medium.com/max/512/1*FKD2Uy_Q6r6AviZA2VD4RQ.png"
+                  /> -->
+          </div>
+          <div class="col-md-6">
+            <h6>{{projectData?.projectName}}</h6>
+            <h6>{{projectData?.asset?.name}}</h6>
+            <h6>{{projectData?.asset?.url}}</h6>
+           
+            <div class="row">
+              <div class="d-flex socLinks align-items-center">
+                <div class="col-md-4">
+                <img
+                      src="https://1000logos.net/wp-content/uploads/2021/04/Telegram-logo.png"
+                      alt=""
+                    />
+              </div>
+              <div class="col-md-4">
+                <img
+                      src="https://1000logos.net/wp-content/uploads/2021/04/Twitter-logo.png"
+                      alt=""
+                    />
+              </div>
+              <div class="col-md-4">
+                <img
+                      src="https://image.similarpng.com/very-thumbnail/2020/05/Glossy-Instagram-icon-PNG.png"
+                      alt=""
+                      style="width: 40px; height: 40px"
+                    />
+              </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="details-row">
+          <div class="row">
+        <div class="col-md-6">
+          <div class="data-box">
+            <span class="property">Price</span>
+            <span class="value">{{ getPrice().toFixed(6)}} Algo/Token</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="data-box">
+            <span class="property">Marketcap</span>
+            <span class="value">{{(getPrice() * blockchainData.totalsupply).toFixed(2)}} Algo</span>
+          </div>
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="data-box">
+              <span class="property">Remaining Supply</span>
+              <span class="value">{{ blockchainData.totalsupply.toFixed(2) }}</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="data-box">
+              <span class="property">Burned</span>
+              <span class="value">{{((projectData.asset.totalSupply / pow(projectData.asset.decimals) - blockchainData.totalsupply)).toFixed(2)}} Token</span>
+              <span class="value">Value: {{ ((projectData.asset.totalSupply / pow(projectData.asset.decimals) - blockchainData.totalsupply) * getPrice()).toFixed(2)}} Algo</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="data-box">
+              <span class="property">Backing</span>
+              <span class="value">{{blockchainData.totalBacking.toFixed(2)}}</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="data-box">
+              <span class="property">Holders</span>
+              <span class="value">XY Addresses</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="outer-buttons-container d-flex flex-column">
+        <button class="btn-secondary-costum">Buy</button>
+        <div class="buttons-container">
+          <div class="d-flex flex-column align-items-center">
+            <button
+              (click)="openPopUp('isBorrow')"
+              class="btn-secondary-costum"
+            >
+              Borrow
+            </button>
+            <span class="interest-span">0% interest</span>
+          </div>
+          <button
+            (click)="openPopUp('isBacking')"
+            class="btn-secondary-costum"
+          >
+            Backing
+          </button>
+        </div>
+      </div>
+      </div>
+    </div>
+      <div class="col-md-7 ">
+        <div class="wrapper-border section-height">
+          <div class="first-section right-section">
+            <h3>Project Description</h3>
+            <div class="desc">
+              <span>
+                {{ projectData?.description }}
+              </span>
+            </div>
+          </div>
+
+          <div class="second-section right-section">
+            <h3>Tokenomics</h3>
+            <div class="tokenDesc">
+              <div class="token-first">
+                <div class="d-flex">
+                  <h6>ASA Id:</h6>
+                  <span>{{ projectData!.asset.assetId}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Contract Id:</h6>
+                  <span>{{ projectData!.asset.contractId}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Token Name:</h6>
+                  <span>{{ projectData!.asset.name}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Token Unit:</h6>
+                  <span>{{projectData?.asset?.unitName}}</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Initial Token Supply:</h6>
+                  <span>{{(projectData!.asset!.totalSupply / pow(projectData!.asset!.decimals)).toFixed(projectData!.asset!.decimals)}}</span>
+                </div>
+              </div>
+              <div class="token-second">
+                <div class="d-flex">
+                  <h6>Buy Burn:</h6>
+                  <span>{{(projectData!.asset!.buyBurn / 100).toFixed(2)}}%</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Sell Burn:</h6>
+                  <span>{{(projectData!.asset!.sellBurn / 100).toFixed(2)}}%</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Send Burn:</h6>
+                  <span>{{(projectData!.asset!.sendBurn / 100).toFixed(2)}}%</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Rising Pricefloor:</h6>
+                  <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="third-section right-section">
+            <h3>Team</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div *ngFor="let member of projectData?.teamMembers; let i = index" class="col-md-4">
+                    <div class="img">
+                      <img
+                        src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+                        alt=""
+                      />
+                      <span>{{member?.name}}</span>
+                      <span>{{member?.role}}</span>
+                    </div>
+                  </div>
+                  
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="fourth-section right-section">
+          <h3>Roadmap</h3>
+          <span>{{projectData?.roadmap}}</span>
+          <div class="roadmap-container">
+            <img
+              src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+              alt="roadmap"
+            />
+          </div>
+        </div>
+        </div>
+      </div>
+    
+  </div>
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="main">
   <div class="unscrollable-section">
     <div class="row">
       <div class="col-md-4">
@@ -67,7 +288,10 @@
               <span class="value">XY Addresses</span>
             </div>
           </div>
-          <!-- <hr> -->
+
+
+
+          
           <div class="outer-buttons-container d-flex flex-column">
             <button class="btn-secondary-costum">Buy</button>
             <div class="buttons-container">
@@ -142,10 +366,7 @@
                   <h6>Rising Pricefloor:</h6>
                   <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
-                <!-- <div class="d-flex">
-                    <h6>Special Wallet:</h6>
-                    <span> somme %</span>
-                  </div> -->
+                
               </div>
             </div>
           </div>
@@ -165,25 +386,7 @@
                     </div>
                   </div>
                   <div class="col-md-4">
-                    <!-- <div class="img">
-                      <img
-                        src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
-                        alt=""
-                      /> -->
-                    <!-- <span>Name</span> -->
-                      <!-- <span>Position</span> -->
-                    <!-- </div> -->
-                  <!-- </div> -->
-                  <!-- <div class="col-md-4">
-                    <div class="img">
-                      <img
-                        src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
-                        alt=""
-                      />
-                      <span>Name</span>
-                      <span>Position</span>
-                    </div>
-                  </div>  -->
+                    
                 </div>
               </div>
             </div>
@@ -214,4 +417,4 @@
   [isBacking]="isBacking"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBacking"
-></app-pop-up>
+></app-pop-up> -->

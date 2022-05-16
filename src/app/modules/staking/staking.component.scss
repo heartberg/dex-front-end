@@ -32,3 +32,10 @@ button {
   width: 140px;
 
 }
+
+@media (max-width: 767px) {
+  .claim-button {
+    justify-content: center;
+    
+  }
+}
