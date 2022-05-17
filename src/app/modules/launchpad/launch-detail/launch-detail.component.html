@@ -228,4 +228,4 @@
     </div>
   </div>
 </div>
-<app-pop-up (isClosed)="closePopUp($event)" *ngIf="closePopup"></app-pop-up>
+<app-pop-up (isClosed)="closePopUp($event)" [presaleEntryData]="presaleEntryData" *ngIf="closePopup"></app-pop-up>

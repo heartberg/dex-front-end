@@ -507,15 +507,18 @@ export class VerseApp {
         let totalBorrowed = globalState[backingStateKeys.total_algo_borrowed_key]['i'] / Math.pow(10, 6)
         let algos = accountInfo['amount'] / Math.pow(10, 6)
         
-        if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
-            let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
-                return el['asset-id'] == ps.platform.verse_asset_id
-            })
-            let holding = 0
-            if(asset){
-                holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
-            }
+        let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+            return el['asset-id'] == ps.platform.verse_asset_id
+        })
+        let holding = 0
+        if(asset){
+            holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
+        }
+        console.log(asset)
+        let assetInfo = await client.getAssetByID(asset['asset-id']).do()
+        console.log(assetInfo)
 
+        if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
             let userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key)
             let userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_algo_borrowed_key)
 
@@ -528,20 +531,26 @@ export class VerseApp {
                 userSupplied: userSupplied,
                 totalBacking: totalBacking,
                 totalBorrowed: totalBorrowed,
-                totalSupply: totalSupply
+                totalSupply: totalSupply,
+                optedIn: true,
+                name: assetInfo['params']['name'],
+                unitName: assetInfo['params']['unit-name']
             }
             
         } else {
             return {
                 userBorrowed: 0,
                 assetDecimals: ps.platform.verse_decimals,
-                availableTokenAmount: 0,
+                availableTokenAmount: holding,
                 availableAlgoAmount: algos,
                 contractId: ps.platform.verse_app_id,
                 userSupplied: 0,
                 totalBacking: totalBacking,
                 totalBorrowed: totalBorrowed,
-                totalSupply: totalSupply
+                totalSupply: totalSupply,
+                optedIn: false,
+                name: assetInfo['params']['name'],
+                unitName: assetInfo['params']['unit-name']
             }
         }
     }

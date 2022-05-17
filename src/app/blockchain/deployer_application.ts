@@ -17,7 +17,7 @@ import { SessionWallet } from "algorand-session-wallet"
 import { Injectable } from "@angular/core";
 import { compileProgram, getAppLocalStateByKey, getTransactionParams, waitForTransaction } from "../services/utils.algo";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
-import { PresaleBlockchainInformation } from "../modules/launchpad/launch-detail/launch-detail.component";
+import { PresaleBlockchainInformation, PresaleEntryData } from "../modules/launchpad/launch-detail/launch-detail.component";
 import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
@@ -81,7 +81,6 @@ export enum Method {
 })
 
 export class DeployedApp {
-
   settings: DeployedAppSettings;
 
   constructor(
@@ -644,14 +643,18 @@ export class DeployedApp {
     let totalBorrowed = globalState[StateKeys.total_borrowed_key]['i'] / Math.pow(10, 6)
     let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetDecimals)
 
+    let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+      return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
+    })
+    let holding = 0
+    if(asset){
+        holding = asset['amount'] / Math.pow(10, assetDecimals)
+    }
+
+    let assetInfo = await client.getAssetByID(asset['asset-id']).do()
+
     if(await isOptedIntoApp(wallet, contractId)) {
-        let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
-            return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
-        })
-        let holding = 0
-        if(asset){
-            holding = asset['amount'] / Math.pow(10, assetDecimals)
-        }
+        
         let userSupplied = globalState[StateKeys.user_supplied_key]['i']
         let userBorrowed = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_borrowed_key)
 
@@ -664,7 +667,10 @@ export class DeployedApp {
             userSupplied: userSupplied,
             totalBacking: totalBacking,
             totalBorrowed: totalBorrowed,
-            totalSupply: totalSupply
+            totalSupply: totalSupply,
+            optedIn: true,
+            name: assetInfo['name'],
+            unitName: assetInfo['unit-name']
         }
 
     } else {
@@ -677,8 +683,27 @@ export class DeployedApp {
             userSupplied: 0,
             totalBacking: totalBacking,
             totalBorrowed: totalBorrowed,
-            totalSupply: totalSupply
+            totalSupply: totalSupply,
+            optedIn: false,
+            name: assetInfo['name'],
+            unitName: assetInfo['unit-name']
         }
+    }
+  }
+
+  async getPresaleEntryData(contractId: number): Promise<PresaleEntryData> {
+    
+    let client: Algodv2 = getAlgodClient()
+    let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+
+    return {
+      availableAmount: 0,
+      presalePrice: 0,
+      filledAmount: globalState[StateKeys.presale_total_raised]['i'],
+      hardCap: globalState[StateKeys.presale_hard_cap_key]['i'],
+      walletCap: globalState[StateKeys.presale_wallet_cap_key]['i'],
+      assetId: globalState[StateKeys.asset_id_key]['i'],
+      contractId: contractId,
     }
   }
 

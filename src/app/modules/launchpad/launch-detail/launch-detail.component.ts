@@ -95,13 +95,9 @@ export class LaunchDetailComponent implements OnInit {
     let wallet = localStorage.getItem("wallet")!
     let client: AlgodClient = getAlgodClient()
     let accInfo = await client.accountInformation(wallet).do()
-    this.presaleEntryData.availableAmount = accInfo['amount']
+    this.presaleEntryData = await this.deployedApp.getPresaleEntryData(this.projectData.asset.contractId)
     this.presaleEntryData.presalePrice = this.presaleData.price
-    this.presaleEntryData.filledAmount = this.presaleData.totalRaised
-    this.presaleEntryData.hardCap = this.presaleData.hardCap
-    this.presaleEntryData.walletCap = this.presaleData.walletCap
-    this.presaleEntryData.assetId = this.projectData.asset.assetId
-    this.presaleEntryData.contractId = this.projectData.asset.contractId
+    this.presaleEntryData.availableAmount = accInfo['amount'] / Math.pow(10, 6)
   }
 
   pow(decimal: number){

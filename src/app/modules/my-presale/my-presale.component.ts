@@ -10,6 +10,7 @@ import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-detail.component';
 
 @Component({
   selector: 'app-my-presale',
@@ -28,6 +29,8 @@ export class MyPresaleComponent implements OnInit {
   isSoldOut: boolean = false;
   wallet: SessionWallet | undefined
 
+  presaleData: PresaleBlockchainInformation | undefined;
+
   constructor(
     private projectReqService: projectReqService,
     private assetReqService: AssetReqService,
@@ -35,7 +38,8 @@ export class MyPresaleComponent implements OnInit {
     private walletService: WalletsConnectService
   ) {}
 
-  openPopUp(version: string) {
+  async openPopUp(version: string, presale: ProjectPreviewModel) {
+    this.presaleData = await this.app.getPresaleInfo(presale.asset.contractId)
     this.isPopUpOpen = true;
     if (version === 'restart') {
       this.isRestart = true;
@@ -53,9 +57,11 @@ export class MyPresaleComponent implements OnInit {
   async removeMaxBuy(assetId: number, contractId: number) {
     this.wallet = this.walletService.sessionWallet!
     let response = await this.app.removeMaxBuy(this.wallet, contractId);
-    this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
-      console.log(res);
-    });
+    if(response) {
+      this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
+        console.log(res);
+      });
+    }
   }
 
   makeRequest(form: FormGroup) {

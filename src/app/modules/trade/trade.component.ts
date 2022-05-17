@@ -89,7 +89,10 @@ export class TradeComponent implements OnInit {
     userSupplied: 0,
     totalBacking: 0,
     totalBorrowed: 0,
-    totalSupply: 0
+    totalSupply: 0,
+    optedIn: true,
+    name: "",
+    unitName: ""
   };
 
   constructor(
@@ -183,12 +186,13 @@ export class TradeComponent implements OnInit {
           console.log("bottom:" + input)
           this.bottomInput = input
           let output = this.calcOtherFieldOutput(false);
+          console.log("bottom output: " + output)
           //this.topForms.get("topInputValue")!.setValue(output);
         } else {
           console.log("top input: " + input)
           this.topInput = input
           let output = this.calcOtherFieldOutput(true);
-          console.log(output, 'this one 2')
+          console.log("bottom output: " + output)
           //this.topForms.get("topInputValue")!.setValue(output);
         }
         this.calcPriceImpact()

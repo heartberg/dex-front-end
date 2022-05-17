@@ -4,7 +4,7 @@ import { AuthService } from '../../../services/authService.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
-import { PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
+import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
 
 
 export type SmartToolData = {
@@ -17,6 +17,9 @@ export type SmartToolData = {
   totalBacking: number,
   totalBorrowed: number,
   totalSupply: number,
+  optedIn: boolean,
+  name: string,
+  unitName: string
 }
 
 @Component({
@@ -53,6 +56,12 @@ export class PopUpComponent implements OnInit {
   isActiveFirst = true;
   isActiveSecond = false;
 
+  returnedBacking: number = 0;
+  presalePrice: number = 0;
+  minInitialPrice = 0;
+  maxInitialPrice = 0;
+  initialFairLaunchPrice = 0;
+
   @Input()
   smartToolData: SmartToolData = {
     assetDecimals: 0,
@@ -64,18 +73,16 @@ export class PopUpComponent implements OnInit {
     totalBacking: 0,
     totalBorrowed: 0,
     totalSupply: 0,
+    optedIn: true,
+    name: "",
+    unitName: ""
   }
+
+  @Input()
+  presaleData: PresaleBlockchainInformation | undefined;
   
   @Input()
-  presaleEntryData: PresaleEntryData = {
-    assetId: 0,
-    availableAmount: 0,
-    contractId: 0,
-    filledAmount: 0,
-    hardCap: 0,
-    presalePrice: 0,
-    walletCap: 0
-  }
+  presaleEntryData: PresaleEntryData | undefined
 
   // FORMS
 
@@ -108,6 +115,8 @@ export class PopUpComponent implements OnInit {
     presaleEnd: [],
     tradingStart: [],
     tokenInPresale: [],
+    tokenInLiquidity: [],
+    algoInLiquidity: [],
     softCap: [],
     hardCap: [],
     walletCap: [],
@@ -116,8 +125,7 @@ export class PopUpComponent implements OnInit {
 
   myPresaleFairLaunchForm = this.fb.group({
     tradingStart: [],
-    additionalAlgo: [],
-    fairLaunchToken: [],
+    tokenLiq: [],
     algoLiq: [],
   });
 
@@ -127,11 +135,13 @@ export class PopUpComponent implements OnInit {
     if (formName === 'myPresaleRestartForm') {
       this.makeRequest.next(this.myPresaleRestartForm);
       this.myPresaleRestartForm.reset();
+      console.log(this.presaleData)
     }
 
     if (formName === 'myPresaleFairLaunchForm') {
       this.makeRequest.next(this.myPresaleFairLaunchForm);
       this.myPresaleFairLaunchForm.reset();
+      console.log(this.presaleData)
     }
   }
 
@@ -143,7 +153,25 @@ export class PopUpComponent implements OnInit {
     private deployedApp: DeployedApp
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.tradeBackingControl.valueChanges!.subscribe(
+      (value: any) => {
+        this.calculateBackingReturn(value)
+      }
+    )
+    this.myPresaleRestartForm.valueChanges!.subscribe(
+      (value: any) => {
+        console.log(value)
+        this.getInitialPrices()
+      }
+    )
+
+    this.myPresaleFairLaunchForm.valueChanges!.subscribe(
+      (value: any) => {
+        this.getFairLaunchPrices()
+      }
+    )
+  }
 
   closePopUp(value: any) {
     this.isClosed.emit(false);
@@ -302,4 +330,44 @@ export class PopUpComponent implements OnInit {
   borrow() {
     console.log("borrow")
   }
+
+  calculateBackingReturn(amount: any) {
+    if(!amount)  {
+      this.returnedBacking = 0
+    } else {
+      this.returnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+    }
+  }
+
+  getInitialPrices() {
+    let hardCap = +this.myPresaleRestartForm.get('hardCap')?.value || 0
+    let softCap = +this.myPresaleRestartForm.get('softCap')?.value || 0
+    let algoLiq = +this.myPresaleRestartForm.get('algoInLiquidity')?.value || 0
+    let presaleAlgoToLiq = +this.myPresaleRestartForm.get('toLiquidity')?.value || 0
+    let tokensInPresale = +this.myPresaleRestartForm.get('tokenInPresale')?.value || 0
+    let tokenLiq = +this.myPresaleRestartForm.get('tokenInLiquidity')?.value || 0
+    if(tokenLiq == 0) {
+      this.maxInitialPrice = 0
+      this.minInitialPrice = 0
+    } else {
+      this.maxInitialPrice = (algoLiq + presaleAlgoToLiq * hardCap / 100) / tokenLiq
+      this.minInitialPrice = (algoLiq + presaleAlgoToLiq * softCap / 100) / tokenLiq
+    }
+    if(tokensInPresale == 0) {
+      this.presalePrice = 0
+    } else {
+      this.presalePrice = hardCap / tokensInPresale
+    } 
+  }
+
+  getFairLaunchPrices() {
+    let algoLiq = +this.myPresaleFairLaunchForm.get("algoLiq")?.value || 0
+    let tokenLiq = + this.myPresaleFairLaunchForm.get("tokenLiq")?.value || 0
+    if(tokenLiq == 0){
+      this.initialFairLaunchPrice = 0;
+    } else {
+      this.initialFairLaunchPrice = algoLiq / tokenLiq
+    }
+  }
+
 }
