@@ -5,6 +5,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
+import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
+import { isOptedIntoApp } from 'src/app/blockchain/algorand';
 
 
 export type SmartToolData = {
@@ -150,10 +153,11 @@ export class PopUpComponent implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private verseApp: VerseApp,
-    private deployedApp: DeployedApp
+    private deployedApp: DeployedApp,
+    private projectService: projectReqService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.tradeBackingControl.valueChanges!.subscribe(
       (value: any) => {
         this.calculateBackingReturn(value)
@@ -369,5 +373,52 @@ export class PopUpComponent implements OnInit {
       this.initialFairLaunchPrice = algoLiq / tokenLiq
     }
   }
+
+  async buyPresale() {
+    console.log("buy")
+    let amount = +this.launchDetailControl.value;
+    const addr = localStorage.getItem("wallet")
+    if(addr){
+      let wallet = this._walletsConnectService.sessionWallet!;
+      if(amount){
+        amount = amount * Math.pow(10, 6)
+        console.log(amount)
+        let response = await this.deployedApp.buyPresale(wallet, amount, this.presaleEntryData!.contractId)
+        if(response){
+          let entryViewModel: PresaleEntryModel = {
+            amount: amount,
+            wallet: addr,
+            presaleId: this.presaleEntryData!.presaleId
+          };
+          this.projectService.createPresaleEntry(entryViewModel).subscribe(
+            (value: any) => {
+              console.log("presale entered!")
+            }
+          )
+        }
+        this.closePopUp(true)
+      } else {
+        console.log("please enter amount")
+      }
+    } else {
+      console.log("please connect wallet")
+    }
+
+  }
+
+  async optInToPresaleContract(){
+    console.log("opt in clicked")
+    const wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      let response = await this.deployedApp.optIn(wallet, this.presaleEntryData!.contractId)
+      if(response){
+        this.presaleEntryData!.isOptedIn = true;
+      }
+    } else {
+      console.log("please connect")
+    }
+    
+  }
+
 
 }

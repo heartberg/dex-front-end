@@ -850,18 +850,14 @@ export class TradeComponent implements OnInit {
   }
 
   async getSmartToolData() {
-    let wallet = this.walletService.sessionWallet;
-    if(wallet){
-      console.log("wallet")
-      let address = localStorage.getItem("wallet")
-      if(this.selectedOption!.contractId != ps.platform.verse_app_id){
-        console.log("deployer app")
-        this.smartToolData = await this.deployedApp.getSmartToolData(address!, this.selectedOption!.contractId, this.selectedOption!.decimals);
-      } else {
-        this.smartToolData = await this.verseApp.getSmartToolData(address!)
-      }
-      console.log(this.smartToolData)
+    let address = localStorage.getItem("wallet")
+    if(this.selectedOption!.contractId != ps.platform.verse_app_id){
+      console.log("deployer app")
+      this.smartToolData = await this.deployedApp.getSmartToolData(this.selectedOption!.contractId, address);
+    } else {
+      this.smartToolData = await this.verseApp.getSmartToolData(address)
     }
+    console.log(this.smartToolData)
   }
 
 }

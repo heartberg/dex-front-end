@@ -262,15 +262,14 @@ export class DeployedApp {
 
   ////  deploy-api-logic-file page end here ------------
 
-  async buyPresale(wallet: SessionWallet, amount: number, settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async buyPresale(wallet: SessionWallet, amount: number, contractId: number): Promise<any> {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(Method.BuyPresale))]
 
-    const buy = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, undefined, undefined))
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, amount))
+    const buy = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, undefined, undefined))
+    const pay = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), amount))
 
     const grouped = [buy, pay]
 
@@ -342,12 +341,11 @@ export class DeployedApp {
     return result
   }
 
-  async optIn(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async optIn(wallet: SessionWallet, contractId: number): Promise<any> {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const optin = new Transaction(get_app_optin_txn(suggested, addr, this.settings.contract_id))
+    const optin = new Transaction(get_app_optin_txn(suggested, addr, contractId))
     const [signed] = await wallet.signTxn([optin])
     const result = await sendWait([signed])
 
@@ -631,63 +629,55 @@ export class DeployedApp {
     return presaleInfo;
   }
 
-  async getSmartToolData(wallet: string, contractId: number, assetDecimals: number): Promise<SmartToolData> {
-    let client: Algodv2 = getAlgodClient()
-    let accountInfo: any = await client.accountInformation(wallet).do()
-    let algos: number = accountInfo['amount']
-    let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+  async getSmartToolData(contractId: number, wallet: string | null): Promise<SmartToolData> {
 
+    let client: Algodv2 = getAlgodClient()
+    let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+    let assetInfo = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
+
+    let algos = 0
+    let holding = 0
+    let userSupplied = 0
+    let userBorrowed = 0
+    let optedIn = false
+
+    if(wallet){
+      let accountInfo: any = await client.accountInformation(wallet).do()
+      algos = accountInfo['amount']
+      let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+        return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
+      })
+      if(asset){
+          holding = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
+      }
+
+      if(await isOptedIntoApp(wallet, contractId)) {
+        optedIn = true
+        userSupplied = globalState[StateKeys.user_supplied_key]['i']
+        userBorrowed = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_borrowed_key)
+      }
+
+    }
+    
     let appInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
     let totalBacking = (appInfo['amount'] - appInfo['min-balance'] - globalState[StateKeys.algo_liq_key]['i'] + globalState[StateKeys.total_borrowed_key]['i']) / Math.pow(10, 6)
 
     let totalBorrowed = globalState[StateKeys.total_borrowed_key]['i'] / Math.pow(10, 6)
-    let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetDecimals)
+    let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
 
-    let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
-      return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
-    })
-    let holding = 0
-    if(asset){
-        holding = asset['amount'] / Math.pow(10, assetDecimals)
-    }
-
-    let assetInfo = await client.getAssetByID(asset['asset-id']).do()
-
-    if(await isOptedIntoApp(wallet, contractId)) {
-        
-        let userSupplied = globalState[StateKeys.user_supplied_key]['i']
-        let userBorrowed = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_borrowed_key)
-
-        return {
-            userBorrowed: userBorrowed,
-            assetDecimals: assetDecimals,
-            availableTokenAmount: holding,
-            availableAlgoAmount: algos,
-            contractId: contractId,
-            userSupplied: userSupplied,
-            totalBacking: totalBacking,
-            totalBorrowed: totalBorrowed,
-            totalSupply: totalSupply,
-            optedIn: true,
-            name: assetInfo['name'],
-            unitName: assetInfo['unit-name']
-        }
-
-    } else {
-        return {
-            userBorrowed: 0,
-            assetDecimals: assetDecimals,
-            availableTokenAmount: 0,
-            availableAlgoAmount: algos,
-            contractId: contractId,
-            userSupplied: 0,
-            totalBacking: totalBacking,
-            totalBorrowed: totalBorrowed,
-            totalSupply: totalSupply,
-            optedIn: false,
-            name: assetInfo['name'],
-            unitName: assetInfo['unit-name']
-        }
+    return {
+        userBorrowed: userBorrowed,
+        assetDecimals: assetInfo['params']['decimals'],
+        availableTokenAmount: holding,
+        availableAlgoAmount: algos,
+        contractId: contractId,
+        userSupplied: userSupplied,
+        totalBacking: totalBacking,
+        totalBorrowed: totalBorrowed,
+        totalSupply: totalSupply,
+        optedIn: optedIn,
+        name: assetInfo['params']['name'],
+        unitName: assetInfo['params']['unit-name']
     }
   }
 
@@ -704,6 +694,8 @@ export class DeployedApp {
       walletCap: globalState[StateKeys.presale_wallet_cap_key]['i'],
       assetId: globalState[StateKeys.asset_id_key]['i'],
       contractId: contractId,
+      presaleId: "",
+      isOptedIn: false,
     }
   }
 

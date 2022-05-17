@@ -57,7 +57,7 @@
             <span>Amount</span>
             <div style="margin-right: 45px">
               <span>Available:</span>
-              <span style="color: #81007f; margin-right: 8px">{{presaleEntryData?.availableAmount}} Algo</span>
+              <span style="color: #81007f; margin-right: 8px">{{presaleEntryData!.availableAmount}} Algo</span>
             </div>
           </div>
           <div>
@@ -72,7 +72,8 @@
             <button class="btn-primary-costum" (click)="closePopUp(false)">
               Cancel
             </button>
-            <button class="btn-secondary-costum">Buy</button>
+            <button class="btn-secondary-costum" *ngIf="!presaleEntryData?.isOptedIn" (click)="optInToPresaleContract()" >Opt In</button>
+            <button class="btn-secondary-costum" *ngIf="presaleEntryData?.isOptedIn" (click)="buyPresale()" >Buy</button>
           </div>
         </div>
         <div class="input-section" *ngIf="isDeploy">

@@ -5,6 +5,7 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { Observable, Subject } from 'rxjs';
+import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
 
 @Injectable({
   providedIn: 'root',
@@ -80,6 +81,16 @@ export class projectReqService {
     });
   }
 
+  getProjectWithpresaleById(id: string) {
+    const url = `${this.baseUrl}/project/presale/get/byId`;
+
+    return this._http.get<ProjectViewModel>(url, {
+      params: {
+        projectId: id,
+      },
+    });
+  }
+
   fairLaunch(projectModel: ProjectViewModel) {
     const url = `${this.baseUrl}/project/presale/toFairLaunch`;
 
@@ -99,6 +110,12 @@ export class projectReqService {
       },
     });
   }
+
+  createPresaleEntry(entryModel: PresaleEntryModel) {
+    const url = `${this.baseUrl}/entry/create`;
+    return this._http.post(url, entryModel);
+  }
+
 }
 
 // getAssetPairs(

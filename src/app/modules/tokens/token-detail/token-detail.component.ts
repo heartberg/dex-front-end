@@ -77,18 +77,15 @@ export class TokenDetailComponent implements OnInit {
   }
 
   async getSmartToolData() {
-    let wallet = this.walletConnect.sessionWallet;
-    if(wallet){
-      console.log("wallet")
-      let address = localStorage.getItem("wallet")
-      if(this.projectData.asset.contractId != ps.platform.verse_app_id){
-        console.log("deployer app")
-        this.smartToolData = await this.deployedApp.getSmartToolData(address!, this.projectData.asset.contractId, this.projectData.asset.decimals);
-      } else {
-        this.smartToolData = await this.verseApp.getSmartToolData(address!)
-      }
-      console.log(this.smartToolData)
+    let address = localStorage.getItem("wallet")
+    if(this.projectData.asset.contractId != ps.platform.verse_app_id){
+      console.log("deployer app")
+      this.smartToolData = await this.deployedApp.getSmartToolData(this.projectData.asset.contractId, address);
+    } else {
+      this.smartToolData = await this.verseApp.getSmartToolData(address)
     }
+    console.log(this.smartToolData)
+
   }
 
   closePopUp(event: boolean) {
