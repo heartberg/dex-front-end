@@ -1,11 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { of } from 'rxjs';
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
-import { User } from '../../../models/user.model';
-import { Form, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { VerseApp } from 'src/app/blockchain/verse_application';
-import { DeployedAppSettings } from 'src/app/blockchain/platform-conf';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
 

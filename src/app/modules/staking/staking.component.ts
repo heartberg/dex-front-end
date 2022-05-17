@@ -2,6 +2,7 @@ import { InvokeFunctionExpr } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
 import { nextTick } from 'process';
+import { iif } from 'rxjs';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
@@ -27,7 +28,7 @@ export class StakingComponent implements OnInit {
     userAddedWeek: 0,
     usersHolding: 0,
     verseRewards: 0,
-    nextClaimableDate: 0
+    nextClaimableDate: -1
   };
   constructor(
     private verse: VerseApp,
@@ -68,15 +69,20 @@ export class StakingComponent implements OnInit {
 
     if (date > 0){
       let now = Math.floor(new Date().getTime() * 1000)
-      let nextClaimableTime = new Date(date - now)
-      if(nextClaimableTime.getHours() > 0){
-          return nextClaimableTime.getHours() + "h " + nextClaimableTime.getMinutes() + "min"
+      if(now > date) {
+        return "claimable"
+      } else {
+        let nextClaimableTime = new Date(date - now)
+        if(nextClaimableTime.getHours() > 0){
+            return nextClaimableTime.getHours() + "h " + nextClaimableTime.getMinutes() + "min"
         } else {
           return nextClaimableTime.getMinutes() + "min"
         }
-      } else {
-        return "-"
       }
+    } else if(date == 0){
+      return "activate stake"
+    }
+    return "-"
   }
 
   async claim(): Promise<void> {

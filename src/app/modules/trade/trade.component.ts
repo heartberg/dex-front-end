@@ -357,8 +357,8 @@ export class TradeComponent implements OnInit {
     this.setMinOutput()
   }
 
-  openPopUp() {
-    this.getSmartToolData()
+  async openPopUp() {
+    await this.getSmartToolData()
     this.isPopUpOpen = true;
   }
 
