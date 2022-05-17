@@ -43,10 +43,12 @@ export class PopUpComponent implements OnInit {
 
   // trade new popup flows
   @Input() isTradeLend: boolean = false;
-  @Input() isTradeBacking: boolean = true;
+  @Input() isTradeBacking: boolean = false;
 
   @Input() isTradeLendVerse: boolean = false;
   @Input() isTradeBackingVerse: boolean = false;
+
+  @Output() indexerOfChosenSection = new EventEmitter<number>();
   // trade new popup flows
 
   tokenDetailBorrowForm = this.fb.group({
@@ -245,6 +247,8 @@ export class PopUpComponent implements OnInit {
                     console.log(user);
                     this.isConnectedToWallet.emit(false);
                     this.logInValue.emit(wallet);
+                    location.reload();
+                    return false;
                   },
                   (error) => {
                     console.log('error', error);
@@ -288,16 +292,9 @@ export class PopUpComponent implements OnInit {
 
   activateLandAndTrade(id: number) {
     if (id === 1) {
-      this.isTradeLend = false;
-      this.isTradeBacking = false;
-      this.isTradeLendVerse = false;
-      this.isTradeBackingVerse = true;
-
+      this.indexerOfChosenSection.emit(1)
     } else if (id === 2) {
-      this.isTradeLendVerse = true;
-      this.isTradeLend = false;
-      this.isTradeBacking = false;
-      this.isTradeBackingVerse = false;
+      this.indexerOfChosenSection.emit(2)
     }
   }
 }

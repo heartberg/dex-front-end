@@ -21,7 +21,7 @@
         </div>
         <div class="col-md-7 second-col-7">
           <div
-                
+
                 class="top-text"
               >
                 <span class="thin-gray-text">Available:</span>
@@ -29,8 +29,8 @@
                   availAmount.toFixed(2)
                 }}</span>
               </div>
-                
-              
+
+
           <input
           formControlName="topInputValue"
           type="number"
@@ -71,7 +71,7 @@
         </div>
 
         </div>
-        
+
       </div>
     </div>
 
@@ -102,7 +102,7 @@
           />
         </div>
       </div>
-      
+
     </div>
 
     <div class="row third-row centered-items">
@@ -125,7 +125,7 @@
       </app-drop-down-selector>
     </div>
     <div class="col-md-7 second-col-7">
-      
+
         <div
           class="bot-text"
         >
@@ -143,11 +143,11 @@
           />
         </form>
     </div>
-      
+
     </div>
 
     <div class="row third-section">
-      
+
       <div class="col-md-5">
         <form [formGroup]="slippageForm">
           <div>
@@ -233,7 +233,7 @@
 
 
 
-          
+
           <div style="flex-direction: column" class="d-flex">
             <div>
               <span>Minimum Output: </span>
@@ -245,7 +245,7 @@
                 Algo
               </span>
             </div>
-            
+
 
 
 
@@ -443,4 +443,10 @@
   [isTrade]="true"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen"
+  [isTradeLend]="isTradeLend"
+  [isTradeBacking]="isTradeBacking"
+  [isTradeLendVerse]="isTradeLendVerse"
+  [isTradeBackingVerse]="isTradeBackingVerse"
+  (indexerOfChosenSection)="getPopUpChosenSection($event)"
+
 ></app-pop-up>

@@ -19,6 +19,7 @@ import { env } from 'process';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import { min } from 'rxjs/operators';
+import {of} from "rxjs";
 
 
 @Component({
@@ -75,6 +76,13 @@ export class TradeComponent implements OnInit {
 
   topInput: number = 0;
   bottomInput: number = 0;
+
+  // trade popup situations
+  isTradeLend: boolean = false;
+  isTradeBacking: boolean = false;
+  isTradeLendVerse: boolean = false;
+  isTradeBackingVerse: boolean = false;
+  // trade popup situations
 
   calcWithFees = false;
   constructor(
@@ -133,6 +141,11 @@ export class TradeComponent implements OnInit {
     this.assetReqService.getAssetPairs(true, '', wallet).subscribe( (res) => {
       res.find( (item: AssetViewModel) => item.assetId === 4357 ? this.assetArrSecond.push(...[item]) : null);
     })
+
+    this.assetReqService.getAssetPairs(true, '', wallet).subscribe( (res) => {
+      res.find( (item: AssetViewModel) => item.assetId === 4357 ? this.assetArr.push(...[item]) : null);
+    })
+
 
     this.changeBottom = false;
     this.changeTop = true;
@@ -335,7 +348,38 @@ export class TradeComponent implements OnInit {
     this.isPopUpOpen = event;
   }
 
+  getPopUpChosenSection($event: any): void {
+    setTimeout (() => {
+      if ($event === 1) {
+        console.log('xxxx')
+        if (this.isTradeLendVerse) {
+          this.isTradeLendVerse = false;
+          this.isTradeBackingVerse = true;
+        } else {
+          this.isTradeLend =  false;
+          this.isTradeBacking = true;
+        }
+      } else if ($event === 2) {
+        if (this.isTradeBackingVerse) {
+          this.isTradeBackingVerse = false;
+          this.isTradeLendVerse = true;
+        } else {
+          this.isTradeBacking = false;
+          this.isTradeLend = true;
+        }
+      }
+    }, 0)
+  }
+
   async getValueFromDropDown($event: any, index: number) {
+    if ($event === 'Verse' && index === 1) {
+      this.isTradeLendVerse = true;
+      this.isTradeBackingVerse = false;
+    } else if ($event !== 'Verse' && index === 1) {
+      this.isTradeLend = true;
+      this.isTradeBacking = false;
+    }
+    else
     if ($event !== 'Algo' && index === 1) {
       this.changeBottom = true;
       this.changeTop = false;
