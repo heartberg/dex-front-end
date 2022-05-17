@@ -171,49 +171,49 @@
                         alt=""
                       /> -->
                     <!-- <span>Name</span> -->
-                      <!-- <span>Position</span> -->
+                    <!-- <span>Position</span> -->
                     <!-- </div> -->
-                  <!-- </div> -->
-                  <!-- <div class="col-md-4">
-                    <div class="img">
-                      <img
-                        src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
-                        alt=""
-                      />
-                      <span>Name</span>
-                      <span>Position</span>
-                    </div>
-                  </div>  -->
+                    <!-- </div> -->
+                    <!-- <div class="col-md-4">
+                      <div class="img">
+                        <img
+                          src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+                          alt=""
+                        />
+                        <span>Name</span>
+                        <span>Position</span>
+                      </div>
+                    </div>  -->
+                  </div>
                 </div>
               </div>
+              <div class="col-md-6"></div>
             </div>
-            <div class="col-md-6"></div>
-          </div>
-          <div class="fourth-section">
-            <h3>Roadmap</h3>
-            <span>{{projectData?.roadmap}}</span>
-            <div class="roadmap-container">
-              <img
-                src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
-                alt="roadmap"
-              />
+            <div class="fourth-section">
+              <h3>Roadmap</h3>
+              <span>{{projectData?.roadmap}}</span>
+              <div class="roadmap-container">
+                <img
+                  src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+                  alt="roadmap"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<app-pop-up
-  [isBorrow]="isBorrow"
-  (isClosed)="closePopUp($event)"
-  *ngIf="isPopUpOpen && isBorrow"
-  [smartToolData]="smartToolData"
-></app-pop-up>
-<app-pop-up
-  [isBacking]="isBacking"
-  (isClosed)="closePopUp($event)"
-  *ngIf="isPopUpOpen && isBacking"
-  [smartToolData]="smartToolData"
-></app-pop-up>
+  <app-pop-up
+    [isBorrow]="isBorrow"
+    (isClosed)="closePopUp($event)"
+    *ngIf="isPopUpOpen && isBorrow"
+    [smartToolData]="smartToolData"
+  ></app-pop-up>
+  <app-pop-up
+    [isBacking]="isBacking"
+    (isClosed)="closePopUp($event)"
+    *ngIf="isPopUpOpen && isBacking"
+    [smartToolData]="smartToolData"
+  ></app-pop-up>

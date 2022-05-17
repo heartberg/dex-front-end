@@ -238,3 +238,13 @@
     }
   }
 }
+.rows {
+  display: flex;
+  flex-wrap: wrap;
+}
+.restyle-md {
+  width: 25%;
+}
+.w {
+  width: 60% !important;
+}

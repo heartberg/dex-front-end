@@ -21,6 +21,7 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
 import { min } from 'rxjs/operators';
 import { ThisReceiver } from '@angular/compiler';
 import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
+import {of} from "rxjs";
 
 
 @Component({
@@ -77,6 +78,13 @@ export class TradeComponent implements OnInit {
 
   topInput: number = 0;
   bottomInput: number = 0;
+
+  // trade popup situations
+  isTradeLend: boolean = false;
+  isTradeBacking: boolean = false;
+  isTradeLendVerse: boolean = false;
+  isTradeBackingVerse: boolean = false;
+  // trade popup situations
 
   calcWithFees = false;
 
@@ -157,6 +165,9 @@ export class TradeComponent implements OnInit {
         this.setMinOutput();
       }
     );
+
+    // this.changeBottom = false;
+    // this.changeTop = true;
 
     this.topForms.get("topInputValue")!.valueChanges.subscribe(
       (input: any) => {
@@ -366,7 +377,38 @@ export class TradeComponent implements OnInit {
     this.isPopUpOpen = event;
   }
 
+  getPopUpChosenSection($event: any): void {
+    setTimeout (() => {
+      if ($event === 1) {
+        console.log('xxxx')
+        if (this.isTradeLendVerse) {
+          this.isTradeLendVerse = false;
+          this.isTradeBackingVerse = true;
+        } else {
+          this.isTradeLend =  false;
+          this.isTradeBacking = true;
+        }
+      } else if ($event === 2) {
+        if (this.isTradeBackingVerse) {
+          this.isTradeBackingVerse = false;
+          this.isTradeLendVerse = true;
+        } else {
+          this.isTradeBacking = false;
+          this.isTradeLend = true;
+        }
+      }
+    }, 0)
+  }
+
   async getValueFromDropDown($event: any, index: number) {
+    if ($event === 'Verse' && index === 1) {
+      this.isTradeLendVerse = true;
+      this.isTradeBackingVerse = false;
+    } else if ($event !== 'Verse' && index === 1) {
+      this.isTradeLend = true;
+      this.isTradeBacking = false;
+    }
+    else
     if ($event !== 'Algo' && index === 1) {
       this.changeBottom = true;
       this.changeTop = false;
@@ -403,6 +445,16 @@ export class TradeComponent implements OnInit {
         this.isBuy = true;
       }
     }
+    //console.log($event);
+    // console.log($event);
+    // if (index === 1 && $event) {
+    //   this.secondDropValues.find( (item, i) =>  {
+    //     item = $event;
+    //     console.log(i);
+    //     this.secondDropValues.splice(i+ 1, 1);
+    //   })
+    //   console.log(this.secondDropValues);
+    // }
     if($event != 'Algo') {
       let asset = this.assetArr.find((el) => {
         return el.name === $event;
@@ -507,6 +559,7 @@ export class TradeComponent implements OnInit {
       let asset = accountInfo['assets'].find((el: any) => {
         return el['asset-id'] == assetId
       })
+
       if(!this.isBuy){
         if(asset != null){
           this.availAmount = asset['amount'] / Math.pow(10, this.selectedOption!.decimals)
