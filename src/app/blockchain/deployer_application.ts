@@ -19,6 +19,7 @@ import { compileProgram, getAppLocalStateByKey, getTransactionParams, waitForTra
 import { BlockchainTrackInfo } from "../modules/track/track.component";
 import { PresaleBlockchainInformation, PresaleEntryData } from "../modules/launchpad/launch-detail/launch-detail.component";
 import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
+import { max } from "rxjs/operators";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -441,17 +442,18 @@ export class DeployedApp {
   }
   // #transfer page
   // trade and token page
-  async getBacking(wallet: SessionWallet, tokenAmount: bigint, settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async getBacking(wallet: SessionWallet, tokenAmount: number, contractId: number): Promise<any> {
+    let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
+    
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(Method.GetBacking)), algosdk.encodeUint64(tokenAmount)]
     const accounts = [ps.platform.burn_addr]
-    const assets = [this.settings.asset_id]
+    const assets = [globalState[StateKeys.asset_id_key]['i']]
 
-    const backing = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+    const backing = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
     const [signed] = await wallet.signTxn([backing])
     const result = await sendWait([signed])
 
@@ -516,13 +518,15 @@ export class DeployedApp {
     let totalSupply = appState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo.params.decimals)
     let totalBacking = (appInfo['amount'] - appInfo['min-balance'] - algoLiquidity + appState[StateKeys.total_borrowed_key]['i']) / Math.pow(10, 6)
     let totalBorrowedAlgo = appState[StateKeys.total_borrowed_key]['i']
+    let maxBuy = appState[StateKeys.max_buy_key]['i']
 
     return {
         algoLiquidity: algoLiquidity,
         tokenLiquidity: tokenLiquidity,
         totalsupply: totalSupply,
         totalBacking: totalBacking,
-        totalBorrowedAlgo: totalBorrowedAlgo
+        totalBorrowedAlgo: totalBorrowedAlgo,
+        maxBuy: maxBuy
     }
   }
 
@@ -696,6 +700,17 @@ export class DeployedApp {
       contractId: contractId,
       presaleId: "",
       isOptedIn: false,
+    }
+  }
+
+  async hasMaxBuy(contractId: number) {
+    let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+    let maxBuy = globalState[StateKeys.max_buy_key]['i']
+
+    if(maxBuy >= Number.MAX_SAFE_INTEGER){
+      return false
+    } else {
+      return true
     }
   }
 

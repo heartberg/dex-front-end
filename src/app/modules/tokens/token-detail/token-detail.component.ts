@@ -48,7 +48,7 @@ export class TokenDetailComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    console.log(this.route.snapshot.paramMap.get('id'));
+    console.log("project id: " + this.route.snapshot.paramMap.get('id'));
     this.projectsReqService
       .getProjectById(this.currentProjectId)
       .subscribe(async (res) => {

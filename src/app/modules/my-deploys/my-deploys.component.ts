@@ -6,6 +6,8 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import {of} from "rxjs";
+import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
 
 @Component({
   selector: 'app-my-deploys',
@@ -20,7 +22,8 @@ export class MyDeploysComponent implements OnInit {
   constructor(
     private walletService: WalletsConnectService,
     private app: DeployedApp,
-    private projectService: projectReqService
+    private projectService: projectReqService,
+    private deployLib: DeployLb
   ) { }
 
   ngOnInit(): void {
@@ -44,8 +47,9 @@ export class MyDeploysComponent implements OnInit {
     navigator.clipboard.writeText(content.innerText);
   }
 
-  isRemoveMaxBuy(model: ProjectPreviewModel): boolean {
-    return model.setup && model.burnOptIn && model.minted
+  async isRemoveMaxBuy(model: ProjectPreviewModel): Promise<boolean> {
+    let hasMaxBuy = await this.app.hasMaxBuy(model.asset.contractId)
+    return model.setup && model.burnOptIn && model.minted && hasMaxBuy
   }
 
   isOptInBurn(model: ProjectPreviewModel): boolean {
@@ -60,11 +64,25 @@ export class MyDeploysComponent implements OnInit {
     return !model.minted && !model.burnOptIn && !model.setup
   }
 
-  removeMaxBuy(contractId: number) {
-    //TODO: DO IT IN BACKEND
-    of(this.app.removeMaxBuy(this.wallet!, contractId)).subscribe( (item) => {
-      console.log(item);
-    })
+  async removeMaxBuy(contractId: number) {
+    let response = await this.app.removeMaxBuy(this.wallet!, contractId)
+    if(response){
+      console.log("removed max buy")
+    } else {
+      console.log("error")
+    }
+  }
+
+  startFromMint(model: ProjectPreviewModel) {
+    console.log("start from mint")
+  }
+
+  startFromOptInBurn(model: ProjectPreviewModel) {
+    console.log("start from optin")
+  }
+
+  startFromSetup(model: ProjectPreviewModel) {
+    console.log("start from setup")
   }
 
   // TODO SABA:

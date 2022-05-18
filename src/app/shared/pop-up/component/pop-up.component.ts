@@ -7,7 +7,10 @@ import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
-import { isOptedIntoApp } from 'src/app/blockchain/algorand';
+import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import { StakingInfo } from 'src/app/modules/staking/staking.component';
+import { Algodv2 } from 'algosdk';
 
 
 export type SmartToolData = {
@@ -65,6 +68,12 @@ export class PopUpComponent implements OnInit {
   maxInitialPrice = 0;
   initialFairLaunchPrice = 0;
 
+  assetIdsToOptIn: number[] = []
+  isOptedInToVerseBacking = false
+
+  @Input()
+  stakingInfo: StakingInfo | undefined;
+
   @Input()
   smartToolData: SmartToolData = {
     assetDecimals: 0,
@@ -112,6 +121,9 @@ export class PopUpComponent implements OnInit {
 
   launchDetailControl = this.fb.control([]);
   tradeBackingControl = this.fb.control([]);
+
+  stakeVerseControl = this.fb.control([])
+  withdrawVerseControl = this.fb.control([])
 
   myPresaleRestartForm = this.fb.group({
     presaleStart: [],
@@ -175,6 +187,12 @@ export class PopUpComponent implements OnInit {
         this.getFairLaunchPrices()
       }
     )
+
+    if(this.isTradeBacking){
+      console.log("is trade backing")
+      await this.checkOptedInBackingContract()
+      await this.checkOptInBackingTokens()
+    }
   }
 
   closePopUp(value: any) {
@@ -417,8 +435,146 @@ export class PopUpComponent implements OnInit {
     } else {
       console.log("please connect")
     }
-    
   }
 
+  async optInToStaking(){
+    console.log("opt in to stake")
+    const wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      let response = await this.verseApp.optIn(wallet)
+      if(response){
+        this.presaleEntryData!.isOptedIn = true;
+      }
+    } else {
+      console.log("please connect")
+    }
+  }
+
+  async stake(){
+    let stakeAmount = +this.stakeVerseControl.value | 0
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      if(stakeAmount > 0) {
+        stakeAmount = stakeAmount * Math.pow(10, ps.platform.verse_decimals)
+        let response = await this.verseApp.stake(wallet, stakeAmount)
+        if(response) {
+          console.log("staked")
+          this.closePopUp(true)
+        }
+      } else {
+        console.log("input > 0 please")
+      }
+    } else {
+      console.log("please connect")
+    }
+
+  }
+
+  async withdrawStake(){
+    let withdraw = +this.withdrawVerseControl.value | 0
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      if(withdraw > 0) {
+        withdraw = withdraw * Math.pow(10, ps.platform.verse_decimals)
+        let response = await this.verseApp.withdraw(wallet, withdraw)
+        if(response) {
+          console.log("withdrew")
+          this.closePopUp(true)
+        }
+      } else {
+        console.log("input > 0 please")
+      }
+    } else {
+      console.log("please connect")
+    }
+  }
+
+  async getBackingTrade() {
+    let amount = +this.tradeBackingControl.value
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      if(amount > 0) {
+        if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+          amount = amount * Math.pow(10, ps.platform.verse_decimals)
+          let response = await this.verseApp.getBacking(wallet, amount)
+          if(response) {
+            console.log("backing done")
+            this.closePopUp(true)
+          }
+        } else {
+          amount = amount * Math.pow(10, this.smartToolData.assetDecimals)
+          let response = await this.deployedApp.getBacking(wallet, amount, this.smartToolData.contractId)
+          if(response) {
+            console.log("got backing")
+            this.closePopUp(true)
+          }
+        }
+      } else {
+        console.log("enter > 0")
+      }
+    } else {
+      console.log("please connect wallet")
+    }
+  }
+
+  async lendTrade() {
+    let amount = this.tradeBackingControl.value | 0
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      if(amount > 0) {
+        if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+          amount = amount * Math.pow(10, ps.platform.verse_decimals)
+          let response = await this.verseApp.getBacking(wallet, amount)
+          if(response) {
+            console.log("backing done")
+          }
+        } else {
+          console.log("enter > 0")
+        }
+      } else {
+        console.log("please connect wallet")
+      }
+    }
+  }
+
+  async checkOptedInBackingContract(){
+    const addr = localStorage.getItem("wallet")
+    if(addr) {
+      if (await isOptedIntoApp(addr, ps.platform.backing_id)) {
+        this.isOptedInToVerseBacking = true
+      } else {
+        this.isOptedInToVerseBacking = false
+      }
+    }
+  }
+
+  async checkOptInBackingTokens(){
+    const wallet = this._walletsConnectService.sessionWallet
+    const addr = localStorage.getItem("wallet")
+    if(wallet) {
+      this.assetIdsToOptIn = await this.verseApp.checkOptedInToBacking(addr!)
+    }
+  }
+
+  async optInToBacking(){
+    const wallet = this._walletsConnectService.sessionWallet
+    if(wallet) {
+      let response = await this.verseApp.optIn(wallet)
+      if(response) {
+        this.isOptedInToVerseBacking = true
+      }
+    }
+  }
+
+  async optInToBackingTokens(){
+    const wallet = this._walletsConnectService.sessionWallet
+    if(wallet) {
+      await this.checkOptInBackingTokens()
+      let response = await this.verseApp.optInBackingAssets(wallet, this.assetIdsToOptIn)
+      if(response) {
+        this.assetIdsToOptIn = []
+      }
+    }
+  }
 
 }

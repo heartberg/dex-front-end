@@ -196,7 +196,7 @@
         <div>
           <input
             [formControl]="tradeBackingControl"
-            type="number"
+            type="text"
             class="input-costum"
           />
         </div>
@@ -209,7 +209,9 @@
         <button class="btn-primary-costum" (click)="closePopUp(false)">
           Cancel
         </button>
-        <button class="btn-secondary-costum">Burn Tokens</button>
+        <button class="btn-secondary-costum" *ngIf="isOptedInToVerseBacking && assetIdsToOptIn.length == 0" (click)="getBackingTrade()" >Burn Tokens</button>
+        <button class="btn-secondary-costum" *ngIf="assetIdsToOptIn.length != 0" (click)="optInToBackingTokens()" >Opt In Tokens</button>
+        <button class="btn-secondary-costum" *ngIf="!isOptedInToVerseBacking" (click)="optInToBacking()" >Opt In Backing Contract</button>
       </div>
     </ng-container>
     </ng-container>
@@ -533,7 +535,7 @@
         <h3 *ngIf="!stackingISStake">Withdraw</h3>
         <div class="pretitle">
           <span class="color-violet" *ngIf="stackingISStake">
-                      Stake Verse Tokens to receive rewards in Algo and Verse
+                      Stake Verse Tokens to receive more Verse
           </span>
           <span class="color-violet" *ngIf="!stackingISStake">
             Withdraw your staked Verse Tokens.
@@ -542,26 +544,29 @@
         <ng-container *ngIf="stackingISStake">
           <div class="inputs second d-flex align-items-center justify-content-between">
             <h4>Verse</h4>
-            <input type="text" class="input-costum">
-            <span class="color-violet txt">available: X</span>
+            <input type="number" [formControl]="stakeVerseControl" class="input-costum">
+            <span class="color-violet txt">available: {{stakingInfo?.usersHolding}}</span>
           </div>
         </ng-container>
           <ng-container *ngIf="!stackingISStake">
             <div class="inputs first d-flex align-items-center justify-content-between">
               <h4>Currently Staked</h4>
-              <input type="text" class="input-costum">
+              <input type="text" class="input-costum" readonly [value]="stakingInfo?.usersStake">
             </div>
             <div class="inputs d-flex align-items-center justify-content-between">
               <h4>Withdraw Verse</h4>
-              <input type="text" class="input-costum">
+              <input type="number" [formControl]="withdrawVerseControl" class="input-costum">
             </div>
           </ng-container>
           <div class="buttons d-flex align-items-center justify-content-between">
             <ng-container *ngIf="stacking">
-              <button class="btn-primary-costum">
+              <button class="btn-primary-costum" *ngIf="stackingISStake" (click)="stake()">
                 Ok
               </button>
-              <button class="btn-secondary-costum">Cancel</button>
+              <button class="btn-primary-costum" *ngIf="!stackingISStake" (click)="withdrawStake()">
+                Ok
+              </button>
+              <button class="btn-secondary-costum" (click)="closePopUp(false)" >Cancel</button>
             </ng-container>
             <ng-container *ngIf="!stacking">
               <button class="btn-primary-costum">

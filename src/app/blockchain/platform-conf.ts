@@ -98,7 +98,8 @@ type BlockchainInformation = {
     tokenLiquidity: number,
     totalsupply: number,
     totalBacking: number,
-    totalBorrowedAlgo: number
+    totalBorrowedAlgo: number,
+    maxBuy: number
 }
 
 const ALGO_VIEWMODEL: AssetViewModel = {

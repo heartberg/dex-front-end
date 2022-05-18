@@ -368,6 +368,9 @@ export class TradeComponent implements OnInit {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+    this.updateBlockchainInfo()
+    this.updateHoldingOfSelectedAsset()
+    this.getSmartToolData()
   }
 
   async getValueFromDropDown($event: any, index: number) {
@@ -631,7 +634,11 @@ export class TradeComponent implements OnInit {
         diff = 6 - this.selectedOption!.decimals
         newPrice = newPrice / Math.pow(10, diff)
       }
-      this.priceImapct = (newPrice / price) * 100 - 100
+      if(amount * Math.pow(10, 6) > algoLiq) {
+        this.priceImapct = Number.POSITIVE_INFINITY
+      } else {
+        this.priceImapct = (newPrice / price) * 100 - 100
+      }
     } else {
       let price = this.spotPrice;
       let algoReturnAmount = Math.floor(price * amount * Math.pow(10, 6));
@@ -646,7 +653,11 @@ export class TradeComponent implements OnInit {
         diff = 6 - this.selectedOption!.decimals
         newPrice = newPrice / Math.pow(10, diff)
       }
-      this.priceImapct = (1 - newPrice / price) * 100
+      if(newAlgoLiq < 0) {
+        this.priceImapct = Number.NEGATIVE_INFINITY
+      } else {
+        this.priceImapct = (1 - newPrice / price) * 100
+      }
     }
   }
 
@@ -693,10 +704,10 @@ export class TradeComponent implements OnInit {
   }
 
   getMaxBuy(){
-    if( this.selectedOption!.maxBuy >= Number.MAX_SAFE_INTEGER){
+    if( this.blockchainInfo!.maxBuy >= Number.MAX_SAFE_INTEGER){
       return "-"
     } else {
-      return (this.selectedOption!.maxBuy / Math.pow(10, 6)).toFixed(2)
+      return (this.blockchainInfo!.maxBuy / Math.pow(10, 6)).toFixed(2)
     }
   }
 
@@ -753,7 +764,7 @@ export class TradeComponent implements OnInit {
       this.getPrice()
       this.emptyInputs()
       this.calcPriceImpact()
-      // clear input top and bottom
+      this.getSmartToolData()
     }
   }
 

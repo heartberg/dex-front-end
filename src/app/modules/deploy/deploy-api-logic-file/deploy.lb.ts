@@ -73,6 +73,7 @@ export class DeployLb {
       (value: any) => {
         setTimeout(() => {
           if (value) {
+            console.log("value of deploy: " + value)
           this.presaleObj.contractId = this.deployerBC.settings.contract_id!
           this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
           this.presaleObj.asset.contractId = this.deployerBC.settings.contract_id!
@@ -84,6 +85,7 @@ export class DeployLb {
                 of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                   (value: any) => {
                     if (value) {
+                      console.log("value of mint: " + value)
                       this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
                         async (value: any) => {
                           if (2 === 2) {

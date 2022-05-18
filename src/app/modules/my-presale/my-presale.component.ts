@@ -58,9 +58,9 @@ export class MyPresaleComponent implements OnInit {
     this.wallet = this.walletService.sessionWallet!
     let response = await this.app.removeMaxBuy(this.wallet, contractId);
     if(response) {
-      this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
-        console.log(res);
-      });
+      console.log("removed max buy")
+    } else {
+      console.log("error")
     }
   }
 

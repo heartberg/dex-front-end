@@ -30,7 +30,7 @@
                   </div>
                   <div class="d-flex align-items-center justify-content-between">
                     <h6>Next claimable time:</h6>
-                    <input type="text" class="input-costum" placeholder="{{formatDate(userInfo!.nextClaimableDate)}}">
+                    <input type="text" class="input-costum" placeholder="{{nextClaimableDate}}">
                   </div>
                 </div>
                 <div class="button d-flex align-items-center justify-content-between">
@@ -42,5 +42,5 @@
       </div>
     </div>
   </div>
-  <app-pop-up [stacking]="true" [stackingISStake]="isStake" (isClosed)="closePopUp($event)" *ngIf="closePopup"></app-pop-up>
+  <app-pop-up [stacking]="true" [stackingISStake]="isStake" [stakingInfo]="userInfo" (isClosed)="closePopUp($event)" *ngIf="closePopup"></app-pop-up>
 </div>
