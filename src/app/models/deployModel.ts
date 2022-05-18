@@ -70,6 +70,7 @@ export interface projectMintModel {
   image: string;
   deployerWallet: string;
   decimals: number;
+  extraFeeTime: number;
 }
 // project mint
 

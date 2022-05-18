@@ -202,7 +202,7 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
-
+    
     const args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time)]
     const assets = [this.settings.asset_id]
     const accounts = [ps.platform.fee_addr, ps.platform.burn_addr]

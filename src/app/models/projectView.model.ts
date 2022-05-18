@@ -17,4 +17,7 @@ export interface ProjectViewModel {
     teamMembers: TeamMemberViewModel[]
     asset: AssetViewModel
     presale?: presaleViewModel
+    initialAlgoLiquidity: number,
+    initialTokenLiquidity: number,
+    initialAlgoLiquidityWithFee: number,
 }

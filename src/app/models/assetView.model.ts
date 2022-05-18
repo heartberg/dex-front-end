@@ -16,4 +16,5 @@ export interface AssetViewModel {
     sendBurn: number
     image: string
     deployerWallet: string
+    extraFeeTime: number
 }

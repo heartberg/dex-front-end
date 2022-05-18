@@ -118,7 +118,8 @@ const ALGO_VIEWMODEL: AssetViewModel = {
     sendBurn: 0,
     totalSupply: 1_000_000_000_000_000,
     tradingStart: 0,
-    unitName: "Algo"
+    unitName: "Algo",
+    extraFeeTime: 0
 }
 
 const platform_settings = require("../../environments/config.json") as PlatformConf;

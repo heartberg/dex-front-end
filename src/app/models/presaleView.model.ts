@@ -8,4 +8,5 @@ export interface presaleViewModel {
     startingTime: number
     endingTime: number
     adminClaimed: boolean
+    presaleToLiq: number
 }

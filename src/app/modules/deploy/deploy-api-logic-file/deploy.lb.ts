@@ -13,6 +13,8 @@ import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
 import {WalletsConnectService} from "../../../services/wallets-connect.service";
 import { TeamMemberViewModel } from 'src/app/models/TeamMemberView.model';
+import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { ProjectViewModel } from 'src/app/models/projectView.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +39,12 @@ export class DeployLb {
   isFailed: boolean = false;
   isPending: boolean = false;
 
-  constructor(private _deployService: deployService, private deployerBC: DeployedApp, private wallet: WalletsConnectService) {
+  constructor(
+    private _deployService: deployService,
+    private deployerBC: DeployedApp, 
+    private wallet: WalletsConnectService,
+    private _projectService: projectReqService
+    ) {
   }
 
 
@@ -233,6 +240,316 @@ export class DeployLb {
     )
   }
 
+  async deployFromSetupPresale(projectModel: ProjectViewModel) {
+    this.sessionWallet = this.wallet.sessionWallet
+    this.blockchainObj = this.mapPresaleProjectViewToBlockchainObject(projectModel)
+    of (await this.deployerBC.setupWithPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        if (value) {
+          this.GetProjectSetup(projectModel.projectId).subscribe(
+            (value: any) => {
+              if (value) {
+                console.log('setup is done')
+                this.finalStepApi = true;
+                this.isPending = false;
+                this.isFailed = false;
+              }
+            },
+            error => {
+              this.isPending = false;
+              this.isFailed = true;
+              this.finalStepApi = false;
+            }
+          )
+        }
+      }
+    )
+  }
+
+async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
+  this.sessionWallet = this.wallet.sessionWallet
+  this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
+  of (await this.deployerBC.setupNoPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+    (value: any) => {
+      if (value) {
+        this.GetProjectSetup(projectModel.projectId).subscribe(
+          (value: any) => {
+            if (value) {
+              console.log('setup is done')
+              this.finalStepApi = true;
+              this.isPending = false;
+              this.isFailed = false;
+            }
+          },
+          error => {
+            this.isPending = false;
+            this.isFailed = true;
+            this.finalStepApi = false;
+          }
+        )
+      }
+    }
+  )
+}
+
+  async deployFromMintNoPresale(projectModel: ProjectViewModel){
+    this.sessionWallet = this.wallet.sessionWallet
+    this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
+    of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        if (value) {
+          console.log("value of mint: " + value)
+          this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
+            async (value: any) => {
+              if (2 === 2) {
+                of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                  (value: any) => {
+                    if (value) {
+                      this.GetProjectBurnOptIn(this.projectId).subscribe(
+                        async (value: any) => {
+                          if (2 === 2) {
+                            of (await this.deployerBC.setupNoPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                              (value: any) => {
+                                if (value) {
+                                  this.GetProjectSetup(this.projectId).subscribe(
+                                    (value: any) => {
+                                      console.log('setup is done')
+                                    }
+                                  )
+                                }
+                              },
+                              error => {
+                                this.isPending = false;
+                                this.isFailed = true;
+                                this.finalStepApi = false;
+                              }
+                            )
+                          }
+                        },
+                        error => {
+                          this.isPending = false;
+                          this.isFailed = true;
+                          this.finalStepApi = false;
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            },
+            error => {
+              this.isPending = false;
+              this.isFailed = true;
+              this.finalStepApi = false;
+            }
+          )
+        }
+      }
+    )
+  }
+
+  async deployFromMintPresale(projectModel: ProjectViewModel){
+    this.sessionWallet = this.wallet.sessionWallet
+    this.blockchainObj = this.mapPresaleProjectViewToBlockchainObject(projectModel)
+    of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        if (value) {
+          console.log("value of mint: " + value)
+          this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
+            async (value: any) => {
+              if (2 === 2) {
+                of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                  (value: any) => {
+                    if (value) {
+                      this.GetProjectBurnOptIn(this.projectId).subscribe(
+                        async (value: any) => {
+                          if (2 === 2) {
+                            of (await this.deployerBC.setupWithPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                              (value: any) => {
+                                if (value) {
+                                  this.GetProjectSetup(this.projectId).subscribe(
+                                    (value: any) => {
+                                      console.log('setup is done')
+                                    }
+                                  )
+                                }
+                              },
+                              error => {
+                                this.isPending = false;
+                                this.isFailed = true;
+                                this.finalStepApi = false;
+                              }
+                            )
+                          }
+                        },
+                        error => {
+                          this.isPending = false;
+                          this.isFailed = true;
+                          this.finalStepApi = false;
+                        }
+                      )
+                    }
+                  }
+                )
+              }
+            },
+            error => {
+              this.isPending = false;
+              this.isFailed = true;
+              this.finalStepApi = false;
+            }
+          )
+        }
+      }
+    )
+  }
+
+  async deployFromOptInPresale(projectModel: ProjectViewModel) {
+    this.sessionWallet = this.wallet.sessionWallet
+    this.blockchainObj = this.mapPresaleProjectViewToBlockchainObject(projectModel)
+    of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        if (value) {
+          this.GetProjectBurnOptIn(this.projectId).subscribe(
+            async (value: any) => {
+              if (2 === 2) {
+                of (await this.deployerBC.setupWithPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                  (value: any) => {
+                    if (value) {
+                      this.GetProjectSetup(this.projectId).subscribe(
+                        (value: any) => {
+                          console.log('setup is done')
+                        }
+                      )
+                    }
+                  },
+                  error => {
+                    this.isPending = false;
+                    this.isFailed = true;
+                    this.finalStepApi = false;
+                  }
+                )
+              }
+            },
+            error => {
+              this.isPending = false;
+              this.isFailed = true;
+              this.finalStepApi = false;
+            }
+          )
+        }
+      }
+    )
+  }
+
+  async deployFromOptInNoPresale(projectModel: ProjectViewModel) {
+    this.sessionWallet = this.wallet.sessionWallet
+    this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
+    of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
+      (value: any) => {
+        if (value) {
+          this.GetProjectBurnOptIn(this.projectId).subscribe(
+            async (value: any) => {
+              if (2 === 2) {
+                of (await this.deployerBC.setupNoPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
+                  (value: any) => {
+                    if (value) {
+                      this.GetProjectSetup(this.projectId).subscribe(
+                        (value: any) => {
+                          console.log('setup is done')
+                        }
+                      )
+                    }
+                  },
+                  error => {
+                    this.isPending = false;
+                    this.isFailed = true;
+                    this.finalStepApi = false;
+                  }
+                )
+              }
+            },
+            error => {
+              this.isPending = false;
+              this.isFailed = true;
+              this.finalStepApi = false;
+            }
+          )
+        }
+      }
+    )
+  }
+
+  mapPresaleProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
+    return {
+      buy_burn: projectView.asset.buyBurn,
+      creator: projectView.creatorWallet,
+      decimals: projectView.asset.decimals,
+      extra_fee_time: Math.floor(projectView.asset.extraFeeTime),
+      initial_algo_liq: projectView.initialAlgoLiquidity,
+      initial_algo_liq_with_fee: projectView.initialAlgoLiquidityWithFee,
+      initial_token_liq: projectView.initialTokenLiquidity,
+      max_buy: projectView.asset.maxBuy,
+      name: projectView.asset.name,
+      sell_burn: projectView.asset.sellBurn,
+      to_backing: projectView.asset.backing,
+      to_lp: projectView.asset.risingPriceFloor,
+      total_supply: projectView.asset.totalSupply,
+      trading_start: projectView.asset.tradingStart,
+      transfer_burn: projectView.asset.sendBurn,
+      unit: projectView.asset.unitName,
+      url: projectView.asset.url || "",
+      asset_id: projectView.asset.assetId,
+      contract_address: projectView.asset.contractAddress,
+      contract_id: projectView.asset.contractId,
+      presale_settings: {
+        hardcap: projectView.presale!.hardCap,
+        presale_end: projectView.presale!.endingTime,
+        presale_start: projectView.presale!.startingTime,
+        presale_token_amount: projectView.presale!.tokenAmount,
+        softcap: projectView.presale!.softCap,
+        to_lp: projectView.presale!.presaleToLiq,
+        walletcap: projectView.presale!.walletCap
+      },
+
+    }
+  }
+
+  mapProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
+    return {
+      buy_burn: projectView.asset.buyBurn,
+      creator: projectView.creatorWallet,
+      decimals: projectView.asset.decimals,
+      extra_fee_time: Math.floor(projectView.asset.extraFeeTime),
+      initial_algo_liq: projectView.initialAlgoLiquidity,
+      initial_algo_liq_with_fee: projectView.initialAlgoLiquidityWithFee,
+      initial_token_liq: projectView.initialTokenLiquidity,
+      max_buy: projectView.asset.maxBuy,
+      name: projectView.asset.name,
+      sell_burn: projectView.asset.sellBurn,
+      to_backing: projectView.asset.backing,
+      to_lp: projectView.asset.risingPriceFloor,
+      total_supply: projectView.asset.totalSupply,
+      trading_start: projectView.asset.tradingStart,
+      transfer_burn: projectView.asset.sendBurn,
+      unit: projectView.asset.unitName,
+      url: projectView.asset.url || "",
+      asset_id: projectView.asset.assetId,
+      contract_address: projectView.asset.contractAddress,
+      contract_id: projectView.asset.contractId,
+      presale_settings: {
+        hardcap: 0,
+        presale_end: 0,
+        presale_start: 0,
+        presale_token_amount: 0,
+        softcap: 0,
+        to_lp: 0,
+        walletcap: 0
+      },
+
+    }
+  }
+
   GetProjectMint(projectId: string, assetId: number) {
     return this._deployService.projectMint(projectId, assetId)
     // .subscribe( (value: projectMintModel) => {
@@ -308,6 +625,7 @@ export class DeployLb {
         sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
+        extraFeeTime: form.get('extraFeeTime')?.value
       }
     }
   }
@@ -354,6 +672,7 @@ export class DeployLb {
         sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
+        extraFeeTime: +form.get('extraFeeTime')?.value
       }
     }
   }

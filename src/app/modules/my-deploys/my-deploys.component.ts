@@ -8,6 +8,16 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
 import {of} from "rxjs";
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
+import { ProjectViewModel } from 'src/app/models/projectView.model';
+
+export type DeployState = {
+  mintState: boolean,
+  optInBurnState: boolean,
+  setupState: boolean,
+  removeMaxBuyState: boolean,
+  finished: boolean
+}
+
 
 @Component({
   selector: 'app-my-deploys',
@@ -16,7 +26,7 @@ import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
 })
 
 export class MyDeploysComponent implements OnInit {
-  arr: ProjectPreviewModel[] = [];
+  arr: [ProjectPreviewModel, DeployState][] = [];
   wallet: SessionWallet | undefined;
 
   constructor(
@@ -32,8 +42,11 @@ export class MyDeploysComponent implements OnInit {
     if(addr) {
       this.projectService.getCreatedProjects(addr, 1).subscribe(
         (res: ProjectPreviewModel[]) => {
-          res.forEach(element => {
-            this.arr.push(element)
+          res.forEach(async element => {
+            let state: DeployState = await this.getDeployState(element)
+            console.log(state)
+            console.log(element)
+            this.arr.push([element, state])
           });
           console.log(res);
         });
@@ -41,6 +54,20 @@ export class MyDeploysComponent implements OnInit {
       console.log("please connect wallet")
     }
 
+  }
+  async getDeployState(project: ProjectPreviewModel): Promise<DeployState> {
+    let mintState = this.isMint(project)
+    let optInState = this.isOptInBurn(project)
+    let removeState = await this.isRemoveMaxBuy(project)
+    let setupState = this.isSetup(project)
+    let finished = !(mintState || optInState || removeState || setupState)
+    return {
+      mintState: mintState,
+      optInBurnState: optInState,
+      removeMaxBuyState: removeState,
+      setupState: setupState,
+      finished: finished
+    }
   }
 
   copyContentToClipboard(content: HTMLElement) {
@@ -74,19 +101,34 @@ export class MyDeploysComponent implements OnInit {
   }
 
   startFromMint(model: ProjectPreviewModel) {
-    console.log("start from mint")
+    this.projectService.getProjectById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromMintNoPresale(projectModel)
+      }
+    )
   }
 
   startFromOptInBurn(model: ProjectPreviewModel) {
-    console.log("start from optin")
-  }
-
-  startFromSetup(model: ProjectPreviewModel) {
+    this.projectService.getProjectById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromOptInNoPresale(projectModel)
+      }
+    )
     console.log("start from setup")
   }
 
-  // TODO SABA:
-  // Do the different HTML versions depending on the state of the back end object
-  // Do the different calls starting at the levels coming from backend
-
+  startFromSetup(model: ProjectPreviewModel) {
+    this.projectService.getProjectById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromSetupNoPresale(projectModel)
+      }
+    )
+    console.log("start from setup")
+  }
 }

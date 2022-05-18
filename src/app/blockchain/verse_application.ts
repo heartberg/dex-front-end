@@ -414,7 +414,8 @@ export class VerseApp {
             sellBurn: state[verseStateKeys.burn_key]['i'],
             sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
             image: "",
-            deployerWallet: ""
+            deployerWallet: "",
+            extraFeeTime: 0
         }
         return verse
     }
