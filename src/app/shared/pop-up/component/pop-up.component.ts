@@ -8,9 +8,11 @@ import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
-import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import { DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { StakingInfo } from 'src/app/modules/staking/staking.component';
 import { Algodv2 } from 'algosdk';
+import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { environment } from 'src/environments/environment';
 
 
 export type SmartToolData = {
@@ -91,7 +93,7 @@ export class PopUpComponent implements OnInit {
   }
 
   @Input()
-  presaleData: PresaleBlockchainInformation | undefined;
+  presaleData: [PresaleBlockchainInformation, ProjectViewModel] | undefined;
   
   @Input()
   presaleEntryData: PresaleEntryData | undefined
@@ -100,7 +102,7 @@ export class PopUpComponent implements OnInit {
 
   // trade new popup flows
   @Input() isTradeLend: boolean = false;
-  @Input() isTradeBacking: boolean = true;
+  @Input() isTradeBacking: boolean = false;
   @Input() isTradeTrade: boolean = false;
   // trade new popup flows
 
@@ -146,15 +148,61 @@ export class PopUpComponent implements OnInit {
 
   // FORMS
 
-  onSubmit(formName: string) {
+  async onSubmit(formName: string) {
+    let wallet = this._walletsConnectService.sessionWallet!
     if (formName === 'myPresaleRestartForm') {
-      this.makeRequest.next(this.myPresaleRestartForm);
+      //this.makeRequest.next(this.myPresaleRestartForm);
+      let softCap = this.myPresaleRestartForm.get("softCap")?.value * 1_000_000
+      let hardCap = this.myPresaleRestartForm.get("hardCap")?.value * 1_000_000
+      let tokenInPresale = this.myPresaleRestartForm.get("tokenInPresale")?.value * Math.pow(10, this.presaleData![1].asset.decimals)
+      let presaleStart = parseInt((new Date(this.myPresaleRestartForm.get("presaleStart")?.value).getTime() / 1000).toFixed(0))
+      let presaleEnd = parseInt((new Date(this.myPresaleRestartForm.get("presaleEnd")?.value).getTime() / 1000).toFixed(0))
+      let tradingStart = parseInt((new Date(this.myPresaleRestartForm.get("tradingStart")?.value).getTime() / 1000).toFixed(0))
+      let tokenInLiquidity = this.myPresaleRestartForm.get("tokenInLiquidity")?.value * Math.pow(10, this.presaleData![1].asset.decimals)
+      let algoInLiquidity = this.myPresaleRestartForm.get("algoInLiquidity")?.value * 1_000_000
+      let walletCap = this.myPresaleRestartForm.get("walletCap")?.value * 1_000_000
+      let toLiquidity = this.myPresaleRestartForm.get("toLiquidity")?.value * 100
+      
+      let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity, tradingStart, tokenInPresale, this.presaleData![0].contractId, this.presaleData![0].assetId)
+      if(response){
+        console.log("send to bc")
+        this.presaleData![1].presale!.presaleToLiq = toLiquidity
+        this.presaleData![1].presale!.hardCap = hardCap
+        this.presaleData![1].presale!.softCap = softCap
+        this.presaleData![1].presale!.endingTime = presaleEnd
+        this.presaleData![1].presale!.walletCap = walletCap
+        this.presaleData![1].presale!.tokenAmount = tokenInPresale
+        this.presaleData![1].initialAlgoLiquidity = algoInLiquidity
+        this.presaleData![1].initialTokenLiquidity = tokenInLiquidity
+        this.presaleData![1].initialAlgoLiquidityWithFee = algoInLiquidity / (1 - environment.Y_FEE)
+
+        this.projectService.reSetupPresale(this.presaleData![1]).subscribe(
+          (value: any) => {
+            console.log("resetup")
+          }
+        )
+      }
       this.myPresaleRestartForm.reset();
       console.log(this.presaleData)
     }
 
     if (formName === 'myPresaleFairLaunchForm') {
-      this.makeRequest.next(this.myPresaleFairLaunchForm);
+      let tokenLiq = this.myPresaleFairLaunchForm.get("tokenLiq")?.value * Math.pow(10, this.presaleData![1].asset.decimals)
+      let algoLiq = this.myPresaleFairLaunchForm.get("algoLiq")?.value * Math.pow(10, 6)
+      let tradingStart = parseInt((new Date(this.myPresaleFairLaunchForm.get("tradingStart")?.value).getTime() / 1000).toFixed(0))
+      let response = await this.deployedApp.resetupPresaleToFairLaunch(wallet, tradingStart, tokenLiq, algoLiq, this.presaleData![0].contractId, this.presaleData![0].assetId)
+      if(response){
+        console.group("send to bc")
+        this.presaleData![1].initialAlgoLiquidity = algoLiq
+        this.presaleData![1].initialTokenLiquidity = tokenLiq
+        this.presaleData![1].initialAlgoLiquidityWithFee = algoLiq / (1 - environment.Y_FEE)
+        this.projectService.fairLaunch(this.presaleData![1]).subscribe(
+          (value: any) => {
+            console.log("to fairlaunch on backend")
+          }
+        )
+      
+      }
       this.myPresaleFairLaunchForm.reset();
       console.log(this.presaleData)
     }

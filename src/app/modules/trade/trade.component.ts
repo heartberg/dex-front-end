@@ -21,6 +21,7 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
 import { min } from 'rxjs/operators';
 import { ThisReceiver } from '@angular/compiler';
 import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
+import { isOptinAsset } from 'src/app/services/utils.algo';
 
 
 @Component({
@@ -536,13 +537,19 @@ export class TradeComponent implements OnInit {
     }
   }
 
-  optInAsset() {
+  async optInAsset() {
     const wallet = this.walletService.sessionWallet;
     if(wallet){
       if(this.selectedOption?.name == 'Verse'){
-        this.verseApp.optInAsset(wallet)
+        let response = await this.verseApp.optInAsset(wallet)
+        if(response) {
+          this.isOptedIn = true 
+        }
       } else {
-        this.deployedApp.optInAsset(wallet, this.selectedOption!.assetId)
+        let response = await this.deployedApp.optInAsset(wallet, this.selectedOption!.assetId)
+        if(response){
+          this.isOptedIn = true
+        }
       }
     }
   }

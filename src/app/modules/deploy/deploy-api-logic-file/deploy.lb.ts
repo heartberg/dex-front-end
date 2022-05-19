@@ -631,6 +631,9 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
   }
 
   initializeApiObjWithoutPresale(form: any): void {
+
+    console.log(form.value)
+
     let wallet = localStorage.getItem('wallet');
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,

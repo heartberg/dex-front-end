@@ -5,12 +5,14 @@ import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-detail.component';
+
 
 @Component({
   selector: 'app-my-presale',
@@ -19,7 +21,7 @@ import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-
 })
 export class MyPresaleComponent implements OnInit {
   // arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
-  arr: ProjectPreviewModel[] = [];
+  arr: [ProjectPreviewModel, PresaleBlockchainInformation][] = [];
 
   isPopUpOpen: boolean = false;
   isRestart: boolean = false;
@@ -29,6 +31,7 @@ export class MyPresaleComponent implements OnInit {
   isSoldOut: boolean = false;
   wallet: SessionWallet | undefined
 
+  projectModel: ProjectViewModel | undefined;
   presaleData: PresaleBlockchainInformation | undefined;
 
   constructor(
@@ -39,15 +42,20 @@ export class MyPresaleComponent implements OnInit {
   ) {}
 
   async openPopUp(version: string, presale: ProjectPreviewModel) {
-    this.presaleData = await this.app.getPresaleInfo(presale.asset.contractId)
-    this.isPopUpOpen = true;
-    if (version === 'restart') {
-      this.isRestart = true;
-      this.isFair = false;
-    } else if (version === 'fair') {
-      this.isRestart = false;
-      this.isFair = true;
-    }
+    this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        this.projectModel = value
+        this.presaleData = await this.app.getPresaleInfo(presale.asset.contractId)
+        this.isPopUpOpen = true;
+        if (version === 'restart') {
+          this.isRestart = true;
+          this.isFair = false;
+        } else if (version === 'fair') {
+          this.isRestart = false;
+          this.isFair = true;
+        }
+      }
+    )
   }
 
   closePopUp(event: boolean) {
@@ -77,9 +85,13 @@ export class MyPresaleComponent implements OnInit {
   ngOnInit(): void {
     const wallet = localStorage.getItem('wallet');
     if(wallet){
+      this.arr = []
       this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
+        res.forEach(async presaleModel => {
+          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.contractId)
+          this.arr.push([presaleModel, blockchainInfo])
+        });
         console.log(res);
-        this.arr = res;
       });
     }
   }
@@ -88,8 +100,7 @@ export class MyPresaleComponent implements OnInit {
     return Math.pow(10, decimal)
   }
 
-  toDate(timestamp: number): string {
-    let date = new Date(timestamp * 1000)
+  formatDate(date: Date): string {
     return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
   }
 

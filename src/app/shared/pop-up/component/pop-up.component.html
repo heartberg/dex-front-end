@@ -243,11 +243,11 @@
             </div>
             <div class="input-box">
               <label for="algo-in-liquidity">Algo in Liquidity</label>
-              <input formControlName="algoInLiquidity" id="algo-in-liquidity" type="number" />
+              <input formControlName="algoInLiquidity" id="algo-in-liquidity" type="number" placeholder="{{presaleData![0].algoLiq}}"/>
             </div>
             <div class="input-box">
               <label for="tokenInLiquidity">Token in Liquidity</label>
-              <input formControlName="tokenInLiquidity" id="tokenInLiquidity" type="number"/>
+              <input formControlName="tokenInLiquidity" id="tokenInLiquidity" type="number" placeholder="{{presaleData![0]?.tokenLiq}}"/>
             </div>
             <div class="input-box" style="margin-bottom: 12px; margin-top: 5px">
               <h4>Presale Price: </h4>
@@ -261,23 +261,23 @@
           <div class="d-flex flex-column">
             <div class="input-box">
               <label for="tokenInPresale">Token In Presale</label>
-              <input formControlName="tokenInPresale" id="tokenInPresale" type="number"/>
+              <input formControlName="tokenInPresale" id="tokenInPresale" type="number" placeholder="{{presaleData![0]?.tokensInPresale}}"/>
             </div>
             <div class="input-box">
               <label for="to-liquidity">Presale funds to Liquidity</label>
-              <input formControlName="toLiquidity" id="to-liquidity" type="number" />
+              <input formControlName="toLiquidity" id="to-liquidity" type="number" placeholder="{{(presaleData![0]?.presaleFundsToLiqPercentage || 0) * 100}}%"/>
             </div>
             <div class="input-box">
               <label for="soft-cap">Soft Cap</label>
-              <input formControlName="softCap" id="soft-cap" type="number" />
+              <input formControlName="softCap" id="soft-cap" type="number" placeholder="{{presaleData![0]?.softCap}}"/>
             </div>
             <div class="input-box">
               <label for="hard-cap">Hard Cap</label>
-              <input formControlName="hardCap" id="hard-cap" type="number" />
+              <input formControlName="hardCap" id="hard-cap" type="number" placeholder="{{presaleData![0]?.hardCap}}"/>
             </div>
             <div class="input-box">
               <label for="wallet-cap">Wallet Cap</label>
-              <input formControlName="walletCap" id="wallet-cap" type="number" />
+              <input formControlName="walletCap" id="wallet-cap" type="number" placeholder="{{presaleData![0]?.walletCap}}"/>
             </div>
             <!-- right inputs -->
           </div>
@@ -306,11 +306,11 @@
             <!-- left inputs -->
             <div class="input-box">
               <label for="trading-start">Token Liquidity</label>
-              <input formControlName="tokenLiq" id="fair-token" type="text" />
+              <input formControlName="tokenLiq" id="fair-token" type="text" placeholder="{{presaleData![0]?.tokenLiq}}"/>
             </div>
             <div class="input-box">
               <label for="trading-start">Algo Liquidity</label>
-              <input formControlName="algoLiq" id="algo-liq" type="text" />
+              <input formControlName="algoLiq" id="algo-liq" type="text" placeholder="{{presaleData![0]?.algoLiq}}"/>
             </div>
             <div class="input-box">
               <label for="trading-start">Trading Start</label>
@@ -322,16 +322,16 @@
             </div>
           </div>
 
-          <div class="d-flex flex-column">
+          <!-- <div class="d-flex flex-column">
             <div class="input-box" style="margin-bottom: 12px; margin-top: 5px;">
               <h4>Current Token Liquidity: </h4>
-              <span class="color-violet">{{presaleData?.tokenLiq}}</span>
+              <span class="color-violet">{{presaleData![0]?.tokenLiq}}</span>
             </div>
             <div class="input-box" style="margin-bottom: 12px;">
               <h4>Current Algo Liquidity: </h4>
-              <span class="color-violet">{{presaleData?.algoLiq}}</span>
+              <span class="color-violet">{{presaleData![0]?.algoLiq}}</span>
             </div>
-          </div>
+          </div> -->
 
         </div>
         <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">

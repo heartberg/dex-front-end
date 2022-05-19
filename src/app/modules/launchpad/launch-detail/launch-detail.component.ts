@@ -36,7 +36,9 @@ export type PresaleBlockchainInformation = {
   softCap: number,
   hardCap: number,
   walletCap: number,
-  totalRaised: number
+  totalRaised: number,
+  contractId: number,
+  assetId: number
 }
 
 @Component({
@@ -86,7 +88,8 @@ export class LaunchDetailComponent implements OnInit {
     this.maxLaunchPrice = (this.presaleData.algoLiq + this.presaleData.presaleFundsToLiqPercentage * this.presaleData.hardCap / 100) / this.presaleData.tokenLiq
   }
 
-  closePopUp(event: boolean) {
+  async closePopUp(event: boolean) {
+    this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.contractId)
     this.closePopup = event;
   }
 
