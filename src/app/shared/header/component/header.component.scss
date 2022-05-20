@@ -443,7 +443,20 @@
     }
   }
 }
-
+//@media (min-width: 1310px) {
+//  .header-sticky {
+//    .header-content {
+//      .hide-respo {
+//        display: none;
+//      }
+//
+//      .navbar-section {
+//        margin-left: 0px !important;
+//        margin-right: 5px;
+//      }
+//    }
+//  }
+//}
 @media (max-width: 780px) {
   .header-sticky .header-content.menu-respo-restyle {
     height: 100%;

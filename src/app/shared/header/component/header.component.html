@@ -17,6 +17,8 @@
             <li [ngClass]="{'menuRespoAnimationSecond': isMenuRespoOpened}" routerLinkActive="active" routerLink="/tokens">Tokens</li>
             <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/launchpad">Launchpad</li>
             <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/staking">Staking</li>
+            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/deploy">Deploy</li>
+            <li [ngClass]="{'menuRespoAnimationThird': isMenuRespoOpened}" routerLinkActive="active" routerLink="/about">About</li>
           </ng-container>
 <!--          <ng-container *ngIf="changeRespoNavAndProfileIcons">-->
 <!--            <li [ngClass]="{'menuRespoAnimationFirst': isMenuRespoOpened}" routerLink="/profile">Profile</li>-->
@@ -31,14 +33,6 @@
     </div>
     <div class="wrapper-profile">
       <div class="profile-section navbar-section">
-        <ul>
-          <li routerLinkActive="active" routerLink="deploy">
-            Deploy
-          </li>
-          <li>
-            About
-          </li>
-        </ul>
         <ng-container *ngIf="!isLoggedIn">
           <button (click)="connectWalletPopUp()" class="btn-default btn-primary-costum btn-primary-costumW"
                   [ngClass]="{'hideUntilMenuRespoClicked': !isMenuRespoOpened}"
@@ -69,7 +63,7 @@
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M1 0C0.447715 0 0 0.447715 0 1C0 1.55228 0.447716 2 1 2H17C17.5523 2 18 1.55228 18 1C18 0.447715 17.5523 0 17 0H1ZM4 6C3.44772 6 3 6.44772 3 7C3 7.55228 3.44772 8 4 8H14C14.5523 8 15 7.55228 15 7C15 6.44772 14.5523 6 14 6H4Z" fill="currentColor"></path>
               </svg>
             </ng-container>
-            <div class="dropDown" *ngIf="isProfileOpened">
+            <div class="dropDown" *ngIf="isProfileOpened || changeRespoNavAndProfileIcons">
               <ul class="d-flex flex-column">
                 <li routerLink="/wallet">Wallet</li>
                 <li routerLink="/send">Send</li>

@@ -61,3 +61,8 @@
   height: calc(80vh - 10px);
   overflow-Y: scroll;
 }
+@media (max-width: 1310px) {
+  .main {
+    height: 100% !important;
+  }
+}
