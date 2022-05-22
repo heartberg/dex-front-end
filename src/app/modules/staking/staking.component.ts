@@ -1,17 +1,21 @@
-import { InvokeFunctionExpr } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
-import { nextTick } from 'process';
-import { iif } from 'rxjs';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 export type StakingInfo = {
+  totalAddedWeek: number,
+  totalStaked: number,
+  weeklyRewards: number
+}
+
+export type StakingUserInfo = {
   usersStake: number,
   userAddedWeek: number,
   usersHolding: number,
   verseRewards: number,
-  nextClaimableDate: number
+  nextClaimableDate: number,
+  optedIn: boolean
 }
 
 @Component({
@@ -23,13 +27,21 @@ export class StakingComponent implements OnInit {
   closePopup: boolean | undefined;
   isStake: boolean = true;
   sessionWallet: SessionWallet | undefined;
-  userInfo: StakingInfo = {
+  userInfo: StakingUserInfo = {
     usersStake: 0,
     userAddedWeek: 0,
     usersHolding: 0,
     verseRewards: 0,
-    nextClaimableDate: -1
+    nextClaimableDate: -1,
+    optedIn: false,
   };
+
+  stakingInfo: StakingInfo = {
+    totalAddedWeek: 0,
+    totalStaked: 0,
+    weeklyRewards: 0
+  }
+
   nextClaimableDate = "-"
   constructor(
     private verse: VerseApp,
@@ -40,7 +52,7 @@ export class StakingComponent implements OnInit {
   async getUserInfo(){
     const wallet = localStorage.getItem("wallet");
     if(wallet){
-      this.userInfo = await this.verse.getStakingInfo(this.sessionWallet!.getDefaultAccount());
+      this.userInfo = await this.verse.getStakingUserInfo(this.sessionWallet!.getDefaultAccount());
       console.log(this.userInfo)
       this.nextClaimableDate = this.formatDate(this.userInfo.nextClaimableDate)
     }
@@ -48,13 +60,18 @@ export class StakingComponent implements OnInit {
 
   ngOnInit() {
     this.sessionWallet = this.walletService.sessionWallet;
+    this.getStakingInfo();
     this.getUserInfo();
     
+  }
+  async getStakingInfo() {
+    this.stakingInfo = await this.verse.getStakingInfo();
   }
 
   closePopUp(event: boolean) {
     this.closePopup = event;
     this.getUserInfo()
+    this.getStakingInfo()
   }
   async openPopUp(value: string): Promise<void> {
     this.sessionWallet = this.walletService.sessionWallet
@@ -101,6 +118,8 @@ export class StakingComponent implements OnInit {
       if(response) {
         console.log("claimed")
       }
+      this.getStakingInfo()
+      this.getUserInfo()
     } else {
       console.log("please connect wallet")
     }

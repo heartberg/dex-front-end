@@ -9,7 +9,7 @@ import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
 import { DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
-import { StakingInfo } from 'src/app/modules/staking/staking.component';
+import { StakingInfo, StakingUserInfo } from 'src/app/modules/staking/staking.component';
 import { Algodv2 } from 'algosdk';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { environment } from 'src/environments/environment';
@@ -74,7 +74,7 @@ export class PopUpComponent implements OnInit {
   isOptedInToVerseBacking = false
 
   @Input()
-  stakingInfo: StakingInfo | undefined;
+  stakingInfo: StakingUserInfo | undefined;
 
   @Input()
   smartToolData: SmartToolData = {
@@ -507,9 +507,9 @@ export class PopUpComponent implements OnInit {
     console.log("opt in to stake")
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      let response = await this.verseApp.optIn(wallet)
+      let response = await this.verseApp.optInStaking(wallet)
       if(response){
-        this.presaleEntryData!.isOptedIn = true;
+        this.stakingInfo!.optedIn = true;
       }
     } else {
       console.log("please connect")

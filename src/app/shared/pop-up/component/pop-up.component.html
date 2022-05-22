@@ -560,13 +560,16 @@
           </ng-container>
           <div class="buttons d-flex align-items-center justify-content-between">
             <ng-container *ngIf="stacking">
-              <button class="btn-primary-costum" *ngIf="stackingISStake" (click)="stake()">
+              <button class="btn-secondary-costum" *ngIf="stackingISStake && stakingInfo?.optedIn" (click)="stake()">
                 Ok
               </button>
-              <button class="btn-primary-costum" *ngIf="!stackingISStake" (click)="withdrawStake()">
+              <button class="btn-secondary-costum" *ngIf="!stakingInfo?.optedIn" (click)="optInToStaking()">
+                Opt In
+              </button>
+              <button class="btn-secondary-costum" *ngIf="!stackingISStake && stakingInfo?.optedIn" (click)="withdrawStake()">
                 Ok
               </button>
-              <button class="btn-secondary-costum" (click)="closePopUp(false)" >Cancel</button>
+              <button class="btn-primary-costum" (click)="closePopUp(false)" >Cancel</button>
             </ng-container>
             <ng-container *ngIf="!stacking">
               <button class="btn-primary-costum">
