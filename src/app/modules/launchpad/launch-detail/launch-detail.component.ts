@@ -6,6 +6,7 @@ import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 // import { ActivatedRoute } from '@angular/router';
 // import { ProjectViewModel } from 'src/app/models/projectView.model';
 // import { projectReqService } from 'src/app/services/APIs/project-req.service';
@@ -62,13 +63,18 @@ export class LaunchDetailComponent implements OnInit {
     presaleId: "",
     isOptedIn: false
   };
+
   minLaunchPrice: number = 0;
   maxLaunchPrice: number = 0;
+  
+  isClaimable: boolean = false;
+  alreadyClaimed: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private projectsReqService: projectReqService,
-    private deployedApp: DeployedApp
+    private deployedApp: DeployedApp,
+    private walletService: WalletsConnectService
   ) { }
 
   ngOnInit(): void {
@@ -78,11 +84,22 @@ export class LaunchDetailComponent implements OnInit {
         this.projectData = res;
         this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.contractId)
         this.calcLaunchPrices()
+        this.checkClaimable()
         console.log(this.projectData)
         console.log(this.presaleData)
       }
     )
   }
+
+  async checkClaimable() {
+    let wallet = localStorage.getItem("wallet")
+    if(wallet){
+      let claimState = await this.deployedApp.isClaimable(wallet, this.projectData.contractId)
+      this.isClaimable = claimState[0]
+      this.alreadyClaimed = claimState[1]
+    }
+  }
+
   calcLaunchPrices() {
     this.minLaunchPrice = (this.presaleData.algoLiq + this.presaleData.presaleFundsToLiqPercentage * this.presaleData.softCap / 100) / this.presaleData.tokenLiq
     this.maxLaunchPrice = (this.presaleData.algoLiq + this.presaleData.presaleFundsToLiqPercentage * this.presaleData.hardCap / 100) / this.presaleData.tokenLiq
@@ -124,5 +141,28 @@ export class LaunchDetailComponent implements OnInit {
 
   pow(decimal: number){
     return Math.pow(10, decimal)
+  }
+
+  async claim() {
+    let wallet = this.walletService.sessionWallet
+    if(wallet){
+      let response = await this.deployedApp.claimPresale(wallet, this.projectData.contractId)
+      if(response) {
+        console.log("claimed data")
+        this.checkClaimable()
+      }
+    }
+  }
+
+  formatDate(date: Date): string {
+    let minutes = date.getMinutes().toString()
+    if(date.getMinutes() < 10) {
+      minutes = "0" + minutes
+    }
+    let hours = date.getHours().toString()
+    if(date.getHours() < 10){
+      hours = "0" + hours
+    }
+    return date.toDateString() + " - " + hours + ":" + minutes
   }
 }

@@ -15,6 +15,7 @@ import {WalletsConnectService} from "../../../services/wallets-connect.service";
 import { TeamMemberViewModel } from 'src/app/models/TeamMemberView.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -508,7 +509,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
         presale_start: projectView.presale!.startingTime,
         presale_token_amount: projectView.presale!.tokenAmount,
         softcap: projectView.presale!.softCap,
-        to_lp: projectView.presale!.presaleToLiq,
+        to_lp: projectView.presale!.presaleToLiquidity,
         walletcap: projectView.presale!.walletCap
       },
 
@@ -576,6 +577,8 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
     let presaleStartTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0))
     let presaleEndTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0))
 
+    let initialAlgoLiquidityWithFee = Math.floor(+form.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000 / (1 - environment.Y_FEE))
+
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
       contractAddress: 'tbd',
@@ -589,6 +592,10 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       telegram: 's',
       instagram:  's',
       website:  's',
+      initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * environment.Y_FEE),
+      initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
+      initialTokenLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
+      
       // TODO: SABA
       teamMembers: [
         {
@@ -605,6 +612,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
         walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value! * 1_000_000,
         startingTime: presaleStartTime,
         endingTime: presaleEndTime,
+        presaleToLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value! * 100 
       },
       asset: {
         assetId: 0,
@@ -633,7 +641,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
   initializeApiObjWithoutPresale(form: any): void {
 
     console.log(form.value)
-
+    let initialAlgoLiquidityWithFee = Math.floor(+form.get('liquidity.algoToLiq')?.value  * 1_000_000 / (1 - environment.Y_FEE))
     let wallet = localStorage.getItem('wallet');
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
@@ -648,6 +656,9 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       telegram: 's',
       instagram:  's',
       website:  's',
+      initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * environment.Y_FEE),
+      initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
+      initialTokenLiquidity: +form.get('liquidity.tokensToLiq')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
       teamMembers: [
         {
           name: 'saba',

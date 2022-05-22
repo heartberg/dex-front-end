@@ -17,7 +17,7 @@
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
                     alt="">
                   <span *ngIf="isPresaleEnded" class="ended-mark color-violet">ENDED</span>
-                  <span *ngIf="isSoldOut" class="ended-mark color-violet">Sold Out</span>
+                  <span *ngIf="item[1].hardCap == item[1].totalRaised" class="ended-mark color-violet">Sold Out</span>
                 </div>
               </div>
               <div class="right-container">
@@ -85,8 +85,11 @@
                 </div>
                 <div class="text-area">
                   <ng-container *ngIf="isPresaleEnded">
-                    <p>
+                    <p *ngIf="!item[0].presale.toFairLaunch" >
                       Your Presale ended.
+                    </p>
+                    <p *ngIf="!item[0].presale.toFairLaunch" >
+                      Your Presale ended. And is converted to a Fair Launch. 
                     </p>
                     <p>
                       After the Token is tradable you can remove the max buying amount anytime you want.
@@ -305,7 +308,7 @@
                   </ng-container>
                 </div>
                 <div class="unset-pd">
-                  <button class="bottom-btn btn-secondary-costum">
+                  <button class="bottom-btn btn-secondary-costum" (click)="claim(item[1].contractId)">
                     Claim Algo
                   </button>
                 </div>

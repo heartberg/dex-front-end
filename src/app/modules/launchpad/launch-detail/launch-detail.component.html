@@ -31,15 +31,15 @@
           <div class="avatar-info">
             <div class="d-flex">
               <h6>Sale Start:</h6>
-              <span>{{presaleData.saleStart.toDateString()}} - {{presaleData.saleStart.getHours()}}:{{presaleData.saleStart.getMinutes()}}</span>
+              <span>{{formatDate(presaleData.saleStart)}}</span>
             </div>
             <div class="d-flex">
               <h6>Sale End:</h6>
-              <span>{{presaleData.saleEnd.toDateString()}} - {{presaleData.saleEnd.getHours()}}:{{presaleData.saleEnd.getMinutes()}}</span>
+              <span>{{formatDate(presaleData.saleEnd)}}</span>
             </div>
             <div class="d-flex">
               <h6>Trading start: </h6>
-              <span>{{presaleData.tradingStart.toDateString()}} - {{presaleData.tradingStart.getHours()}}:{{presaleData.tradingStart.getMinutes()}}</span>
+              <span>{{formatDate(presaleData.tradingStart)}}</span>
             </div>
             <div class="d-flex">
               <h6>Presale Price: </h6>
@@ -81,8 +81,18 @@
               <span>Filled:</span> <span>{{(presaleData.totalRaised / presaleData.hardCap * 100).toFixed(2)}}%</span>
             </div>
             <div class="button">
-              <button class="btn-secondary-costum" (click)="openPopUp()">
+              <button class="btn-secondary-costum" *ngIf="!isClaimable" (click)="openPopUp()">
                 Participate
+              </button>
+            </div>
+            <div class="button">
+              <button class="btn-secondary-costum" *ngIf="isClaimable && !alreadyClaimed" (click)="claim()">
+                Claim
+              </button>
+            </div>
+            <div class="button">
+              <button class="btn-secondary-costum" *ngIf="isClaimable && alreadyClaimed" disabled>
+                Claimed
               </button>
             </div>
           </div>

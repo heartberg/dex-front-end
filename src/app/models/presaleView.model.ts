@@ -7,6 +7,7 @@ export interface presaleViewModel {
     tokenAmount: number
     startingTime: number
     endingTime: number
-    adminClaimed: boolean
-    presaleToLiq: number
+    presaleToLiquidity: number
+    toFairLaunch: boolean
+
 }

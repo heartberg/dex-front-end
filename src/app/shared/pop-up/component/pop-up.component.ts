@@ -149,6 +149,7 @@ export class PopUpComponent implements OnInit {
   // FORMS
 
   async onSubmit(formName: string) {
+    console.log(this.presaleData![1])
     let wallet = this._walletsConnectService.sessionWallet!
     if (formName === 'myPresaleRestartForm') {
       //this.makeRequest.next(this.myPresaleRestartForm);
@@ -162,21 +163,40 @@ export class PopUpComponent implements OnInit {
       let algoInLiquidity = this.myPresaleRestartForm.get("algoInLiquidity")?.value * 1_000_000
       let walletCap = this.myPresaleRestartForm.get("walletCap")?.value * 1_000_000
       let toLiquidity = this.myPresaleRestartForm.get("toLiquidity")?.value * 100
-      
-      let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity, tradingStart, tokenInPresale, this.presaleData![0].contractId, this.presaleData![0].assetId)
-      if(response){
-        console.log("send to bc")
-        this.presaleData![1].presale!.presaleToLiq = toLiquidity
-        this.presaleData![1].presale!.hardCap = hardCap
-        this.presaleData![1].presale!.softCap = softCap
-        this.presaleData![1].presale!.endingTime = presaleEnd
-        this.presaleData![1].presale!.walletCap = walletCap
-        this.presaleData![1].presale!.tokenAmount = tokenInPresale
-        this.presaleData![1].initialAlgoLiquidity = algoInLiquidity
-        this.presaleData![1].initialTokenLiquidity = tokenInLiquidity
-        this.presaleData![1].initialAlgoLiquidityWithFee = algoInLiquidity / (1 - environment.Y_FEE)
 
-        this.projectService.reSetupPresale(this.presaleData![1]).subscribe(
+      let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity, 
+        tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId)
+      if(response){
+        let projectView: ProjectViewModel = {
+          presale: {
+            endingTime: presaleEnd,
+            hardCap: hardCap,
+            presaleId: this.presaleData![1].presale!.presaleId,
+            presaleToLiquidity: toLiquidity,
+            softCap: softCap,
+            startingTime: presaleStart,
+            tokenAmount: tokenInPresale,
+            totalRaised: this.presaleData![0].totalRaised,
+            walletCap: walletCap,
+            toFairLaunch: false
+          },
+          asset: this.presaleData![1].asset,
+          creatorWallet: this.presaleData![1].creatorWallet,
+          description: this.presaleData![1].description,
+          initialAlgoLiquidity: algoInLiquidity,
+          initialAlgoLiquidityWithFee: Math.floor(algoInLiquidity / (1 - environment.Y_FEE)),
+          initialTokenLiquidity: tokenInLiquidity,
+          projectId: this.presaleData![1].projectId,
+          projectImage: this.presaleData![1].projectImage,
+          projectName: this.presaleData![1].projectName,
+          teamMembers: this.presaleData![1].teamMembers,
+          contractAddress: this.presaleData![1].contractAddress,
+          contractId: this.presaleData![1].contractId
+        }
+        console.log(projectView)
+        console.log("send to bc")
+
+        this.projectService.reSetupPresale(projectView).subscribe(
           (value: any) => {
             console.log("resetup")
           }
@@ -190,19 +210,17 @@ export class PopUpComponent implements OnInit {
       let tokenLiq = this.myPresaleFairLaunchForm.get("tokenLiq")?.value * Math.pow(10, this.presaleData![1].asset.decimals)
       let algoLiq = this.myPresaleFairLaunchForm.get("algoLiq")?.value * Math.pow(10, 6)
       let tradingStart = parseInt((new Date(this.myPresaleFairLaunchForm.get("tradingStart")?.value).getTime() / 1000).toFixed(0))
-      let response = await this.deployedApp.resetupPresaleToFairLaunch(wallet, tradingStart, tokenLiq, algoLiq, this.presaleData![0].contractId, this.presaleData![0].assetId)
-      if(response){
+      //let response = await this.deployedApp.resetupPresaleToFairLaunch(wallet, tradingStart, tokenLiq, algoLiq, this.presaleData![0].contractId, this.presaleData![0].assetId)
+      //if(response){
         console.group("send to bc")
-        this.presaleData![1].initialAlgoLiquidity = algoLiq
-        this.presaleData![1].initialTokenLiquidity = tokenLiq
-        this.presaleData![1].initialAlgoLiquidityWithFee = algoLiq / (1 - environment.Y_FEE)
-        this.projectService.fairLaunch(this.presaleData![1]).subscribe(
+        this.presaleData![1].asset.tradingStart = tradingStart
+        this.projectService.fairLaunch(this.presaleData![1].asset).subscribe(
           (value: any) => {
             console.log("to fairlaunch on backend")
           }
         )
       
-      }
+      //}
       this.myPresaleFairLaunchForm.reset();
       console.log(this.presaleData)
     }

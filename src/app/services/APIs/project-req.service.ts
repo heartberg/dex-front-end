@@ -6,6 +6,7 @@ import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { Observable, Subject } from 'rxjs';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
+import { AssetViewModel } from 'src/app/models/assetView.model';
 
 @Injectable({
   providedIn: 'root',
@@ -91,24 +92,16 @@ export class projectReqService {
     });
   }
 
-  fairLaunch(projectModel: ProjectViewModel) {
+  fairLaunch(assetModel: AssetViewModel) {
     const url = `${this.baseUrl}/project/presale/toFairLaunch`;
 
-    return this._http.post(url, {
-      params: {
-        projectModel: projectModel,
-      },
-    });
+    return this._http.post(url, assetModel);
   }
 
   reSetupPresale(projectModel: ProjectViewModel) {
     const url = `${this.baseUrl}/project/presale/resetup`;
-
-    return this._http.post(url, {
-      params: {
-        projectModel: projectModel,
-      },
-    });
+    //console.log(projectModel)
+    return this._http.post(url, projectModel);
   }
 
   createPresaleEntry(entryModel: PresaleEntryModel) {

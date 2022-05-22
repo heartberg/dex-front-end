@@ -13,7 +13,10 @@ export interface projectPresaleCreateModel {
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
   presale: projectPresaleCreatePresaleModel,
-  asset: projectMintModel
+  asset: projectMintModel,
+  initialAlgoLiquidity: number,
+  initialAlgoLiquidityWithFee: number,
+  initialTokenLiquidity: number,
 }
 
 interface projectrPresaleCreateTeamModel {
@@ -29,7 +32,8 @@ interface projectPresaleCreatePresaleModel {
     tokenAmount: number,
     walletCap: number,
     startingTime: number,
-    endingTime: number
+    endingTime: number,
+    presaleToLiquidity: number
 }
 // presaleCreate
 
@@ -47,7 +51,10 @@ export interface projectWithoutPresaleCreateModel {
   instagram:string,
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
-  asset: projectMintModel
+  asset: projectMintModel,
+  initialAlgoLiquidity: number,
+  initialAlgoLiquidityWithFee: number,
+  initialTokenLiquidity: number,
 }
 // withoutPresale
 

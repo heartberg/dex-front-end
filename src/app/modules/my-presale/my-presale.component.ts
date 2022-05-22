@@ -44,6 +44,7 @@ export class MyPresaleComponent implements OnInit {
   async openPopUp(version: string, presale: ProjectPreviewModel) {
     this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
       async (value: ProjectViewModel) => {
+        console.log(value)
         this.projectModel = value
         this.presaleData = await this.app.getPresaleInfo(presale.asset.contractId)
         this.isPopUpOpen = true;
@@ -101,7 +102,15 @@ export class MyPresaleComponent implements OnInit {
   }
 
   formatDate(date: Date): string {
-    return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
+    let minutes = date.getMinutes().toString()
+    if(date.getMinutes() < 10) {
+      minutes = "0" + minutes
+    }
+    let hours = date.getHours().toString()
+    if(date.getHours() < 10){
+      hours = "0" + hours
+    }
+    return date.toDateString() + " - " + hours + ":" + minutes
   }
 
   isFailed(model: ProjectPreviewModel): boolean {
@@ -129,6 +138,12 @@ export class MyPresaleComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  async claim(contractId: number) {
+    let wallet = this.walletService.sessionWallet
+    let response = await this.app.claimPresale(wallet!, contractId)
+    console.log("successful claimed")
   }
 
 }

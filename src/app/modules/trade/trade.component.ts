@@ -144,6 +144,7 @@ export class TradeComponent implements OnInit {
     }
     this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
       this.removeVerse(res);
+      res = this.removeFailedPresales(res);
       this.assetArr.push(...res);
       this.assetArrSecond.push(...res);
     });
@@ -202,6 +203,15 @@ export class TradeComponent implements OnInit {
     )
 
   }
+  removeFailedPresales(res: AssetViewModel[]) {
+    let output: AssetViewModel[] = []
+    res.forEach(async model => {
+      if(!await this.deployedApp.isFailedPresale(model.contractId)){
+        output.push(model)
+      }
+    });
+    return output
+  }
 
   makeReverse() {
     this.rotate = !this.rotate;
@@ -230,6 +240,7 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArr = []
         this.removeVerse(res);
+        res = this.removeFailedPresales(res);
         this.assetArr.push(await this.verseApp.getViewModel())
         this.assetArr.push(ALGO_VIEWMODEL)
         this.assetArr.push(...res);
@@ -242,6 +253,7 @@ export class TradeComponent implements OnInit {
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         this.removeVerse(res)
+        res = this.removeFailedPresales(res);
         this.assetArr.push(...res);
       });
     }
@@ -254,6 +266,7 @@ export class TradeComponent implements OnInit {
       this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
         this.assetArrSecond = [];
         this.removeVerse(res);
+        res = this.removeFailedPresales(res);
         this.assetArrSecond.push(await this.verseApp.getViewModel())
         this.assetArrSecond.push(ALGO_VIEWMODEL)
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
@@ -271,6 +284,7 @@ export class TradeComponent implements OnInit {
       const wallet = localStorage.getItem('wallet')!;
       this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
         this.removeVerse(res)
+        res = this.removeFailedPresales(res);
         this.assetArrSecond.push(...res);
         // this.assetArrSecond.push(this.dummyAlgo);
         this.selectAsset(this.assetArr[0].assetId)
