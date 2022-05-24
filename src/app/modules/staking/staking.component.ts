@@ -23,6 +23,7 @@ export type StakingUserInfo = {
   templateUrl: './staking.component.html',
   styleUrls: ['./staking.component.scss']
 })
+
 export class StakingComponent implements OnInit {
   closePopup: boolean | undefined;
   isStake: boolean = true;
@@ -48,7 +49,6 @@ export class StakingComponent implements OnInit {
     private walletService: WalletsConnectService
   ) { }
 
-
   async getUserInfo(){
     const wallet = localStorage.getItem("wallet");
     if(wallet){
@@ -64,6 +64,7 @@ export class StakingComponent implements OnInit {
     this.getUserInfo();
     
   }
+
   async getStakingInfo() {
     this.stakingInfo = await this.verse.getStakingInfo();
   }
@@ -73,6 +74,7 @@ export class StakingComponent implements OnInit {
     this.getUserInfo()
     this.getStakingInfo()
   }
+
   async openPopUp(value: string): Promise<void> {
     this.sessionWallet = this.walletService.sessionWallet
     if(this.sessionWallet){
@@ -84,7 +86,6 @@ export class StakingComponent implements OnInit {
       } else {
         this.isStake = false;
       }
-
   }
 
   formatDate(date: number): string {

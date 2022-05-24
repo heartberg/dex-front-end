@@ -479,7 +479,10 @@ export class VerseApp {
         }
         let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
         let nextClaimabletime = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.next_claimable_time_key)
-        
+        let status = await client.status().do()
+        let latestRound = await client.block(status['last-round']).do()
+        let latestTimestemp = latestRound['block']['ts']
+
         if(await isOptedIntoApp(wallet, ps.platform.staking_id)) {
             
             let usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key)
@@ -487,13 +490,12 @@ export class VerseApp {
 
             let claimableAmount = 0
             if(usersStake > usersWeekStake) {
-                console.log(usersStake)
-                console.log(usersWeekStake)
-                console.log(globalState[stakingStateKeys.distribution_asset_amount_key]['i'])
-                console.log(globalState[stakingStateKeys.week_total_stake_key]['i'])
-                claimableAmount = (((usersStake - usersWeekStake) * globalState[stakingStateKeys.distribution_asset_amount_key]['i']) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
+                let rewardPool = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
+                if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
+                    rewardPool = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
+                }
+                claimableAmount = (((usersStake - usersWeekStake) * rewardPool) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
             }
-            
 
             usersStake = usersStake / Math.pow(10, ps.platform.verse_decimals)
             usersWeekStake = usersWeekStake / Math.pow(10, ps.platform.verse_decimals)
@@ -523,8 +525,16 @@ export class VerseApp {
         let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
         let totalStaked = globalState[stakingStateKeys.total_staked]['i'] / Math.pow(10, ps.platform.verse_decimals)
         let totalAddedWeek = globalState[stakingStateKeys.week_total_added_stake_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
-        let weeklyRewards = globalState[stakingStateKeys.distribution_asset_amount_key]['i'] / Math.pow(10, 6)
+        let weeklyRewards = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
+        let client: Algodv2 = getAlgodClient()
+        let status = await client.status().do()
+        let latestRound = await client.block(status['last-round']).do()
+        let latestTimestemp = latestRound['block']['ts']
 
+        if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
+            weeklyRewards = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
+        }
+        weeklyRewards = weeklyRewards / Math.pow(10, 6)
 
         let stakingInfo: StakingInfo = {
             totalAddedWeek: totalAddedWeek,

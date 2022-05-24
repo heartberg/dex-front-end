@@ -61,7 +61,7 @@ export class projectReqService {
     });
   }
 
-  getAllProjects(ordering: string | null = null, page: number = 1) {
+  getAllProjects(ordering: string | null = null, page: number = 1, search: string | null = null) {
     const url = `${this.baseUrl}/project/get/all`;
 
     return this._http.get<ProjectPreviewModel[]>(url, {

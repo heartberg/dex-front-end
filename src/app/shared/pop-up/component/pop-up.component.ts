@@ -43,6 +43,7 @@ export class PopUpComponent implements OnInit {
 
   @Output() makeRequest = new EventEmitter<FormGroup>();
 
+  @Input() isChooseWallet: boolean = false;
   @Input() openWallet: boolean = false;
   @Input() isDeploy: boolean = false;
   @Input() isTrade: boolean = false;
@@ -70,6 +71,7 @@ export class PopUpComponent implements OnInit {
   maxInitialPrice = 0;
   initialFairLaunchPrice = 0;
 
+  accountList: string[] = []
   assetIdsToOptIn: number[] = []
   isOptedInToVerseBacking = false
 

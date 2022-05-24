@@ -617,5 +617,21 @@
       </div>
     </ng-container>
     <!--#deploy-popup-->
+
+    <!-- choose wallet pop up
+    <ng-container *ngIf="isChooseWallet">
+      <div style="max-width: 600px">
+        <p>
+          Choose Wallet
+        </p>
+      </div>
+      <div style="margin-top: 50px" class="d-flex">
+        <select name="walletSelect" id="walletSelect">
+          <option *ng-repeat="wallet in accountList" value="{{wallet}}">{{wallet}}</option>
+        </select>
+
+      </div>
+    </ng-container> -->
+
   </div>
 </div>
