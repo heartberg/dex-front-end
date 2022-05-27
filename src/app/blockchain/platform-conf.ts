@@ -65,6 +65,8 @@ type DeployedAppSettings = {
     transfer_burn: number,
     to_lp: number,
     to_backing: number,
+    additionalFee?: number,
+    additionalFeeAddress?: string,
     max_buy: number,
     name: string,
     unit: string,
@@ -78,6 +80,11 @@ type DeployedAppSettings = {
     contract_id?: number,
     contract_address?: string,
     asset_id?: number,
+    poolStart?: number,
+    poolRewards?: number,
+    poolInterval?: number,
+    rewardsPerInterval?: number,
+    poolDuration?: number,
     presale_settings: PresaleSettings
 };
 

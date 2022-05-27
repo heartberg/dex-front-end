@@ -1,3 +1,5 @@
+import { ProjectPreviewModel } from "./projectPreview.model";
+
 export interface projectPresaleCreateModel {
   description:string,
   contractAddress:string,
@@ -17,6 +19,14 @@ export interface projectPresaleCreateModel {
   initialAlgoLiquidity: number,
   initialAlgoLiquidityWithFee: number,
   initialTokenLiquidity: number,
+}
+
+export interface stakingCreateModel {
+  assetId: number,
+  contractId: number,
+  startingTime: number,
+  endingTime: number,
+  projectId: string | null
 }
 
 interface projectrPresaleCreateTeamModel {
@@ -78,6 +88,9 @@ export interface projectMintModel {
   deployerWallet: string;
   decimals: number;
   extraFeeTime: number;
+  additionalFee?: number;
+  additionalFeeWallet?: string;
+  purpose?: string;
 }
 // project mint
 

@@ -16,6 +16,7 @@ import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
 export class DeployComponent implements OnInit, DoCheck {
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
+  isCheckedStaking: boolean = false;
   extraFieldsArr: number[] = [1];
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
@@ -26,6 +27,9 @@ export class DeployComponent implements OnInit, DoCheck {
   initialPrice = 0;
   minInitialPrice = 0;
   presalePrice = 0;
+
+  tokensPerInterval = 0;
+  estimatedApy = 0;
 
   sessionWallet: any;
   blockchainObect: DeployedAppSettings | undefined;
@@ -56,13 +60,6 @@ export class DeployComponent implements OnInit, DoCheck {
 
   ngOnInit(): void {
     this.initiializeForm();
-
-    // of(this.walletProviderService.payToSetUpIndex('ZOLXPN2IQYCDBYQMA42S2WCPJJYMQ7V3OCMEBCBQFGUEUH3ATVPFCMUYYE', 1)).subscribe(
-    //   (item: any) => {
-    //     console.log(item);
-    //   }
-    // )
-
   }
 
   @ViewChild('checkbox', { static: false})
@@ -80,6 +77,10 @@ export class DeployComponent implements OnInit, DoCheck {
   @ViewChild('checkPresale', {static: false})
   // @ts-ignore
   private checkPresale: ElementRef;
+
+  @ViewChild('checkboxStaking', {static: false})
+  // @ts-ignore
+  private checkStaking: ElementRef;
 
   imageURL: string = ''
   closePopup: boolean = false;
@@ -126,6 +127,9 @@ export class DeployComponent implements OnInit, DoCheck {
         buyBurn: '',
         sellBurn: '',
         sendBurn: '',
+        purpose: null,
+        address: null,
+        fee: null
       }),
       projectName: this.fb.control(''),
       presaleOptionsGroupDescription: this.fb.control(''),
@@ -149,7 +153,6 @@ export class DeployComponent implements OnInit, DoCheck {
         algoToLiq: '',
       }),
       tradingStart: this.fb.control(''),
-      // added field
       extraFeeTime: this.fb.control(''),
       addRoadMapOptionGroup: this.fb.group({
         roadmapDescription: '',
@@ -164,11 +167,19 @@ export class DeployComponent implements OnInit, DoCheck {
       presaleCheck: this.fb.control(false),
       roadmapCheck: this.fb.control(false),
       teamInfoCheck: this.fb.control(false),
+      stakingCheck: this.fb.control(false),
+      stakingGroup: this.fb.group({
+        rewardPool:  null,
+        rewardInterval: null,
+        poolDuration: null,
+        poolStart: null
+      })
     });
     // for form intitialize
     this.deployFormGroup.valueChanges.subscribe(x => {
       this.setPriceFields()
-  })
+      this.setStakingFields()
+    });
   }
 
   blockchainObjInitialize(): DeployedAppSettings {
@@ -187,9 +198,18 @@ export class DeployComponent implements OnInit, DoCheck {
     console.log(initial_token_liq)
     let tradeStart =  parseInt((new Date(this.deployFormGroup.get('tradingStart')?.value).getTime() / 1000).toFixed(0))
 
+    let poolStart = parseInt((new Date(this.deployFormGroup.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
+    let poolRewards = +this.deployFormGroup.get('stakingGroup.rewardPool')?.value * Math.pow(10, decimals)
+    let poolInterval = +this.deployFormGroup.get('stakingGroup.rewardInterval')?.value * 86400
+    let poolDuration = +this.deployFormGroup.get('stakingGroup.poolDuration')?.value * 86400
+    let rewardsPerInterval = undefined
+    if(poolRewards != 0 && poolInterval != 0 && poolDuration != 0) {
+      rewardsPerInterval = poolRewards / (poolDuration / poolInterval)
+    }
+    
     // @ts-ignore
     return this.blockchainObect = {
-      extra_fee_time: 300,
+      extra_fee_time: +this.deployFormGroup.get('extraFeeTime')?.value,
       creator: this.sessionWallet.wallet.getDefaultAccount(),
       total_supply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, decimals),
       buy_burn: +this.deployFormGroup.get('feesGroup.buyBurn')?.value * 100,
@@ -206,6 +226,13 @@ export class DeployComponent implements OnInit, DoCheck {
       initial_token_liq: initial_token_liq,
       initial_algo_liq_with_fee: initial_algo_liq_with_fee,
       initial_algo_liq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.fee),
+      additionalFee: +this.deployFormGroup.get('feesGroup.fee')?.value * 100,
+      additionalFeeAddress: this.deployFormGroup.get('feesGroup.addrees')?.value,
+      poolStart: poolStart,
+      poolInterval: poolInterval,
+      poolRewards: poolRewards,
+      rewardsPerInterval: rewardsPerInterval,
+      poolDuration: poolDuration,
       presale_settings: {
         presale_token_amount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
         to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
@@ -224,13 +251,18 @@ export class DeployComponent implements OnInit, DoCheck {
     this.sessionWallet = this.walletProviderService.sessionWallet;
     console.log(this.sessionWallet)
     this.blockchainObjInitialize();
+    console.log(this.blockchainObect)
     localStorage.setItem('blockchainObj', JSON.stringify(this.blockchainObect)!);
     // this.deployLib.initializeApiObj(this.deployFormGroup);
     if(this.presaleIsChecked){
       this.deployLib.initializeApiObjWithPresale(this.deployFormGroup);
+      console.log(this.deployFormGroup.value);
+      return
       this.deployLib.DeployFinalFunc(true, this.deployFormGroup);
     } else {
       this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
+      console.log(this.deployFormGroup.value);
+      return
       this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }
 
@@ -312,6 +344,26 @@ export class DeployComponent implements OnInit, DoCheck {
 
   }
 
+  setStakingFields() {
+    if(this.isCheckedStaking) {
+      let rewardPool = +this.deployFormGroup.get('stakingGroup.rewardPool')?.value
+      let poolDuration = +this.deployFormGroup.get('stakingGroup.poolDuration')?.value
+      let poolInterval = +this.deployFormGroup.get('stakingGroup.rewardInterval')?.value
+      if(rewardPool != 0 && poolDuration != 0 && poolInterval != 0) {
+        this.tokensPerInterval = rewardPool / (poolDuration / poolInterval)
+      } else {
+        this.tokensPerInterval = 0
+      }
+    }
+  }
+
+  activateStakingSection() {
+    if (this.checkStaking.nativeElement.checked) {
+      this.isCheckedStaking = true;
+    } else {
+      this.isCheckedStaking = false;
+    }
+  }
 
   closePopUp(event: boolean) {
     this.closePopup = event;

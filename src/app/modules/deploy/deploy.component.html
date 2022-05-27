@@ -200,6 +200,32 @@
                   formControlName="sendBurn"
                 />
               </div>
+              <div class="wrapper-border">
+                <div class="d-flex align-items-center"  (click)="activatePurposeSection()"   [ngStyle]="{'margin-bottom': purposeIsChecked ? '8px' : '0px'}">
+                  <input type="checkbox" name="checkPurpose" id="checkPurpose" #checkboxPurpose >
+                  <label for="checkPurpose" style="color: #81007F; font-weight: 700;margin-left: 5px; cursor: pointer; margin-bottom: 0px;">Additional Fee</label>
+                </div>
+                <ng-container *ngIf="purposeIsChecked">
+                  <div class="createoffer">
+                    <h4 class="amountheader">Purpose</h4>
+                    <input type="text" placeholder="Marketing" class="input-costum"
+                    formControlName="purpose"
+                    >
+                  </div>
+                  <div class="createoffer">
+                    <h4 class="amountheader">Address</h4>
+                    <input type="text" placeholder="address" class="input-costum"
+                    formControlName="address"
+                    >
+                  </div>
+                  <div class="createoffer">
+                    <h4 class="amountheader">Fee</h4>
+                    <input type="number" placeholder="1" class="input-costum"
+                    formControlName="fee"
+                    >
+                  </div>
+                </ng-container>
+              </div>
             </form>
           </div>
           <!-- </div> -->
@@ -443,6 +469,50 @@
                         </div>
                       </div>
                     </div>
+
+                    <!-- Staking Section -->
+                    <div class="d-flex align-items-center"  (click)="activateStakingSection()"   [ngStyle]="{'margin-bottom': isCheckedStaking ? '8px' : '0px'}">
+                      <input type="checkbox" name="checkStaking" id="checkStaking" #checkboxStaking >
+                      <label for="checkStaking" style="color: #81007F; font-weight: 700;margin-left: 5px; cursor: pointer; margin-bottom: 0px;">Staking</label>
+                    </div>
+                    <form formGroupName="stakingGroup">
+                      <ng-container *ngIf="isCheckedStaking">
+                        <div class="createoffer">
+                          <h4 class="amountheader">Reward Pool</h4>
+                          <input type="text" placeholder="40000" class="input-costum"
+                          formControlName="rewardPool"
+                          >
+                        </div>
+                        <div class="createoffer">
+                          <h4 class="amountheader">Reward Interval (Days)</h4>
+                          <input type="text" placeholder="1" class="input-costum"
+                          formControlName="rewardInterval"
+                          >
+                        </div>
+                        <div class="createoffer">
+                          <h4 class="amountheader">Pool Duration (Days)</h4>
+                          <input type="number" placeholder="30" class="input-costum"
+                          formControlName="poolDuration"
+                          >
+                        </div>
+                        <div class="createoffer">
+                          <h4 class="amountheader">Pool Start</h4>
+                          <input type="datetime-local" class="input-costum"
+                          formControlName="poolStart"
+                          >
+                        </div>
+
+                        <div class="info-box">
+                          <h6 class="color-violet">Tokens per Interval: </h6>
+                          <h6> {{tokensPerInterval}} Token/Interval</h6>
+                        </div>
+                        <div class="info-box">
+                          <h6 class="color-violet">est. APY: </h6>
+                          <h6> {{estimatedApy}}%</h6>
+                        </div>
+                      </ng-container>
+                    </form>
+                    <hr />
                     <div
                       class="down-checkbox"
                       (click)="check()"

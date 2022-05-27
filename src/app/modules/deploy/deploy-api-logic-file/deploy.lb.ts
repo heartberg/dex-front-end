@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   projectMintModel,
   projectPresaleCreateModel,
-  projectWithoutPresaleCreateModel
+  projectWithoutPresaleCreateModel,
+  stakingCreateModel
 } from "../../../models/deployModel";
 import {deployService} from "../../../services/APIs/deploy/deploy-service";
 import {FormGroup} from "@angular/forms";
@@ -39,6 +40,7 @@ export class DeployLb {
   finalStepApi: boolean = false;
   isFailed: boolean = false;
   isPending: boolean = false;
+  hasStaking: boolean = false;
 
   constructor(
     private _deployService: deployService,
@@ -96,6 +98,30 @@ export class DeployLb {
                       console.log("value of mint: " + value)
                       this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
                         async (value: any) => {
+                          if(this.blockchainObj.rewardsPerInterval) {
+                            console.log("deploy smart staking")
+                            let response = await this.deployerBC.deploySmartStaking(this.sessionWallet!)
+                            if(response) {
+                              let stakingId = response['application-index']
+                              let setupResponse = await this.deployerBC.setupSmartStaking(this.sessionWallet!, stakingId, this.deployerBC.settings.asset_id!, 
+                                this.deployerBC.settings.contract_id!, this.blockchainObj.rewardsPerInterval!, this.blockchainObj.poolRewards!, this.blockchainObj.poolStart!,
+                                this.blockchainObj.poolInterval!)
+                              if(setupResponse) {
+                                let stakingPool: stakingCreateModel = {
+                                  assetId: this.deployerBC.settings.asset_id!,
+                                  contractId: stakingId,
+                                  startingTime: this.blockchainObj.poolStart!,
+                                  endingTime: this.blockchainObj.poolStart! + this.blockchainObj.poolDuration!,
+                                  projectId: this.projectId
+                                }
+                                this._projectService.AddStakingPool(stakingPool).subscribe(
+                                  (value: any) => {
+                                    console.log("staking pool added!")
+                                  }
+                                )
+                              }
+                            }
+                          }
                           if (2 === 2) {
                             of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
                               (value: any) => {
@@ -177,6 +203,30 @@ export class DeployLb {
                       if (value) {
                         this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
                           async (value: any) => {
+                            if(this.blockchainObj.rewardsPerInterval) {
+                              console.log("deploy smart staking")
+                              let response = await this.deployerBC.deploySmartStaking(this.sessionWallet!)
+                              if(response) {
+                                let stakingId = response['application-index']
+                                let setupResponse = await this.deployerBC.setupSmartStaking(this.sessionWallet!, stakingId, this.deployerBC.settings.asset_id!, 
+                                  this.deployerBC.settings.contract_id!, this.blockchainObj.rewardsPerInterval!, this.blockchainObj.poolRewards!, this.blockchainObj.poolStart!,
+                                  this.blockchainObj.poolInterval!)
+                                if(setupResponse) {
+                                  let stakingPool: stakingCreateModel = {
+                                    assetId: this.deployerBC.settings.asset_id!,
+                                    contractId: stakingId,
+                                    startingTime: this.blockchainObj.poolStart!,
+                                    endingTime: this.blockchainObj.poolStart! + this.blockchainObj.poolDuration!,
+                                    projectId: this.projectId
+                                  }
+                                  this._projectService.AddStakingPool(stakingPool).subscribe(
+                                    (value: any) => {
+                                      console.log("staking pool added!")
+                                    }
+                                  )
+                                }
+                              }
+                            }
                             if (2 === 2) {
                               of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
                                 async (value: any) => {
@@ -631,6 +681,9 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
         buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
         sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
         sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
+        additionalFee: form.get('feesGroup.fee')?.value * 100,
+        additionalFeeWallet: form.get('feesGroup.address')?.value,
+        purpose: form.get('feesGroup.purpose')?.value,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
         extraFeeTime: form.get('extraFeeTime')?.value

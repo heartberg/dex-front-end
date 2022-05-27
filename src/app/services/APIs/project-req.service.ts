@@ -7,6 +7,7 @@ import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { Observable, Subject } from 'rxjs';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
 import { AssetViewModel } from 'src/app/models/assetView.model';
+import { stakingCreateModel } from 'src/app/models/deployModel';
 
 @Injectable({
   providedIn: 'root',
@@ -107,6 +108,11 @@ export class projectReqService {
   createPresaleEntry(entryModel: PresaleEntryModel) {
     const url = `${this.baseUrl}/entry/create`;
     return this._http.post(url, entryModel);
+  }
+
+  AddStakingPool(stakingPool: stakingCreateModel) {
+    const url = `${this.baseUrl}/staking/create`;
+    return this._http.post(url, stakingPool);
   }
 
 }

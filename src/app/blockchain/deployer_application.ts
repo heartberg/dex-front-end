@@ -6,9 +6,11 @@ import {
   get_pay_txn,
   get_app_closeout_txn,
   get_app_call_txn,
-  get_asa_optin_txn
+  get_asa_optin_txn,
+  get_create_deploy_app_txn,
+  get_asa_xfer_txn
 } from "./transactions"
-import algosdk, { Algodv2, getApplicationAddress, Indexer, Transaction } from 'algosdk';
+import algosdk, { Algodv2, getApplicationAddress, Indexer, seedFromMnemonic, Transaction } from 'algosdk';
 import {
   DeployedAppSettings,
   platform_settings as ps
@@ -22,6 +24,7 @@ import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
 import { max } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { TradeRoutingModule } from "../modules/trade/trade-routing.module";
+import { send } from "process";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -76,7 +79,9 @@ export enum Method {
   Resetup = "resetup_presale",
   RemoveMaxBuy = "remove_max_buy",
   BuyPresale = "buy_presale",
-  ClaimPresale = "claim_presale"
+  ClaimPresale = "claim_presale",
+  SetupStaking = "setup_staking",
+  ClaimStaking = "claim"
 }
 
 @Injectable({
@@ -92,18 +97,20 @@ export class DeployedApp {
   }
 
   async deploy(wallet: SessionWallet, settings: DeployedAppSettings) {
-
     this.settings = settings;
     const suggested = await getSuggested(30)
     // console.log(suggested)
     // console.log('wallet', wallet)
     const addr = wallet.getDefaultAccount()
     // console.log('addr', addr)
-    
+    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
     const args = [algosdk.encodeUint64(this.settings.total_supply), algosdk.encodeUint64(this.settings.buy_burn), algosdk.encodeUint64(this.settings.sell_burn),
                   algosdk.encodeUint64(this.settings.transfer_burn), algosdk.encodeUint64(this.settings.to_lp), algosdk.encodeUint64(this.settings.to_backing),
                   algosdk.encodeUint64(this.settings.max_buy)]
-    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+    if(settings.additionalFee) {
+      args.push(algosdk.encodeUint64(settings.additionalFee))
+      accounts.push(settings.additionalFeeAddress!)
+    }
     const assets = [ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id, ps.platform.backing_id]
 
@@ -116,8 +123,8 @@ export class DeployedApp {
         from: wallet.getDefaultAccount(),
         approvalProgram: await compileProgram(approval),
         clearProgram: await compileProgram(clear),
-        numGlobalInts: 28,
-        numGlobalByteSlices: 2,
+        numGlobalInts: 30,
+        numGlobalByteSlices: 3,
         numLocalInts: 3,
         numLocalByteSlices: 0,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
@@ -254,6 +261,131 @@ export class DeployedApp {
 
     return result
   }
+
+  // Deploy Staking
+  async deploySmartStaking(wallet: SessionWallet) {
+    const addr = wallet.getDefaultAccount()
+    const suggested = await getSuggested(10)
+
+    const approval = await (await fetch('../../assets/contracts/smart_staking_approval.teal')).text()
+    //// console.log('approval', approval)
+    const clear = await (await fetch('../../assets/contracts/smart_staking_clear.teal')).text()
+
+    let createApp = algosdk.makeApplicationCreateTxnFromObject({
+      from: addr,
+      approvalProgram: await compileProgram(approval),
+      clearProgram: await compileProgram(clear),
+      numGlobalInts: 9,
+      numGlobalByteSlices: 0,
+      numLocalInts: 1,
+      numLocalByteSlices: 0,
+      onComplete: algosdk.OnApplicationComplete.NoOpOC,
+      note: new Uint8Array(Buffer.from("Deploy Staking App")),
+      suggestedParams: suggested,
+    })
+    let [signed] = await wallet.signTxn([createApp])
+    let response = await sendWait([signed])
+    return response
+  }
+
+  async setupSmartStaking(wallet: SessionWallet, contractId: number, assetId: number, assetContractId: number, rewardsPerInterval: number, 
+    totalRewards: number, start: number, periodTime: number) {
+      let addr = wallet.getDefaultAccount()
+      let suggested = await getSuggested(10)
+
+      let assets = [assetId, ps.platform.verse_asset_id]
+      let apps = [assetContractId, ps.platform.staking_id]
+      let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+      algosdk.encodeUint64(periodTime)]
+      suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+      let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
+      
+      suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
+      args = [new Uint8Array(Buffer.from(Method.SetupStaking))]
+      let setupStaking = new Transaction(get_app_call_txn(suggested, addr, assetContractId, args, undefined, undefined, undefined))
+
+      algosdk.assignGroupID([stakingTxn, setupStaking])
+
+      let signed = await wallet.signTxn([stakingTxn, setupStaking])
+      let response = await sendWait(signed)
+      return response
+  }
+
+    // Deploy Staking
+    async deployStandardStaking(wallet: SessionWallet) {
+      const addr = wallet.getDefaultAccount()
+      const suggested = await getSuggested(10)
+  
+      const approval = await (await fetch('../../assets/contracts/standard_staking_approval.teal')).text()
+      //// console.log('approval', approval)
+      const clear = await (await fetch('../../assets/contracts/standard_staking_clear.teal')).text()
+  
+      let createApp = algosdk.makeApplicationCreateTxnFromObject({
+        from: addr,
+        approvalProgram: await compileProgram(approval),
+        clearProgram: await compileProgram(clear),
+        numGlobalInts: 8,
+        numGlobalByteSlices: 0,
+        numLocalInts: 1,
+        numLocalByteSlices: 0,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        note: new Uint8Array(Buffer.from("Deploy Staking App")),
+        suggestedParams: suggested,
+      })
+      let [signed] = await wallet.signTxn([createApp])
+      let response = await sendWait([signed])
+      return response
+    }
+  
+    async setupStandardStaking(wallet: SessionWallet, contractId: number, assetId: number, rewardsPerInterval: number, 
+      totalRewards: number, start: number, periodTime: number) {
+        let addr = wallet.getDefaultAccount()
+        let suggested = await getSuggested(10)
+  
+        let assets = [assetId, ps.platform.verse_asset_id]
+        let apps = [ps.platform.staking_id]
+        let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+        algosdk.encodeUint64(periodTime)]
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+        let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
+
+        suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
+        let sendAssetTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), assetId, totalRewards))
+
+        algosdk.assignGroupID([stakingTxn, sendAssetTxn])
+  
+        let signed = await wallet.signTxn([stakingTxn, sendAssetTxn])
+        let response = await sendWait(signed)
+        return response
+    }
+
+    async claimStaking(wallet: SessionWallet, contractId: number, assetId: number, smartAssetContractId?: number) {
+      let addr = wallet.getDefaultAccount()
+      let suggested = await getSuggested(10)
+
+      let assets = [assetId]
+      let args = [new Uint8Array(Buffer.from(Method.ClaimStaking))]
+
+      if(smartAssetContractId){
+        let apps = [smartAssetContractId, ps.platform.staking_id]
+        let txn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
+
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 2 * algosdk.ALGORAND_MIN_TX_FEE))
+        algosdk.assignGroupID([payTxn, txn])
+        let signed = await wallet.signTxn([payTxn, txn])
+        let response = await sendWait(signed)
+        return response
+      } else {
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+        let apps = [ps.platform.staking_id]
+        let txn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
+        let signed = await wallet.signTxn([txn])
+        let response = await sendWait(signed)
+        return response
+      }
+      
+    }
+
   /// api calls for each steps of this calls
 
   // /project/create - without presale

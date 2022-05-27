@@ -601,8 +601,10 @@ export class VerseApp {
             if(key.startsWith("a")){
                 let assetId = backingState[key]['i']
                 console.log(assetId)
-                if(!await isOptedIntoAsset(wallet, assetId)){
-                    assetIds.push(assetId)
+                if(assetId != 0) {
+                    if(!await isOptedIntoAsset(wallet, assetId)){
+                        assetIds.push(assetId)
+                    }
                 }
             }
         }

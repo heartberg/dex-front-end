@@ -89,11 +89,6 @@ export class StakingComponent implements OnInit {
   }
 
   formatDate(date: number): string {
-    console.log(date);
-    console.log(new Date(date * 1000));
-    console.log(new Date())
-    console.log(Math.floor(new Date().getTime() * 1000))
-
     if (date > 0){
       let now = Math.floor(new Date().getTime() * 1000)
       if(now > date) {

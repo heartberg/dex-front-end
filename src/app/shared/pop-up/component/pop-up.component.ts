@@ -212,8 +212,8 @@ export class PopUpComponent implements OnInit {
       let tokenLiq = this.myPresaleFairLaunchForm.get("tokenLiq")?.value * Math.pow(10, this.presaleData![1].asset.decimals)
       let algoLiq = this.myPresaleFairLaunchForm.get("algoLiq")?.value * Math.pow(10, 6)
       let tradingStart = parseInt((new Date(this.myPresaleFairLaunchForm.get("tradingStart")?.value).getTime() / 1000).toFixed(0))
-      //let response = await this.deployedApp.resetupPresaleToFairLaunch(wallet, tradingStart, tokenLiq, algoLiq, this.presaleData![0].contractId, this.presaleData![0].assetId)
-      //if(response){
+      let response = await this.deployedApp.resetupPresaleToFairLaunch(wallet, tradingStart, tokenLiq, algoLiq, this.presaleData![0].contractId, this.presaleData![0].assetId)
+      if(response){
         console.group("send to bc")
         this.presaleData![1].asset.tradingStart = tradingStart
         this.projectService.fairLaunch(this.presaleData![1].asset).subscribe(
@@ -222,7 +222,7 @@ export class PopUpComponent implements OnInit {
           }
         )
       
-      //}
+      }
       this.myPresaleFairLaunchForm.reset();
       console.log(this.presaleData)
     }
@@ -238,6 +238,13 @@ export class PopUpComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+
+    // this.lendControl.valueChanges!.subscribe(
+    //   (value: any) => {
+    //     this.calculateBackingReturn(value)
+    //   }
+    // )
+
     this.tradeBackingControl.valueChanges!.subscribe(
       (value: any) => {
         this.calculateBackingReturn(value)
@@ -397,7 +404,7 @@ export class PopUpComponent implements OnInit {
     this.isLiquiditied.emit(true);
   }
 
-  activateLandAndTrade(id: number) {
+  async activateLandAndTrade(id: number) {
     if (id === 1) {
       this.isTradeLend = false;
       this.isTradeBacking = false;
@@ -410,6 +417,8 @@ export class PopUpComponent implements OnInit {
       this.isTradeLend = false;
       this.isTradeBacking = true;
       this.isTradeTrade = false;
+      await this.checkOptedInBackingContract()
+      await this.checkOptInBackingTokens()
     }
   }
 
@@ -621,6 +630,7 @@ export class PopUpComponent implements OnInit {
     const addr = localStorage.getItem("wallet")
     if(wallet) {
       this.assetIdsToOptIn = await this.verseApp.checkOptedInToBacking(addr!)
+      console.log(this.assetIdsToOptIn)
     }
   }
 
