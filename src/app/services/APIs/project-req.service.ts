@@ -110,7 +110,7 @@ export class projectReqService {
     return this._http.post(url, entryModel);
   }
 
-  AddStakingPool(stakingPool: stakingCreateModel) {
+  AddStakingPool(stakingPool: stakingCreateModel): Observable<any>{
     const url = `${this.baseUrl}/staking/create`;
     return this._http.post(url, stakingPool);
   }

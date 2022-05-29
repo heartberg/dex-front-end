@@ -736,10 +736,11 @@ export class TradeComponent implements OnInit {
     arr.forEach( (item, index) => {
       if(item.assetId === ps.platform.verse_asset_id) arr.splice(index,1);
     });
- }
+  }
   // swap && optIn
   async swap() {
     const wallet = this.walletService.sessionWallet;
+    console.log(this.isBuy)
     if(wallet){
       if (this.isBuy) {
         let response = await this.buy(wallet, this.topInput)

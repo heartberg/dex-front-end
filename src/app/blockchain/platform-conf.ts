@@ -85,8 +85,20 @@ type DeployedAppSettings = {
     poolInterval?: number,
     rewardsPerInterval?: number,
     poolDuration?: number,
+    stakingContractId?: number,
     presale_settings: PresaleSettings
 };
+
+export type StakingSetup = {
+    assetId: number,
+    assetContractId: number | null,
+    poolRewards: number,
+    poolInterval: number,
+    poolStart: number,
+    rewardsPerInterval: number,
+    poolDuration: number,
+    projectId: string | null
+}
 
 type PlatformConf = {
     domain: string
@@ -126,7 +138,8 @@ const ALGO_VIEWMODEL: AssetViewModel = {
     totalSupply: 1_000_000_000_000_000,
     tradingStart: 0,
     unitName: "Algo",
-    extraFeeTime: 0
+    extraFeeTime: 0,
+    projectId: ""
 }
 
 const platform_settings = require("../../environments/config.json") as PlatformConf;

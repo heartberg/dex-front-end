@@ -3,10 +3,16 @@ import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {WalletsConnectService} from "../../services/wallets-connect.service";
 import { of } from 'rxjs';
 import {DeployedApp} from "../../blockchain/deployer_application";
-import {DeployedAppSettings} from "../../blockchain/platform-conf";
+import {DeployedAppSettings, StakingSetup} from "../../blockchain/platform-conf";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {environment} from "../../../environments/environment";
 import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
+import { stakingCreateModel } from 'src/app/models/deployModel';
+import { Algodv2 } from 'algosdk';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
+import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { AssetViewModel } from 'src/app/models/assetView.model';
+import { platform_settings as ps } from '../../blockchain/platform-conf';
 
 @Component({
   selector: 'app-deploy-api-logic-file',
@@ -14,6 +20,10 @@ import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
   styleUrls: ['./deploy.component.scss']
 })
 export class DeployComponent implements OnInit, DoCheck {
+
+  isSmartAsaDeploy: boolean = true;
+  isStakingDeploy: boolean = false;
+
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
   isCheckedStaking: boolean = false;
@@ -35,6 +45,20 @@ export class DeployComponent implements OnInit, DoCheck {
   blockchainObect: DeployedAppSettings | undefined;
   // @ts-ignore
   deployFormGroup: FormGroup;
+  // @ts-ignore
+  stakingFormGroup: FormGroup;
+  stakingSetup: StakingSetup | undefined;
+
+  // Staking Section
+  selectedStakingAsset: number = 0;
+  selectedAssetContract: number | null = null;
+  selectedAssetProject: string | null = null;
+  selectedAssetDecimal = 0;
+
+  smartAsas: AssetViewModel[] = []
+  assetArray: string[] = []
+  ownedAssets: any[] = []
+  availableStakingAmount = 0
 
   ///
   finalStepApi: boolean = false;
@@ -49,8 +73,11 @@ export class DeployComponent implements OnInit, DoCheck {
     private walletProviderService: WalletsConnectService,
     private deployedApp: DeployedApp,
     private fb: FormBuilder,
-    private deployLib: DeployLb
+    private deployLib: DeployLb,
+    private assetService: AssetReqService,
+
   ) {}
+
 
   ngDoCheck() {
     this.finalStepApi = this.deployLib.finalStepApi;
@@ -112,6 +139,15 @@ export class DeployComponent implements OnInit, DoCheck {
   // for form intitialize
 
   initiializeForm(): void {
+
+    this.stakingFormGroup = this.fb.group({
+      assetId: '',
+      rewardPool:  null,
+      rewardInterval: null,
+      poolDuration: null,
+      poolStart: null
+    });
+
     this.deployFormGroup = this.fb.group({
       tokenInfoGroup: this.fb.group({
         tokenName: '',
@@ -180,6 +216,10 @@ export class DeployComponent implements OnInit, DoCheck {
       this.setPriceFields()
       this.setStakingFields()
     });
+
+    this.stakingFormGroup.valueChanges.subscribe(x => {
+      this.stakingSectionSetStakingFields()
+    })
   }
 
   blockchainObjInitialize(): DeployedAppSettings {
@@ -199,12 +239,12 @@ export class DeployComponent implements OnInit, DoCheck {
     let tradeStart =  parseInt((new Date(this.deployFormGroup.get('tradingStart')?.value).getTime() / 1000).toFixed(0))
 
     let poolStart = parseInt((new Date(this.deployFormGroup.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
-    let poolRewards = +this.deployFormGroup.get('stakingGroup.rewardPool')?.value * Math.pow(10, decimals)
+    let poolRewards = Math.floor(+this.deployFormGroup.get('stakingGroup.rewardPool')?.value * Math.pow(10, decimals))
     let poolInterval = +this.deployFormGroup.get('stakingGroup.rewardInterval')?.value * 86400
     let poolDuration = +this.deployFormGroup.get('stakingGroup.poolDuration')?.value * 86400
     let rewardsPerInterval = undefined
     if(poolRewards != 0 && poolInterval != 0 && poolDuration != 0) {
-      rewardsPerInterval = poolRewards / (poolDuration / poolInterval)
+      rewardsPerInterval = Math.floor(poolRewards / (poolDuration / poolInterval))
     }
     
     // @ts-ignore
@@ -245,11 +285,7 @@ export class DeployComponent implements OnInit, DoCheck {
     }
   }
 
-
-  async onSubmit() {
-    this.closePopup = true;
-    this.sessionWallet = this.walletProviderService.sessionWallet;
-    console.log(this.sessionWallet)
+  async smartAsaDeploy() {
     this.blockchainObjInitialize();
     console.log(this.blockchainObect)
     localStorage.setItem('blockchainObj', JSON.stringify(this.blockchainObect)!);
@@ -257,17 +293,80 @@ export class DeployComponent implements OnInit, DoCheck {
     if(this.presaleIsChecked){
       this.deployLib.initializeApiObjWithPresale(this.deployFormGroup);
       console.log(this.deployFormGroup.value);
-      return
       this.deployLib.DeployFinalFunc(true, this.deployFormGroup);
     } else {
       this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup);
       console.log(this.deployFormGroup.value);
-      return
       this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }
 
     console.log(this.blockchainObect);
     console.log(this.sessionWallet);
+  }
+
+  async getSelectedAsset(event: string) {
+    let splits = event.split(" ")
+    console.log(splits)
+    let length = splits.length
+    if(splits[length-2] == "Contract:") {
+      this.selectedAssetContract = parseInt(splits[length-1])
+      this.selectedStakingAsset = parseInt(splits[length-3])
+      let smartAsa = this.smartAsas.find(x => {
+        return x.assetId == this.selectedStakingAsset
+      })
+      if(smartAsa) {
+        this.selectedAssetProject = smartAsa.projectId
+      } else {
+        this.selectedAssetProject = null
+      }
+    } else if(splits[length-2] == "ID:") {
+      this.selectedAssetContract = null
+      this.selectedStakingAsset = parseInt(splits[length-1])
+      this.selectedAssetProject = null
+    }
+    let asset = this.ownedAssets.find(element => {
+      return element['asset-id'] == this.selectedStakingAsset
+    });
+    if(asset){
+      let client: Algodv2 = getAlgodClient()
+      let assetInfo = await client.getAssetByID(this.selectedStakingAsset).do()
+      this.availableStakingAmount = asset['amount'] / Math.pow(10, assetInfo['params']['decimals'])
+      this.selectedAssetDecimal = assetInfo['params']['decimals']
+    } else {
+      this.availableStakingAmount = 0
+    }
+    console.log(this.selectedAssetContract)
+    console.log(this.selectedStakingAsset)
+    console.log(this.selectedAssetProject)
+  }
+
+  initializeStakingObject() {
+    this.stakingSetup = {
+      assetId: this.selectedStakingAsset,
+      poolDuration: +this.stakingFormGroup.get('poolDuration')?.value * 86400,
+      poolInterval: this.stakingFormGroup.get('rewardInterval')?.value * 86400,
+      poolRewards: this.stakingFormGroup.get('rewardPool')?.value * Math.pow(10, this.selectedAssetDecimal),
+      poolStart: parseInt((new Date(this.stakingFormGroup.get('poolStart')?.value).getTime() / 1000).toFixed(0)),
+      rewardsPerInterval: parseInt((this.tokensPerInterval * Math.pow(10, this.selectedAssetDecimal)).toFixed(0)),
+      assetContractId: this.selectedAssetContract,
+      projectId: this.selectedAssetProject,
+    }
+  }
+
+  async stakingDeploy() {
+    this.initializeStakingObject()
+    this.deployLib.deployStaking(this.stakingSetup!)
+  }
+
+  async onSubmit() {
+    this.closePopup = true;
+    this.sessionWallet = this.walletProviderService.sessionWallet;
+    console.log(this.sessionWallet)
+    if(this.isSmartAsaDeploy) {
+      await this.smartAsaDeploy()
+    } else {
+      await this.stakingDeploy()
+    }
   }
 
   activatePurposeSection() {
@@ -357,6 +456,17 @@ export class DeployComponent implements OnInit, DoCheck {
     }
   }
 
+  stakingSectionSetStakingFields() {
+    let poolDuration = +this.stakingFormGroup.get('poolDuration')?.value
+    let poolInterval = this.stakingFormGroup.get('rewardInterval')?.value
+    let poolRewards = this.stakingFormGroup.get('rewardPool')?.value
+    if(poolRewards != 0 && poolDuration != 0 && poolInterval != 0) {
+      this.tokensPerInterval = poolRewards / (poolDuration / poolInterval)
+    } else {
+      this.tokensPerInterval = 0
+    }
+  }
+
   activateStakingSection() {
     if (this.checkStaking.nativeElement.checked) {
       this.isCheckedStaking = true;
@@ -367,6 +477,52 @@ export class DeployComponent implements OnInit, DoCheck {
 
   closePopUp(event: boolean) {
     this.closePopup = event;
+  }
+
+  smartAsa() {
+    this.isSmartAsaDeploy = true;
+    this.isStakingDeploy = false;
+    this.setStakingFields()
+  }
+
+  async staking() {
+    this.isSmartAsaDeploy = false;
+    this.isStakingDeploy = true;
+    this.stakingSectionSetStakingFields()
+    let client: Algodv2 = getAlgodClient()
+    let wallet = localStorage.getItem('wallet')
+    if(wallet) {
+      this.assetArray = []
+      this.assetService.getAssetPairs(true, '', wallet).subscribe(
+        async (res: AssetViewModel[]) => {
+          this.removeVerse(res)
+          this.smartAsas = res
+          let info = await client.accountInformation(wallet!).do()
+          let assetsInWallet = info['assets']
+          this.ownedAssets = assetsInWallet
+          assetsInWallet.forEach(async (element: { [x: string]: number; }) => {
+            let asset = res.find( x => {
+              return x.assetId == element['asset-id']
+            })
+            console.log(asset)
+            if(asset) {
+              this.assetArray.push(asset.name + " ASA ID: " + asset.assetId + " Contract: " + asset.contractId)
+            } else {
+              let assetInfo = await client.getAssetByID(element['asset-id']).do()
+              this.assetArray.push(assetInfo['params']['name'] + " ASA ID: " + element['asset-id'])
+            }
+          });
+        }
+      )
+    } else {
+      console.log("connect wallet")
+    }
+  }
+
+  removeVerse(arr: AssetViewModel[]){
+    arr.forEach( (item, index) => {
+      if(item.assetId === ps.platform.verse_asset_id) arr.splice(index,1);
+    });
   }
 
 }

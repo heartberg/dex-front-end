@@ -415,7 +415,8 @@ export class VerseApp {
             sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
             image: "",
             deployerWallet: "",
-            extraFeeTime: 0
+            extraFeeTime: 0,
+            projectId: ""
         }
         return verse
     }

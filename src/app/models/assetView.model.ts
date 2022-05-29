@@ -17,4 +17,5 @@ export interface AssetViewModel {
     image: string
     deployerWallet: string
     extraFeeTime: number
+    projectId: string
 }
