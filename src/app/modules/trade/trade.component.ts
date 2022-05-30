@@ -19,6 +19,7 @@ import { env } from 'process';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import { min } from 'rxjs/operators';
+import {SmartToolData} from "../../shared/pop-up/component/pop-up.component";
 
 
 @Component({

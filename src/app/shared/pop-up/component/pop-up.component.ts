@@ -460,15 +460,12 @@ export class PopUpComponent implements OnInit {
     if (id === 1) {
       this.isTradeLend = false;
       this.isTradeBacking = false;
-      this.isTradeTrade = true;
     } else if (id === 2) {
       this.isTradeLend = true;
       this.isTradeBacking = false;
-      this.isTradeTrade = false;
     } else if (id === 3) {
       this.isTradeLend = false;
       this.isTradeBacking = true;
-      this.isTradeTrade = false;
       await this.checkOptedInBackingContract()
       await this.checkOptInBackingTokens()
     }
