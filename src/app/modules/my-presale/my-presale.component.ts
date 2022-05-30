@@ -5,11 +5,14 @@ import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-detail.component';
+
 
 @Component({
   selector: 'app-my-presale',
@@ -18,7 +21,7 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
 })
 export class MyPresaleComponent implements OnInit {
   // arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
-  arr: ProjectPreviewModel[] = [];
+  arr: [ProjectPreviewModel, PresaleBlockchainInformation][] = [];
 
   isPopUpOpen: boolean = false;
   isRestart: boolean = false;
@@ -28,6 +31,9 @@ export class MyPresaleComponent implements OnInit {
   isSoldOut: boolean = false;
   wallet: SessionWallet | undefined
 
+  projectModel: ProjectViewModel | undefined;
+  presaleData: PresaleBlockchainInformation | undefined;
+
   constructor(
     private projectReqService: projectReqService,
     private assetReqService: AssetReqService,
@@ -35,15 +41,22 @@ export class MyPresaleComponent implements OnInit {
     private walletService: WalletsConnectService
   ) {}
 
-  openPopUp(version: string) {
-    this.isPopUpOpen = true;
-    if (version === 'restart') {
-      this.isRestart = true;
-      this.isFair = false;
-    } else if (version === 'fair') {
-      this.isRestart = false;
-      this.isFair = true;
-    }
+  async openPopUp(version: string, presale: ProjectPreviewModel) {
+    this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        console.log(value)
+        this.projectModel = value
+        this.presaleData = await this.app.getPresaleInfo(presale.asset.contractId)
+        this.isPopUpOpen = true;
+        if (version === 'restart') {
+          this.isRestart = true;
+          this.isFair = false;
+        } else if (version === 'fair') {
+          this.isRestart = false;
+          this.isFair = true;
+        }
+      }
+    )
   }
 
   closePopUp(event: boolean) {
@@ -53,9 +66,11 @@ export class MyPresaleComponent implements OnInit {
   async removeMaxBuy(assetId: number, contractId: number) {
     this.wallet = this.walletService.sessionWallet!
     let response = await this.app.removeMaxBuy(this.wallet, contractId);
-    this.assetReqService.removeMaxBuy(assetId).subscribe((res) => {
-      console.log(res);
-    });
+    if(response) {
+      console.log("removed max buy")
+    } else {
+      console.log("error")
+    }
   }
 
   makeRequest(form: FormGroup) {
@@ -71,9 +86,13 @@ export class MyPresaleComponent implements OnInit {
   ngOnInit(): void {
     const wallet = localStorage.getItem('wallet');
     if(wallet){
+      this.arr = []
       this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
+        res.forEach(async presaleModel => {
+          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.contractId)
+          this.arr.push([presaleModel, blockchainInfo])
+        });
         console.log(res);
-        this.arr = res;
       });
     }
   }
@@ -82,9 +101,16 @@ export class MyPresaleComponent implements OnInit {
     return Math.pow(10, decimal)
   }
 
-  toDate(timestamp: number): string {
-    let date = new Date(timestamp * 1000)
-    return date.toDateString() + " - " + date.getHours().toString() + ":" + date.getMinutes().toString()
+  formatDate(date: Date): string {
+    let minutes = date.getMinutes().toString()
+    if(date.getMinutes() < 10) {
+      minutes = "0" + minutes
+    }
+    let hours = date.getHours().toString()
+    if(date.getHours() < 10){
+      hours = "0" + hours
+    }
+    return date.toDateString() + " - " + hours + ":" + minutes
   }
 
   isFailed(model: ProjectPreviewModel): boolean {
@@ -112,6 +138,12 @@ export class MyPresaleComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  async claim(contractId: number) {
+    let wallet = this.walletService.sessionWallet
+    let response = await this.app.claimPresale(wallet!, contractId)
+    console.log("successful claimed")
   }
 
 }

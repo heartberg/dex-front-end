@@ -17,4 +17,16 @@ export class CardComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  formatDate(date: Date): string {
+    let minutes = date.getMinutes().toString()
+    if(date.getMinutes() < 10) {
+      minutes = "0" + minutes
+    }
+    let hours = date.getHours().toString()
+    if(date.getHours() < 10){
+      hours = "0" + hours
+    }
+    return date.toDateString() + " - " + hours + ":" + minutes
+  }
+
 }

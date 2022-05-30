@@ -6,6 +6,18 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import {of} from "rxjs";
+import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
+import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
+import { ProjectViewModel } from 'src/app/models/projectView.model';
+
+export type DeployState = {
+  mintState: boolean,
+  optInBurnState: boolean,
+  setupState: boolean,
+  removeMaxBuyState: boolean,
+  finished: boolean
+}
+
 
 @Component({
   selector: 'app-my-deploys',
@@ -14,13 +26,14 @@ import {of} from "rxjs";
 })
 
 export class MyDeploysComponent implements OnInit {
-  arr: ProjectPreviewModel[] = [];
+  arr: [ProjectPreviewModel, DeployState][] = [];
   wallet: SessionWallet | undefined;
 
   constructor(
     private walletService: WalletsConnectService,
     private app: DeployedApp,
-    private projectService: projectReqService
+    private projectService: projectReqService,
+    private deployLib: DeployLb
   ) { }
 
   ngOnInit(): void {
@@ -29,8 +42,11 @@ export class MyDeploysComponent implements OnInit {
     if(addr) {
       this.projectService.getCreatedProjects(addr, 1).subscribe(
         (res: ProjectPreviewModel[]) => {
-          res.forEach(element => {
-            this.arr.push(element)
+          res.forEach(async element => {
+            let state: DeployState = await this.getDeployState(element)
+            console.log(state)
+            console.log(element)
+            this.arr.push([element, state])
           });
           console.log(res);
         });
@@ -39,13 +55,28 @@ export class MyDeploysComponent implements OnInit {
     }
 
   }
+  async getDeployState(project: ProjectPreviewModel): Promise<DeployState> {
+    let mintState = this.isMint(project)
+    let optInState = this.isOptInBurn(project)
+    let removeState = await this.isRemoveMaxBuy(project)
+    let setupState = this.isSetup(project)
+    let finished = !(mintState || optInState || removeState || setupState)
+    return {
+      mintState: mintState,
+      optInBurnState: optInState,
+      removeMaxBuyState: removeState,
+      setupState: setupState,
+      finished: finished
+    }
+  }
 
   copyContentToClipboard(content: HTMLElement) {
     navigator.clipboard.writeText(content.innerText);
   }
 
-  isRemoveMaxBuy(model: ProjectPreviewModel): boolean {
-    return model.setup && model.burnOptIn && model.minted
+  async isRemoveMaxBuy(model: ProjectPreviewModel): Promise<boolean> {
+    let hasMaxBuy = await this.app.hasMaxBuy(model.asset.contractId)
+    return model.setup && model.burnOptIn && model.minted && hasMaxBuy
   }
 
   isOptInBurn(model: ProjectPreviewModel): boolean {
@@ -60,15 +91,44 @@ export class MyDeploysComponent implements OnInit {
     return !model.minted && !model.burnOptIn && !model.setup
   }
 
-  removeMaxBuy(contractId: number) {
-    //TODO: DO IT IN BACKEND
-    of(this.app.removeMaxBuy(this.wallet!, contractId)).subscribe( (item) => {
-      console.log(item);
-    })
+  async removeMaxBuy(contractId: number) {
+    let response = await this.app.removeMaxBuy(this.wallet!, contractId)
+    if(response){
+      console.log("removed max buy")
+    } else {
+      console.log("error")
+    }
   }
 
-  // TODO SABA:
-  // Do the different HTML versions depending on the state of the back end object
-  // Do the different calls starting at the levels coming from backend
+  startFromMint(model: ProjectPreviewModel) {
+    this.projectService.getProjectById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromMintNoPresale(projectModel)
+      }
+    )
+  }
 
+  startFromOptInBurn(model: ProjectPreviewModel) {
+    this.projectService.getProjectById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromOptInNoPresale(projectModel)
+      }
+    )
+    console.log("start from setup")
+  }
+
+  startFromSetup(model: ProjectPreviewModel) {
+    this.projectService.getProjectById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromSetupNoPresale(projectModel)
+      }
+    )
+    console.log("start from setup")
+  }
 }

@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectReqService
-        .getAllPresales(OrderingEnum.ending, 1)
+        .getAllPresales(OrderingEnum.upcomming, 1)
         .subscribe((res) => {
           console.log(res);
           res.forEach((el: ProjectPreviewModel) => {

@@ -1,3 +1,5 @@
+import { ProjectPreviewModel } from "./projectPreview.model";
+
 export interface projectPresaleCreateModel {
   description:string,
   contractAddress:string,
@@ -13,7 +15,18 @@ export interface projectPresaleCreateModel {
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
   presale: projectPresaleCreatePresaleModel,
-  asset: projectMintModel
+  asset: projectMintModel,
+  initialAlgoLiquidity: number,
+  initialAlgoLiquidityWithFee: number,
+  initialTokenLiquidity: number,
+}
+
+export interface stakingCreateModel {
+  assetId: number,
+  contractId: number,
+  startingTime: number,
+  endingTime: number,
+  projectId: string | null
 }
 
 interface projectrPresaleCreateTeamModel {
@@ -29,7 +42,8 @@ interface projectPresaleCreatePresaleModel {
     tokenAmount: number,
     walletCap: number,
     startingTime: number,
-    endingTime: number
+    endingTime: number,
+    presaleToLiquidity: number
 }
 // presaleCreate
 
@@ -47,7 +61,10 @@ export interface projectWithoutPresaleCreateModel {
   instagram:string,
   website:string,
   teamMembers: projectrPresaleCreateTeamModel[],
-  asset: projectMintModel
+  asset: projectMintModel,
+  initialAlgoLiquidity: number,
+  initialAlgoLiquidityWithFee: number,
+  initialTokenLiquidity: number,
 }
 // withoutPresale
 
@@ -70,6 +87,10 @@ export interface projectMintModel {
   image: string;
   deployerWallet: string;
   decimals: number;
+  extraFeeTime: number;
+  additionalFee?: number;
+  additionalFeeWallet?: string;
+  purpose?: string;
 }
 // project mint
 

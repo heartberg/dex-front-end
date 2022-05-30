@@ -1,7 +1,7 @@
 <div class="main">
 
   <div class="row">
-    
+
     <div class="col-md-5 ">
       <div class="wrapper-border section-height">
         <div class="row">
@@ -16,7 +16,7 @@
             <h6>{{projectData?.projectName}}</h6>
             <h6>{{projectData?.asset?.name}}</h6>
             <h6>{{projectData?.asset?.url}}</h6>
-           
+
             <div class="row">
               <div class="d-flex socLinks align-items-center">
                 <div class="col-md-4">
@@ -39,7 +39,7 @@
                     />
               </div>
               </div>
-              
+
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@
                   <h6>Rising Pricefloor:</h6>
                   <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
-                
+
               </div>
             </div>
           </div>
@@ -182,10 +182,10 @@
                       <span>{{member?.role}}</span>
                     </div>
                   </div>
-                  
+
               </div>
             </div>
-            
+
           </div>
         </div>
         <div class="fourth-section right-section">
@@ -200,26 +200,10 @@
         </div>
         </div>
       </div>
-    
+
   </div>
-  
+
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <div class="main">
   <div class="unscrollable-section">
     <div class="row">
       <div class="col-md-4">
@@ -288,10 +272,7 @@
               <span class="value">XY Addresses</span>
             </div>
           </div>
-
-
-
-          
+          <!-- <hr> -->
           <div class="outer-buttons-container d-flex flex-column">
             <button class="btn-secondary-costum" routerLink="../../../trade">Buy</button>
             <div class="buttons-container">
@@ -366,7 +347,10 @@
                   <h6>Rising Pricefloor:</h6>
                   <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
-                
+                <!-- <div class="d-flex">
+                    <h6>Special Wallet:</h6>
+                    <span> somme %</span>
+                  </div> -->
               </div>
             </div>
           </div>
@@ -386,7 +370,25 @@
                     </div>
                   </div>
                   <div class="col-md-4">
-                    
+                    <!-- <div class="img">
+                      <img
+                        src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+                        alt=""
+                      /> -->
+                    <!-- <span>Name</span> -->
+                      <!-- <span>Position</span> -->
+                    <!-- </div> -->
+                  <!-- </div> -->
+                  <!-- <div class="col-md-4">
+                    <div class="img">
+                      <img
+                        src="https://g.foolcdn.com/editorial/images/655346/bitcoin-cryptocurrency-digital-ethereum-dollar-gold-investment-getty.jpg"
+                        alt=""
+                      />
+                      <span>Name</span>
+                      <span>Position</span>
+                    </div>
+                  </div>  -->
                 </div>
               </div>
             </div>
@@ -412,9 +414,11 @@
   [isBorrow]="isBorrow"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBorrow"
+  [smartToolData]="smartToolData"
 ></app-pop-up>
 <app-pop-up
   [isBacking]="isBacking"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBacking"
-></app-pop-up> -->
+  [smartToolData]="smartToolData"
+></app-pop-up>

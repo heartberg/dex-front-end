@@ -6,7 +6,7 @@ import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
-import {DeployedApp, StateKeys} from "../../blockchain/deployer_application";
+import {StateKeys} from "../../blockchain/deployer_application";
 
 export type TimeTupel = {
   startTime: Date,
@@ -78,4 +78,5 @@ export class LaunchpadComponent implements OnInit {
     let amount = await getAppLocalStateByKey(client, model.asset.contractId, this.wallet!, StateKeys.presale_contribution_key)
     return amount
   }
+  
 }

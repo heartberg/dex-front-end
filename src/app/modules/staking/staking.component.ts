@@ -4,11 +4,18 @@ import { VerseApp } from 'src/app/blockchain/verse_application';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 export type StakingInfo = {
+  totalAddedWeek: number,
+  totalStaked: number,
+  weeklyRewards: number
+}
+
+export type StakingUserInfo = {
   usersStake: number,
   userAddedWeek: number,
   usersHolding: number,
   verseRewards: number,
-  nextClaimableDate: Date | undefined
+  nextClaimableDate: number,
+  optedIn: boolean
 }
 
 @Component({
@@ -16,58 +23,101 @@ export type StakingInfo = {
   templateUrl: './staking.component.html',
   styleUrls: ['./staking.component.scss']
 })
+
 export class StakingComponent implements OnInit {
   closePopup: boolean | undefined;
   isStake: boolean = true;
   sessionWallet: SessionWallet | undefined;
-  userInfo: StakingInfo = {
+  userInfo: StakingUserInfo = {
     usersStake: 0,
     userAddedWeek: 0,
     usersHolding: 0,
     verseRewards: 0,
-    nextClaimableDate: undefined
+    nextClaimableDate: -1,
+    optedIn: false,
   };
+
+  stakingInfo: StakingInfo = {
+    totalAddedWeek: 0,
+    totalStaked: 0,
+    weeklyRewards: 0
+  }
+
+  nextClaimableDate = "-"
   constructor(
     private verse: VerseApp,
     private walletService: WalletsConnectService
   ) { }
 
-
   async getUserInfo(){
-    this.userInfo = await this.verse.getStakingInfo(this.sessionWallet!.getDefaultAccount());
-    console.log(this.userInfo)
+    const wallet = localStorage.getItem("wallet");
+    if(wallet){
+      this.userInfo = await this.verse.getStakingUserInfo(this.sessionWallet!.getDefaultAccount());
+      console.log(this.userInfo)
+      this.nextClaimableDate = this.formatDate(this.userInfo.nextClaimableDate)
+    }
   }
 
   ngOnInit() {
     this.sessionWallet = this.walletService.sessionWallet;
-    const wallet = localStorage.getItem("wallet");
-    if(wallet){
-      this.getUserInfo();
-    }
+    this.getStakingInfo();
+    this.getUserInfo();
+    
+  }
+
+  async getStakingInfo() {
+    this.stakingInfo = await this.verse.getStakingInfo();
   }
 
   closePopUp(event: boolean) {
     this.closePopup = event;
-  }
-  openPopUp(value: string): void {
-    this.closePopup = true;
-    if (value === 'stake') {
-      this.isStake = true;
-    } else {
-      this.isStake = false;
-    }
+    this.getUserInfo()
+    this.getStakingInfo()
   }
 
-  formatDate(date: Date | undefined): string {
-    if (date){
-      return date.toDateString() + "-" + date.getHours() + ":" + date.getMinutes()
-    } else {
-      return "-"
+  async openPopUp(value: string): Promise<void> {
+    this.sessionWallet = this.walletService.sessionWallet
+    if(this.sessionWallet){
+      await this.getUserInfo()
     }
+    this.closePopup = true;
+      if (value === 'stake') {
+        this.isStake = true;
+      } else {
+        this.isStake = false;
+      }
+  }
+
+  formatDate(date: number): string {
+    if (date > 0){
+      let now = Math.floor(new Date().getTime() * 1000)
+      if(now > date) {
+        return "claimable"
+      } else {
+        let nextClaimableTime = new Date(date - now)
+        if(nextClaimableTime.getHours() > 0){
+            return nextClaimableTime.getHours() + "h " + nextClaimableTime.getMinutes() + "min"
+        } else {
+          return nextClaimableTime.getMinutes() + "min"
+        }
+      }
+    } else if(date == 0){
+      return "activate stake"
+    }
+    return "-"
   }
 
   async claim(): Promise<void> {
-    let response = await this.verse.claim(this.sessionWallet!)
-    console.log(response)
+    let wallet = this.walletService.sessionWallet
+    if(wallet){
+      let response = await this.verse.claim(this.sessionWallet!)
+      if(response) {
+        console.log("claimed")
+      }
+      this.getStakingInfo()
+      this.getUserInfo()
+    } else {
+      console.log("please connect wallet")
+    }
   }
 }

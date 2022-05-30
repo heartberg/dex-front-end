@@ -8,6 +8,8 @@ export interface ProjectViewModel {
     projectImage: string
     description: string
     creatorWallet: string
+    contractId: number
+    contractAddress: string
     roadmap?: string
     roadmapImage?: string
     twitter?: string
@@ -17,4 +19,7 @@ export interface ProjectViewModel {
     teamMembers: TeamMemberViewModel[]
     asset: AssetViewModel
     presale?: presaleViewModel
+    initialAlgoLiquidity: number,
+    initialTokenLiquidity: number,
+    initialAlgoLiquidityWithFee: number
 }

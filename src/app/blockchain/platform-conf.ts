@@ -65,6 +65,8 @@ type DeployedAppSettings = {
     transfer_burn: number,
     to_lp: number,
     to_backing: number,
+    additionalFee?: number,
+    additionalFeeAddress?: string,
     max_buy: number,
     name: string,
     unit: string,
@@ -78,8 +80,25 @@ type DeployedAppSettings = {
     contract_id?: number,
     contract_address?: string,
     asset_id?: number,
+    poolStart?: number,
+    poolRewards?: number,
+    poolInterval?: number,
+    rewardsPerInterval?: number,
+    poolDuration?: number,
+    stakingContractId?: number,
     presale_settings: PresaleSettings
 };
+
+export type StakingSetup = {
+    assetId: number,
+    assetContractId: number | null,
+    poolRewards: number,
+    poolInterval: number,
+    poolStart: number,
+    rewardsPerInterval: number,
+    poolDuration: number,
+    projectId: string | null
+}
 
 type PlatformConf = {
     domain: string
@@ -98,7 +117,8 @@ type BlockchainInformation = {
     tokenLiquidity: number,
     totalsupply: number,
     totalBacking: number,
-    totalBorrowedAlgo: number
+    totalBorrowedAlgo: number,
+    maxBuy: number
 }
 
 const ALGO_VIEWMODEL: AssetViewModel = {
@@ -117,7 +137,9 @@ const ALGO_VIEWMODEL: AssetViewModel = {
     sendBurn: 0,
     totalSupply: 1_000_000_000_000_000,
     tradingStart: 0,
-    unitName: "Algo"
+    unitName: "Algo",
+    extraFeeTime: 0,
+    projectId: ""
 }
 
 const platform_settings = require("../../environments/config.json") as PlatformConf;

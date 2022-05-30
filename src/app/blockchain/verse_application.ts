@@ -1,4 +1,4 @@
-import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getGlobalState, readLocalState, StateToObj, getAlgodClient, getIndexer, isOptedIntoApp } from "./algorand"
+import { addrToB64, sendWait, getSuggested, getTransaction, getLogicFromTransaction, getGlobalState, readLocalState, StateToObj, getAlgodClient, getIndexer, isOptedIntoApp, isOptedIntoAsset } from "./algorand"
 import {
     get_app_optin_txn,
     get_verse_app_call_txn,
@@ -22,9 +22,12 @@ import { Injectable } from "@angular/core";
 import { AssetViewModel } from "../models/assetView.model"
 import { IfStmt } from "@angular/compiler";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
-import { StakingInfo } from "../modules/staking/staking.component";
+import { StakingInfo, StakingUserInfo } from "../modules/staking/staking.component";
 import { getAppLocalStateByKey } from "../services/utils.algo";
 import { StateKeys } from "./deployer_application";
+import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
+import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
+import { send } from "process";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -48,6 +51,7 @@ export enum verseStateKeys {
     fee_addr_key = "ta",
     burn_addr_key = "ba"
 }
+
 
 export enum backingStateKeys {
     user_supplied_key = "us",
@@ -128,7 +132,7 @@ export class VerseApp {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
-        const optin = new Transaction(get_app_optin_txn(suggested, addr, ps.platform.verse_app_id))
+        const optin = new Transaction(get_app_optin_txn(suggested, addr, ps.platform.backing_id))
         const [signed] = await wallet.signTxn([optin])
         const result = await sendWait([signed])
 
@@ -139,7 +143,7 @@ export class VerseApp {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
 
-        const optout = new Transaction(get_app_closeout_txn(suggested, addr, ps.platform.verse_app_id))
+        const optout = new Transaction(get_app_closeout_txn(suggested, addr, ps.platform.backing_id))
         const [signed] = await wallet.signTxn([optout])
         const result = await sendWait([signed])
 
@@ -162,7 +166,7 @@ export class VerseApp {
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from("buy")), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
         const assets = [ps.platform.verse_asset_id]
 
         const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
@@ -184,7 +188,7 @@ export class VerseApp {
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
         const assets = [ps.platform.verse_asset_id]
 
         const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
@@ -212,7 +216,7 @@ export class VerseApp {
     }
 
 
-    async getBacking(wallet: SessionWallet , tokenAmount: bigint): Promise<boolean> {
+    async getBacking(wallet: SessionWallet , tokenAmount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
         const addr = wallet.getDefaultAccount()
@@ -224,16 +228,24 @@ export class VerseApp {
         const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
 
         args = [new Uint8Array(Buffer.from(Method.GetBacking)), algosdk.encodeUint64(tokenAmount)]
-
-        //TODO: finish
-        let globalState = StateToObj(await getGlobalState(ps.platform.backing_id), Method)
-        //console.log(globalState)
-
-        assets = [ps.platform.verse_asset_id]
-
-        const backing = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, undefined, assets, accounts))
-        const [signed] = await wallet.signTxn([backing])
-        const result = await sendWait([signed])
+        
+        const apps = [ps.platform.verse_app_id]
+        assets = []
+        let backingState = StateToObj(await getGlobalState(ps.platform.backing_id), Method)
+        for(let key in backingState){
+            if(key.startsWith("a") && key != 'algo'){
+                let assetId = backingState[key]['i']
+                console.log(key)
+                console.log(assetId)
+                assets.push(assetId)
+            }
+        }
+        
+        const backing = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, apps, assets, undefined))
+        const grouped = [transfer, backing]
+        algosdk.assignGroupID(grouped)
+        const [signedTransfer, signedBacking] = await wallet.signTxn(grouped)
+        const result = await sendWait([signedTransfer, signedBacking])
 
         return result
     }
@@ -296,15 +308,16 @@ export class VerseApp {
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
         
-        const args = [Method.Transfer, encodeParam(amount)]
-        const accounts = [encodeParam(ps.platform.burn_addr), encodeParam(ps.platform.staking_addr)]
-        const assets = [encodeParam(ps.platform.verse_asset_id)]
+        const args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(amount)]
+        const accounts = [ps.platform.burn_addr, ps.platform.staking_addr]
+        const assets = [ps.platform.verse_asset_id]
 
         const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
         
         suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
-        const stakingArgs = [Method.Stake, encodeParam(amount)]
-        const stake = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, stakingArgs, undefined, undefined, undefined))
+        const stakingArgs = [new Uint8Array(Buffer.from(Method.Stake)), algosdk.encodeUint64(amount)]
+        const apps = [ps.platform.verse_app_id]
+        const stake = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, stakingArgs, apps, undefined, undefined))
 
         algosdk.assignGroupID([transfer, stake])
 
@@ -318,7 +331,7 @@ export class VerseApp {
         const suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
         
-        const args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk,encodeUint64(amount)]
+        const args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk.encodeUint64(amount)]
         const accounts = [ps.platform.burn_addr]
         const assets = [ps.platform.verse_asset_id]
         const apps = [ps.platform.verse_app_id]
@@ -370,13 +383,15 @@ export class VerseApp {
         let totalSupply = verseState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
         let totalBacking = (backingInfo['amount'] - backingInfo['min-balance'] + backingState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
         let totalBorrowedAlgo = backingState[backingStateKeys.total_algo_borrowed_key]['i']
+        let maxBuy = verseState[verseStateKeys.max_buy_key]['i']
 
         return {
             algoLiquidity: algoLiquidity,
             tokenLiquidity: tokenLiquidity,
             totalsupply: totalSupply,
             totalBacking: totalBacking,
-            totalBorrowedAlgo: totalBorrowedAlgo
+            totalBorrowedAlgo: totalBorrowedAlgo,
+            maxBuy: maxBuy
         }
     }
 
@@ -399,7 +414,9 @@ export class VerseApp {
             sellBurn: state[verseStateKeys.burn_key]['i'],
             sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
             image: "",
-            deployerWallet: ""
+            deployerWallet: "",
+            extraFeeTime: 0,
+            projectId: ""
         }
         return verse
     }
@@ -451,46 +468,171 @@ export class VerseApp {
         return trackInfo
     }
 
-    async getStakingInfo(wallet: string) : Promise<StakingInfo>{
+    async getStakingUserInfo(wallet: string) : Promise<StakingUserInfo>{
+        let client: Algodv2 = getAlgodClient()
+        let accountInfo: any = await client.accountInformation(wallet).do()
+        let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+            return el['asset-id'] == ps.platform.verse_asset_id
+        })
+        let holding = 0
+        if(asset){
+            holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
+        }
+        let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
+        let nextClaimabletime = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.next_claimable_time_key)
+        let status = await client.status().do()
+        let latestRound = await client.block(status['last-round']).do()
+        let latestTimestemp = latestRound['block']['ts']
+
         if(await isOptedIntoApp(wallet, ps.platform.staking_id)) {
-            let client: Algodv2 = getAlgodClient()
-            let accountInfo: any = await client.accountInformation(wallet).do()
-            let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
-            let nextClaimabletime = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.next_claimable_time_key)
+            
             let usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key)
             let usersWeekStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.week_stake_amount)
-    
-            let claimableAmount = (((usersStake - usersWeekStake) * globalState[stakingStateKeys.distribution_asset_amount_key]['i']) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
-    
-            let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
-                return el['asset-id'] == ps.platform.verse_asset_id
-            })
-            let holding = 0
-            if(asset){
-                holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
+
+            let claimableAmount = 0
+            if(usersStake > usersWeekStake) {
+                let rewardPool = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
+                if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
+                    rewardPool = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
+                }
+                claimableAmount = (((usersStake - usersWeekStake) * rewardPool) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
             }
-            
 
             usersStake = usersStake / Math.pow(10, ps.platform.verse_decimals)
             usersWeekStake = usersWeekStake / Math.pow(10, ps.platform.verse_decimals)
-            let stakingInfo: StakingInfo = {
-                nextClaimableDate: new Date(nextClaimabletime * 1000),
+            let stakingInfo: StakingUserInfo = {
+                nextClaimableDate: nextClaimabletime,
                 usersHolding: holding,
                 usersStake: usersStake,
                 verseRewards: claimableAmount,
-                userAddedWeek: usersWeekStake
+                userAddedWeek: usersWeekStake,
+                optedIn: true,
             }
             return stakingInfo
         } else {
-            let stakingInfo: StakingInfo = {
-                nextClaimableDate: new Date(),
-                usersHolding: 0,
+            let stakingInfo: StakingUserInfo = {
+                nextClaimableDate: 0,
+                usersHolding: holding,
                 usersStake: 0,
                 verseRewards: 0,
-                userAddedWeek: 0
+                userAddedWeek: 0,
+                optedIn: false
             }
             return stakingInfo
         }
-        
     }
+
+    async getStakingInfo() : Promise<StakingInfo>{
+        let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
+        let totalStaked = globalState[stakingStateKeys.total_staked]['i'] / Math.pow(10, ps.platform.verse_decimals)
+        let totalAddedWeek = globalState[stakingStateKeys.week_total_added_stake_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
+        let weeklyRewards = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
+        let client: Algodv2 = getAlgodClient()
+        let status = await client.status().do()
+        let latestRound = await client.block(status['last-round']).do()
+        let latestTimestemp = latestRound['block']['ts']
+
+        if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
+            weeklyRewards = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
+        }
+        weeklyRewards = weeklyRewards / Math.pow(10, 6)
+
+        let stakingInfo: StakingInfo = {
+            totalAddedWeek: totalAddedWeek,
+            totalStaked: totalStaked,
+            weeklyRewards: weeklyRewards
+        }
+        return stakingInfo
+    }
+
+    async getSmartToolData(wallet: string | null): Promise<SmartToolData> {
+        let client: Algodv2 = getAlgodClient()
+        let verseState: any = StateToObj(await getGlobalState(ps.platform.verse_app_id), verseStateKeys)
+        let globalState: any = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
+        let appInfo: any = await client.accountInformation(ps.platform.backing_addr).do()
+        
+        let userSupplied = 0
+        let userBorrowed = 0
+        let holding = 0
+        let algos = 0
+        let optedIn = false
+        if(wallet){
+            let accountInfo: any = await client.accountInformation(wallet).do()
+            algos = accountInfo['amount'] / Math.pow(10, 6)
+            let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
+                return el['asset-id'] == ps.platform.verse_asset_id
+            })
+            if(asset){
+                holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
+            }
+            if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
+                optedIn = true
+                userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key)
+                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_algo_borrowed_key)
+            }
+        }
+        
+        let totalBacking = (appInfo['amount'] - appInfo['min-balance'] + globalState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
+
+        let totalSupply = verseState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
+        let totalBorrowed = globalState[backingStateKeys.total_algo_borrowed_key]['i'] / Math.pow(10, 6)
+        
+        let assetInfo = await client.getAssetByID(ps.platform.verse_asset_id).do()
+
+        return {
+            userBorrowed: userBorrowed,
+            assetDecimals: ps.platform.verse_decimals,
+            availableTokenAmount: holding,
+            availableAlgoAmount: algos,
+            contractId: ps.platform.verse_app_id,
+            userSupplied: userSupplied,
+            totalBacking: totalBacking,
+            totalBorrowed: totalBorrowed,
+            totalSupply: totalSupply,
+            optedIn: optedIn,
+            name: assetInfo['params']['name'],
+            unitName: assetInfo['params']['unit-name']
+        }
+    }
+
+    async checkOptedInToBacking(wallet: string) : Promise<number[]>{
+        let assetIds: number[] = []
+        let backingState: any = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
+        for(let key in backingState){
+            if(key.startsWith("a")){
+                let assetId = backingState[key]['i']
+                console.log(assetId)
+                if(assetId != 0) {
+                    if(!await isOptedIntoAsset(wallet, assetId)){
+                        assetIds.push(assetId)
+                    }
+                }
+            }
+        }
+        return assetIds
+    }
+
+    async optInBackingAssets(wallet: SessionWallet, assetIdsToOptIn: number[]) {
+        let addr = wallet.getDefaultAccount()
+        let params = await getSuggested(10)
+        let group = []
+        for(var index in assetIdsToOptIn) {
+            let txn = new Transaction(get_asa_optin_txn(params, addr, assetIdsToOptIn[index]))
+            group.push(txn)
+        }
+        algosdk.assignGroupID(group)
+        let signed = await wallet.signTxn(group)
+        let response = await sendWait(signed)
+        return response
+    }
+
+    async optInStaking(wallet: SessionWallet) {
+        let addr = wallet.getDefaultAccount()
+        let params = await getSuggested(10)
+        let txn = new Transaction(get_app_optin_txn(params, addr, ps.platform.staking_id))
+        let [signed] = await wallet.signTxn([txn])
+        let response = await sendWait([signed])
+        return response
+    }
+
 }

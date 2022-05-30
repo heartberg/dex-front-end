@@ -14,11 +14,11 @@
           <div class="left-values">
             <div class="d-flex date">
               <h6 class="color-violet">Starts:</h6>
-              <span>{{data[1]?.startTime?.toDateString()}} {{data[1]?.startTime?.getHours()}}:{{data[1]?.startTime?.getMinutes()}}</span>
+              <span>{{formatDate(data[1]!.startTime)}}</span>
             </div>
             <div class="d-flex date">
               <h6 class="color-violet">Ends:</h6>
-              <span>{{data[1]?.endTime?.toDateString()}} {{data[1]?.endTime?.getHours()}}:{{data[1]?.endTime?.getMinutes()}}</span>
+              <span>{{formatDate(data[1]!.endTime)}}</span>
             </div>
           </div>
           <div class="right-values d-flex flex-column align-items-start">

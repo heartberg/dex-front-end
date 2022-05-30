@@ -6,7 +6,7 @@
 <!--stacking-->
     <div class="top-side" *ngIf="!stacking">
       <div class="title">
-        <h3 class="color-violet" *ngIf="isTrade">Get Backing for Token Name</h3>
+        <h3 class="color-violet" *ngIf="isTrade">Get Backing for {{smartToolData.name}}</h3>
         <h3 style="text-align: unset" class="color-violet" *ngIf="isRestart">
           Restart Presale
         </h3>
@@ -26,8 +26,7 @@
             !isD
           "
         >
-          <h3>Participate</h3>
-          <h3>Project Name Pre-sale</h3>
+          <h3>Enter Presale</h3>
         </div>
         <h3 *ngIf="isDeploy">are you sure one time only?</h3>
         <div *ngIf="isBorrow" class="isBorrow-version-headline">
@@ -58,7 +57,7 @@
             <span>Amount</span>
             <div style="margin-right: 45px">
               <span>Available:</span>
-              <span style="color: #81007f; margin-right: 8px">2000</span>
+              <span style="color: #81007f; margin-right: 8px">{{presaleEntryData!.availableAmount}} Algo</span>
             </div>
           </div>
           <div>
@@ -73,7 +72,8 @@
             <button class="btn-primary-costum" (click)="closePopUp(false)">
               Cancel
             </button>
-            <button class="btn-secondary-costum">Buy</button>
+            <button class="btn-secondary-costum" *ngIf="!presaleEntryData?.isOptedIn" (click)="optInToPresaleContract()" >Opt In</button>
+            <button class="btn-secondary-costum" *ngIf="presaleEntryData?.isOptedIn" (click)="buyPresale()" >Buy</button>
           </div>
         </div>
         <div class="input-section" *ngIf="isDeploy">
@@ -385,11 +385,11 @@
       <div style="margin: 50px 0 30px 0">
         <div class="data-box">
           <span class="property">Total Backing:</span>
-          <span class="value">Y Algo</span>
+          <span class="value">{{(smartToolData.totalBacking).toFixed(2)}} Algo</span>
         </div>
         <div class="data-box">
           <span class="property">Backing per token</span>
-          <span class="value">X Algo</span>
+          <span class="value">{{(smartToolData.totalBacking / smartToolData.totalSupply).toFixed(6)}} Algo</span>
         </div>
       </div>
       <div class="input-section">
@@ -397,26 +397,28 @@
           <span>Amount</span>
           <div>
             <span class="color-violet">Available:</span>
-            <span style="margin-left: 4px">1000</span>
+            <span style="margin-left: 4px">{{(smartToolData.availableTokenAmount).toFixed(smartToolData.assetDecimals)}}</span>
           </div>
         </div>
         <div>
           <input
             [formControl]="tradeBackingControl"
-            type="number"
+            type="text"
             class="input-costum"
           />
         </div>
       </div>
       <div class="data-box" style="margin: 40px 0 20px 0">
         <span class="property">Output:</span>
-        <span class="value">Y Algo</span>
+        <span class="value">{{returnedBacking.toFixed(6)}} Algo</span>
       </div>
       <div class="d-flex buttons isTrade-buttons">
         <button class="btn-primary-costum" (click)="closePopUp(false)">
           Cancel
         </button>
-        <button class="btn-secondary-costum">Burn Tokens</button>
+        <button class="btn-secondary-costum" *ngIf="isOptedInToVerseBacking && assetIdsToOptIn.length == 0" (click)="getBackingTrade()" >Burn Tokens</button>
+        <button class="btn-secondary-costum" *ngIf="assetIdsToOptIn.length != 0" (click)="optInToBackingTokens()" >Opt In Tokens</button>
+        <button class="btn-secondary-costum" *ngIf="!isOptedInToVerseBacking" (click)="optInToBacking()" >Opt In Backing Contract</button>
       </div>
     </ng-container>
     </ng-container>
@@ -447,34 +449,42 @@
               <input formControlName="tradingStart" id="trading-start" type="datetime-local"/>
             </div>
             <div class="input-box">
-              <label for="tokenInPresale">Token In Presale</label>
-              <input formControlName="tokenInPresale" id="tokenInPresale" type="text"/>
+              <label for="algo-in-liquidity">Algo in Liquidity</label>
+              <input formControlName="algoInLiquidity" id="algo-in-liquidity" type="number" placeholder="{{presaleData![0].algoLiq}}"/>
+            </div>
+            <div class="input-box">
+              <label for="tokenInLiquidity">Token in Liquidity</label>
+              <input formControlName="tokenInLiquidity" id="tokenInLiquidity" type="number" placeholder="{{presaleData![0]?.tokenLiq}}"/>
             </div>
             <div class="input-box" style="margin-bottom: 12px; margin-top: 5px">
               <h4>Presale Price: </h4>
-                <span class="color-violet">2000</span>
+                <span class="color-violet">{{presalePrice}} Algo/Token</span>
             </div>
             <div class="input-box">
               <h4>Initial Token Price</h4>
-              <span class="color-violet">1000</span>
+              <span class="color-violet">{{minInitialPrice.toFixed(6)}} Algo/Token - {{maxInitialPrice.toFixed(6)}} Algo/Token</span>
             </div>
           </div>
           <div class="d-flex flex-column">
             <div class="input-box">
+              <label for="tokenInPresale">Token In Presale</label>
+              <input formControlName="tokenInPresale" id="tokenInPresale" type="number" placeholder="{{presaleData![0]?.tokensInPresale}}"/>
+            </div>
+            <div class="input-box">
+              <label for="to-liquidity">Presale funds to Liquidity</label>
+              <input formControlName="toLiquidity" id="to-liquidity" type="number" placeholder="{{(presaleData![0]?.presaleFundsToLiqPercentage || 0) * 100}}%"/>
+            </div>
+            <div class="input-box">
               <label for="soft-cap">Soft Cap</label>
-              <input formControlName="softCap" id="soft-cap" type="text" />
+              <input formControlName="softCap" id="soft-cap" type="number" placeholder="{{presaleData![0]?.softCap}}"/>
             </div>
             <div class="input-box">
               <label for="hard-cap">Hard Cap</label>
-              <input formControlName="hardCap" id="hard-cap" type="text" />
+              <input formControlName="hardCap" id="hard-cap" type="number" placeholder="{{presaleData![0]?.hardCap}}"/>
             </div>
             <div class="input-box">
               <label for="wallet-cap">Wallet Cap</label>
-              <input formControlName="walletCap" id="wallet-cap" type="text" />
-            </div>
-            <div class="input-box">
-              <label for="to-liquidity">To Liquidity</label>
-              <input formControlName="toLiquidity" id="to-liquidity" type="text" />
+              <input formControlName="walletCap" id="wallet-cap" type="number" placeholder="{{presaleData![0]?.walletCap}}"/>
             </div>
             <!-- right inputs -->
           </div>
@@ -502,34 +512,34 @@
           <div class="d-flex flex-column">
             <!-- left inputs -->
             <div class="input-box">
+              <label for="trading-start">Token Liquidity</label>
+              <input formControlName="tokenLiq" id="fair-token" type="text" placeholder="{{presaleData![0]?.tokenLiq}}"/>
+            </div>
+            <div class="input-box">
+              <label for="trading-start">Algo Liquidity</label>
+              <input formControlName="algoLiq" id="algo-liq" type="text" placeholder="{{presaleData![0]?.algoLiq}}"/>
+            </div>
+            <div class="input-box">
               <label for="trading-start">Trading Start</label>
               <input formControlName="tradingStart" id="trading-start" type="datetime-local" />
             </div>
             <div class="input-box">
-              <label for="trading-start">Add additional Algo to Liquidity</label>
-              <input formControlName="additionalAlgo" id="add-algo" type="text" />
+              <h4>Initial Price: </h4>
+              <span class="color-violet">{{initialFairLaunchPrice.toFixed(6)}}</span>
             </div>
-            <div class="input-box">
-              <label for="trading-start">Fair Launch Token Liquidity</label>
-              <input formControlName="fairLaunchToken" id="fair-token" type="text" />
-            </div>
-            <div class="input-box">
-              <label for="trading-start">Algo Liquidity</label>
-              <input formControlName="algoLiq" id="algo-liq" type="text" />
-            </div>
+          </div>
+
+          <!-- <div class="d-flex flex-column">
             <div class="input-box" style="margin-bottom: 12px; margin-top: 5px;">
               <h4>Current Token Liquidity: </h4>
-              <span class="color-violet">100</span>
+              <span class="color-violet">{{presaleData![0]?.tokenLiq}}</span>
             </div>
             <div class="input-box" style="margin-bottom: 12px;">
               <h4>Current Algo Liquidity: </h4>
-              <span class="color-violet">100</span>
+              <span class="color-violet">{{presaleData![0]?.algoLiq}}</span>
             </div>
-            <div class="input-box">
-              <h4>Initial Price: </h4>
-              <span class="color-violet">300</span>
-            </div>
-          </div>
+          </div> -->
+
         </div>
         <div style="margin-top: 25px" class="d-flex buttons isTrade-buttons">
           <button class="btn-primary-costum" (click)="closePopUp(false)">
@@ -648,22 +658,22 @@
           >
             <div class="d-flex flex-column">
               <span style="align-self: flex-end" class="thin-gray-text"
-              >Available: 2000</span
+              >Available: {{smartToolData.availableTokenAmount / pow(smartToolData.assetDecimals)}}</span
               >
               <div class="input-box">
-                <label for="token-name">Token Name:</label>
+                <label for="supply-amount">Supply Amount:</label>
                 <input
-                  formControlName="tokenName"
-                  id="token-name"
-                  type="text"
+                  formControlName="supplyAmount"
+                  id="supply-amount"
+                  type="number"
                 />
               </div>
             </div>
             <div class="d-flex flex-row">
               <div class="input-box">
-                <label for="borrow-amount">Borrowed Amount:</label>
+                <label for="borrow-amount">Borrow Amount:</label>
                 <input
-                  formControlName="borrowedAmount"
+                  formControlName="borrowAmount"
                   id="borrow-amount"
                   type="number"
                 />
@@ -682,6 +692,7 @@
                 align-self: center;
               "
               class="btn-secondary-costum"
+              (click)="borrow"
             >
               Borrow
             </button>
@@ -731,7 +742,7 @@
         <h3 *ngIf="!stackingISStake">Withdraw</h3>
         <div class="pretitle">
           <span class="color-violet" *ngIf="stackingISStake">
-                      Stake Verse Tokens to receive rewards in Algo and Verse
+                      Stake Verse Tokens to receive more Verse
           </span>
           <span class="color-violet" *ngIf="!stackingISStake">
             Withdraw your staked Verse Tokens.
@@ -740,26 +751,32 @@
         <ng-container *ngIf="stackingISStake">
           <div class="inputs second d-flex align-items-center justify-content-between">
             <h4>Verse</h4>
-            <input type="text" class="input-costum">
-            <span class="color-violet txt">available: X</span>
+            <input type="number" [formControl]="stakeVerseControl" class="input-costum">
+            <span class="color-violet txt">available: {{stakingInfo?.usersHolding}}</span>
           </div>
         </ng-container>
           <ng-container *ngIf="!stackingISStake">
             <div class="inputs first d-flex align-items-center justify-content-between">
               <h4>Currently Staked</h4>
-              <input type="text" class="input-costum">
+              <input type="text" class="input-costum" readonly [value]="stakingInfo?.usersStake">
             </div>
             <div class="inputs d-flex align-items-center justify-content-between">
               <h4>Withdraw Verse</h4>
-              <input type="text" class="input-costum">
+              <input type="number" [formControl]="withdrawVerseControl" class="input-costum">
             </div>
           </ng-container>
           <div class="buttons d-flex align-items-center justify-content-between">
             <ng-container *ngIf="stacking">
-              <button class="btn-primary-costum">
+              <button class="btn-secondary-costum" *ngIf="stackingISStake && stakingInfo?.optedIn" (click)="stake()">
                 Ok
               </button>
-              <button class="btn-secondary-costum">Cancel</button>
+              <button class="btn-secondary-costum" *ngIf="!stakingInfo?.optedIn" (click)="optInToStaking()">
+                Opt In
+              </button>
+              <button class="btn-secondary-costum" *ngIf="!stackingISStake && stakingInfo?.optedIn" (click)="withdrawStake()">
+                Ok
+              </button>
+              <button class="btn-primary-costum" (click)="closePopUp(false)" >Cancel</button>
             </ng-container>
             <ng-container *ngIf="!stacking">
               <button class="btn-primary-costum">
@@ -807,5 +824,21 @@
       </div>
     </ng-container>
     <!--#deploy-popup-->
+
+    <!-- choose wallet pop up
+    <ng-container *ngIf="isChooseWallet">
+      <div style="max-width: 600px">
+        <p>
+          Choose Wallet
+        </p>
+      </div>
+      <div style="margin-top: 50px" class="d-flex">
+        <select name="walletSelect" id="walletSelect">
+          <option *ng-repeat="wallet in accountList" value="{{wallet}}">{{wallet}}</option>
+        </select>
+
+      </div>
+    </ng-container> -->
+
   </div>
 </div>

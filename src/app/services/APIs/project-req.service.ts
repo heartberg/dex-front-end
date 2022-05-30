@@ -5,6 +5,9 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { Observable, Subject } from 'rxjs';
+import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
+import { AssetViewModel } from 'src/app/models/assetView.model';
+import { stakingCreateModel } from 'src/app/models/deployModel';
 
 @Injectable({
   providedIn: 'root',
@@ -59,7 +62,7 @@ export class projectReqService {
     });
   }
 
-  getAllProjects(ordering: string | null = null, page: number = 1) {
+  getAllProjects(ordering: string | null = null, page: number = 1, search: string | null = null) {
     const url = `${this.baseUrl}/project/get/all`;
 
     return this._http.get<ProjectPreviewModel[]>(url, {
@@ -80,25 +83,38 @@ export class projectReqService {
     });
   }
 
-  fairLaunch(projectModel: ProjectViewModel) {
-    const url = `${this.baseUrl}/project/presale/toFairLaunch`;
+  getProjectWithpresaleById(id: string) {
+    const url = `${this.baseUrl}/project/presale/get/byId`;
 
-    return this._http.post(url, {
+    return this._http.get<ProjectViewModel>(url, {
       params: {
-        projectModel: projectModel,
+        projectId: id,
       },
     });
+  }
+
+  fairLaunch(assetModel: AssetViewModel) {
+    const url = `${this.baseUrl}/project/presale/toFairLaunch`;
+
+    return this._http.post(url, assetModel);
   }
 
   reSetupPresale(projectModel: ProjectViewModel) {
     const url = `${this.baseUrl}/project/presale/resetup`;
-
-    return this._http.post(url, {
-      params: {
-        projectModel: projectModel,
-      },
-    });
+    //console.log(projectModel)
+    return this._http.post(url, projectModel);
   }
+
+  createPresaleEntry(entryModel: PresaleEntryModel) {
+    const url = `${this.baseUrl}/entry/create`;
+    return this._http.post(url, entryModel);
+  }
+
+  AddStakingPool(stakingPool: stakingCreateModel): Observable<any>{
+    const url = `${this.baseUrl}/staking/create`;
+    return this._http.post(url, stakingPool);
+  }
+
 }
 
 // getAssetPairs(

@@ -110,15 +110,6 @@ export class AssetReqService {
       },
     });
   }
-
-  removeMaxBuy(assetId: number) {
-    const url = `${this.baseUrl}/asset/remove/maxBuy`;
-    return this._http.post(url, {
-      params: {
-        assetId: assetId,
-      },
-    });
-  }
 }
 
 //   getUserByWallet(wallet: string | any): Observable<User> {

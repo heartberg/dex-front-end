@@ -107,6 +107,7 @@ export class TrackComponent implements OnInit {
         price: priceData
       }
       this.totalAlgoValue += verseData.blockchainTrackInfo.holding * verseData.blockchainTrackInfo.price
+      localStorage.setItem('algo', JSON.stringify(this.totalAlgoValue));
       console.log(verseData)
       this.arr.push(verseData)
 
@@ -139,6 +140,7 @@ export class TrackComponent implements OnInit {
                     price: priceData
                   }
                   this.totalAlgoValue += trackData.blockchainTrackInfo.price * trackData.blockchainTrackInfo.holding;
+                  localStorage.setItem('algo', JSON.stringify(this.totalAlgoValue));
                   console.log(trackData)
                   this.arr.push(trackData)
                 }
@@ -147,7 +149,7 @@ export class TrackComponent implements OnInit {
         }
       )
     }
-    console.log(this.totalAlgoValue);
+    console.log("algo value: " + this.totalAlgoValue);
     localStorage.setItem('algo', JSON.stringify(this.totalAlgoValue));
   }
   mapEntries(res: TokenEntryViewModel[], info: BlockchainTrackInfo): PriceData {
