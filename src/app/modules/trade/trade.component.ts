@@ -138,14 +138,15 @@ export class TradeComponent implements OnInit {
     });
     this.selectAsset(this.assetArr[0].assetId);
 
-    this.assetReqService.getAssetPairs(true, '', wallet).subscribe( (res) => {
-      res.find( (item: AssetViewModel) => item.assetId === 4357 ? this.assetArrSecond.push(...[item]) : null);
+
+    this.assetReqService.getAssetPairs(true, '', wallet).subscribe( (res: any) => {
+      // res.find( (item: AssetViewModel) => this.assetArrSecond.push(...[item]));
+      this.assetArrSecond.push(...res);
     })
 
     this.assetReqService.getAssetPairs(true, '', wallet).subscribe( (res) => {
       res.find( (item: AssetViewModel) => item.assetId === 4357 ? this.assetArr.push(...[item]) : null);
     })
-
 
     this.changeBottom = false;
     this.changeTop = true;

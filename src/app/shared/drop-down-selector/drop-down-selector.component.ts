@@ -100,10 +100,12 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.incomeData)
    setTimeout(() => {
-     this.incomeData.find( (item: AssetViewModel) => item.assetId === 4357 ? this.tradeSelectedBottom = item.name : null)
+     this.incomeData.find( (item: AssetViewModel) => item.assetId === 6813 ? this.tradeSelectedBottom = item.name : null)
+     console.log(this.tradeSelectedBottom);
    }, 500)
-    console.log(this.incomeData);
+
   }
 
   ngDoCheck() {

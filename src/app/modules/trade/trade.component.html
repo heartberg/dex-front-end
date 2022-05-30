@@ -30,15 +30,16 @@
                 }}</span>
               </div>
 
-
-          <input
-          formControlName="topInputValue"
-          type="number"
-          (click)="onUserInput()"
-          class="input-costum"
-          [value]="0"
-          #inputRef
-        />
+          <form action="" [formGroup]="topForms">
+            <input
+            formControlName="topInputValue"
+            type="number"
+            (click)="onUserInput()"
+            class="input-costum"
+            [value]="0"
+            #inputRef
+          />
+          </form>
         <div class="centered-buttons">
           <button
           class="btn-primary-costum btn-extra"
