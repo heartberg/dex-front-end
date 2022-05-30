@@ -8,12 +8,13 @@ import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
-import { DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import { DeployedAppSettings, platform_settings as ps, StakingSetup } from 'src/app/blockchain/platform-conf';
 import { StakingInfo, StakingUserInfo } from 'src/app/modules/staking/staking.component';
 import { Algodv2 } from 'algosdk';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
 import { environment } from 'src/environments/environment';
-
+import { DeployLb } from 'src/app/modules/deploy/deploy-api-logic-file/deploy.lb';
+import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
 
 export type SmartToolData = {
   userSupplied: number,
@@ -52,6 +53,11 @@ export class PopUpComponent implements OnInit {
 
   @Input() isRestart: boolean = false;
   @Input() isFair: boolean = false;
+
+  @Input() isDistributionPool: boolean = false;
+  @Input() projectForDistributionPool: ProjectPreviewModel | undefined;
+  tokensPerInterval: number = 0;
+  availableAmountForDistribution: number = 0;
 
   @Input() stacking: boolean = false;
   @Input() stackingISStake: boolean = false;
@@ -107,6 +113,13 @@ export class PopUpComponent implements OnInit {
   @Input() isTradeBacking: boolean = false;
   @Input() isTradeTrade: boolean = false;
   // trade new popup flows
+
+  distributionPoolForm = this.fb.group({
+    poolReward: [],
+    poolStart: [],
+    poolInterval: [],
+    poolDuration: [],
+  })
 
   tokenDetailBorrowForm = this.fb.group({
     supplyAmount: [],
@@ -234,7 +247,8 @@ export class PopUpComponent implements OnInit {
     private fb: FormBuilder,
     private verseApp: VerseApp,
     private deployedApp: DeployedApp,
-    private projectService: projectReqService
+    private projectService: projectReqService,
+    private deployLib: DeployLb
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -262,6 +276,22 @@ export class PopUpComponent implements OnInit {
         this.getFairLaunchPrices()
       }
     )
+
+    this.distributionPoolForm.valueChanges!.subscribe(
+      (value: any) => {
+        this.getDistributionFields()
+      }
+    )
+
+    if(this.isDistributionPool) {
+      let client: Algodv2 = getAlgodClient()
+      let wallet = this._walletsConnectService.sessionWallet
+      let accInfo = await client.accountInformation(wallet!.getDefaultAccount()).do()
+      let asset = accInfo['assets'].find((value: any) => {
+        return value['asset-id'] == this.projectForDistributionPool!.asset.assetId
+      })
+      this.availableAmountForDistribution = asset['amount']
+    }
 
     if(this.isTradeBacking){
       console.log("is trade backing")
@@ -435,6 +465,18 @@ export class PopUpComponent implements OnInit {
       this.returnedBacking = 0
     } else {
       this.returnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+    }
+  }
+
+  getDistributionFields() {
+    let poolDuration = +this.distributionPoolForm.get('poolDuration')?.value * 86400
+    let poolInterval = this.distributionPoolForm.get('rewardInterval')?.value * 86400
+    let poolRewards = this.distributionPoolForm.get('rewardPool')?.value * Math.pow(10, this.projectForDistributionPool!.asset.decimals)
+
+    if(poolRewards != 0 && poolDuration != 0 && poolInterval != 0) {
+      this.tokensPerInterval = poolRewards / (poolDuration / poolInterval)
+    } else {
+      this.tokensPerInterval = 0
     }
   }
 
@@ -655,4 +697,25 @@ export class PopUpComponent implements OnInit {
     }
   }
 
+  async createDistributionPool() {
+    console.log("create pool")
+    let poolReward = +this.distributionPoolForm.get('poolReward')?.value * Math.pow(10, this.projectForDistributionPool!.asset.decimals)
+    let poolDuration = +this.distributionPoolForm.get('poolDuration')?.value * 86400
+    let poolInterval = +this.distributionPoolForm.get('poolInterval')?.value * 86400
+    let poolStart = parseInt((new Date(this.distributionPoolForm.get('poolStart')?.value).getTime() / 1000).toFixed(0))
+    let poolIntervalRewards = parseInt((this.tokensPerInterval * Math.pow(10, this.projectForDistributionPool!.asset.decimals)).toFixed(0))
+    
+    let stakingSetup: StakingSetup = {
+      assetContractId: this.projectForDistributionPool!.asset.contractId,
+      assetId: this.projectForDistributionPool!.asset.assetId,
+      poolDuration: poolDuration,
+      poolInterval: poolInterval,
+      poolRewards: poolReward,
+      poolStart: poolStart,
+      projectId: this.projectForDistributionPool!.projectId,
+      rewardsPerInterval: poolIntervalRewards,
+      isDistribution: true
+    }
+    await this.deployLib.deployStaking(stakingSetup)
+  }
 }

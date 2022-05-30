@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
 import { VerseApp } from 'src/app/blockchain/verse_application';
+import { StakingModel } from 'src/app/models/stakingModel';
+import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
 export type StakingInfo = {
@@ -28,6 +30,12 @@ export class StakingComponent implements OnInit {
   closePopup: boolean | undefined;
   isStake: boolean = true;
   sessionWallet: SessionWallet | undefined;
+
+  pools: StakingModel[] = []
+  isDistributionSelected = true
+  isStakingSelected = false
+  isFinishedChecked = false
+
   userInfo: StakingUserInfo = {
     usersStake: 0,
     userAddedWeek: 0,
@@ -43,10 +51,15 @@ export class StakingComponent implements OnInit {
     weeklyRewards: 0
   }
 
+  @ViewChild('checkboxFinished', {static: false})
+  // @ts-ignore
+  private checkFinished: ElementRef;
+
   nextClaimableDate = "-"
   constructor(
     private verse: VerseApp,
-    private walletService: WalletsConnectService
+    private walletService: WalletsConnectService,
+    private projectReqService: projectReqService
   ) { }
 
   async getUserInfo(){
@@ -60,6 +73,12 @@ export class StakingComponent implements OnInit {
 
   ngOnInit() {
     this.sessionWallet = this.walletService.sessionWallet;
+    this.projectReqService.GetStakingPools(false, false).subscribe(
+      (res: any) => {
+        console.log(res)
+        this.pools = res
+      }
+    )
     this.getStakingInfo();
     this.getUserInfo();
     
@@ -119,5 +138,43 @@ export class StakingComponent implements OnInit {
     } else {
       console.log("please connect wallet")
     }
+  }
+
+  ShowStaking() {
+    
+    this.isStakingSelected = true
+    this.isDistributionSelected = false
+    this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
+      (res: any) => {
+        console.log(res)
+        this.pools = res
+      }
+    )
+    
+  }
+
+  ShowDistribution(){
+    this.isStakingSelected = false
+    this.isDistributionSelected = true
+    this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
+      (res: any) => {
+        console.log(res)
+        this.pools = res
+      }
+    )
+  }
+
+  ShowFinished() {
+    if(this.checkFinished.nativeElement.checked) {
+      this.isFinishedChecked = true;
+    } else {
+      this.isFinishedChecked = false;
+    }
+    this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
+      (res: any) => {
+        console.log(res)
+        this.pools = res
+      }
+    )
   }
 }

@@ -86,6 +86,7 @@ type DeployedAppSettings = {
     rewardsPerInterval?: number,
     poolDuration?: number,
     stakingContractId?: number,
+    isDistribution?: boolean
     presale_settings: PresaleSettings
 };
 
@@ -97,7 +98,8 @@ export type StakingSetup = {
     poolStart: number,
     rewardsPerInterval: number,
     poolDuration: number,
-    projectId: string | null
+    projectId: string | null,
+    isDistribution?: boolean
 }
 
 type PlatformConf = {

@@ -26,7 +26,8 @@ export interface stakingCreateModel {
   contractId: number,
   startingTime: number,
   endingTime: number,
-  projectId: string | null
+  projectId: string | null,
+  isDistribution: boolean
 }
 
 interface projectrPresaleCreateTeamModel {

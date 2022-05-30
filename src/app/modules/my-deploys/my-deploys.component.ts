@@ -9,6 +9,8 @@ import {of} from "rxjs";
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
 import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { Algodv2 } from 'algosdk';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
 
 export type DeployState = {
   mintState: boolean,
@@ -28,7 +30,8 @@ export type DeployState = {
 export class MyDeploysComponent implements OnInit {
   arr: [ProjectPreviewModel, DeployState][] = [];
   wallet: SessionWallet | undefined;
-
+  isPopUpOpen: boolean = false;
+  projectForDistribution: ProjectPreviewModel | undefined;
   constructor(
     private walletService: WalletsConnectService,
     private app: DeployedApp,
@@ -130,5 +133,14 @@ export class MyDeploysComponent implements OnInit {
       }
     )
     console.log("start from setup")
+  }
+
+  openPopUp(model: ProjectPreviewModel) {
+    this.projectForDistribution = model
+    this.isPopUpOpen = true
+  }
+
+  closePopUp(event: boolean) {
+    this.isPopUpOpen = event;
   }
 }

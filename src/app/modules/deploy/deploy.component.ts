@@ -23,6 +23,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   isSmartAsaDeploy: boolean = true;
   isStakingDeploy: boolean = false;
+  isDistributionPool: boolean = false;
 
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
@@ -104,6 +105,10 @@ export class DeployComponent implements OnInit, DoCheck {
   @ViewChild('checkPresale', {static: false})
   // @ts-ignore
   private checkPresale: ElementRef;
+
+  @ViewChild('checkDistributionPool', {static: false})
+  // @ts-ignore
+  private checkDistributionPool: ElementRef;
 
   @ViewChild('checkboxStaking', {static: false})
   // @ts-ignore
@@ -308,22 +313,7 @@ export class DeployComponent implements OnInit, DoCheck {
     let splits = event.split(" ")
     console.log(splits)
     let length = splits.length
-    if(splits[length-2] == "Contract:") {
-      this.selectedAssetContract = parseInt(splits[length-1])
-      this.selectedStakingAsset = parseInt(splits[length-3])
-      let smartAsa = this.smartAsas.find(x => {
-        return x.assetId == this.selectedStakingAsset
-      })
-      if(smartAsa) {
-        this.selectedAssetProject = smartAsa.projectId
-      } else {
-        this.selectedAssetProject = null
-      }
-    } else if(splits[length-2] == "ID:") {
-      this.selectedAssetContract = null
-      this.selectedStakingAsset = parseInt(splits[length-1])
-      this.selectedAssetProject = null
-    }
+    this.selectedStakingAsset = parseInt(splits[length-1])
     let asset = this.ownedAssets.find(element => {
       return element['asset-id'] == this.selectedStakingAsset
     });
@@ -335,9 +325,6 @@ export class DeployComponent implements OnInit, DoCheck {
     } else {
       this.availableStakingAmount = 0
     }
-    console.log(this.selectedAssetContract)
-    console.log(this.selectedStakingAsset)
-    console.log(this.selectedAssetProject)
   }
 
   initializeStakingObject() {
@@ -348,8 +335,9 @@ export class DeployComponent implements OnInit, DoCheck {
       poolRewards: this.stakingFormGroup.get('rewardPool')?.value * Math.pow(10, this.selectedAssetDecimal),
       poolStart: parseInt((new Date(this.stakingFormGroup.get('poolStart')?.value).getTime() / 1000).toFixed(0)),
       rewardsPerInterval: parseInt((this.tokensPerInterval * Math.pow(10, this.selectedAssetDecimal)).toFixed(0)),
-      assetContractId: this.selectedAssetContract,
-      projectId: this.selectedAssetProject,
+      assetContractId: null,
+      projectId: null,
+      isDistribution: this.isDistributionPool
     }
   }
 
@@ -382,6 +370,14 @@ export class DeployComponent implements OnInit, DoCheck {
       this.presaleIsChecked = true;
     } else {
       this.presaleIsChecked = false;
+    }
+  }
+
+  activateDistributionPool() {
+    if(this.checkDistributionPool.nativeElement.checked) {
+      this.isDistributionPool = true;
+    } else {
+      this.isDistributionPool = false;
     }
   }
 
@@ -505,9 +501,7 @@ export class DeployComponent implements OnInit, DoCheck {
               return x.assetId == element['asset-id']
             })
             console.log(asset)
-            if(asset) {
-              this.assetArray.push(asset.name + " ASA ID: " + asset.assetId + " Contract: " + asset.contractId)
-            } else {
+            if(!asset) {
               let assetInfo = await client.getAssetByID(element['asset-id']).do()
               this.assetArray.push(assetInfo['params']['name'] + " ASA ID: " + element['asset-id'])
             }

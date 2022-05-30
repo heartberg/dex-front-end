@@ -81,6 +81,7 @@ export enum Method {
   BuyPresale = "buy_presale",
   ClaimPresale = "claim_presale",
   SetupStaking = "setup_staking",
+  SetupDistrbution = "setup_distribution",
   ClaimStaking = "claim"
 }
 
@@ -291,6 +292,7 @@ export class DeployedApp {
       const stakingAssets = [this.settings.asset_id!, ps.platform.verse_asset_id]
       const stakingArgs = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+      suggested.flatFee = true
       let txn = new Transaction(get_app_call_txn(suggested, addr, this.settings.stakingContractId, stakingArgs, apps, stakingAssets, undefined))
       grouped.unshift(setupPay, txn)
       console.log(grouped)
@@ -359,6 +361,61 @@ export class DeployedApp {
       return response
   }
 
+  // TODO
+  async deploySmartDistributionStaking(wallet: SessionWallet) {
+    const addr = wallet.getDefaultAccount()
+    const suggested = await getSuggested(10)
+
+    const approval = await (await fetch('../../assets/contracts/smart_distribution_approval.teal')).text()
+    //// console.log('approval', approval)
+    const clear = await (await fetch('../../assets/contracts/smart_distribution_clear_state.teal')).text()
+
+    let createApp = algosdk.makeApplicationCreateTxnFromObject({
+      from: addr,
+      approvalProgram: await compileProgram(approval),
+      clearProgram: await compileProgram(clear),
+      numGlobalInts: 9,
+      numGlobalByteSlices: 1,
+      numLocalInts: 2,
+      numLocalByteSlices: 0,
+      onComplete: algosdk.OnApplicationComplete.NoOpOC,
+      note: new Uint8Array(Buffer.from("Deploy Staking App")),
+      suggestedParams: suggested,
+    })
+    let [signed] = await wallet.signTxn([createApp])
+    let response = await sendWait([signed])
+    this.settings.stakingContractId = response['application-index']
+    return response
+  }
+
+  async setupSmartDistributionStaking(wallet: SessionWallet, contractId: number, assetId: number, assetContractId: number, rewardsPerInterval: number, 
+    totalRewards: number, start: number, periodTime: number) {
+      let addr = wallet.getDefaultAccount()
+      let suggested = await getSuggested(10)
+
+      let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 200000))
+
+      let assets = [assetId]
+      let apps = [assetContractId]
+      let accounts = [ps.platform.burn_addr]
+      let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+                  algosdk.encodeUint64(periodTime)]
+      suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+      suggested.flatFee = true
+      let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
+      
+      args = [new Uint8Array(Buffer.from(Method.SetupDistrbution))]
+      accounts = [getApplicationAddress(contractId)]
+      let setupStaking = new Transaction(get_app_call_txn(suggested, addr, assetContractId, args, undefined, assets, accounts))
+      
+      let grouped = [payTxn, setupStaking, stakingTxn]
+      algosdk.assignGroupID(grouped)
+
+      let signed = await wallet.signTxn(grouped)
+      let response = await sendWait(signed)
+      return response
+  }
+
     // Deploy Staking
     async deployStandardStaking(wallet: SessionWallet) {
       const addr = wallet.getDefaultAccount()
@@ -398,6 +455,56 @@ export class DeployedApp {
         algosdk.encodeUint64(periodTime)]
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
+
+        suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
+        let sendAssetTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), assetId, totalRewards))
+
+        let grouped  =[payTxn, stakingTxn, sendAssetTxn]
+        algosdk.assignGroupID(grouped)
+  
+        let signed = await wallet.signTxn(grouped)
+        let response = await sendWait(signed)
+        return response
+    }
+
+    // TODO
+    async deployStandardDistributionStaking(wallet: SessionWallet) {
+      const addr = wallet.getDefaultAccount()
+      const suggested = await getSuggested(10)
+  
+      const approval = await (await fetch('../../assets/contracts/standard_distribution_approval.teal')).text()
+      //// console.log('approval', approval)
+      const clear = await (await fetch('../../assets/contracts/standard_distribution_clear_state.teal')).text()
+  
+      let createApp = algosdk.makeApplicationCreateTxnFromObject({
+        from: addr,
+        approvalProgram: await compileProgram(approval),
+        clearProgram: await compileProgram(clear),
+        numGlobalInts: 8,
+        numGlobalByteSlices: 0,
+        numLocalInts: 2,
+        numLocalByteSlices: 0,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        note: new Uint8Array(Buffer.from("Deploy Staking App")),
+        suggestedParams: suggested,
+      })
+      let [signed] = await wallet.signTxn([createApp])
+      let response = await sendWait([signed])
+      return response
+    }
+  
+    async setupStandardDistributionStaking(wallet: SessionWallet, contractId: number, assetId: number, rewardsPerInterval: number, 
+      totalRewards: number, start: number, periodTime: number) {
+        let addr = wallet.getDefaultAccount()
+        let suggested = await getSuggested(10)
+
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 200000))
+  
+        let assets = [assetId]
+        let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+                    algosdk.encodeUint64(periodTime)]
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+        let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, undefined))
 
         suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
         let sendAssetTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), assetId, totalRewards))

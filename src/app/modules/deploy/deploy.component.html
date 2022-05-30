@@ -736,8 +736,33 @@
                   <span> Available Amount: {{availableStakingAmount}}</span>
 
                 </div>
-              
-
+                <div class="row">
+                  <div
+                  class="d-flex align-items-center"
+                  (click)="activateDistributionPool()"
+                >
+                  <input
+                    type="checkbox"
+                    name="checkDistributionPool"
+                    id="checkDistributionPool"
+                    #checkDistributionPool
+                    formControlName="distributionPoolCheck"
+                  />
+                  <label
+                    for="checkDistributionPool"
+                    style="
+                    color: #81007f;
+                    font-weight: 700;
+                    margin-left: 5px;
+                    cursor: pointer;
+                    margin-bottom: 0px;
+                  "
+                  >Create Distribution Pool</label
+                  >
+                </div>
+                </div>
+                <hr>
+                
                 <div class="createoffer">
                   <h4 class="amountheader">Reward Pool</h4>
                   <input type="text" placeholder="40000" class="input-costum"
