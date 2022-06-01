@@ -8,7 +8,7 @@ import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
-import { DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import {DeployedAppSettings, platform_settings as ps, StakingSetup} from 'src/app/blockchain/platform-conf';
 import { StakingInfo, StakingUserInfo } from 'src/app/modules/staking/staking.component';
 import { Algodv2 } from 'algosdk';
 import { ProjectViewModel } from 'src/app/models/projectViewModel';
@@ -116,7 +116,7 @@ export class PopUpComponent implements OnInit {
   @Input() isTradeLendVerse: boolean = false;
   @Input() isTradeBackingVerse: boolean = false;
 
-  @Output() indexerOfChosenSection = new EventEmitter<number>();
+  // @Output() indexerOfChosenSection = new EventEmitter<number>();
   // trade new popup flows
 
   distributionPoolForm = this.fb.group({
