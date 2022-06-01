@@ -251,7 +251,7 @@ export class DeployComponent implements OnInit, DoCheck {
     if(poolRewards != 0 && poolInterval != 0 && poolDuration != 0) {
       rewardsPerInterval = Math.floor(poolRewards / (poolDuration / poolInterval))
     }
-    
+
     // @ts-ignore
     return this.blockchainObect = {
       extra_fee_time: +this.deployFormGroup.get('extraFeeTime')?.value,
