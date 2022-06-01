@@ -1,9 +1,10 @@
 import { SessionWallet } from "algorand-session-wallet";
-import algosdk, { getApplicationAddress, Transaction } from "algosdk";
+import algosdk, { Algodv2, getApplicationAddress, Transaction } from "algosdk";
 import { platform_settings as ps } from "./platform-conf";
-import { getGlobalState, getSuggested, sendWait, StateToObj } from "./algorand";
+import { getAlgodClient, getGlobalState, getSuggested, isOptedIntoApp, sendWait, StateToObj } from "./algorand";
 import { get_app_call_txn, get_asa_xfer_txn, get_pay_txn } from "./transactions";
 import { DeployerMethod } from "./deployer_application";
+import { getAppLocalStateByKey } from "../services/utils.algo";
 
 export type LockSettings = {
     assetId: number,
@@ -11,7 +12,8 @@ export type LockSettings = {
     amount: number,
     lockTime: number,
     periodTime?: number,
-    tokensPerPeriod?: number
+    tokensPerPeriod?: number,
+    nextClaimableTime?: number
 }
 
 export enum LockerGlobalKeys {
@@ -132,6 +134,33 @@ export class LockerApp {
     }
 
     async getLockData(addr: string, contractId: number) {
-        
+        let lockSettings: LockSettings = {
+            amount: 0,
+            assetId: 0,
+            lockTime: 0,
+            assetContractId: 0,
+            periodTime: 0,
+            tokensPerPeriod: 0
+        }
+        if(await isOptedIntoApp(addr, ps.platform.locker_id)) {
+            let client: Algodv2 = getAlgodClient()
+            let assetId = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.lock_pair_key)
+            let amount = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.lock_amount_key)
+            let lockTime = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.lock_time_key)
+            let asaContract = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.smart_asa_app_id_key)
+            let releasePeriod = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.release_period_key)
+            let nextReleaseTime = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.next_released_time_key)
+            let tokensPerPeriod = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.tokens_per_period_key)
+            
+            let assetInfo = await client.getAssetByID(assetId).do()
+            lockSettings.amount = amount / assetInfo['params']['decimals']
+            lockSettings.assetContractId = asaContract
+            lockSettings.lockTime = lockTime
+            lockSettings.periodTime = releasePeriod
+            lockSettings.tokensPerPeriod = tokensPerPeriod / assetInfo['params']['decimals']
+            lockSettings.nextClaimableTime = nextReleaseTime
+        }
+
+        return lockSettings
     }
 }
