@@ -13,9 +13,9 @@ import {DeployedAppSettings, StakingSetup} from "../../../blockchain/platform-co
 import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
 import {WalletsConnectService} from "../../../services/wallets-connect.service";
-import { TeamMemberViewModel } from 'src/app/models/TeamMemberView.model';
+import { TeamMemberViewModel } from 'src/app/models/TeamMemberViewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -282,7 +282,8 @@ export class DeployLb {
       contractId: this.deployerBC.settings.stakingContractId!,
       startingTime: this.blockchainObj.poolStart!,
       endingTime: this.blockchainObj.poolStart! + this.blockchainObj.poolDuration!,
-      projectId: this.projectId
+      projectId: this.projectId,
+      isDistribution: this.blockchainObj.isDistribution!
     }  
     console.log(stakingSetup)
     return this._projectService.AddStakingPool(stakingSetup)
@@ -532,30 +533,82 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
     console.log(stakingSetup)
     this.sessionWallet = this.wallet.sessionWallet
     if(stakingSetup.assetContractId) {
-      console.log("deploy smart staking")
-      let response = await this.deployerBC.deploySmartStaking(this.sessionWallet!)
-      if(response) {
-        let stakingId = response['application-index']
-        let setupResponse = await this.deployerBC.setupSmartStaking(this.sessionWallet!, stakingId, stakingSetup.assetId, 
-          stakingSetup.assetContractId, stakingSetup.rewardsPerInterval, stakingSetup.poolRewards, stakingSetup.poolStart,
-          stakingSetup.poolInterval)
-        if(setupResponse) {
-          let stakingPool: stakingCreateModel = {
-            assetId: stakingSetup.assetId,
-            contractId: stakingId,
-            startingTime: stakingSetup.poolStart,
-            endingTime: stakingSetup.poolStart + stakingSetup.poolDuration,
-            projectId: stakingSetup.projectId!
-          }
-          this._projectService.AddStakingPool(stakingPool).subscribe(
-            (value: any) => {
-              console.log("staking pool added!")
+      if(stakingSetup.isDistribution) {
+        console.log("deploy smart distribution staking")
+        let response = await this.deployerBC.deploySmartDistributionStaking(this.sessionWallet!)
+        if(response) {
+          let stakingId = response['application-index']
+          let setupResponse = await this.deployerBC.setupSmartDistributionStaking(this.sessionWallet!, stakingId, stakingSetup.assetId, 
+            stakingSetup.assetContractId, stakingSetup.rewardsPerInterval, stakingSetup.poolRewards, stakingSetup.poolStart,
+            stakingSetup.poolInterval)
+          if(setupResponse) {
+            let stakingPool: stakingCreateModel = {
+              assetId: stakingSetup.assetId,
+              contractId: stakingId,
+              startingTime: stakingSetup.poolStart,
+              endingTime: stakingSetup.poolStart + stakingSetup.poolDuration,
+              projectId: stakingSetup.projectId!,
+              isDistribution: stakingSetup.isDistribution!
             }
-          )
+            this._projectService.AddStakingPool(stakingPool).subscribe(
+              (value: any) => {
+                console.log("smart distribution staking pool added!")
+              }
+            )
+          }
+        }
+      } else {
+        console.log("deploy smart staking")
+        let response = await this.deployerBC.deploySmartStaking(this.sessionWallet!)
+        if(response) {
+          let stakingId = response['application-index']
+          let setupResponse = await this.deployerBC.setupSmartStaking(this.sessionWallet!, stakingId, stakingSetup.assetId, 
+            stakingSetup.assetContractId, stakingSetup.rewardsPerInterval, stakingSetup.poolRewards, stakingSetup.poolStart,
+            stakingSetup.poolInterval)
+          if(setupResponse) {
+            let stakingPool: stakingCreateModel = {
+              assetId: stakingSetup.assetId,
+              contractId: stakingId,
+              startingTime: stakingSetup.poolStart,
+              endingTime: stakingSetup.poolStart + stakingSetup.poolDuration,
+              projectId: stakingSetup.projectId!,
+              isDistribution: stakingSetup.isDistribution!
+            }
+            this._projectService.AddStakingPool(stakingPool).subscribe(
+              (value: any) => {
+                console.log("staking pool added!")
+              }
+            )
+          }
         }
       }
     } else {
-      console.log("deploy standard staking")
+      if(stakingSetup.isDistribution) {
+        console.log("deploy standard staking")
+        let response = await this.deployerBC.deployStandardDistributionStaking(this.sessionWallet!)
+        if(response) {
+          let stakingId = response['application-index']
+          let setupResponse = await this.deployerBC.setupStandardDistributionStaking(this.sessionWallet!, stakingId, stakingSetup.assetId, 
+            stakingSetup.rewardsPerInterval, stakingSetup.poolRewards, stakingSetup.poolStart,
+            stakingSetup.poolInterval)
+          if(setupResponse) {
+            let stakingPool: stakingCreateModel = {
+              assetId: stakingSetup.assetId,
+              contractId: stakingId,
+              startingTime: stakingSetup.poolStart,
+              endingTime: stakingSetup.poolStart + stakingSetup.poolDuration,
+              projectId: null,
+              isDistribution: stakingSetup.isDistribution!
+            }
+            this._projectService.AddStakingPool(stakingPool).subscribe(
+              (value: any) => {
+                console.log("staking pool added!")
+              }
+            )
+          }
+        }
+      } else {
+        console.log("deploy standard staking")
       let response = await this.deployerBC.deployStandardStaking(this.sessionWallet!)
       if(response) {
         let stakingId = response['application-index']
@@ -568,7 +621,8 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
             contractId: stakingId,
             startingTime: stakingSetup.poolStart,
             endingTime: stakingSetup.poolStart + stakingSetup.poolDuration,
-            projectId: null
+            projectId: null,
+            isDistribution: stakingSetup.isDistribution!
           }
           this._projectService.AddStakingPool(stakingPool).subscribe(
             (value: any) => {
@@ -576,6 +630,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
             }
           )
         }
+      }
       }
     }
   }
@@ -652,17 +707,10 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
 
   GetProjectMint(projectId: string, assetId: number) {
     return this._deployService.projectMint(projectId, assetId)
-    // .subscribe( (value: projectMintModel) => {
-    // console.log(value, 'mint');
-    // return value;
-    // })
   }
 
   GetProjectBurnOptIn(projectId: string) {
     return this._deployService.projectburnOptIn(projectId)
-    //   .subscribe( (value: any) => {
-    //   console.log(value, 'burnOptIn');
-    // })
   }
 
   GetProjectSetup(projectId: string) {

@@ -32,10 +32,45 @@ button {
   width: 140px;
 
 }
+.extra-buttons {
+  display: flex;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  .stacking {
+    margin-right: 20px;
+  }
+}
+
+.header {
+  margin-bottom: 15px;
+}
+
+.distribution {
+  .input {
+    h6 {
+      //font-size: 14px;
+      white-space: nowrap;
+      margin-right: 10px;
+    }
+    .bottom {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 90%;
+    }
+    ::placeholder {
+    }
+    div {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
 
 @media (max-width: 767px) {
   .claim-button {
     justify-content: center;
-    
+
   }
 }

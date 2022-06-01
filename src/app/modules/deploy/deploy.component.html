@@ -1,22 +1,26 @@
 <div style="height: calc(100vh - 75px)">
   <div class="wrapper wrapper-border mainDiv">
-    <button
-    (click)="smartAsa()"
-    class="btn-secondary-costum"
-    type="submit"
-    style="width: unset"
-    >
-    Smart ASA
-    </button>
+    <div class="buttons">
+      <button
+        (click)="smartAsa()"
+        class="btn-primary-costum smart-asa"
+        [class.btn-secondary-costum]="isSmartAsaDeploy"
+        type="submit"
+        style="width: unset"
+      >
+        Smart ASA
+      </button>
 
-    <button
-      (click)="staking()"
-      class="btn-secondary-costum"
-      type="submit"
-      style="width: unset"
-    >
-      Staking
-    </button>
+      <button
+        (click)="staking()"
+        class="btn-primary-costum"
+        type="submit"
+        [class.btn-secondary-costum]="isStakingDeploy"
+        style="width: unset"
+      >
+        Staking
+      </button>
+    </div>
     <div class="whole" style="padding-right: 5px">
       <div class="row" *ngIf="isSmartAsaDeploy" style="width: 100%">
           <form
@@ -722,7 +726,7 @@
             <hr>
               <ng-container>
                 <div class="row">
-                  <div class="createoffer">
+                  <div class="createoffer" style="margin-left: 21px">
                     <h4 class="amountheader">Asset</h4>
                     <app-drop-down-selector
                   [isNotAccordion]="false"
@@ -736,7 +740,33 @@
                   <span> Available Amount: {{availableStakingAmount}}</span>
 
                 </div>
-              
+                <div class="row">
+                  <div
+                  class="d-flex align-items-center"
+                  (click)="activateDistributionPool()"
+                  style="margin-left: 21px"
+                >
+                  <input
+                    type="checkbox"
+                    name="checkDistributionPool"
+                    id="checkDistributionPool"
+                    #checkDistributionPool
+                    formControlName="distributionPoolCheck"
+                  />
+                  <label
+                    for="checkDistributionPool"
+                    style="
+                    color: #81007f;
+                    font-weight: 700;
+                    margin-left: 5px;
+                    cursor: pointer;
+                    margin-bottom: 0px;
+                  "
+                  >Create Distribution Pool</label
+                  >
+                </div>
+                </div>
+                <hr>
 
                 <div class="createoffer">
                   <h4 class="amountheader">Reward Pool</h4>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { TimeTupel } from '../launchpad/launchpad.component';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';

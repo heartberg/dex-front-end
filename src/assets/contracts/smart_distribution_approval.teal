@@ -1,0 +1,487 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l27
+txn OnCompletion
+int NoOp
+==
+bnz main_l11
+txn OnCompletion
+int DeleteApplication
+==
+txn OnCompletion
+int ClearState
+==
+||
+bnz main_l10
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l9
+txn OnCompletion
+int OptIn
+==
+bnz main_l8
+txn OnCompletion
+int CloseOut
+==
+bnz main_l7
+err
+main_l7:
+int 0
+return
+main_l8:
+int 1
+return
+main_l9:
+int 0
+return
+main_l10:
+int 0
+return
+main_l11:
+txna ApplicationArgs 0
+byte "setup"
+==
+bnz main_l26
+txna ApplicationArgs 0
+byte "claim"
+==
+bnz main_l18
+txna ApplicationArgs 0
+byte "stake"
+==
+bnz main_l17
+txna ApplicationArgs 0
+byte "withdraw"
+==
+bnz main_l16
+err
+main_l16:
+global GroupSize
+int 2
+==
+txna Assets 0
+byte "TK_ID"
+app_global_get
+==
+&&
+txna Applications 1
+byte "TA"
+app_global_get
+==
+&&
+txn NumAppArgs
+int 2
+==
+&&
+txna ApplicationArgs 1
+btoi
+int 0
+>
+&&
+txna ApplicationArgs 1
+btoi
+txn Sender
+byte "TA"
+app_local_get
+<=
+&&
+gtxn 0 TypeEnum
+int pay
+==
+&&
+gtxn 0 Amount
+int 3000
+>=
+&&
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+&&
+assert
+txn Sender
+txna ApplicationArgs 1
+btoi
+callsub sendtokens_1
+txn Sender
+byte "TA"
+txn Sender
+byte "TA"
+app_local_get
+txna ApplicationArgs 1
+btoi
+-
+app_local_put
+byte "TS"
+app_global_get
+byte "TS"
+app_global_get
+app_global_get
+txna ApplicationArgs 1
+btoi
+-
+app_global_put
+int 1
+return
+main_l17:
+txna Applications 1
+byte "trb"
+app_global_get_ex
+store 3
+store 2
+load 3
+assert
+global GroupSize
+int 2
+==
+assert
+txna Applications 1
+byte "TA"
+app_global_get
+==
+assert
+gtxn 0 TypeEnum
+int appl
+==
+assert
+gtxna 0 ApplicationArgs 0
+byte "transfer"
+==
+assert
+gtxn 0 ApplicationID
+byte "TA"
+app_global_get
+==
+assert
+gtxn 0 Sender
+txn Sender
+==
+assert
+gtxna 0 Accounts 2
+global CurrentApplicationAddress
+==
+assert
+gtxna 0 ApplicationArgs 1
+btoi
+int 0
+>
+assert
+gtxna 0 ApplicationArgs 1
+btoi
+int 10000
+load 2
+-
+callsub calculatefraction_0
+store 1
+txn Sender
+byte "TA"
+txn Sender
+byte "TA"
+app_local_get
+load 1
++
+app_local_put
+byte "TS"
+app_global_get
+byte "TS"
+app_global_get
+load 1
++
+app_global_put
+int 1
+return
+main_l18:
+byte "TK_ID"
+app_global_get
+txna Assets 0
+==
+assert
+txna Applications 1
+byte "TA"
+app_global_get
+==
+assert
+global GroupSize
+int 2
+==
+assert
+txna Accounts 1
+byte "BA"
+app_global_get
+==
+assert
+gtxn 0 TypeEnum
+int pay
+==
+assert
+gtxn 0 Amount
+int 3
+global MinTxnFee
+*
+>=
+assert
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+assert
+txn Sender
+byte "NCT"
+app_local_get
+global LatestTimestamp
+<=
+assert
+byte "CE"
+app_global_get
+global LatestTimestamp
+<=
+bnz main_l22
+main_l19:
+byte "TS"
+app_global_get
+app_global_get
+int 0
+!=
+bnz main_l21
+main_l20:
+txn Sender
+byte "NCT"
+byte "CE"
+app_global_get
+app_local_put
+int 1
+return
+main_l21:
+txn Sender
+byte "TA"
+app_local_get
+byte "DTA"
+app_global_get
+mulw
+int 0
+byte "TS"
+app_global_get
+divmodw
+pop
+pop
+swap
+!
+assert
+store 1
+txn Sender
+load 1
+callsub sendtokens_1
+byte "UC"
+byte "UC"
+app_global_get
+load 1
+-
+app_global_put
+byte "RP"
+byte "RP"
+app_global_get
+load 1
+-
+app_global_put
+b main_l20
+main_l22:
+byte "UC"
+app_global_get
+byte "PDA"
+app_global_get
++
+store 0
+byte "RP"
+app_global_get
+load 0
+<
+bnz main_l25
+byte "UC"
+load 0
+app_global_put
+main_l24:
+byte "DTA"
+byte "UC"
+app_global_get
+app_global_put
+byte "CE"
+byte "CE"
+app_global_get
+byte "PT"
+app_global_get
++
+app_global_put
+b main_l19
+main_l25:
+byte "UC"
+byte "RP"
+app_global_put
+b main_l24
+main_l26:
+global GroupSize
+int 3
+==
+assert
+txn Sender
+global CreatorAddress
+==
+assert
+txna ApplicationArgs 3
+btoi
+global LatestTimestamp
+>
+assert
+byte "TA"
+app_global_get
+int 0
+==
+assert
+txn GroupIndex
+int 1
+-
+gtxns TypeEnum
+int pay
+==
+assert
+txn GroupIndex
+int 1
+-
+gtxns Receiver
+global CurrentApplicationAddress
+==
+assert
+txn GroupIndex
+int 1
+-
+gtxns Amount
+int 200000
+>=
+assert
+txn GroupIndex
+int 1
++
+gtxns TypeEnum
+int appl
+==
+assert
+txn GroupIndex
+int 1
++
+gtxnsa ApplicationArgs 0
+byte "setup_distribution"
+==
+assert
+txn GroupIndex
+int 1
++
+gtxns ApplicationID
+txna Applications 1
+==
+assert
+txna ApplicationArgs 1
+btoi
+txna ApplicationArgs 2
+btoi
+>
+assert
+byte "TK_ID"
+txna Assets 0
+app_global_put
+byte "TA"
+txna Applications 1
+app_global_put
+byte "BA"
+txna Accounts 1
+app_global_put
+byte "RP"
+txna ApplicationArgs 1
+btoi
+app_global_put
+byte "PDA"
+txna ApplicationArgs 2
+btoi
+app_global_put
+byte "CE"
+txna ApplicationArgs 3
+btoi
+app_global_put
+byte "PT"
+txna ApplicationArgs 4
+btoi
+app_global_put
+byte "TS"
+int 0
+app_global_put
+byte "UC"
+int 0
+app_global_put
+byte "DTA"
+txna ApplicationArgs 2
+btoi
+app_global_put
+itxn_begin
+int axfer
+itxn_field TypeEnum
+txna Assets 0
+itxn_field XferAsset
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+int 0
+itxn_field Fee
+itxn_submit
+int 1
+return
+main_l27:
+byte "TA"
+int 0
+app_global_put
+int 1
+return
+
+// calculate_fraction
+calculatefraction_0:
+store 5
+store 4
+load 4
+load 5
+mulw
+int 0
+int 10000
+divmodw
+pop
+pop
+swap
+!
+assert
+retsub
+
+// send_tokens
+sendtokens_1:
+store 7
+store 6
+itxn_begin
+int appl
+itxn_field TypeEnum
+byte "TK_ID"
+app_global_get
+itxn_field Assets
+byte "TA"
+app_global_get
+itxn_field ApplicationID
+byte "transfer"
+itxn_field ApplicationArgs
+load 7
+itob
+itxn_field ApplicationArgs
+byte "BA"
+app_global_get
+itxn_field Accounts
+load 6
+itxn_field Accounts
+int 3
+global MinTxnFee
+*
+itxn_field Fee
+itxn_submit
+retsub

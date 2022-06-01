@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
 import {StateKeys} from "../../blockchain/deployer_application";

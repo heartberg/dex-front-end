@@ -1,4 +1,4 @@
-import { ProjectPreviewModel } from "./projectPreview.model";
+import { ProjectPreviewModel } from "./projectPreviewModel";
 
 export interface projectPresaleCreateModel {
   description:string,
@@ -26,7 +26,8 @@ export interface stakingCreateModel {
   contractId: number,
   startingTime: number,
   endingTime: number,
-  projectId: string | null
+  projectId: string | null,
+  isDistribution: boolean
 }
 
 interface projectrPresaleCreateTeamModel {

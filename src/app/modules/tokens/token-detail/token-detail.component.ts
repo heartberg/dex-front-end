@@ -3,12 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { platform_settings as ps } from 'src/app/blockchain/platform-conf'; 
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
 import { TemplateBindingParseResult } from '@angular/compiler';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import { StakingUserInfo } from '../../staking/staking.component';
+import { StakingUtils } from 'src/app/blockchain/staking';
 
 @Component({
   selector: 'app-token-detail',
@@ -44,7 +46,7 @@ export class TokenDetailComponent implements OnInit {
     private projectsReqService: projectReqService,
     private deployedApp: DeployedApp,
     private verseApp: VerseApp,
-    private walletConnect: WalletsConnectService
+    private stakingUtils: StakingUtils
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -82,7 +84,7 @@ export class TokenDetailComponent implements OnInit {
       console.log("deployer app")
       this.smartToolData = await this.deployedApp.getSmartToolData(this.projectData.asset.contractId, address);
     } else {
-      this.smartToolData = await this.verseApp.getSmartToolData(address)
+      this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }
     console.log(this.smartToolData)
 

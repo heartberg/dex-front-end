@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { TokenError } from '@angular/compiler/src/ml_parser/lexer';
 

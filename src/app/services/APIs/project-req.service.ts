@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { Observable, Subject } from 'rxjs';
 import { PresaleEntryModel } from 'src/app/models/presaleEntryModel';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { stakingCreateModel } from 'src/app/models/deployModel';
+import { StakingModel } from 'src/app/models/stakingModel';
 
 @Injectable({
   providedIn: 'root',
@@ -113,6 +114,16 @@ export class projectReqService {
   AddStakingPool(stakingPool: stakingCreateModel): Observable<any>{
     const url = `${this.baseUrl}/staking/create`;
     return this._http.post(url, stakingPool);
+  }
+
+  GetStakingPools(finished: boolean, isDistribution: boolean): Observable<any>{
+    const url = `${this.baseUrl}/staking/get/pools`;
+    return this._http.get<StakingModel[]>(url, {
+      params: {
+        finished: finished,
+        isDistribution: isDistribution
+      },
+    });
   }
 
 }

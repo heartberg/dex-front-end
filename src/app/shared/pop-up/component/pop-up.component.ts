@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { of } from 'rxjs';
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -12,9 +11,11 @@ import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
 import { DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { StakingInfo, StakingUserInfo } from 'src/app/modules/staking/staking.component';
 import { Algodv2 } from 'algosdk';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { environment } from 'src/environments/environment';
-
+import { DeployLb } from 'src/app/modules/deploy/deploy-api-logic-file/deploy.lb';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
+import { StakingUtils } from 'src/app/blockchain/staking';
 
 export type SmartToolData = {
   userSupplied: number,
@@ -53,6 +54,11 @@ export class PopUpComponent implements OnInit {
 
   @Input() isRestart: boolean = false;
   @Input() isFair: boolean = false;
+
+  @Input() isDistributionPool: boolean = false;
+  @Input() projectForDistributionPool: ProjectPreviewModel | undefined;
+  tokensPerInterval: number = 0;
+  availableAmountForDistribution: number = 0;
 
   @Input() stacking: boolean = false;
   @Input() stackingISStake: boolean = false;
@@ -113,6 +119,13 @@ export class PopUpComponent implements OnInit {
   @Output() indexerOfChosenSection = new EventEmitter<number>();
   // trade new popup flows
 
+  distributionPoolForm = this.fb.group({
+    poolReward: [],
+    poolStart: [],
+    poolInterval: [],
+    poolDuration: [],
+  })
+
   tokenDetailBorrowForm = this.fb.group({
     supplyAmount: [],
     borrowAmount: [],
@@ -154,6 +167,66 @@ export class PopUpComponent implements OnInit {
   });
 
   // FORMS
+  constructor(
+    private _walletsConnectService: WalletsConnectService,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private verseApp: VerseApp,
+    private deployedApp: DeployedApp,
+    private projectService: projectReqService,
+    private deployLib: DeployLb,
+    private stakingUtils: StakingUtils
+  ) {}
+
+
+  async ngOnInit(): Promise<void> {
+
+    // this.lendControl.valueChanges!.subscribe(
+    //   (value: any) => {
+    //     this.calculateBackingReturn(value)
+    //   }
+    // )
+
+    this.tradeBackingControl.valueChanges!.subscribe(
+      (value: any) => {
+        this.calculateBackingReturn(value)
+      }
+    )
+    this.myPresaleRestartForm.valueChanges!.subscribe(
+      (value: any) => {
+        console.log(value)
+        this.getInitialPrices()
+      }
+    )
+
+    this.myPresaleFairLaunchForm.valueChanges!.subscribe(
+      (value: any) => {
+        this.getFairLaunchPrices()
+      }
+    )
+
+    this.distributionPoolForm.valueChanges!.subscribe(
+      (value: any) => {
+        this.getDistributionFields()
+      }
+    )
+
+    if(this.isDistributionPool) {
+      let client: Algodv2 = getAlgodClient()
+      let wallet = this._walletsConnectService.sessionWallet
+      let accInfo = await client.accountInformation(wallet!.getDefaultAccount()).do()
+      let asset = accInfo['assets'].find((value: any) => {
+        return value['asset-id'] == this.projectForDistributionPool!.asset.assetId
+      })
+      this.availableAmountForDistribution = asset['amount']
+    }
+
+    if(this.isTradeBacking){
+      console.log("is trade backing")
+      await this.checkOptedInBackingContract()
+      await this.checkOptInBackingTokens()
+    }
+  }
 
   // tradelendVerse
   lendVerse = [
@@ -278,109 +351,11 @@ export class PopUpComponent implements OnInit {
     }
   }
 
-  constructor(
-    private _walletsConnectService: WalletsConnectService,
-    private authService: AuthService,
-    private fb: FormBuilder,
-    private verseApp: VerseApp,
-    private deployedApp: DeployedApp,
-    private projectService: projectReqService
-  ) {}
-
-  async ngOnInit(): Promise<void> {
-
-    // this.lendControl.valueChanges!.subscribe(
-    //   (value: any) => {
-    //     this.calculateBackingReturn(value)
-    //   }
-    // )
-
-    this.tradeBackingControl.valueChanges!.subscribe(
-      (value: any) => {
-        this.calculateBackingReturn(value)
-      }
-    )
-    this.myPresaleRestartForm.valueChanges!.subscribe(
-      (value: any) => {
-        console.log(value)
-        this.getInitialPrices()
-      }
-    )
-
-    this.myPresaleFairLaunchForm.valueChanges!.subscribe(
-      (value: any) => {
-        this.getFairLaunchPrices()
-      }
-    )
-
-    if(this.isTradeBacking){
-      console.log("is trade backing")
-      await this.checkOptedInBackingContract()
-      await this.checkOptInBackingTokens()
-    }
-  }
-
   closePopUp(value: any) {
     this.isClosed.emit(false);
   }
 
-  // async setelectWalletConnect(value: string) {
-  //   if (value === 'MyAlgoWallet') {
-  //     await of(this._walletsConnectService.connectToMyAlgo()).toPromise();
-  //     let wallet = localStorage.getItem('wallet');
-  //     if (
-  //       this._walletsConnectService.myAlgoAddress &&
-  //       this._walletsConnectService.myAlgoName !== undefined
-  //     ) {
-  //       this.authService
-  //         .createUser(
-  //           // @ts-ignore
-  //           {
-  //             wallet: wallet,
-  //             name: 'Name',
-  //             verified: false,
-  //             bio: 'Nothing yet...',
-  //             profileImage: '',
-  //             banner: '',
-  //             featuredImage: '',
-  //             customUrl: '',
-  //             twitter: '',
-  //             instagram: '',
-  //             website: '',
-  //           }
-  //         )
-  //         .subscribe(
-  //           (user: any) => {
-  //             console.log(user);
-  //             this.isConnectedToWallet.emit(false);
-  //             this.logInValue.emit(wallet);
-  //           },
-  //           (error) => {
-  //             console.log('error', error);
-  //             this.logInValue.emit(wallet);
-  //             this.isConnectedToWallet.emit(false);
-  //           }
-  //         );
-  //     }
-  //   }
-  // }
-
-
   async setelectWalletConnect(value: string) {
-    // if (value === 'MyAlgoWallet') {
-    //   await of(this._walletsConnectService.connectToMyAlgo()).toPromise();
-    //   if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
-    //     this.isConnectedToWallet.emit(false);
-    //     console.log('emited')
-    //     console.log('Connected to MyAlgoWallet')
-    //   }
-    // } else if (value == 'WalletConnect') {
-    //   this._walletsConnectService.connectToWalletConnect();
-    //   if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
-    //     this.isConnectedToWallet.emit(false);
-    //     console.log('Connected to MyAlgoWallet')
-    //   }
-    // }
 
     if (value === 'MyAlgoWallet') {
       await this._walletsConnectService.connect('my-algo-connect');
@@ -413,8 +388,6 @@ export class PopUpComponent implements OnInit {
                     console.log(user);
                     this.isConnectedToWallet.emit(false);
                     this.logInValue.emit(wallet);
-                    location.reload();
-                    return false;
                   },
                   (error) => {
                     console.log('error', error);
@@ -484,6 +457,18 @@ export class PopUpComponent implements OnInit {
       this.returnedBacking = 0
     } else {
       this.returnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+    }
+  }
+
+  getDistributionFields() {
+    let poolDuration = +this.distributionPoolForm.get('poolDuration')?.value * 86400
+    let poolInterval = this.distributionPoolForm.get('rewardInterval')?.value * 86400
+    let poolRewards = this.distributionPoolForm.get('rewardPool')?.value * Math.pow(10, this.projectForDistributionPool!.asset.decimals)
+
+    if(poolRewards != 0 && poolDuration != 0 && poolInterval != 0) {
+      this.tokensPerInterval = poolRewards / (poolDuration / poolInterval)
+    } else {
+      this.tokensPerInterval = 0
     }
   }
 
@@ -567,7 +552,7 @@ export class PopUpComponent implements OnInit {
     console.log("opt in to stake")
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      let response = await this.verseApp.optInStaking(wallet)
+      let response = await this.stakingUtils.optInVerseStaking(wallet)
       if(response){
         this.stakingInfo!.optedIn = true;
       }
@@ -678,7 +663,7 @@ export class PopUpComponent implements OnInit {
     const wallet = this._walletsConnectService.sessionWallet
     const addr = localStorage.getItem("wallet")
     if(wallet) {
-      this.assetIdsToOptIn = await this.verseApp.checkOptedInToBacking(addr!)
+      this.assetIdsToOptIn = await this.stakingUtils.checkOptedInToBackingAssets(addr!)
       console.log(this.assetIdsToOptIn)
     }
   }
@@ -697,11 +682,32 @@ export class PopUpComponent implements OnInit {
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet) {
       await this.checkOptInBackingTokens()
-      let response = await this.verseApp.optInBackingAssets(wallet, this.assetIdsToOptIn)
+      let response = await this.stakingUtils.optInBackingAssets(wallet, this.assetIdsToOptIn)
       if(response) {
         this.assetIdsToOptIn = []
       }
     }
   }
 
+  async createDistributionPool() {
+    console.log("create pool")
+    let poolReward = +this.distributionPoolForm.get('poolReward')?.value * Math.pow(10, this.projectForDistributionPool!.asset.decimals)
+    let poolDuration = +this.distributionPoolForm.get('poolDuration')?.value * 86400
+    let poolInterval = +this.distributionPoolForm.get('poolInterval')?.value * 86400
+    let poolStart = parseInt((new Date(this.distributionPoolForm.get('poolStart')?.value).getTime() / 1000).toFixed(0))
+    let poolIntervalRewards = parseInt((this.tokensPerInterval * Math.pow(10, this.projectForDistributionPool!.asset.decimals)).toFixed(0))
+
+    let stakingSetup: StakingSetup = {
+      assetContractId: this.projectForDistributionPool!.asset.contractId,
+      assetId: this.projectForDistributionPool!.asset.assetId,
+      poolDuration: poolDuration,
+      poolInterval: poolInterval,
+      poolRewards: poolReward,
+      poolStart: poolStart,
+      projectId: this.projectForDistributionPool!.projectId,
+      rewardsPerInterval: poolIntervalRewards,
+      isDistribution: true
+    }
+    await this.deployLib.deployStaking(stakingSetup)
+  }
 }

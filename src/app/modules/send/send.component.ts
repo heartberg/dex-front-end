@@ -6,7 +6,7 @@ import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { getAlgodClient, isOptedIntoAsset } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { VerseApp } from 'src/app/blockchain/verse_application';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 
