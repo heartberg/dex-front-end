@@ -11,10 +11,11 @@ import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
 import { DeployedAppSettings, platform_settings as ps, StakingSetup } from 'src/app/blockchain/platform-conf';
 import { StakingInfo, StakingUserInfo } from 'src/app/modules/staking/staking.component';
 import { Algodv2 } from 'algosdk';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { environment } from 'src/environments/environment';
 import { DeployLb } from 'src/app/modules/deploy/deploy-api-logic-file/deploy.lb';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
+import { StakingUtils } from 'src/app/blockchain/staking';
 
 export type SmartToolData = {
   userSupplied: number,
@@ -163,6 +164,66 @@ export class PopUpComponent implements OnInit {
 
   // FORMS
 
+  constructor(
+    private _walletsConnectService: WalletsConnectService,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private verseApp: VerseApp,
+    private deployedApp: DeployedApp,
+    private projectService: projectReqService,
+    private deployLib: DeployLb,
+    private stakingUtils: StakingUtils
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+
+    // this.lendControl.valueChanges!.subscribe(
+    //   (value: any) => {
+    //     this.calculateBackingReturn(value)
+    //   }
+    // )
+
+    this.tradeBackingControl.valueChanges!.subscribe(
+      (value: any) => {
+        this.calculateBackingReturn(value)
+      }
+    )
+    this.myPresaleRestartForm.valueChanges!.subscribe(
+      (value: any) => {
+        console.log(value)
+        this.getInitialPrices()
+      }
+    )
+
+    this.myPresaleFairLaunchForm.valueChanges!.subscribe(
+      (value: any) => {
+        this.getFairLaunchPrices()
+      }
+    )
+
+    this.distributionPoolForm.valueChanges!.subscribe(
+      (value: any) => {
+        this.getDistributionFields()
+      }
+    )
+
+    if(this.isDistributionPool) {
+      let client: Algodv2 = getAlgodClient()
+      let wallet = this._walletsConnectService.sessionWallet
+      let accInfo = await client.accountInformation(wallet!.getDefaultAccount()).do()
+      let asset = accInfo['assets'].find((value: any) => {
+        return value['asset-id'] == this.projectForDistributionPool!.asset.assetId
+      })
+      this.availableAmountForDistribution = asset['amount']
+    }
+
+    if(this.isTradeBacking){
+      console.log("is trade backing")
+      await this.checkOptedInBackingContract()
+      await this.checkOptInBackingTokens()
+    }
+  }
+
   async onSubmit(formName: string) {
     console.log(this.presaleData![1])
     let wallet = this._walletsConnectService.sessionWallet!
@@ -238,65 +299,6 @@ export class PopUpComponent implements OnInit {
       }
       this.myPresaleFairLaunchForm.reset();
       console.log(this.presaleData)
-    }
-  }
-
-  constructor(
-    private _walletsConnectService: WalletsConnectService,
-    private authService: AuthService,
-    private fb: FormBuilder,
-    private verseApp: VerseApp,
-    private deployedApp: DeployedApp,
-    private projectService: projectReqService,
-    private deployLib: DeployLb
-  ) {}
-
-  async ngOnInit(): Promise<void> {
-
-    // this.lendControl.valueChanges!.subscribe(
-    //   (value: any) => {
-    //     this.calculateBackingReturn(value)
-    //   }
-    // )
-
-    this.tradeBackingControl.valueChanges!.subscribe(
-      (value: any) => {
-        this.calculateBackingReturn(value)
-      }
-    )
-    this.myPresaleRestartForm.valueChanges!.subscribe(
-      (value: any) => {
-        console.log(value)
-        this.getInitialPrices()
-      }
-    )
-
-    this.myPresaleFairLaunchForm.valueChanges!.subscribe(
-      (value: any) => {
-        this.getFairLaunchPrices()
-      }
-    )
-
-    this.distributionPoolForm.valueChanges!.subscribe(
-      (value: any) => {
-        this.getDistributionFields()
-      }
-    )
-
-    if(this.isDistributionPool) {
-      let client: Algodv2 = getAlgodClient()
-      let wallet = this._walletsConnectService.sessionWallet
-      let accInfo = await client.accountInformation(wallet!.getDefaultAccount()).do()
-      let asset = accInfo['assets'].find((value: any) => {
-        return value['asset-id'] == this.projectForDistributionPool!.asset.assetId
-      })
-      this.availableAmountForDistribution = asset['amount']
-    }
-
-    if(this.isTradeBacking){
-      console.log("is trade backing")
-      await this.checkOptedInBackingContract()
-      await this.checkOptInBackingTokens()
     }
   }
 
@@ -560,7 +562,7 @@ export class PopUpComponent implements OnInit {
     console.log("opt in to stake")
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      let response = await this.verseApp.optInStaking(wallet)
+      let response = await this.stakingUtils.optInVerseStaking(wallet)
       if(response){
         this.stakingInfo!.optedIn = true;
       }
@@ -671,7 +673,7 @@ export class PopUpComponent implements OnInit {
     const wallet = this._walletsConnectService.sessionWallet
     const addr = localStorage.getItem("wallet")
     if(wallet) {
-      this.assetIdsToOptIn = await this.verseApp.checkOptedInToBacking(addr!)
+      this.assetIdsToOptIn = await this.stakingUtils.checkOptedInToBackingAssets(addr!)
       console.log(this.assetIdsToOptIn)
     }
   }
@@ -690,7 +692,7 @@ export class PopUpComponent implements OnInit {
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet) {
       await this.checkOptInBackingTokens()
-      let response = await this.verseApp.optInBackingAssets(wallet, this.assetIdsToOptIn)
+      let response = await this.stakingUtils.optInBackingAssets(wallet, this.assetIdsToOptIn)
       if(response) {
         this.assetIdsToOptIn = []
       }

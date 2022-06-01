@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
-import { AssetViewModel } from 'src/app/models/assetView.model';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 import {of} from "rxjs";
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 

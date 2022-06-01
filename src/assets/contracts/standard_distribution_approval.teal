@@ -1,0 +1,379 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l27
+txn OnCompletion
+int NoOp
+==
+bnz main_l11
+txn OnCompletion
+int DeleteApplication
+==
+txn OnCompletion
+int ClearState
+==
+||
+bnz main_l10
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l9
+txn OnCompletion
+int OptIn
+==
+bnz main_l8
+txn OnCompletion
+int CloseOut
+==
+bnz main_l7
+err
+main_l7:
+int 0
+return
+main_l8:
+int 0
+byte "TA"
+int 0
+app_local_put
+int 1
+return
+main_l9:
+int 0
+return
+main_l10:
+int 0
+return
+main_l11:
+txna ApplicationArgs 0
+byte "setup"
+==
+bnz main_l26
+txna ApplicationArgs 0
+byte "claim"
+==
+bnz main_l18
+txna ApplicationArgs 0
+byte "stake"
+==
+bnz main_l17
+txna ApplicationArgs 0
+byte "withdraw"
+==
+bnz main_l16
+err
+main_l16:
+txn Sender
+global CurrentApplicationID
+app_opted_in
+assert
+txna Assets 0
+byte "TK_ID"
+app_global_get
+==
+assert
+txna ApplicationArgs 1
+btoi
+int 0
+>
+assert
+txna ApplicationArgs 1
+btoi
+txn Sender
+byte "TA"
+app_local_get
+<=
+assert
+txn Sender
+txna ApplicationArgs 1
+btoi
+callsub sendtokens_0
+txn Sender
+byte "TA"
+txn Sender
+byte "TA"
+app_local_get
+txna ApplicationArgs 1
+btoi
+-
+app_local_put
+byte "TS"
+byte "TS"
+app_global_get
+txna ApplicationArgs 1
+btoi
+-
+app_global_put
+int 1
+return
+main_l17:
+txn Sender
+global CurrentApplicationID
+app_opted_in
+assert
+global GroupSize
+int 2
+==
+assert
+gtxn 0 TypeEnum
+int axfer
+==
+assert
+gtxn 0 Sender
+txn Sender
+==
+assert
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 0 AssetAmount
+int 0
+>
+assert
+txn Sender
+byte "TA"
+txn Sender
+byte "TA"
+app_local_get
+gtxn 0 AssetAmount
++
+app_local_put
+byte "TS"
+byte "TS"
+app_global_get
+gtxn 0 AssetAmount
++
+app_global_put
+int 1
+return
+main_l18:
+byte "TK_ID"
+app_global_get
+txna Assets 0
+==
+assert
+txn Sender
+byte "NCT"
+app_local_get
+global LatestTimestamp
+<=
+assert
+byte "CE"
+app_global_get
+global LatestTimestamp
+<=
+bnz main_l22
+main_l19:
+byte "TS"
+app_global_get
+int 0
+!=
+bnz main_l21
+main_l20:
+txn Sender
+byte "NCT"
+byte "CE"
+app_global_get
+app_local_put
+int 1
+return
+main_l21:
+txn Sender
+byte "TA"
+app_local_get
+byte "DTA"
+app_global_get
+mulw
+int 0
+byte "TS"
+app_global_get
+divmodw
+pop
+pop
+swap
+!
+assert
+store 1
+txn Sender
+load 1
+callsub sendtokens_0
+byte "UC"
+byte "UC"
+app_global_get
+load 1
+-
+app_global_put
+byte "RP"
+byte "RP"
+app_global_get
+load 1
+-
+app_global_put
+b main_l20
+main_l22:
+byte "UC"
+app_global_get
+byte "PDA"
+app_global_get
++
+store 0
+byte "RP"
+app_global_get
+load 0
+<
+bnz main_l25
+byte "UC"
+load 0
+app_global_put
+main_l24:
+byte "DTA"
+byte "UC"
+app_global_get
+app_global_put
+byte "CE"
+byte "CE"
+app_global_get
+byte "PT"
+app_global_get
++
+app_global_put
+b main_l19
+main_l25:
+byte "UC"
+byte "RP"
+app_global_put
+b main_l24
+main_l26:
+global GroupSize
+int 3
+==
+assert
+txn Sender
+global CreatorAddress
+==
+assert
+txna ApplicationArgs 2
+btoi
+global LatestTimestamp
+>
+assert
+byte "TK_ID"
+app_global_get
+int 0
+==
+assert
+txn GroupIndex
+int 1
+-
+gtxns TypeEnum
+int pay
+==
+assert
+txn GroupIndex
+int 1
+-
+gtxns Receiver
+global CurrentApplicationAddress
+==
+assert
+txn GroupIndex
+int 1
+-
+gtxns Amount
+int 200000
+>=
+assert
+txn GroupIndex
+int 1
++
+gtxns TypeEnum
+int axfer
+==
+assert
+txn GroupIndex
+int 1
++
+gtxns XferAsset
+txna Assets 0
+==
+assert
+txn GroupIndex
+int 1
++
+gtxns AssetReceiver
+global CurrentApplicationAddress
+==
+assert
+txn GroupIndex
+int 1
++
+gtxns AssetAmount
+txna ApplicationArgs 1
+btoi
+>
+assert
+byte "TK_ID"
+txna Assets 0
+app_global_put
+byte "RP"
+gtxn 1 AssetAmount
+app_global_put
+byte "PDA"
+txna ApplicationArgs 1
+btoi
+app_global_put
+byte "CE"
+txna ApplicationArgs 2
+btoi
+app_global_put
+byte "PT"
+txna ApplicationArgs 3
+btoi
+app_global_put
+byte "TS"
+int 0
+app_global_put
+byte "UC"
+int 0
+app_global_put
+byte "DTA"
+int 0
+app_global_put
+itxn_begin
+int axfer
+itxn_field TypeEnum
+txna Assets 0
+itxn_field XferAsset
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+int 0
+itxn_field Fee
+itxn_submit
+int 1
+return
+main_l27:
+byte "TK_ID"
+int 0
+app_global_put
+int 1
+return
+
+// send_tokens
+sendtokens_0:
+store 3
+store 2
+itxn_begin
+int axfer
+itxn_field TypeEnum
+load 2
+itxn_field AssetReceiver
+byte "TK_ID"
+app_global_get
+itxn_field XferAsset
+load 3
+itxn_field AssetAmount
+int 0
+itxn_field Fee
+itxn_submit
+retsub

@@ -1,6 +1,6 @@
-import { AssetViewModel } from "./assetView.model";
-import { presaleViewModel } from "./presaleView.model";
-import { TeamMemberViewModel } from "./TeamMemberView.model";
+import { AssetViewModel } from "./assetViewModel";
+import { presaleViewModel } from "./presaleViewModel";
+import { TeamMemberViewModel } from "./TeamMemberViewModel";
 
 export interface ProjectViewModel {
     projectId: string

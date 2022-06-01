@@ -9,7 +9,7 @@ import {
     get_asa_xfer_txn,
     get_asa_optin_txn
 } from "./transactions"
-import algosdk, { Algodv2, encodeUint64, Transaction } from 'algosdk';
+import algosdk, { Algodv2, encodeUint64, getApplicationAddress, Transaction } from 'algosdk';
 import { 
     BlockchainInformation,
     platform_settings as ps
@@ -19,7 +19,7 @@ import { encode } from "querystring";
 import { sign } from "crypto";
 import { toBase64String } from "@angular/compiler/src/output/source_map";
 import { Injectable } from "@angular/core";
-import { AssetViewModel } from "../models/assetView.model"
+import { AssetViewModel } from "../models/assetViewModel"
 import { IfStmt } from "@angular/compiler";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
 import { StakingInfo, StakingUserInfo } from "../modules/staking/staking.component";
@@ -28,97 +28,11 @@ import { StateKeys } from "./deployer_application";
 import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
 import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
 import { send } from "process";
+import { backingStateKeys, Method, smartDistributionStateKeys, smartStakingKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys, verseStateKeys } from "./keys";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
 
-export enum verseStateKeys {
-    token_liq_key = "s1",
-    algo_liq_key = "s2",
-    burned_key = "bd",
-    total_supply_key = "ts",
-    burn_key = "b",
-    transfer_burn_key = "trb",
-    flat_fee_key = "ff",
-    to_lp_key = "lp",
-    to_backing_key = "tb",
-    max_buy_key = "mb",
-    asset_id_key = "asa",
-    trading_start_key = "t",
-    extra_fee_time_key = "eft",
-    distribution_id_key = "di",
-    backing_id_key = "bi",
-    fee_addr_key = "ta",
-    burn_addr_key = "ba"
-}
-
-
-export enum backingStateKeys {
-    user_supplied_key = "us",
-    user_algo_borrowed_key = "uab",
-    user_1_borrowed_key = "ub1",
-    user_2_borrowed_key = "ub2",
-    user_3_borrowed_key = "ub3",
-    user_4_borrowed_key = "ub4",
-    user_5_borrowed_key = "ub5",
-    user_6_borrowed_key = "ub6",
-    user_7_borrowed_key = "ub7",
-
-    total_algo_borrowed_key = "tab",
-    total_1_borrowed_key = "tb1",
-    total_2_borrowed_key = "tb2",
-    total_3_borrowed_key = "tb3",
-    total_4_borrowed_key = "tb4",
-    total_5_borrowed_key = "tb5",
-    total_6_borrowed_key = "tb6",
-    total_7_borrowed_key = "tb7",
-
-    asset_1_key = "a1",
-    asset_2_key = "a2",
-    asset_3_key = "a3",
-    asset_4_key = "a4",
-    asset_5_key = "a5",
-    asset_6_key = "a6",
-    asset_7_key = "a7",
-
-    number_of_backing_tokens_key = "nbt",
-    verse_app_id_key = "vid",
-    verse_token_id_key = "vai",
-    burn_addr_key = "ba",
-}
-
-export enum stakingStateKeys {
-    burn_addr_key = "BA",
-
-    token_id_key = "TK_ID",
-    token_app_id_key = "TA",
-    current_end_epoch_key = "CE",
-    week_total_stake_key = "WTA",
-    week_total_added_stake_key = "WTAA",
-    weekly_dist_amount_key = "WDA",
-    distribution_asset_amount_key = "DTA",
-    unclaimed_key = "UC",
-    total_staked = "TS",
-
-    token_amount_key = "TA",
-    next_claimable_time_key = "NCT",
-    week_stake_amount = "WSA"
-}
-
-export enum Method {
-    Transfer = "transfer",
-    Buy = "buy",
-    Sell = "sell",
-    GetBacking = "get_backing",
-    Borrow = "borrow",
-    Algo = "algo",
-    RepayAssets = "repay_assets",
-    RepayAlgo = "repay_algo",
-    Supply = "supply",
-    Stake = "stake",
-    Withdraw = "withdraw",
-    Claim = "claim"
-}
 
 @Injectable({
     providedIn: 'root',
@@ -162,7 +76,7 @@ export class VerseApp {
 
     async buy(wallet: SessionWallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from("buy")), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
@@ -467,172 +381,4 @@ export class VerseApp {
 
         return trackInfo
     }
-
-    async getStakingUserInfo(wallet: string) : Promise<StakingUserInfo>{
-        let client: Algodv2 = getAlgodClient()
-        let accountInfo: any = await client.accountInformation(wallet).do()
-        let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
-            return el['asset-id'] == ps.platform.verse_asset_id
-        })
-        let holding = 0
-        if(asset){
-            holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
-        }
-        let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
-        let nextClaimabletime = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.next_claimable_time_key)
-        let status = await client.status().do()
-        let latestRound = await client.block(status['last-round']).do()
-        let latestTimestemp = latestRound['block']['ts']
-
-        if(await isOptedIntoApp(wallet, ps.platform.staking_id)) {
-            
-            let usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key)
-            let usersWeekStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.week_stake_amount)
-
-            let claimableAmount = 0
-            if(usersStake > usersWeekStake) {
-                let rewardPool = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
-                if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
-                    rewardPool = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
-                }
-                claimableAmount = (((usersStake - usersWeekStake) * rewardPool) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
-            }
-
-            usersStake = usersStake / Math.pow(10, ps.platform.verse_decimals)
-            usersWeekStake = usersWeekStake / Math.pow(10, ps.platform.verse_decimals)
-            let stakingInfo: StakingUserInfo = {
-                nextClaimableDate: nextClaimabletime,
-                usersHolding: holding,
-                usersStake: usersStake,
-                verseRewards: claimableAmount,
-                userAddedWeek: usersWeekStake,
-                optedIn: true,
-            }
-            return stakingInfo
-        } else {
-            let stakingInfo: StakingUserInfo = {
-                nextClaimableDate: 0,
-                usersHolding: holding,
-                usersStake: 0,
-                verseRewards: 0,
-                userAddedWeek: 0,
-                optedIn: false
-            }
-            return stakingInfo
-        }
-    }
-
-    async getStakingInfo() : Promise<StakingInfo>{
-        let globalState: any = StateToObj(await getGlobalState(ps.platform.staking_id), stakingStateKeys)
-        let totalStaked = globalState[stakingStateKeys.total_staked]['i'] / Math.pow(10, ps.platform.verse_decimals)
-        let totalAddedWeek = globalState[stakingStateKeys.week_total_added_stake_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
-        let weeklyRewards = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
-        let client: Algodv2 = getAlgodClient()
-        let status = await client.status().do()
-        let latestRound = await client.block(status['last-round']).do()
-        let latestTimestemp = latestRound['block']['ts']
-
-        if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
-            weeklyRewards = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
-        }
-        weeklyRewards = weeklyRewards / Math.pow(10, 6)
-
-        let stakingInfo: StakingInfo = {
-            totalAddedWeek: totalAddedWeek,
-            totalStaked: totalStaked,
-            weeklyRewards: weeklyRewards
-        }
-        return stakingInfo
-    }
-
-    async getSmartToolData(wallet: string | null): Promise<SmartToolData> {
-        let client: Algodv2 = getAlgodClient()
-        let verseState: any = StateToObj(await getGlobalState(ps.platform.verse_app_id), verseStateKeys)
-        let globalState: any = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
-        let appInfo: any = await client.accountInformation(ps.platform.backing_addr).do()
-        
-        let userSupplied = 0
-        let userBorrowed = 0
-        let holding = 0
-        let algos = 0
-        let optedIn = false
-        if(wallet){
-            let accountInfo: any = await client.accountInformation(wallet).do()
-            algos = accountInfo['amount'] / Math.pow(10, 6)
-            let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
-                return el['asset-id'] == ps.platform.verse_asset_id
-            })
-            if(asset){
-                holding = asset['amount'] / Math.pow(10, ps.platform.verse_decimals)
-            }
-            if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
-                optedIn = true
-                userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key)
-                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_algo_borrowed_key)
-            }
-        }
-        
-        let totalBacking = (appInfo['amount'] - appInfo['min-balance'] + globalState[backingStateKeys.total_algo_borrowed_key]['i']) / Math.pow(10, 6)
-
-        let totalSupply = verseState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
-        let totalBorrowed = globalState[backingStateKeys.total_algo_borrowed_key]['i'] / Math.pow(10, 6)
-        
-        let assetInfo = await client.getAssetByID(ps.platform.verse_asset_id).do()
-
-        return {
-            userBorrowed: userBorrowed,
-            assetDecimals: ps.platform.verse_decimals,
-            availableTokenAmount: holding,
-            availableAlgoAmount: algos,
-            contractId: ps.platform.verse_app_id,
-            userSupplied: userSupplied,
-            totalBacking: totalBacking,
-            totalBorrowed: totalBorrowed,
-            totalSupply: totalSupply,
-            optedIn: optedIn,
-            name: assetInfo['params']['name'],
-            unitName: assetInfo['params']['unit-name']
-        }
-    }
-
-    async checkOptedInToBacking(wallet: string) : Promise<number[]>{
-        let assetIds: number[] = []
-        let backingState: any = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
-        for(let key in backingState){
-            if(key.startsWith("a")){
-                let assetId = backingState[key]['i']
-                console.log(assetId)
-                if(assetId != 0) {
-                    if(!await isOptedIntoAsset(wallet, assetId)){
-                        assetIds.push(assetId)
-                    }
-                }
-            }
-        }
-        return assetIds
-    }
-
-    async optInBackingAssets(wallet: SessionWallet, assetIdsToOptIn: number[]) {
-        let addr = wallet.getDefaultAccount()
-        let params = await getSuggested(10)
-        let group = []
-        for(var index in assetIdsToOptIn) {
-            let txn = new Transaction(get_asa_optin_txn(params, addr, assetIdsToOptIn[index]))
-            group.push(txn)
-        }
-        algosdk.assignGroupID(group)
-        let signed = await wallet.signTxn(group)
-        let response = await sendWait(signed)
-        return response
-    }
-
-    async optInStaking(wallet: SessionWallet) {
-        let addr = wallet.getDefaultAccount()
-        let params = await getSuggested(10)
-        let txn = new Transaction(get_app_optin_txn(params, addr, ps.platform.staking_id))
-        let [signed] = await wallet.signTxn([txn])
-        let response = await sendWait([signed])
-        return response
-    }
-
 }

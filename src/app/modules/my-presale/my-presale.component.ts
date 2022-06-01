@@ -4,8 +4,8 @@ import { SessionWallet } from 'algorand-session-wallet';
 import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
@@ -20,7 +20,6 @@ import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-
   styleUrls: ['./my-presale.component.scss'],
 })
 export class MyPresaleComponent implements OnInit {
-  // arr: string[] = ['ended', 'failed', 'failed', 'ended', 'user', 'failed', 'user'];
   arr: [ProjectPreviewModel, PresaleBlockchainInformation][] = [];
 
   isPopUpOpen: boolean = false;
@@ -143,7 +142,9 @@ export class MyPresaleComponent implements OnInit {
   async claim(contractId: number) {
     let wallet = this.walletService.sessionWallet
     let response = await this.app.claimPresale(wallet!, contractId)
-    console.log("successful claimed")
+    if(response) {
+      console.log("successful claimed")
+    }
   }
 
 }

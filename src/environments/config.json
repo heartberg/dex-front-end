@@ -18,7 +18,7 @@
     "explorer":"algoscan.app",
     "platform": {
         "burn_addr": "MXJT53H5ZO7KWBYMCLZ4ZVWEF5JS4NLVHEII6OI3DCLI3KL26BRDTAFJKA",
-        "fee_addr": "PX3TDDPFVVO4KMICLRIM7QL45JHVWJWUAZLRSUBRQ4KMILOTF6VZUQK734",
+        "fee_addr": "FRSCVC72AY3V5FCGVBDEQG4QXAWGHJXIZ6VSTZ4IP4LAQXAABCVHX6W7UE",
         "staking_addr": "K526DHV6PUEXDV5VKNUYU4ZQ5VR3RSCG4MKGMUENQFWJTZYPNZW3ZGN4RU",
         "staking_id": 7610,
         "verse_app_id": 7596,
@@ -27,7 +27,9 @@
         "verse_decimals": 6,
         "backing_id": 7594,
         "backing_addr": "RGG5NMQAJ32XKF4XGJIKEZKGMABTUGFYX7EIBEJWER4K6E7LQ76NGM5ATU",
-        "backing_per_x_token": 1000000
+        "backing_per_x_token": 1000000,
+        "locker_id": 1231,
+        "locker_addr": "okok"
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",

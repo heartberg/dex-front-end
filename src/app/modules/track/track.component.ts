@@ -7,7 +7,7 @@ import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation, platform_settings as ps} from 'src/app/blockchain/platform-conf';
 import { VerseApp } from 'src/app/blockchain/verse_application';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { TokenEntryViewModel } from 'src/app/models/tokenEntryViewModel';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { deployService } from 'src/app/services/APIs/deploy/deploy-service';

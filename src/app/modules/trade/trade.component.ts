@@ -12,7 +12,7 @@ import { getAlgodClient, getGlobalState } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { ALGO_VIEWMODEL, BlockchainInformation, DeployedAppSettings, platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { VerseApp } from 'src/app/blockchain/verse_application';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import {SessionWallet, Wallet} from 'algorand-session-wallet';
 import { env } from 'process';
@@ -22,6 +22,7 @@ import { min } from 'rxjs/operators';
 import { ThisReceiver } from '@angular/compiler';
 import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
 import { isOptinAsset } from 'src/app/services/utils.algo';
+import { StakingUtils } from 'src/app/blockchain/staking';
 
 
 @Component({
@@ -101,7 +102,8 @@ export class TradeComponent implements OnInit {
     private walletService: WalletsConnectService,
     private fb: FormBuilder,
     private deployedApp: DeployedApp,
-    private verseApp: VerseApp
+    private verseApp: VerseApp,
+    private stakingUtils: StakingUtils
   ) {}
 
   // FORMS
@@ -888,7 +890,7 @@ export class TradeComponent implements OnInit {
       console.log("deployer app")
       this.smartToolData = await this.deployedApp.getSmartToolData(this.selectedOption!.contractId, address);
     } else {
-      this.smartToolData = await this.verseApp.getSmartToolData(address)
+      this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }
     console.log(this.smartToolData)
   }

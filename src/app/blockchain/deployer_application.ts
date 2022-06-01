@@ -7,7 +7,6 @@ import {
   get_app_closeout_txn,
   get_app_call_txn,
   get_asa_optin_txn,
-  get_create_deploy_app_txn,
   get_asa_xfer_txn
 } from "./transactions"
 import algosdk, { Algodv2, getApplicationAddress, Indexer, seedFromMnemonic, Transaction } from 'algosdk';
@@ -67,7 +66,7 @@ export enum StateKeys {
     extra_fee_time_key = "eft"
 }
 
-export enum Method {
+export enum DeployerMethod {
   Transfer = "transfer",
   Buy = "buy",
   Sell = "sell",
@@ -82,7 +81,8 @@ export enum Method {
   ClaimPresale = "claim_presale",
   SetupStaking = "setup_staking",
   SetupDistrbution = "setup_distribution",
-  ClaimStaking = "claim"
+  ClaimStaking = "claim",
+  SetupLock = "setup_lock"
 }
 
 @Injectable({
@@ -160,7 +160,7 @@ export class DeployedApp {
 
     const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, 201_000))
 
-    const args = [new Uint8Array(Buffer.from(Method.Create)), new Uint8Array(Buffer.from(this.settings.name)), new Uint8Array(Buffer.from(this.settings.unit)), 
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Create)), new Uint8Array(Buffer.from(this.settings.name)), new Uint8Array(Buffer.from(this.settings.unit)), 
       algosdk.encodeUint64(this.settings.decimals), new Uint8Array(Buffer.from(this.settings.url))]
     const mint = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, undefined, undefined))
 
@@ -212,9 +212,13 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
     
     let accounts = []
+    let algoAmountToSend = this.settings.initial_algo_liq_with_fee
     if(this.settings.rewardsPerInterval) {
       suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
       accounts = [ps.platform.fee_addr, ps.platform.burn_addr, getApplicationAddress(this.settings.stakingContractId!)]
+      if(settings.poolRewards! > Math.floor(0.03 * settings.total_supply)) {
+        algoAmountToSend = this.settings.initial_algo_liq
+      }
     } else {
       suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
       accounts = [ps.platform.fee_addr, ps.platform.burn_addr]
@@ -222,7 +226,7 @@ export class DeployedApp {
 
     suggested.flatFee = true
     
-    let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time)]
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time)]
     let assets = [this.settings.asset_id]
     const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, assets, accounts))
 
@@ -239,7 +243,7 @@ export class DeployedApp {
 
       const apps = [this.settings.contract_id!, ps.platform.staking_id]
       const stakingAssets = [this.settings.asset_id!, ps.platform.verse_asset_id]
-      const stakingArgs = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
+      const stakingArgs = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       let txn = new Transaction(get_app_call_txn(suggested, addr, this.settings.stakingContractId, stakingArgs, apps, stakingAssets, undefined))
       grouped.unshift(setupPay, txn)
@@ -270,7 +274,7 @@ export class DeployedApp {
 
     suggested.flatFee = true
 
-    let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time), algosdk.encodeUint64(this.settings.presale_settings.presale_start),
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time), algosdk.encodeUint64(this.settings.presale_settings.presale_start),
       algosdk.encodeUint64(this.settings.presale_settings?.presale_end), algosdk.encodeUint64(this.settings.presale_settings?.softcap), algosdk.encodeUint64(this.settings.presale_settings?.hardcap),
       algosdk.encodeUint64(this.settings.presale_settings?.walletcap), algosdk.encodeUint64(this.settings.presale_settings?.to_lp), algosdk.encodeUint64(this.settings.presale_settings?.presale_token_amount)]
 
@@ -290,7 +294,7 @@ export class DeployedApp {
 
       const apps = [this.settings.contract_id!, ps.platform.staking_id]
       const stakingAssets = [this.settings.asset_id!, ps.platform.verse_asset_id]
-      const stakingArgs = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
+      const stakingArgs = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       suggested.flatFee = true
       let txn = new Transaction(get_app_call_txn(suggested, addr, this.settings.stakingContractId, stakingArgs, apps, stakingAssets, undefined))
@@ -343,13 +347,13 @@ export class DeployedApp {
 
       let assets = [assetId, ps.platform.verse_asset_id]
       let apps = [assetContractId, ps.platform.staking_id]
-      let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+      let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
                   algosdk.encodeUint64(periodTime)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
       
       suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
-      args = [new Uint8Array(Buffer.from(Method.SetupStaking))]
+      args = [new Uint8Array(Buffer.from(DeployerMethod.SetupStaking))]
       let accounts = [getApplicationAddress(contractId)]
       let setupStaking = new Transaction(get_app_call_txn(suggested, addr, assetContractId, args, undefined, assets, accounts))
       
@@ -398,13 +402,13 @@ export class DeployedApp {
       let assets = [assetId]
       let apps = [assetContractId]
       let accounts = [ps.platform.burn_addr]
-      let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+      let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
                   algosdk.encodeUint64(periodTime)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       suggested.flatFee = true
       let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
       
-      args = [new Uint8Array(Buffer.from(Method.SetupDistrbution))]
+      args = [new Uint8Array(Buffer.from(DeployerMethod.SetupDistrbution))]
       accounts = [getApplicationAddress(contractId)]
       let setupStaking = new Transaction(get_app_call_txn(suggested, addr, assetContractId, args, undefined, assets, accounts))
       
@@ -451,7 +455,7 @@ export class DeployedApp {
   
         let assets = [assetId, ps.platform.verse_asset_id]
         let apps = [ps.platform.staking_id]
-        let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+        let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
         algosdk.encodeUint64(periodTime)]
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
@@ -501,7 +505,7 @@ export class DeployedApp {
         let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 200000))
   
         let assets = [assetId]
-        let args = [new Uint8Array(Buffer.from(Method.Setup)), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
+        let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
                     algosdk.encodeUint64(periodTime)]
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, undefined))
@@ -522,7 +526,7 @@ export class DeployedApp {
       let suggested = await getSuggested(10)
 
       let assets = [assetId]
-      let args = [new Uint8Array(Buffer.from(Method.ClaimStaking))]
+      let args = [new Uint8Array(Buffer.from(DeployerMethod.ClaimStaking))]
 
       if(smartAssetContractId){
         let apps = [smartAssetContractId, ps.platform.staking_id]
@@ -559,7 +563,7 @@ export class DeployedApp {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.BuyPresale))]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.BuyPresale))]
 
     const buy = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, undefined, undefined))
     const pay = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), amount))
@@ -584,7 +588,7 @@ export class DeployedApp {
     suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.ClaimPresale))]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.ClaimPresale))]
     const assets = [globalState[StateKeys.asset_id_key]['i']]
     const accounts = [ps.platform.burn_addr, appInfo['params']['creator'], ps.platform.fee_addr]
 
@@ -614,7 +618,7 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
     const assets = [globalState[StateKeys.asset_id_key]['i']]
     const accounts = [ps.platform.fee_addr]
-    const args = [new Uint8Array(Buffer.from(Method.Resetup)), algosdk.encodeUint64(tradingStart), algosdk.encodeUint64(tokenLiq), algosdk.encodeUint64(extraFeeTime)]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Resetup)), algosdk.encodeUint64(tradingStart), algosdk.encodeUint64(tokenLiq), algosdk.encodeUint64(extraFeeTime)]
 
     const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, contractId, args, undefined, assets, accounts))
 
@@ -669,7 +673,7 @@ export class DeployedApp {
       }
 
       const accs = [ps.platform.fee_addr]
-      const args = [new Uint8Array(Buffer.from(Method.Resetup)), algosdk.encodeUint64(softCap), algosdk.encodeUint64(hardCap), 
+      const args = [new Uint8Array(Buffer.from(DeployerMethod.Resetup)), algosdk.encodeUint64(softCap), algosdk.encodeUint64(hardCap), 
         algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd), algosdk.encodeUint64(walletCap),
         algosdk.encodeUint64(toLiq), algosdk.encodeUint64(tradingStart), algosdk.encodeUint64(presaleTokenAmount), algosdk.encodeUint64(extraFeeTime)]
       const assets = [assetId]
@@ -718,7 +722,7 @@ export class DeployedApp {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.RemoveMaxBuy))]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.RemoveMaxBuy))]
 
     const remove = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, undefined, undefined))
 
@@ -735,7 +739,7 @@ export class DeployedApp {
     suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.Buy)), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Buy)), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.verse_app_addr]
     const assets = [this.settings.asset_id, ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id]
@@ -759,7 +763,7 @@ export class DeployedApp {
     suggested.fee = 6 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
     const assets = [this.settings.asset_id, ps.platform.verse_asset_id]
 
@@ -776,7 +780,7 @@ export class DeployedApp {
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(tokenAmount)]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Transfer)), algosdk.encodeUint64(tokenAmount)]
 
     const accounts = [ps.platform.burn_addr, to]
     const assets = [assetId]
@@ -796,7 +800,7 @@ export class DeployedApp {
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.GetBacking)), algosdk.encodeUint64(tokenAmount)]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.GetBacking)), algosdk.encodeUint64(tokenAmount)]
     const accounts = [ps.platform.burn_addr]
     const assets = [globalState[StateKeys.asset_id_key]['i']]
 
@@ -813,7 +817,7 @@ export class DeployedApp {
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.Borrow)), algosdk.encodeUint64(tokenAmount)]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Borrow)), algosdk.encodeUint64(tokenAmount)]
     const assets = [this.settings.asset_id]
 
     const borrow = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
@@ -829,7 +833,7 @@ export class DeployedApp {
     suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     const addr = wallet.getDefaultAccount()
 
-    const args = [new Uint8Array(Buffer.from(Method.Repay))]
+    const args = [new Uint8Array(Buffer.from(DeployerMethod.Repay))]
     const assets = [this.settings.asset_id]
 
     const repay = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))

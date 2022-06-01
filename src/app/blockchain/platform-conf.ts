@@ -1,5 +1,5 @@
 import {LogicSig} from 'algosdk/dist/types/src/logicsig';
-import { AssetViewModel } from '../models/assetView.model';
+import { AssetViewModel } from '../models/assetViewModel';
 
 
 type AlgodConf = {
@@ -44,7 +44,9 @@ type Platform = {
     verse_decimals: number,
     backing_id: number,
     backing_addr: string,
-    backing_per_x_token: number
+    backing_per_x_token: number,
+    locker_id: number,
+    locker_address: string
 };
 
 type PresaleSettings = {

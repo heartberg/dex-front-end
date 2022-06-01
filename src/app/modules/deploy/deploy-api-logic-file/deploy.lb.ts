@@ -13,9 +13,9 @@ import {DeployedAppSettings, StakingSetup} from "../../../blockchain/platform-co
 import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
 import {WalletsConnectService} from "../../../services/wallets-connect.service";
-import { TeamMemberViewModel } from 'src/app/models/TeamMemberView.model';
+import { TeamMemberViewModel } from 'src/app/models/TeamMemberViewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -707,17 +707,10 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
 
   GetProjectMint(projectId: string, assetId: number) {
     return this._deployService.projectMint(projectId, assetId)
-    // .subscribe( (value: projectMintModel) => {
-    // console.log(value, 'mint');
-    // return value;
-    // })
   }
 
   GetProjectBurnOptIn(projectId: string) {
     return this._deployService.projectburnOptIn(projectId)
-    //   .subscribe( (value: any) => {
-    //   console.log(value, 'burnOptIn');
-    // })
   }
 
   GetProjectSetup(projectId: string) {

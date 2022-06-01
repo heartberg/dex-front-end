@@ -10,7 +10,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {Observable, of} from 'rxjs';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import {take} from "rxjs/operators";
 import {AssetReqService} from "../../services/APIs/assets-req.service";
 

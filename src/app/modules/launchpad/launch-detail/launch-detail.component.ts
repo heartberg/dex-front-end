@@ -4,7 +4,7 @@ import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
-import { ProjectViewModel } from 'src/app/models/projectView.model';
+import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 // import { ActivatedRoute } from '@angular/router';

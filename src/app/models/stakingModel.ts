@@ -1,4 +1,4 @@
-import { ProjectPreviewModel } from "./projectPreview.model";
+import { ProjectPreviewModel } from "./projectPreviewModel";
 
 export interface StakingModel {
     stakingPoolId: string,

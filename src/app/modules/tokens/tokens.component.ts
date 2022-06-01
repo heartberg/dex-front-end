@@ -3,10 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
-import { ProjectPreviewModel } from 'src/app/models/projectPreview.model';
+import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 
 @Component({
   selector: 'app-tokens',

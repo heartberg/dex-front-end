@@ -11,7 +11,7 @@ import { stakingCreateModel } from 'src/app/models/deployModel';
 import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
-import { AssetViewModel } from 'src/app/models/assetView.model';
+import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { platform_settings as ps } from '../../blockchain/platform-conf';
 
 @Component({
@@ -491,12 +491,11 @@ export class DeployComponent implements OnInit, DoCheck {
       this.assetArray = []
       this.assetService.getAssetPairs(true, '', wallet).subscribe(
         async (res: AssetViewModel[]) => {
-          this.removeVerse(res)
           this.smartAsas = res
           let info = await client.accountInformation(wallet!).do()
           let assetsInWallet = info['assets']
           this.ownedAssets = assetsInWallet
-          assetsInWallet.forEach(async (element: { [x: string]: number; }) => {
+          assetsInWallet.forEach(async (element: { [key: string]: number; }) => {
             let asset = res.find( x => {
               return x.assetId == element['asset-id']
             })
