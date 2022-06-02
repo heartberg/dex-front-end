@@ -291,7 +291,10 @@ export class PopUpComponent implements OnInit {
 
       let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity,
         tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId)
-      if(response){
+      
+      this.presaleData![1].asset.tradingStart = tradingStart
+      
+        if(response){
         let projectView: ProjectViewModel = {
           presale: {
             endingTime: presaleEnd,
@@ -314,9 +317,7 @@ export class PopUpComponent implements OnInit {
           projectId: this.presaleData![1].projectId,
           projectImage: this.presaleData![1].projectImage,
           projectName: this.presaleData![1].projectName,
-          teamMembers: this.presaleData![1].teamMembers,
-          contractAddress: this.presaleData![1].contractAddress,
-          contractId: this.presaleData![1].contractId
+          teamMembers: this.presaleData![1].teamMembers
         }
         console.log(projectView)
         console.log("send to bc")
@@ -698,7 +699,7 @@ export class PopUpComponent implements OnInit {
     let poolIntervalRewards = parseInt((this.tokensPerInterval * Math.pow(10, this.projectForDistributionPool!.asset.decimals)).toFixed(0))
 
     let stakingSetup: StakingSetup = {
-      assetContractId: this.projectForDistributionPool!.asset.contractId,
+      assetContractId: this.projectForDistributionPool!.asset.smartProperties!.contractId,
       assetId: this.projectForDistributionPool!.asset.assetId,
       poolDuration: poolDuration,
       poolInterval: poolInterval,

@@ -131,7 +131,7 @@
                 </div>
                 <div class="d-flex">
                   <h6>Contract Id:</h6>
-                  <span>{{ projectData!.asset.contractId}}</span>
+                  <span>{{ projectData!.asset.smartProperties!.contractId}}</span>
                 </div>
                 <div class="d-flex">
                   <h6>Token Name:</h6>
@@ -149,19 +149,19 @@
               <div class="token-second">
                 <div class="d-flex">
                   <h6>Buy Burn:</h6>
-                  <span>{{(projectData!.asset!.buyBurn / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.buyBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Sell Burn:</h6>
-                  <span>{{(projectData!.asset!.sellBurn / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.sellBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Send Burn:</h6>
-                  <span>{{(projectData!.asset!.sendBurn / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.sendBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Rising Pricefloor:</h6>
-                  <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
 
               </div>
@@ -315,7 +315,7 @@
                 </div>
                 <div class="d-flex">
                   <h6>Contract Id:</h6>
-                  <span>{{ projectData!.asset.contractId}}</span>
+                  <span>{{ projectData!.asset.smartProperties!.contractId}}</span>
                 </div>
                 <div class="d-flex">
                   <h6>Token Name:</h6>
@@ -333,19 +333,19 @@
               <div class="token-second">
                 <div class="d-flex">
                   <h6>Buy Burn:</h6>
-                  <span>{{(projectData!.asset!.buyBurn / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.buyBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Sell Burn:</h6>
-                  <span>{{(projectData!.asset!.sellBurn / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.sellBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Send Burn:</h6>
-                  <span>{{(projectData!.asset!.sendBurn / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.sendBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
                   <h6>Rising Pricefloor:</h6>
-                  <span>{{(projectData!.asset!.risingPriceFloor / 100).toFixed(2)}}%</span>
+                  <span>{{(projectData!.asset!.smartProperties!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
                 <!-- <div class="d-flex">
                     <h6>Special Wallet:</h6>

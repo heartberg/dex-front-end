@@ -46,7 +46,7 @@ export class SendComponent implements OnInit {
     } else {
       this.app.transfer(this.wallet!, amount,
         this.sendForm.get("addressInput")!.value,
-        this.selectedOption!.assetId, this.selectedOption!.contractId
+        this.selectedOption!.assetId, this.selectedOption!.smartProperties!.contractId
       );
     }
 

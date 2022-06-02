@@ -45,7 +45,7 @@ export class MyPresaleComponent implements OnInit {
       async (value: ProjectViewModel) => {
         console.log(value)
         this.projectModel = value
-        this.presaleData = await this.app.getPresaleInfo(presale.asset.contractId)
+        this.presaleData = await this.app.getPresaleInfo(presale.asset.smartProperties!.contractId)
         this.isPopUpOpen = true;
         if (version === 'restart') {
           this.isRestart = true;
@@ -88,7 +88,7 @@ export class MyPresaleComponent implements OnInit {
       this.arr = []
       this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
         res.forEach(async presaleModel => {
-          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.contractId)
+          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
           this.arr.push([presaleModel, blockchainInfo])
         });
         console.log(res);

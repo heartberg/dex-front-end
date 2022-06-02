@@ -50,10 +50,10 @@ type Platform = {
 };
 
 type PresaleSettings = {
-    presale_token_amount: number,
-    presale_start: number,
-    presale_end: number,
-    to_lp: number,
+    presaleTokenAmount: number,
+    presaleStart: number,
+    presaleEnd: number,
+    toLp: number,
     softcap: number,
     hardcap: number,
     walletcap: number
@@ -61,27 +61,27 @@ type PresaleSettings = {
 
 type DeployedAppSettings = {
     creator: string,
-    total_supply: number,
-    buy_burn: number,
-    sell_burn: number,
-    transfer_burn: number,
-    to_lp: number,
-    to_backing: number,
+    totalSupply: number,
+    buyBurn: number,
+    sellBurn: number,
+    transferBurn: number,
+    toLp: number,
+    toBacking: number,
     additionalFee?: number,
     additionalFeeAddress?: string,
-    max_buy: number,
+    maxBuy: number,
     name: string,
     unit: string,
     decimals: number,
     url: string,
-    trading_start: number,
-    initial_token_liq: number,
-    initial_algo_liq: number,
-    initial_algo_liq_with_fee: number,
-    extra_fee_time: number,
-    contract_id?: number,
-    contract_address?: string,
-    asset_id?: number,
+    tradingStart: number,
+    initialTokenLiq: number,
+    initialAlgoLiq: number,
+    initialAlgoLiqWithFee: number,
+    extraFeeTime: number,
+    contractId?: number,
+    contractAddress?: string,
+    assetId?: number,
     poolStart?: number,
     poolRewards?: number,
     poolInterval?: number,
@@ -89,7 +89,7 @@ type DeployedAppSettings = {
     poolDuration?: number,
     stakingContractId?: number,
     isDistribution?: boolean
-    presale_settings: PresaleSettings
+    presaleSettings: PresaleSettings
 };
 
 export type StakingSetup = {
@@ -127,18 +127,10 @@ type BlockchainInformation = {
 
 const ALGO_VIEWMODEL: AssetViewModel = {
     assetId: 0,
-    backing: 0,
-    buyBurn: 0,
-    contractAddress: "",
-    contractId: 0,
     decimals: 6,
     deployerWallet: "MICALI",
     image: "",
-    maxBuy: 0,
     name: "Algo",
-    risingPriceFloor: 0,
-    sellBurn: 0,
-    sendBurn: 0,
     totalSupply: 1_000_000_000_000_000,
     tradingStart: 0,
     unitName: "Algo",

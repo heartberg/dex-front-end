@@ -1,24 +1,23 @@
+import { SmartProperties } from "./assetViewModel";
 import { ProjectPreviewModel } from "./projectPreviewModel";
 
 export interface projectPresaleCreateModel {
   description:string,
-  contractAddress:string,
-  contractId:number,
   projectName:string,
   projectImage:string,
   creatorWallet:string,
-  roadmap:string,
-  roadmapImage:string,
-  twitter:string,
-  telegram:string,
-  instagram:string,
-  website:string,
-  teamMembers: projectrPresaleCreateTeamModel[],
+  roadmap?:string,
+  roadmapImage?:string,
+  twitter?:string,
+  telegram?:string,
+  instagram?:string,
+  website?:string,
+  teamMembers?: projectCreateTeamModel[],
   presale: projectPresaleCreatePresaleModel,
   asset: projectMintModel,
-  initialAlgoLiquidity: number,
-  initialAlgoLiquidityWithFee: number,
-  initialTokenLiquidity: number,
+  initialAlgoLiquidity?: number,
+  initialAlgoLiquidityWithFee?: number,
+  initialTokenLiquidity?: number,
 }
 
 export interface stakingCreateModel {
@@ -30,7 +29,7 @@ export interface stakingCreateModel {
   isDistribution: boolean
 }
 
-interface projectrPresaleCreateTeamModel {
+interface projectCreateTeamModel {
   name: string,
   image: string,
   role: string,
@@ -44,54 +43,42 @@ interface projectPresaleCreatePresaleModel {
     walletCap: number,
     startingTime: number,
     endingTime: number,
-    presaleToLiquidity: number
+    presaleToLiquidity: number,
+    contractId?: number
 }
 // presaleCreate
 
 export interface projectWithoutPresaleCreateModel {
   description:string,
-  contractAddress:string,
-  contractId:number,
   projectName:string,
   projectImage:string,
   creatorWallet:string,
-  roadmap:string,
-  roadmapImage:string,
-  twitter:string,
-  telegram:string,
-  instagram:string,
-  website:string,
-  teamMembers: projectrPresaleCreateTeamModel[],
+  roadmap?:string,
+  roadmapImage?:string,
+  twitter?:string,
+  telegram?:string,
+  instagram?:string,
+  website?:string,
+  teamMembers?: projectCreateTeamModel[],
   asset: projectMintModel,
-  initialAlgoLiquidity: number,
-  initialAlgoLiquidityWithFee: number,
-  initialTokenLiquidity: number,
+  initialAlgoLiquidity?: number,
+  initialAlgoLiquidityWithFee?: number,
+  initialTokenLiquidity?: number,
 }
 // withoutPresale
 
 export interface projectMintModel {
   assetId: number;
   projectId: string;
-  contractId: number;
-  contractAddress: string;
   name: string;
   unitName: string;
   totalSupply: number;
   url: string;
-  maxBuy: number;
-  tradingStart: number;
-  risingPriceFloor: number;
-  backing: number;
-  buyBurn: number;
-  sellBurn: number;
-  sendBurn: number;
   image: string;
   deployerWallet: string;
   decimals: number;
-  extraFeeTime: number;
-  additionalFee?: number;
-  additionalFeeWallet?: string;
-  purpose?: string;
+  smartProperties: SmartProperties
+  tradingStart: number
 }
 // project mint
 

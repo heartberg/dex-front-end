@@ -75,7 +75,7 @@ export class LaunchpadComponent implements OnInit {
 
   async getParticipatedAmount(model: ProjectPreviewModel): Promise<number> {
     let client: Algodv2 = getAlgodClient()
-    let amount = await getAppLocalStateByKey(client, model.asset.contractId, this.wallet!, StateKeys.presale_contribution_key)
+    let amount = await getAppLocalStateByKey(client, model.asset.smartProperties!.contractId, this.wallet!, StateKeys.presale_contribution_key)
     return amount
   }
   

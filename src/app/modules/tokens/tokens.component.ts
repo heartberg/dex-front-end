@@ -40,7 +40,7 @@ export class TokensComponent implements OnInit {
             let bcInfo = await this.verseApp.getBlockchainInformation();
             this.arr.push([element, bcInfo])
           } else {
-            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.contractId)
+            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
             this.arr.push([element, bcInfo])
           }
         });

@@ -161,8 +161,6 @@ export class TradeComponent implements OnInit {
     this.selectedOption = this.assetArr[0]
     await this.selectAsset(this.assetArr[1].assetId);
 
-    this.assetArrSecond.push(await this.verseApp.getViewModel())
-
     this.slippageForm.get("slippageInput")!.valueChanges.subscribe(
       (input: any) => {
         if(input != null){
@@ -217,7 +215,7 @@ export class TradeComponent implements OnInit {
   removeFailedPresales(res: AssetViewModel[]) {
     let output: AssetViewModel[] = []
     res.forEach(async model => {
-      if(!await this.deployedApp.isFailedPresale(model.contractId)){
+      if(!await this.deployedApp.isFailedPresale(model.smartProperties!.contractId)){
         output.push(model)
       }
     });
@@ -326,7 +324,7 @@ export class TradeComponent implements OnInit {
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       } else {
         this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
-        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contract_id!)
+        this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contractId!)
       }
     }
     this.getAllBuysAndSells()
@@ -507,33 +505,33 @@ export class TradeComponent implements OnInit {
 
   mapViewModelToAppSettings(model: AssetViewModel) : DeployedAppSettings{
     return {
-      asset_id: model.assetId,
-      contract_id: model.contractId,
-      contract_address: model.contractAddress,
-      buy_burn: model.buyBurn,
+      assetId: model.assetId,
+      contractId: model.smartProperties!.contractId,
+      contractAddress: model.smartProperties!.contractAddress,
+      buyBurn: model.smartProperties!.buyBurn,
       creator: model.deployerWallet,
       decimals: model.decimals,
-      extra_fee_time: 300,
-      max_buy: model.maxBuy,
+      extraFeeTime: 300,
+      maxBuy: model.smartProperties!.maxBuy,
       name: model.name,
       unit: model.unitName,
-      sell_burn: model.sellBurn,
-      trading_start: model.tradingStart,
-      to_backing: model.backing,
-      to_lp: model.risingPriceFloor,
-      transfer_burn: model.sendBurn,
+      sellBurn: model.smartProperties!.sellBurn,
+      tradingStart: model.tradingStart,
+      toBacking: model.smartProperties!.backing,
+      toLp: model.smartProperties!.risingPriceFloor,
+      transferBurn: model.smartProperties!.sendBurn,
       url: "",
-      initial_algo_liq: 0,
-      initial_algo_liq_with_fee: 0,
-      initial_token_liq: 0,
-      total_supply: 0,
-      presale_settings: {
+      initialAlgoLiq: 0,
+      initialAlgoLiqWithFee: 0,
+      initialTokenLiq: 0,
+      totalSupply: 0,
+      presaleSettings: {
         hardcap: 0,
-        presale_end: 0,
-        presale_start: 0,
-        presale_token_amount: 0,
+        presaleEnd: 0,
+        presaleStart: 0,
+        presaleTokenAmount: 0,
         softcap: 0,
-        to_lp: 0,
+        toLp: 0,
         walletcap: 0
       }
     }
@@ -588,12 +586,12 @@ export class TradeComponent implements OnInit {
   }
 
   getAutoSlippage() {
-    let accumulatedFees = this.selectedOption!.backing + +environment.Y_FEE! * 10000
+    let accumulatedFees = this.selectedOption!.smartProperties!.backing + +environment.Y_FEE! * 10000
     //console.log(accumulatedFees)
     if(this.isBuy){
-      accumulatedFees += this.selectedOption!.buyBurn
+      accumulatedFees += this.selectedOption!.smartProperties!.buyBurn
     } else{
-      accumulatedFees += this.selectedOption!.sellBurn + this.selectedOption!.risingPriceFloor
+      accumulatedFees += this.selectedOption!.smartProperties!.sellBurn + this.selectedOption!.smartProperties!.risingPriceFloor
     }
 
     if (this.selectedOption!.assetId != ps.platform.verse_asset_id){
@@ -705,7 +703,7 @@ export class TradeComponent implements OnInit {
     if(this.selectedOption!.assetId == ps.platform.verse_asset_id) {
       this.blockchainInfo = await this.verseApp.getBlockchainInformation()
     } else {
-      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
+      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contractId!)
     }
 
     let scaledAmount = Math.floor(amount * 1_000_000)
@@ -731,7 +729,7 @@ export class TradeComponent implements OnInit {
       return response;
     } else {
       // same same here
-      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contract_id!)
+      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings!.contractId!)
       scaledAmount = Math.floor(amount * Math.pow(10, this.deployedAppSettings!.decimals))
       wantedReturn = this.calcDesiredOutput(scaledAmount, this.blockchainInfo.algoLiquidity, this.blockchainInfo.tokenLiquidity)
       let response = await this.deployedApp.sell(wallet, scaledAmount, this.slippage, wantedReturn, this.deployedAppSettings!)
@@ -897,15 +895,15 @@ export class TradeComponent implements OnInit {
     if(this.selectedOption!.assetId == ps.platform.verse_asset_id){
       this.blockchainInfo = await this.verseApp.getBlockchainInformation();
     } else {
-      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.selectedOption!.contractId);
+      this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.selectedOption!.smartProperties!.contractId);
     }
   }
 
   async getSmartToolData() {
     let address = localStorage.getItem("wallet")
-    if(this.selectedOption!.contractId != ps.platform.verse_app_id){
+    if(this.selectedOption!.smartProperties!.contractId != ps.platform.verse_app_id){
       console.log("deployer app")
-      this.smartToolData = await this.deployedApp.getSmartToolData(this.selectedOption!.contractId, address);
+      this.smartToolData = await this.deployedApp.getSmartToolData(this.selectedOption!.smartProperties!.contractId, address);
     } else {
       this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }

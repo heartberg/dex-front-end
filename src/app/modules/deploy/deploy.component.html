@@ -12,6 +12,16 @@
       </button>
 
       <button
+        (click)="asa()"
+        class="btn-primary-costum smart-asa"
+        [class.btn-secondary-costum]="isAsaDeploy"
+        type="submit"
+        style="width: unset"
+      >
+        ASA
+      </button>
+
+      <button
         (click)="staking()"
         class="btn-primary-costum"
         type="submit"
@@ -22,15 +32,19 @@
       </button>
     </div>
     <div class="whole" style="padding-right: 5px">
-      <div class="row" *ngIf="isSmartAsaDeploy" style="width: 100%">
+      <div class="row" *ngIf="isSmartAsaDeploy || isAsaDeploy" style="width: 100%">
           <form
           class="col-md-12 scrollable-section-first"
           [formGroup]="deployFormGroup"
           >
           <!-- <div class="col-md-12 scrollable-section-first"> -->
           <div class="inside wrapper-border">
-            <div class="header">
-              <h3>Deploy</h3>
+            <div class="header" *ngIf="isSmartAsaDeploy">
+              <h3>Deploy Smart ASA</h3>
+            </div>
+
+            <div class="header" *ngIf="isAsaDeploy">
+              <h3>Deploy ASA</h3>
             </div>
 
             <div class="metaheader">
@@ -143,7 +157,7 @@
                   </div>
                 </div>
               </div>
-              <div class="royalties wrapper-border">
+              <div class="royalties wrapper-border" *ngIf="isSmartAsaDeploy">
                 <div class="royal height-_10">
                   <div
                     class="row d-flex align-items-center"
@@ -168,7 +182,7 @@
                 </div>
               </div>
             </form>
-            <form formGroupName="feesGroup">
+            <form formGroupName="feesGroup" *ngIf="isSmartAsaDeploy">
               <div class="metaheader">
                 <h6 class="color-violet">Fees (in %)</h6>
               </div>
@@ -362,10 +376,10 @@
                         </div>
                         <!-- <div class="wrapper-border"> -->
                         <form
-                          class="wrapper-border"
-                          formGroupName="presaleLiquidity"
+                        formGroupName="presaleLiquidity"
                         >
-                          <h3 class="color-violet">Presale Liquidity</h3>
+                        <div class="wrapper-border">
+                          <h3 class="color-violet">Presale Token Allocation</h3>
                           <div class="inputs">
                             <div class="d-flex align-items-center">
                               <h4>Tokens in Presale</h4>
@@ -381,7 +395,19 @@
                                 {{tokenPresalePercentage.toFixed(2)}}% of total supply
                               </h4>
                             </div>
+
+                            <div class="d-flex align-items-center" *ngIf="isSmartAsaDeploy">
+                              <h4>Presale funds to liquidity (in %)</h4>
+                              <input
+                                type="number"
+                                class="input-costum"
+                                formControlName="presaleFundsToLiquidity"
+                              />
+                            </div>
                           </div>
+                        </div>
+                        <div class="wrapper-border" *ngIf="isSmartAsaDeploy">
+                          <h3 class="color-violet">Initial Liquidity</h3>
                           <div class="inputs">
                             <div class="d-flex align-items-center">
                               <h4>Tokens in liquidity</h4>
@@ -408,33 +434,25 @@
                               />
                             </div>
                           </div>
-                          <div class="inputs">
-                            <div class="d-flex align-items-center">
-                              <h4>Presale funds to liquidity (in %)</h4>
-                              <input
-                                type="number"
-                                class="input-costum"
-                                formControlName="presaleFundsToLiquidity"
-                              />
-                            </div>
-                          </div>
+                        </div>
                         </form>
+
                         <!-- </div> -->
                         <div class="info-box">
                           <h6 class="color-violet">Presale Price:</h6>
                           <h6>{{presalePrice.toFixed(6)}} Algo/Token</h6>
                         </div>
-                        <div class="info-box">
+                        <div class="info-box" *ngIf="isSmartAsaDeploy">
                           <h6 class="color-violet">Initial Price:</h6>
                           <h6> {{minInitialPrice.toFixed(6)}} Algo/Token - {{initialPrice.toFixed(6)}} Algo/Token</h6>
                         </div>
                       </ng-container>
                     </form>
                     <!--  -->
-                    <ng-container *ngIf="!presaleIsChecked">
+                    <ng-container *ngIf="!presaleIsChecked && isSmartAsaDeploy">
                       <!-- <div class="wrapper-border"> -->
                       <form class="wrapper-border" formGroupName="liquidity">
-                        <h3 class="color-violet title">Liquidity</h3>
+                        <h3 class="color-violet title">Initial Liquidity</h3>
                         <div class="inputs">
                           <div class="d-flex align-items-center">
                             <h4>Tokens to liquidity</h4>
@@ -469,8 +487,8 @@
                         <h6>{{initialPrice.toFixed(6)}} Algo/Token</h6>
                       </div>
                     </ng-container>
-                    <hr *ngIf="!presaleIsChecked" />
-                    <div class="wrapper-border">
+                    
+                    <div class="wrapper-border" *ngIf="isSmartAsaDeploy">
                       <h3 class="color-violet title">Trading Start</h3>
                       <div class="inputs">
                         <div class="d-flex align-items-center">

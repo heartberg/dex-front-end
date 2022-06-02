@@ -62,7 +62,7 @@
                 </p>
 
                 <div class="col-md-4 unset-pd aligner-of-content">
-                  <button class="bottom-btn btn-secondary-costum" (click)="removeMaxBuy(item[0].asset.contractId)">
+                  <button class="bottom-btn btn-secondary-costum" (click)="removeMaxBuy(item[0].asset.smartProperties!.contractId)">
                     Remove max buy
                   </button>
                   <button class="bottom-btn btn-secondary-costum" (click)="openPopUp(item[0])">

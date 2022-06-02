@@ -8,8 +8,6 @@ export interface ProjectViewModel {
     projectImage: string
     description: string
     creatorWallet: string
-    contractId: number
-    contractAddress: string
     roadmap?: string
     roadmapImage?: string
     twitter?: string

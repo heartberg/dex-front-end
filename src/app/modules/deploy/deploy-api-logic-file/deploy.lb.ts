@@ -8,7 +8,7 @@ import {
 import {deployService} from "../../../services/APIs/deploy/deploy-service";
 import {FormGroup} from "@angular/forms";
 import {of} from "rxjs";
-import {DeployComponent} from "../deploy.component";
+import {AsaSettings, DeployComponent} from "../deploy.component";
 import {DeployedAppSettings, StakingSetup} from "../../../blockchain/platform-conf";
 import {DeployedApp} from "../../../blockchain/deployer_application";
 import { SessionWallet } from 'algorand-session-wallet';
@@ -41,6 +41,7 @@ export class DeployLb {
   isFailed: boolean = false;
   isPending: boolean = false;
   hasStaking: boolean = false;
+  standardAsaBlockchainObject: AsaSettings | undefined;
 
   constructor(
     private _deployService: deployService,
@@ -53,9 +54,9 @@ export class DeployLb {
 
   SetMintVars(data: DeployedAppSettings) {
     this.mintObj.projectId = this.projectId
-    this.mintObj.contractAddress = data.contract_address!
-    this.mintObj.contractId = data.contract_id!
-    this.mintObj.assetId = data.asset_id!
+    this.mintObj.contractAddress = data.contractAddress!
+    this.mintObj.contractId = data.contractId!
+    this.mintObj.assetId = data.assetId!
   }
 
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
@@ -84,10 +85,10 @@ export class DeployLb {
         setTimeout(() => {
           if (value) {
             console.log("value of deploy: " + value)
-          this.presaleObj.contractId = this.deployerBC.settings.contract_id!
-          this.presaleObj.contractAddress = this.deployerBC.settings.contract_address!
-          this.presaleObj.asset.contractId = this.deployerBC.settings.contract_id!
-          this.presaleObj.asset.contractAddress = this.deployerBC.settings.contract_address!
+          this.presaleObj.contractId = this.deployerBC.settings.contractId!
+          this.presaleObj.contractAddress = this.deployerBC.settings.contractAddress!
+          this.presaleObj.asset.contractId = this.deployerBC.settings.contractId!
+          this.presaleObj.asset.contractAddress = this.deployerBC.settings.contractAddress!
           this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
             async (value: any) => {
               this.projectId = value
@@ -96,7 +97,7 @@ export class DeployLb {
                   (value: any) => {
                     if (value) {
                       console.log("value of mint: " + value)
-                      this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
+                      this.GetProjectMint(this.projectId, this.deployerBC.settings.assetId!).subscribe(
                         async (value: any) => {
                           if (2 === 2) {
                             of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
@@ -176,10 +177,8 @@ export class DeployLb {
   async GetProjectWithoutPresaleCreate() {
     of(await this.deployerBC.deploy(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
-        this.withoutPresaleObj.contractId = this.deployerBC.settings.contract_id!
-        this.withoutPresaleObj.contractAddress = this.deployerBC.settings.contract_address!
-        this.withoutPresaleObj.asset.contractId = this.deployerBC.settings.contract_id!
-        this.withoutPresaleObj.asset.contractAddress = this.deployerBC.settings.contract_address!
+        this.withoutPresaleObj.asset.contractId = this.deployerBC.settings.contractId!
+        this.withoutPresaleObj.asset.contractAddress = this.deployerBC.settings.contractAddress!
         if (value) {
           setTimeout(() => {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
@@ -192,7 +191,7 @@ export class DeployLb {
                   of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                     (value: any) => {
                       if (value) {
-                        this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
+                        this.GetProjectMint(this.projectId, this.deployerBC.settings.assetId!).subscribe(
                           async (value: any) => {
                             if (2 === 2) {
                               of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
@@ -278,7 +277,7 @@ export class DeployLb {
 
   GetStakingSetup() {
     let stakingSetup: stakingCreateModel = {
-      assetId: this.blockchainObj.asset_id!,
+      assetId: this.blockchainObj.assetId!,
       contractId: this.deployerBC.settings.stakingContractId!,
       startingTime: this.blockchainObj.poolStart!,
       endingTime: this.blockchainObj.poolStart! + this.blockchainObj.poolDuration!,
@@ -348,7 +347,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       (value: any) => {
         if (value) {
           console.log("value of mint: " + value)
-          this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
+          this.GetProjectMint(this.projectId, this.deployerBC.settings.assetId!).subscribe(
             async (value: any) => {
               if (2 === 2) {
                 of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
@@ -404,7 +403,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       (value: any) => {
         if (value) {
           console.log("value of mint: " + value)
-          this.GetProjectMint(this.projectId, this.deployerBC.settings.asset_id!).subscribe(
+          this.GetProjectMint(this.projectId, this.deployerBC.settings.assetId!).subscribe(
             async (value: any) => {
               if (2 === 2) {
                 of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
@@ -637,33 +636,33 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
 
   mapPresaleProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
     return {
-      buy_burn: projectView.asset.buyBurn,
+      buyBurn: projectView.asset.smartProperties!.buyBurn,
       creator: projectView.creatorWallet,
       decimals: projectView.asset.decimals,
-      extra_fee_time: Math.floor(projectView.asset.extraFeeTime),
-      initial_algo_liq: projectView.initialAlgoLiquidity,
-      initial_algo_liq_with_fee: projectView.initialAlgoLiquidityWithFee,
-      initial_token_liq: projectView.initialTokenLiquidity,
-      max_buy: projectView.asset.maxBuy,
+      extraFeeTime: Math.floor(projectView.asset.extraFeeTime),
+      initialAlgoLiq: projectView.initialAlgoLiquidity,
+      initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
+      initialTokenLiq: projectView.initialTokenLiquidity,
+      maxBuy: projectView.asset.smartProperties!.maxBuy,
       name: projectView.asset.name,
-      sell_burn: projectView.asset.sellBurn,
-      to_backing: projectView.asset.backing,
-      to_lp: projectView.asset.risingPriceFloor,
-      total_supply: projectView.asset.totalSupply,
-      trading_start: projectView.asset.tradingStart,
-      transfer_burn: projectView.asset.sendBurn,
+      sellBurn: projectView.asset.smartProperties!.sellBurn,
+      toBacking: projectView.asset.smartProperties!.backing,
+      toLp: projectView.asset.smartProperties!.risingPriceFloor,
+      totalSupply: projectView.asset.totalSupply,
+      tradingStart: projectView.asset.tradingStart,
+      transferBurn: projectView.asset.smartProperties!.sendBurn,
       unit: projectView.asset.unitName,
       url: projectView.asset.url || "",
-      asset_id: projectView.asset.assetId,
-      contract_address: projectView.asset.contractAddress,
-      contract_id: projectView.asset.contractId,
-      presale_settings: {
+      assetId: projectView.asset.assetId,
+      contractAddress: projectView.asset.smartProperties!.contractAddress,
+      contractId: projectView.asset.smartProperties!.contractId,
+      presaleSettings: {
         hardcap: projectView.presale!.hardCap,
-        presale_end: projectView.presale!.endingTime,
-        presale_start: projectView.presale!.startingTime,
-        presale_token_amount: projectView.presale!.tokenAmount,
+        presaleEnd: projectView.presale!.endingTime,
+        presaleStart: projectView.presale!.startingTime,
+        presaleTokenAmount: projectView.presale!.tokenAmount,
         softcap: projectView.presale!.softCap,
-        to_lp: projectView.presale!.presaleToLiquidity,
+        toLp: projectView.presale!.presaleToLiquidity,
         walletcap: projectView.presale!.walletCap
       },
 
@@ -672,33 +671,33 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
 
   mapProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
     return {
-      buy_burn: projectView.asset.buyBurn,
+      buyBurn: projectView.asset.smartProperties!.buyBurn,
       creator: projectView.creatorWallet,
       decimals: projectView.asset.decimals,
-      extra_fee_time: Math.floor(projectView.asset.extraFeeTime),
-      initial_algo_liq: projectView.initialAlgoLiquidity,
-      initial_algo_liq_with_fee: projectView.initialAlgoLiquidityWithFee,
-      initial_token_liq: projectView.initialTokenLiquidity,
-      max_buy: projectView.asset.maxBuy,
+      extraFeeTime: Math.floor(projectView.asset.extraFeeTime),
+      initialAlgoLiq: projectView.initialAlgoLiquidity,
+      initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
+      initialTokenLiq: projectView.initialTokenLiquidity,
+      maxBuy: projectView.asset.smartProperties!.maxBuy,
       name: projectView.asset.name,
-      sell_burn: projectView.asset.sellBurn,
-      to_backing: projectView.asset.backing,
-      to_lp: projectView.asset.risingPriceFloor,
-      total_supply: projectView.asset.totalSupply,
-      trading_start: projectView.asset.tradingStart,
-      transfer_burn: projectView.asset.sendBurn,
+      sellBurn: projectView.asset.smartProperties!.sellBurn,
+      toBacking: projectView.asset.smartProperties!.backing,
+      toLp: projectView.asset.smartProperties!.risingPriceFloor,
+      totalSupply: projectView.asset.totalSupply,
+      tradingStart: projectView.asset.tradingStart,
+      transferBurn: projectView.asset.smartProperties!.sendBurn,
       unit: projectView.asset.unitName,
       url: projectView.asset.url || "",
-      asset_id: projectView.asset.assetId,
-      contract_address: projectView.asset.contractAddress,
-      contract_id: projectView.asset.contractId,
-      presale_settings: {
+      assetId: projectView.asset.assetId,
+      contractAddress: projectView.asset.smartProperties!.contractAddress,
+      contractId: projectView.asset.smartProperties!.contractId,
+      presaleSettings: {
         hardcap: 0,
-        presale_end: 0,
-        presale_start: 0,
-        presale_token_amount: 0,
+        presaleEnd: 0,
+        presaleStart: 0,
+        presaleTokenAmount: 0,
         softcap: 0,
-        to_lp: 0,
+        toLp: 0,
         walletcap: 0
       },
 
@@ -852,6 +851,22 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       }
       mapped.push(member)
     });
+  }
+
+  DeployStandardAssetWithPresale() {
+    this.standardAsaBlockchainObject = JSON.parse(localStorage.getItem("standardBlockchainObj")!)
+  }
+
+  DeployStandardAssetWithoutPresale() {
+    this.standardAsaBlockchainObject = JSON.parse(localStorage.getItem("standardBlockchainObj")!)
+  }
+
+  InitializeStandardApiObjectWithPresale() {
+
+  }
+
+  InitializeStandardApiObjectWithoutPresale() {
+
   }
 
 }

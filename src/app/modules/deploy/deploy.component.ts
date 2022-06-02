@@ -14,6 +14,33 @@ import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { platform_settings as ps } from '../../blockchain/platform-conf';
 
+export type AsaPresaleSettings = {
+  contractId: number,
+  presaleTokenAmount: number,
+  presaleStart: number,
+  presaleEnd: number,
+  softcap: number,
+  hardcap: number,
+  walletcap: number
+}
+
+export type AsaSettings = {
+  creator: string,
+  totalSupply: number,
+  name: string,
+  unit: string,
+  decimals: number,
+  url: string,
+  assetId?: number,
+  poolStart?: number,
+  poolRewards?: number,
+  poolInterval?: number,
+  rewardsPerInterval?: number,
+  poolDuration?: number,
+  stakingContractId?: number,
+  presaleSettings?: AsaPresaleSettings
+}
+
 @Component({
   selector: 'app-deploy-api-logic-file',
   templateUrl: './deploy.component.html',
@@ -23,6 +50,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   isSmartAsaDeploy: boolean = true;
   isStakingDeploy: boolean = false;
+  isAsaDeploy: boolean = false;
   isDistributionPool: boolean = false;
 
   isCheckedRoadMap: boolean = false;
@@ -43,7 +71,8 @@ export class DeployComponent implements OnInit, DoCheck {
   estimatedApy = 0;
 
   sessionWallet: any;
-  blockchainObect: DeployedAppSettings | undefined;
+  blockchainObject: DeployedAppSettings | undefined;
+  standardBlockchainObject: AsaSettings | undefined;
   // @ts-ignore
   deployFormGroup: FormGroup;
   // @ts-ignore
@@ -87,7 +116,7 @@ export class DeployComponent implements OnInit, DoCheck {
   }
 
   ngOnInit(): void {
-    this.initiializeForm();
+    this.initializeForm();
   }
 
   @ViewChild('checkbox', { static: false})
@@ -143,7 +172,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   // for form intitialize
 
-  initiializeForm(): void {
+  initializeForm(): void {
 
     this.stakingFormGroup = this.fb.group({
       assetId: '',
@@ -253,24 +282,24 @@ export class DeployComponent implements OnInit, DoCheck {
     }
 
     // @ts-ignore
-    return this.blockchainObect = {
-      extra_fee_time: +this.deployFormGroup.get('extraFeeTime')?.value,
+    return this.blockchainObject = {
+      extraFeeTime: +this.deployFormGroup.get('extraFeeTime')?.value,
       creator: this.sessionWallet.wallet.getDefaultAccount(),
-      total_supply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, decimals),
-      buy_burn: +this.deployFormGroup.get('feesGroup.buyBurn')?.value * 100,
-      sell_burn: +this.deployFormGroup.get('feesGroup.sellBurn')?.value * 100,
-      transfer_burn: +this.deployFormGroup.get('feesGroup.sendBurn')?.value * 100,
-      to_lp: +this.deployFormGroup.get('feesGroup.risingPriceFloor')?.value * 100,
-      to_backing: +this.deployFormGroup.get('feesGroup.backing')?.value * 100,
-      max_buy: +this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
+      totalSupply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, decimals),
+      buyBurn: +this.deployFormGroup.get('feesGroup.buyBurn')?.value * 100,
+      sellBurn: +this.deployFormGroup.get('feesGroup.sellBurn')?.value * 100,
+      transferBurn: +this.deployFormGroup.get('feesGroup.sendBurn')?.value * 100,
+      toLp: +this.deployFormGroup.get('feesGroup.risingPriceFloor')?.value * 100,
+      toBacking: +this.deployFormGroup.get('feesGroup.backing')?.value * 100,
+      maxBuy: +this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
       name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
       unit: this.deployFormGroup.get('tokenInfoGroup.unitName')?.value || null,
       decimals: decimals,
       url: this.deployFormGroup.get('tokenInfoGroup.URL')?.value || null,
-      trading_start: tradeStart,
-      initial_token_liq: initial_token_liq,
-      initial_algo_liq_with_fee: initial_algo_liq_with_fee,
-      initial_algo_liq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.fee),
+      tradingStart: tradeStart,
+      initialTokenLiq: initial_token_liq,
+      initialAlgoLiqWithFee: initial_algo_liq_with_fee,
+      initialAlgoLiq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.fee),
       additionalFee: +this.deployFormGroup.get('feesGroup.fee')?.value * 100,
       additionalFeeAddress: this.deployFormGroup.get('feesGroup.addrees')?.value,
       poolStart: poolStart,
@@ -278,11 +307,11 @@ export class DeployComponent implements OnInit, DoCheck {
       poolRewards: poolRewards,
       rewardsPerInterval: rewardsPerInterval,
       poolDuration: poolDuration,
-      presale_settings: {
-        presale_token_amount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
-        to_lp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
-        presale_start: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
-        presale_end: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
+      presaleSettings: {
+        presaleTokenAmount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
+        toLp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
+        presaleStart: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
+        presaleEnd: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
         softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value * 1_000_000,
         hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value * 1_000_000,
         walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value * 1_000_000,
@@ -292,8 +321,8 @@ export class DeployComponent implements OnInit, DoCheck {
 
   async smartAsaDeploy() {
     this.blockchainObjInitialize();
-    console.log(this.blockchainObect)
-    localStorage.setItem('blockchainObj', JSON.stringify(this.blockchainObect)!);
+    console.log(this.blockchainObject)
+    localStorage.setItem('blockchainObj', JSON.stringify(this.blockchainObject)!);
     // this.deployLib.initializeApiObj(this.deployFormGroup);
     if(this.presaleIsChecked){
       this.deployLib.initializeApiObjWithPresale(this.deployFormGroup);
@@ -305,7 +334,7 @@ export class DeployComponent implements OnInit, DoCheck {
       this.deployLib.DeployFinalFunc(false, this.deployFormGroup);
     }
 
-    console.log(this.blockchainObect);
+    console.log(this.blockchainObject);
     console.log(this.sessionWallet);
   }
 
@@ -346,14 +375,65 @@ export class DeployComponent implements OnInit, DoCheck {
     this.deployLib.deployStaking(this.stakingSetup!)
   }
 
+  asaObjectInitialize() {
+    let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
+
+    let poolStart = parseInt((new Date(this.deployFormGroup.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
+    let poolRewards = Math.floor(+this.deployFormGroup.get('stakingGroup.rewardPool')?.value * Math.pow(10, decimals))
+    let poolInterval = +this.deployFormGroup.get('stakingGroup.rewardInterval')?.value * 86400
+    let poolDuration = +this.deployFormGroup.get('stakingGroup.poolDuration')?.value * 86400
+    let rewardsPerInterval = undefined
+    if(poolRewards != 0 && poolInterval != 0 && poolDuration != 0) {
+      rewardsPerInterval = Math.floor(poolRewards / (poolDuration / poolInterval))
+    }
+
+    this.standardBlockchainObject = {
+      creator: this.sessionWallet.wallet.getDefaultAccount(),
+      totalSupply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, decimals),
+      name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
+      unit: this.deployFormGroup.get('tokenInfoGroup.unitName')?.value || null,
+      decimals: decimals,
+      url: this.deployFormGroup.get('tokenInfoGroup.URL')?.value || null,
+      poolStart: poolStart,
+      poolInterval: poolInterval,
+      poolRewards: poolRewards,
+      rewardsPerInterval: rewardsPerInterval,
+      poolDuration: poolDuration,
+      presaleSettings: {
+        contractId: 0,
+        presaleTokenAmount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
+        presaleStart: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
+        presaleEnd: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
+        softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value * 1_000_000,
+        hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value * 1_000_000,
+        walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value * 1_000_000,
+      } || null
+    }
+  }
+
+  async asaDeploy() {
+    this.asaObjectInitialize()
+    localStorage.setItem('standardBlockchainObj', JSON.stringify(this.standardBlockchainObject)!);
+    if(this.presaleIsChecked) {
+      this.deployLib.InitializeStandardApiObjectWithPresale()
+      this.deployLib.DeployStandardAssetWithPresale()
+    } else {
+      this.deployLib.InitializeStandardApiObjectWithoutPresale()
+      this.deployLib.DeployStandardAssetWithoutPresale()
+    }
+
+  }
+
   async onSubmit() {
     this.closePopup = true;
     this.sessionWallet = this.walletProviderService.sessionWallet;
     console.log(this.sessionWallet)
     if(this.isSmartAsaDeploy) {
       await this.smartAsaDeploy()
-    } else {
+    } else if(this.isStakingDeploy){
       await this.stakingDeploy()
+    } else {
+      await this.asaDeploy()
     }
   }
 
@@ -478,12 +558,20 @@ export class DeployComponent implements OnInit, DoCheck {
   smartAsa() {
     this.isSmartAsaDeploy = true;
     this.isStakingDeploy = false;
+    this.isAsaDeploy = false;
     this.setStakingFields()
+  }
+
+  asa() {
+    this.isSmartAsaDeploy = false;
+    this.isStakingDeploy = false;
+    this.isAsaDeploy = true;
   }
 
   async staking() {
     this.isSmartAsaDeploy = false;
     this.isStakingDeploy = true;
+    this.isAsaDeploy = false;
     this.stakingSectionSetStakingFields()
     let client: Algodv2 = getAlgodClient()
     let wallet = localStorage.getItem('wallet')

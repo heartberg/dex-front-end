@@ -9,26 +9,16 @@ import {
     get_asa_xfer_txn,
     get_asa_optin_txn
 } from "./transactions"
-import algosdk, { Algodv2, encodeUint64, getApplicationAddress, Transaction } from 'algosdk';
+import algosdk, { Algodv2, Transaction } from 'algosdk';
 import { 
     BlockchainInformation,
     platform_settings as ps
 } from "./platform-conf";
 import { SessionWallet } from "algorand-session-wallet"
-import { encode } from "querystring";
-import { sign } from "crypto";
-import { toBase64String } from "@angular/compiler/src/output/source_map";
 import { Injectable } from "@angular/core";
 import { AssetViewModel } from "../models/assetViewModel"
-import { IfStmt } from "@angular/compiler";
 import { BlockchainTrackInfo } from "../modules/track/track.component";
-import { StakingInfo, StakingUserInfo } from "../modules/staking/staking.component";
-import { getAppLocalStateByKey } from "../services/utils.algo";
-import { StateKeys } from "./deployer_application";
-import { SmartToolData } from "../shared/pop-up/component/pop-up.component";
-import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
-import { send } from "process";
-import { backingStateKeys, Method, smartDistributionStateKeys, smartStakingKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys, verseStateKeys } from "./keys";
+import { backingStateKeys, Method, verseStateKeys } from "./keys";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -314,23 +304,25 @@ export class VerseApp {
 
         let verse: AssetViewModel = {
             assetId: ps.platform.verse_asset_id,
-            contractId: ps.platform.verse_app_id,
-            contractAddress: ps.platform.verse_app_addr,
             name: "Verse",
             unitName: "Verse",
             totalSupply: state[verseStateKeys.total_supply_key]['i'],
             decimals: ps.platform.verse_decimals,
-            maxBuy: state[verseStateKeys.max_buy_key]['i'],
             tradingStart: 0,
-            risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
-            backing: state[verseStateKeys.to_backing_key]['i'],
-            buyBurn: state[verseStateKeys.burn_key]['i'],
-            sellBurn: state[verseStateKeys.burn_key]['i'],
-            sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
             image: "",
             deployerWallet: "",
             extraFeeTime: 0,
-            projectId: ""
+            projectId: "",
+            smartProperties: {
+                risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
+                backing: state[verseStateKeys.to_backing_key]['i'],
+                buyBurn: state[verseStateKeys.burn_key]['i'],
+                sellBurn: state[verseStateKeys.burn_key]['i'],
+                sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
+                contractId: ps.platform.verse_app_id,
+                contractAddress: ps.platform.verse_app_addr,
+                maxBuy: state[verseStateKeys.max_buy_key]['i'],
+            }
         }
         return verse
     }

@@ -105,9 +105,9 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
     // console.log('addr', addr)
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
-    const args = [algosdk.encodeUint64(this.settings.total_supply), algosdk.encodeUint64(this.settings.buy_burn), algosdk.encodeUint64(this.settings.sell_burn),
-                  algosdk.encodeUint64(this.settings.transfer_burn), algosdk.encodeUint64(this.settings.to_lp), algosdk.encodeUint64(this.settings.to_backing),
-                  algosdk.encodeUint64(this.settings.max_buy)]
+    const args = [algosdk.encodeUint64(this.settings.totalSupply), algosdk.encodeUint64(this.settings.buyBurn), algosdk.encodeUint64(this.settings.sellBurn),
+                  algosdk.encodeUint64(this.settings.transferBurn), algosdk.encodeUint64(this.settings.toLp), algosdk.encodeUint64(this.settings.toBacking),
+                  algosdk.encodeUint64(this.settings.maxBuy)]
     if(settings.additionalFee) {
       args.push(algosdk.encodeUint64(settings.additionalFee))
       accounts.push(settings.additionalFeeAddress!)
@@ -147,8 +147,8 @@ export class DeployedApp {
     //const txRes = await getAlgodClient().pendingTransactionInformation(result.txId).do();
     //// console.log('appCreateResult', txRes);
 
-    this.settings.contract_id = result['application-index'];
-    this.settings.contract_address = algosdk.getApplicationAddress(BigInt( result['application-index'] ));
+    this.settings.contractId = result['application-index'];
+    this.settings.contractAddress = algosdk.getApplicationAddress(BigInt( result['application-index'] ));
     return result
   }
 
@@ -158,11 +158,11 @@ export class DeployedApp {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, 201_000))
+    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, 201_000))
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Create)), new Uint8Array(Buffer.from(this.settings.name)), new Uint8Array(Buffer.from(this.settings.unit)), 
       algosdk.encodeUint64(this.settings.decimals), new Uint8Array(Buffer.from(this.settings.url))]
-    const mint = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, undefined, undefined))
+    const mint = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, undefined, undefined))
 
     const grouped = [pay, mint]
 
@@ -173,7 +173,7 @@ export class DeployedApp {
     const txId = mint.txID()
     let pending = await client.pendingTransactionInformation(txId).do()
     // console.log(pending)
-    this.settings.asset_id = pending['inner-txns'][0]['asset-index']
+    this.settings.assetId = pending['inner-txns'][0]['asset-index']
 
     return result
   }
@@ -186,7 +186,7 @@ export class DeployedApp {
 
     const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.burn_addr, 101_000))
 
-    const optIn = new Transaction(get_asa_optin_txn(suggested, ps.platform.burn_addr, this.settings.asset_id))
+    const optIn = new Transaction(get_asa_optin_txn(suggested, ps.platform.burn_addr, this.settings.assetId))
 
     const grouped = [pay, optIn]
 
@@ -212,12 +212,12 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
     
     let accounts = []
-    let algoAmountToSend = this.settings.initial_algo_liq_with_fee
+    let algoAmountToSend = this.settings.initialAlgoLiqWithFee
     if(this.settings.rewardsPerInterval) {
       suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
       accounts = [ps.platform.fee_addr, ps.platform.burn_addr, getApplicationAddress(this.settings.stakingContractId!)]
-      if(settings.poolRewards! > Math.floor(0.03 * settings.total_supply)) {
-        algoAmountToSend = this.settings.initial_algo_liq
+      if(settings.poolRewards! > Math.floor(0.03 * settings.totalSupply)) {
+        algoAmountToSend = this.settings.initialAlgoLiq
       }
     } else {
       suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
@@ -226,23 +226,23 @@ export class DeployedApp {
 
     suggested.flatFee = true
     
-    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time)]
-    let assets = [this.settings.asset_id]
-    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, assets, accounts))
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initialTokenLiq), algosdk.encodeUint64(this.settings.tradingStart), algosdk.encodeUint64(this.settings.extraFeeTime)]
+    let assets = [this.settings.assetId]
+    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
 
     // console.log(this.settings.initial_algo_liq_with_fee)
     suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, this.settings.initial_algo_liq_with_fee))
+    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, this.settings.initialAlgoLiqWithFee))
 
-    const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.asset_id))
+    const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.assetId))
     const grouped = [creatorOptin, pay, setup]
 
     if(this.settings.rewardsPerInterval){
       suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
       let setupPay = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(this.settings.stakingContractId!), 200000))
 
-      const apps = [this.settings.contract_id!, ps.platform.staking_id]
-      const stakingAssets = [this.settings.asset_id!, ps.platform.verse_asset_id]
+      const apps = [this.settings.contractId!, ps.platform.staking_id]
+      const stakingAssets = [this.settings.assetId!, ps.platform.verse_asset_id]
       const stakingArgs = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       let txn = new Transaction(get_app_call_txn(suggested, addr, this.settings.stakingContractId, stakingArgs, apps, stakingAssets, undefined))
@@ -274,17 +274,17 @@ export class DeployedApp {
 
     suggested.flatFee = true
 
-    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initial_token_liq), algosdk.encodeUint64(this.settings.trading_start), algosdk.encodeUint64(this.settings.extra_fee_time), algosdk.encodeUint64(this.settings.presale_settings.presale_start),
-      algosdk.encodeUint64(this.settings.presale_settings?.presale_end), algosdk.encodeUint64(this.settings.presale_settings?.softcap), algosdk.encodeUint64(this.settings.presale_settings?.hardcap),
-      algosdk.encodeUint64(this.settings.presale_settings?.walletcap), algosdk.encodeUint64(this.settings.presale_settings?.to_lp), algosdk.encodeUint64(this.settings.presale_settings?.presale_token_amount)]
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initialTokenLiq), algosdk.encodeUint64(this.settings.tradingStart), algosdk.encodeUint64(this.settings.extraFeeTime), algosdk.encodeUint64(this.settings.presaleSettings.presaleStart),
+      algosdk.encodeUint64(this.settings.presaleSettings?.presaleEnd), algosdk.encodeUint64(this.settings.presaleSettings?.softcap), algosdk.encodeUint64(this.settings.presaleSettings?.hardcap),
+      algosdk.encodeUint64(this.settings.presaleSettings?.walletcap), algosdk.encodeUint64(this.settings.presaleSettings?.toLp), algosdk.encodeUint64(this.settings.presaleSettings?.presaleTokenAmount)]
 
-    let assets = [this.settings.asset_id]
-    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, assets, accounts))
+    let assets = [this.settings.assetId]
+    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
 
     suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, this.settings.initial_algo_liq_with_fee))
+    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, this.settings.initialAlgoLiqWithFee))
 
-    const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.asset_id))
+    const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.assetId))
 
     const grouped = [creatorOptin, pay, setup]
 
@@ -292,8 +292,8 @@ export class DeployedApp {
       suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
       let setupPay = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(this.settings.stakingContractId!), 200000))
 
-      const apps = [this.settings.contract_id!, ps.platform.staking_id]
-      const stakingAssets = [this.settings.asset_id!, ps.platform.verse_asset_id]
+      const apps = [this.settings.contractId!, ps.platform.staking_id]
+      const stakingAssets = [this.settings.assetId!, ps.platform.verse_asset_id]
       const stakingArgs = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       suggested.flatFee = true
@@ -709,7 +709,7 @@ export class DeployedApp {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const optout = new Transaction(get_app_closeout_txn(suggested, addr, this.settings.contract_id))
+    const optout = new Transaction(get_app_closeout_txn(suggested, addr, this.settings.contractId))
     const [signed] = await wallet.signTxn([optout])
     const result = await sendWait([signed])
     // some popup info mmanagaer in sendWait
@@ -741,11 +741,11 @@ export class DeployedApp {
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Buy)), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.verse_app_addr]
-    const assets = [this.settings.asset_id, ps.platform.verse_asset_id]
+    const assets = [this.settings.assetId, ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id]
 
-    const buy = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, apps, assets, accounts))
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, algoAmount))
+    const buy = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, apps, assets, accounts))
+    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, algoAmount))
 
     const grouped = [pay, buy]
 
@@ -765,9 +765,9 @@ export class DeployedApp {
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
     const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
-    const assets = [this.settings.asset_id, ps.platform.verse_asset_id]
+    const assets = [this.settings.assetId, ps.platform.verse_asset_id]
 
-    const sell = new Transaction(get_app_call_txn(suggested, addr, this.settings.contract_id, args, undefined, assets, accounts))
+    const sell = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
     const [signed] = await wallet.signTxn([sell])
     const result = await sendWait([signed])
 
@@ -818,7 +818,7 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Borrow)), algosdk.encodeUint64(tokenAmount)]
-    const assets = [this.settings.asset_id]
+    const assets = [this.settings.assetId]
 
     const borrow = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
     const [signed] = await wallet.signTxn([borrow])
@@ -834,10 +834,10 @@ export class DeployedApp {
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Repay))]
-    const assets = [this.settings.asset_id]
+    const assets = [this.settings.assetId]
 
     const repay = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contract_address, algoAmount))
+    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, algoAmount))
 
     const grouped = [repay, pay]
 

@@ -116,7 +116,7 @@ export class TrackComponent implements OnInit {
           this.removeVerse(res)
           console.log(res);
           res.forEach(async element => {
-              let info: BlockchainTrackInfo = await this.deployedApp.getTrackInfo(wallet!, element.contractId)
+              let info: BlockchainTrackInfo = await this.deployedApp.getTrackInfo(wallet!, element.smartProperties!.contractId)
               if(!element.url){
                 element.url = "-"
               }

@@ -59,7 +59,7 @@ export class TokenDetailComponent implements OnInit {
         if(this.projectData.asset.assetId == ps.platform.verse_asset_id) {
           this.blockchainData = await this.verseApp.getBlockchainInformation();
         } else {
-          this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.contractId);
+          this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.smartProperties!.contractId);
         }
       });
       await this.getSmartToolData();
@@ -80,9 +80,9 @@ export class TokenDetailComponent implements OnInit {
 
   async getSmartToolData() {
     let address = localStorage.getItem("wallet")
-    if(this.projectData.asset.contractId != ps.platform.verse_app_id){
+    if(this.projectData.asset.smartProperties!.contractId != ps.platform.verse_app_id){
       console.log("deployer app")
-      this.smartToolData = await this.deployedApp.getSmartToolData(this.projectData.asset.contractId, address);
+      this.smartToolData = await this.deployedApp.getSmartToolData(this.projectData.asset.smartProperties!.contractId, address);
     } else {
       this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }
