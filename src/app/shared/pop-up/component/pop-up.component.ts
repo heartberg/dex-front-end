@@ -119,6 +119,8 @@ export class PopUpComponent implements OnInit {
   // @Output() indexerOfChosenSection = new EventEmitter<number>();
   // trade new popup flows
 
+  @Input() isPool: boolean = false;
+
   distributionPoolForm = this.fb.group({
     poolReward: [],
     poolStart: [],

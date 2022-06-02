@@ -23,7 +23,8 @@
             !isRestart &&
             !isBorrow &&
             !isBacking &&
-            !isD
+            !isD &&
+            !isPool
           "
         >
           <h3>Enter Presale</h3>
@@ -50,7 +51,8 @@
             !isRestart &&
             !isBacking &&
             !isBorrow &&
-            !isD
+            !isD &&
+            !isPool
           "
         >
           <div class="d-flex align-items-center justify-content-between">
@@ -788,6 +790,47 @@
       </div>
     </ng-container>
   <!--#if is stacking-->
+  <!--pool-->
+    <ng-container *ngIf="isPool">
+      <form formGroupName="stakingGroup" class="pool">
+        <ng-container *ngIf="true">
+          <div class="createoffer">
+            <h4 class="amountheader">Reward Pool</h4>
+            <input type="text" placeholder="40000" class="input-costum"
+                   formControlName="rewardPool"
+            >
+          </div>
+          <div class="createoffer">
+            <h4 class="amountheader">Reward Interval (Days)</h4>
+            <input type="text" placeholder="1" class="input-costum"
+                   formControlName="rewardInterval"
+            >
+          </div>
+          <div class="createoffer">
+            <h4 class="amountheader">Pool Duration (Days)</h4>
+            <input type="number" placeholder="30" class="input-costum"
+                   formControlName="poolDuration"
+            >
+          </div>
+          <div class="createoffer">
+            <h4 class="amountheader">Pool Start</h4>
+            <input type="datetime-local" class="input-costum"
+                   formControlName="poolStart"
+            >
+          </div>
+
+          <div class="info-box">
+            <h6 class="color-violet">Tokens per Interval: </h6>
+            <h6>  Token/Interval</h6>
+          </div>
+          <div class="info-box">
+            <h6 class="color-violet">est. APY: </h6>
+            <h6> {{'20'}}%</h6>
+          </div>
+        </ng-container>
+      </form>
+    </ng-container>
+  <!--pool-->
   <!--deploy-popup-->
     <ng-container *ngIf="isD">
       <div class="blockchain-wrapper">

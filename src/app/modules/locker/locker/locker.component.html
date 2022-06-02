@@ -1,0 +1,179 @@
+<div class="wrapper-border">
+  <div class="main">
+    <div class="header">
+      <h3>Verse Locker</h3>
+    </div>
+    <div class="content">
+      <div class="first">
+        <form action="">
+          <div class="d-flex">
+            <div class="title">
+              <h4>Asset</h4>
+            </div>
+            <div class="field">
+              <app-drop-down-selector  [widthPX]="'400PX'"></app-drop-down-selector>
+            </div>
+          </div>
+          <div class="d-flex">
+            <div class="title">
+              <h4>Amount</h4>
+            </div>
+            <div class="field">
+              <input type="text" class="input-costum">
+            </div>
+          </div>
+          <div class="d-flex">
+            <div class="title">
+              <h4>Lock Time</h4>
+            </div>
+            <div class="field">
+              <input type="text" class="input-costum">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="second">
+        <form action="">
+          <div class="check"  (click)="activatePresaleSection()">
+            <input
+              type="checkbox"
+              name="checkPurpose"
+              id="checkPresale"
+              #Vested
+              formControlName="vestedCheck"
+            />
+            <label
+              for="checkPresale"
+              style="
+                          color: #81007f;
+                          font-weight: 700;
+                          margin-left: 5px;
+                          cursor: pointer;
+                          margin-bottom: 0px;
+                        "
+            >Vested Release</label
+            >
+          </div>
+          <ng-container *ngIf="vestedChecked">
+            <div class="d-flex">
+              <div class="title">
+                <h4>Release Interval</h4>
+              </div>
+              <div class="field">
+                <input type="text" class="input-costum">
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="title">
+                <h4>Last Release</h4>
+              </div>
+              <div class="field">
+                <input type="text" class="input-costum">
+              </div>
+            </div>
+            <div class="d-flex unset">
+              <div class="title">
+                <h4>Token Amount per Interval:</h4>
+              </div>
+              <div class="field" >
+                <span class="color-violet">XYXY Tokens</span>
+              </div>
+            </div>
+          </ng-container>
+          <button class="btn-secondary-costum" style="width: 140px">
+            Lock
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="wrapper-border second" style="margin-top: 20px">
+  <div class="main">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
+            <header>
+              <h3>Lock Info</h3>
+            </header>
+              <div class="d-flex">
+                <div>
+                  <span>ASA ID:</span>
+                </div>
+                <div>
+                  <span class="color-violet">XY</span>
+                </div>
+              </div>
+              <div class="d-flex">
+                <div>
+                  <span>Contract ID:</span>
+                </div>
+                <div>
+                  <span class="color-violet">XY</span>
+                </div>
+              </div>
+          </div>
+          <div class="col-md-6 top">
+            <div class="d-flex">
+              <div>
+                <span>Locked Amount:</span>
+              </div>
+              <div>
+                <span class="color-violet">XY</span>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div>
+                <span>Release Time:</span>
+              </div>
+              <div>
+                <span class="color-violet">XY</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6">
+            <header>
+              <h3>Vesting Schedule</h3>
+            </header>
+            <div class="d-flex">
+              <div>
+                <span>Release Period: </span>
+              </div>
+              <div>
+                <span class="color-violet">XY</span>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div>
+                <span>Tokens Per Period:</span>
+              </div>
+              <div>
+                <span class="color-violet">XY</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 top">
+            <div class="d-flex">
+              <div>
+                <span>Until next Release:</span>
+              </div>
+              <div>
+                <span class="color-violet">XY</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="button">
+        <button class="btn-secondary-costum">
+          Claim
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -822,5 +822,13 @@
     </div>
   </div>
 </div>
-<app-pop-up [isD]="true" (isClosed)="closePopUp($event)" *ngIf="closePopup" [isDeployedSuccess]="finalStepApi" [isDeployedFaied]="isFailed" [isDeployedPending]="isPending"></app-pop-up>
+<app-pop-up [isD]="true"
+            (isClosed)="closePopUp($event)"
+            *ngIf="closePopup"
+            [isDeployedSuccess]="finalStepApi"
+            [isDeployedFaied]="isFailed"
+            [isDeployedPending]="isPending"
+            [isPool]="true">
+
+</app-pop-up>
 

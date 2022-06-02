@@ -1,0 +1,64 @@
+div.header {
+  h3 {
+    text-align: center;
+  }
+  margin-bottom: 20px;
+}
+.content {
+  form {
+    width: 800px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    .d-flex {
+      margin-bottom: 20px;
+      flex-direction: column;
+      align-items: flex-start;
+      h4 {
+        margin-left: 8px;
+        margin-bottom: 3px;
+      }
+    }
+    input {
+      width: 100%;
+    }
+  }
+}
+.check {
+  margin-bottom: 30px;
+  display: flex;
+  white-space: nowrap;
+  width: 144px;
+  align-items: center;
+  margin-top: 10px;
+}
+.unset{
+  flex-direction: unset !important;
+  .field {
+    margin-left: 5px;
+  }
+}
+.second {
+  header {
+    margin-bottom: 20px;
+  }
+}
+.top {
+  margin-top: 44px;
+}
+.second{
+  .d-flex {
+    margin-bottom: 10px;
+  }
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    button {
+      width: 140px;
+    }
+  }
+}

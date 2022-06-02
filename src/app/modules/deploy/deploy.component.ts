@@ -376,6 +376,7 @@ export class DeployComponent implements OnInit, DoCheck {
   activateDistributionPool() {
     if(this.checkDistributionPool.nativeElement.checked) {
       this.isDistributionPool = true;
+      this.closePopup = true;
     } else {
       this.isDistributionPool = false;
     }
@@ -473,6 +474,9 @@ export class DeployComponent implements OnInit, DoCheck {
 
   closePopUp(event: boolean) {
     this.closePopup = event;
+    if (event === false) {
+      this.checkDistributionPool.nativeElement.checked = false;
+    }
   }
 
   smartAsa() {
