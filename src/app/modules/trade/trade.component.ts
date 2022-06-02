@@ -516,7 +516,7 @@ export class TradeComponent implements OnInit {
       name: model.name,
       unit: model.unitName,
       sellBurn: model.smartProperties!.sellBurn,
-      tradingStart: model.tradingStart,
+      tradingStart: model.smartProperties!.tradingStart,
       toBacking: model.smartProperties!.backing,
       toLp: model.smartProperties!.risingPriceFloor,
       transferBurn: model.smartProperties!.sendBurn,

@@ -132,9 +132,7 @@ const ALGO_VIEWMODEL: AssetViewModel = {
     image: "",
     name: "Algo",
     totalSupply: 1_000_000_000_000_000,
-    tradingStart: 0,
     unitName: "Algo",
-    extraFeeTime: 0,
     projectId: ""
 }
 

@@ -51,14 +51,6 @@ export class DeployLb {
     ) {
   }
 
-
-  SetMintVars(data: DeployedAppSettings) {
-    this.mintObj.projectId = this.projectId
-    this.mintObj.contractAddress = data.contractAddress!
-    this.mintObj.contractId = data.contractId!
-    this.mintObj.assetId = data.assetId!
-  }
-
   DeployFinalFunc(isPresaleChecked: boolean, data: any): void {
     // @ts-ignore
     this.blockchainObj = JSON.parse(localStorage.getItem('blockchainObj'));
@@ -85,10 +77,8 @@ export class DeployLb {
         setTimeout(() => {
           if (value) {
             console.log("value of deploy: " + value)
-          this.presaleObj.contractId = this.deployerBC.settings.contractId!
-          this.presaleObj.contractAddress = this.deployerBC.settings.contractAddress!
-          this.presaleObj.asset.contractId = this.deployerBC.settings.contractId!
-          this.presaleObj.asset.contractAddress = this.deployerBC.settings.contractAddress!
+          this.presaleObj.asset.smartProperties.contractId = this.deployerBC.settings.contractId!
+          this.presaleObj.asset.smartProperties.contractAddress = this.deployerBC.settings.contractAddress!
           this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
             async (value: any) => {
               this.projectId = value
@@ -177,8 +167,8 @@ export class DeployLb {
   async GetProjectWithoutPresaleCreate() {
     of(await this.deployerBC.deploy(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
-        this.withoutPresaleObj.asset.contractId = this.deployerBC.settings.contractId!
-        this.withoutPresaleObj.asset.contractAddress = this.deployerBC.settings.contractAddress!
+        this.withoutPresaleObj.asset.smartProperties.contractId = this.deployerBC.settings.contractId!
+        this.withoutPresaleObj.asset.smartProperties.contractAddress = this.deployerBC.settings.contractAddress!
         if (value) {
           setTimeout(() => {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
@@ -639,7 +629,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       buyBurn: projectView.asset.smartProperties!.buyBurn,
       creator: projectView.creatorWallet,
       decimals: projectView.asset.decimals,
-      extraFeeTime: Math.floor(projectView.asset.extraFeeTime),
+      extraFeeTime: Math.floor(projectView.asset.smartProperties!.extraFeeTime),
       initialAlgoLiq: projectView.initialAlgoLiquidity,
       initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
       initialTokenLiq: projectView.initialTokenLiquidity,
@@ -649,7 +639,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       toBacking: projectView.asset.smartProperties!.backing,
       toLp: projectView.asset.smartProperties!.risingPriceFloor,
       totalSupply: projectView.asset.totalSupply,
-      tradingStart: projectView.asset.tradingStart,
+      tradingStart: projectView.asset.smartProperties!.tradingStart,
       transferBurn: projectView.asset.smartProperties!.sendBurn,
       unit: projectView.asset.unitName,
       url: projectView.asset.url || "",
@@ -674,7 +664,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       buyBurn: projectView.asset.smartProperties!.buyBurn,
       creator: projectView.creatorWallet,
       decimals: projectView.asset.decimals,
-      extraFeeTime: Math.floor(projectView.asset.extraFeeTime),
+      extraFeeTime: Math.floor(projectView.asset.smartProperties!.extraFeeTime),
       initialAlgoLiq: projectView.initialAlgoLiquidity,
       initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
       initialTokenLiq: projectView.initialTokenLiquidity,
@@ -684,7 +674,7 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       toBacking: projectView.asset.smartProperties!.backing,
       toLp: projectView.asset.smartProperties!.risingPriceFloor,
       totalSupply: projectView.asset.totalSupply,
-      tradingStart: projectView.asset.tradingStart,
+      tradingStart: projectView.asset.smartProperties!.tradingStart,
       transferBurn: projectView.asset.smartProperties!.sendBurn,
       unit: projectView.asset.unitName,
       url: projectView.asset.url || "",
@@ -727,8 +717,6 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
 
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
-      contractAddress: 'tbd',
-      contractId: 0,
       projectName: form.get('projectName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage').value, // ask
       creatorWallet: wallet!,
@@ -763,26 +751,28 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       asset: {
         assetId: 0,
         projectId: '00000000-0000-0000-0000-000000000000',
-        contractId: 0,
-        contractAddress: 'tbd',
         decimals: +form.get('tokenInfoGroup.decimals')?.value,
         name: form.get('tokenInfoGroup.tokenName')?.value,
         unitName: form.get('tokenInfoGroup.unitName')?.value,
         totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
         url: form.get('tokenInfoGroup.URL')?.value,
-        maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
-        tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
-        risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
-        backing: form.get('feesGroup.backing')?.value * 100,
-        buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
-        sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
-        sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
-        additionalFee: form.get('feesGroup.fee')?.value * 100,
-        additionalFeeWallet: form.get('feesGroup.address')?.value,
-        purpose: form.get('feesGroup.purpose')?.value,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
-        extraFeeTime: form.get('extraFeeTime')?.value
+        smartProperties: {
+          maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
+          tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
+          risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+          backing: form.get('feesGroup.backing')?.value * 100,
+          buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
+          sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
+          sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
+          additionalFee: form.get('feesGroup.fee')?.value * 100,
+          additionalFeeAddress: form.get('feesGroup.address')?.value,
+          additionalFeePurpose: form.get('feesGroup.purpose')?.value,
+          extraFeeTime: form.get('extraFeeTime')?.value,
+          contractId: 0,
+          contractAddress: 'tbd',
+        }
       }
     }
   }
@@ -794,8 +784,6 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
     let wallet = localStorage.getItem('wallet');
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
-      contractAddress: 'tbd',
-      contractId: 0,
       projectName: form.get('projectName')?.value,
       projectImage: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
       creatorWallet: wallet!,
@@ -819,23 +807,25 @@ async deployFromSetupNoPresale(projectModel: ProjectViewModel) {
       asset: {
         assetId: 0,
         projectId: '00000000-0000-0000-0000-000000000000',
-        contractId: 0,
-        contractAddress: 'tbd',
         decimals: +form.get('tokenInfoGroup.decimals')?.value,
         name: form.get('tokenInfoGroup.tokenName')?.value,
         unitName: form.get('tokenInfoGroup.unitName')?.value,
         totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
         url: form.get('tokenInfoGroup.URL')?.value,
-        maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
-        tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
-        risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
-        backing: form.get('feesGroup.backing')?.value * 100,
-        buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
-        sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
-        sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
-        extraFeeTime: +form.get('extraFeeTime')?.value
+        smartProperties: {
+          maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
+          tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
+          risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+          backing: form.get('feesGroup.backing')?.value * 100,
+          buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
+          sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
+          sendBurn: form.get('feesGroup.sendBurn')?.value * 100,
+          extraFeeTime: +form.get('extraFeeTime')?.value,
+          contractId: 0,
+          contractAddress: 'tbd',
+        }
       }
     }
   }

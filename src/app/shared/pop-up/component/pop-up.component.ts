@@ -292,7 +292,7 @@ export class PopUpComponent implements OnInit {
       let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity,
         tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId)
       
-      this.presaleData![1].asset.tradingStart = tradingStart
+      this.presaleData![1].asset.smartProperties!.tradingStart = tradingStart
       
         if(response){
         let projectView: ProjectViewModel = {
@@ -339,7 +339,7 @@ export class PopUpComponent implements OnInit {
       let response = await this.deployedApp.resetupPresaleToFairLaunch(wallet, tradingStart, tokenLiq, algoLiq, this.presaleData![0].contractId, this.presaleData![0].assetId)
       if(response){
         console.group("send to bc")
-        this.presaleData![1].asset.tradingStart = tradingStart
+        this.presaleData![1].asset.smartProperties!.tradingStart = tradingStart
         this.projectService.fairLaunch(this.presaleData![1].asset).subscribe(
           (value: any) => {
             console.log("to fairlaunch on backend")

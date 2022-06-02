@@ -78,7 +78,6 @@ export interface projectMintModel {
   deployerWallet: string;
   decimals: number;
   smartProperties: SmartProperties
-  tradingStart: number
 }
 // project mint
 

@@ -308,10 +308,8 @@ export class VerseApp {
             unitName: "Verse",
             totalSupply: state[verseStateKeys.total_supply_key]['i'],
             decimals: ps.platform.verse_decimals,
-            tradingStart: 0,
             image: "",
             deployerWallet: "",
-            extraFeeTime: 0,
             projectId: "",
             smartProperties: {
                 risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
@@ -322,6 +320,8 @@ export class VerseApp {
                 contractId: ps.platform.verse_app_id,
                 contractAddress: ps.platform.verse_app_addr,
                 maxBuy: state[verseStateKeys.max_buy_key]['i'],
+                tradingStart: state[verseStateKeys.trading_start_key]['i'],
+                extraFeeTime: state[verseStateKeys.extra_fee_time_key]['i']
             }
         }
         return verse

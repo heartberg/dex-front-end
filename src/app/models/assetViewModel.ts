@@ -9,10 +9,11 @@ export interface SmartProperties {
     sellBurn: number
     sendBurn: number
     maxBuy: number
-    startFeeTime: number
-    extraFeeAddress?: string
-    extraFee?: number
-    extraFeePurpose?: string
+    extraFeeTime: number
+    additionalFeeAddress?: string
+    additionalFee?: number
+    additionalFeePurpose?: string
+    tradingStart: number
 }
 
 export interface AssetViewModel {
@@ -22,7 +23,6 @@ export interface AssetViewModel {
     totalSupply: number
     decimals: number
     url?: string
-    tradingStart: number
     image: string
     deployerWallet: string
     projectId: string

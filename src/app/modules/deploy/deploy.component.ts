@@ -1,13 +1,11 @@
 import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 // import {DeployedApp} from "../../blockchain/deployer_application";
 import {WalletsConnectService} from "../../services/wallets-connect.service";
-import { of } from 'rxjs';
 import {DeployedApp} from "../../blockchain/deployer_application";
 import {DeployedAppSettings, StakingSetup} from "../../blockchain/platform-conf";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {environment} from "../../../environments/environment";
 import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
-import { stakingCreateModel } from 'src/app/models/deployModel';
 import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
