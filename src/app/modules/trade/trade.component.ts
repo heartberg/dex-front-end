@@ -182,10 +182,13 @@ export class TradeComponent implements OnInit {
     if (this.enteredValueTop === 'default') {
       // @ts-ignore
       this.enteredValueTop = $event.data;
+      console.log(this.enteredValueTop, 'first entering')
     } else {
       // @ts-ignore
       this.enteredValueTop = JSON.stringify(this.entereenteredValueTopdValue) + JSON.stringify($event.data);
+      console.log(this.enteredValueTop, 'adding to eachother')
       this.enteredValueTop = +this.enteredValueTop;
+      console.log(this.enteredValueTop, 'final result')
     }
 
     if(!this.rotate){
@@ -207,10 +210,13 @@ export class TradeComponent implements OnInit {
     if (this.enteredValue === 'default') {
       // @ts-ignore
       this.enteredValue = $event.data;
+      console.log(this.enteredValue, 'first entering')
     } else {
       // @ts-ignore
       this.enteredValue = JSON.stringify(this.enteredValue) + JSON.stringify($event.data);
+      console.log(this.enteredValue, 'adding to eachother')
       this.enteredValue = +this.enteredValue;
+      console.log(this.enteredValue, 'bottom')
     }
 
     if(!this.rotate){
