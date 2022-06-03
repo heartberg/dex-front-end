@@ -91,6 +91,9 @@ export class TradeComponent implements OnInit {
   // trade popup situations
 
   calcWithFees = false;
+  // @ts-ignore
+  enteredValueTop: number | string = 'default';
+  enteredValue: number | string = 'default';
 
   smartToolData: SmartToolData = {
     assetDecimals: 0,
@@ -174,47 +177,57 @@ export class TradeComponent implements OnInit {
         this.setMinOutput();
       }
     );
-
-    this.topForms.get("topInputValue")!.valueChanges.subscribe(
-      (input: any) => {
-        if(!this.rotate){
-          //console.log("top:" + input);
-          this.topInput = input;
-          let output = this.calcOtherFieldOutput(true);
-          //this.bottomForms.get("bottomInputValue")!.setValue(output);
-        } else {
-          //console.log("bottom input: " + input);
-          this.bottomInput = input;
-          let output = this.calcOtherFieldOutput(false);
-          console.log(output, 'this one')
-          //this.bottomForms.get("bottomInputValue")!.setValue(output)
-        }
-        this.calcPriceImpact()
-        this.setMinOutput()
-      }
-    );
-
-    this.bottomForms.get("bottomInputValue")!.valueChanges.subscribe(
-      (input: any) => {
-        if(!this.rotate){
-          console.log("bottom:" + input)
-          this.bottomInput = input
-          let output = this.calcOtherFieldOutput(false);
-          console.log("bottom output: " + output)
-          //this.topForms.get("topInputValue")!.setValue(output);
-        } else {
-          console.log("top input: " + input)
-          this.topInput = input
-          let output = this.calcOtherFieldOutput(true);
-          console.log("bottom output: " + output)
-          //this.topForms.get("topInputValue")!.setValue(output);
-        }
-        this.calcPriceImpact()
-        this.setMinOutput()
-      }
-    )
-
   }
+
+  catchValueTop($event: Event) {
+    if (this.enteredValueTop === 'default') {
+      // @ts-ignore
+      this.enteredValueTop = $event.data;
+    } else {
+      // @ts-ignore
+      this.enteredValueTop = JSON.stringify(this.entereenteredValueTopdValue) + JSON.stringify($event.data);
+      this.enteredValueTop = +this.enteredValueTop;
+    }
+
+    if(!this.rotate){
+      // @ts-ignore
+      this.topInput = +this.enteredValueTop;
+      let output = this.calcOtherFieldOutput(true);
+      this.bottomForms.get("bottomInputValue")!.setValue(output);
+    } else {
+      // @ts-ignore
+      this.bottomInput = +this.enteredValueTop;
+      let output = this.calcOtherFieldOutput(false);
+      this.bottomForms.get("bottomInputValue")!.setValue(output)
+    }
+    this.calcPriceImpact()
+    this.setMinOutput()
+  }
+
+  catchValueBottom($event: Event) {
+    if (this.enteredValue === 'default') {
+      // @ts-ignore
+      this.enteredValue = $event.data;
+    } else {
+      // @ts-ignore
+      this.enteredValue = JSON.stringify(this.enteredValue) + JSON.stringify($event.data);
+      this.enteredValue = +this.enteredValue;
+    }
+
+    if(!this.rotate){
+      this.bottomInput = +this.enteredValue;
+      let output = this.calcOtherFieldOutput(false);
+      this.topForms.get("topInputValue")!.setValue(output);
+    } else {
+      // @ts-ignore
+      this.topInput = +this.enteredValue;
+      let output = this.calcOtherFieldOutput(true);
+      this.topForms.get("topInputValue")!.setValue(output);
+    }
+    this.calcPriceImpact()
+    this.setMinOutput()
+  }
+
   removeFailedPresales(res: AssetViewModel[]) {
     let output: AssetViewModel[] = []
     res.forEach(async model => {

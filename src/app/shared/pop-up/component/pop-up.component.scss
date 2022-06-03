@@ -248,3 +248,36 @@
 .w {
   width: 60% !important;
 }
+
+
+///
+.pool {
+  div {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    h4 {
+      margin-bottom: 5px;
+      margin-left: 5px;
+    }
+  }
+  .createoffer {
+    margin-bottom: 20px;
+    input {
+      width: 100%;
+    }
+  }
+  .info-box {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 15px;
+    flex-direction: unset;
+    h6 {
+      display: block;
+    }
+    &:last-child {
+      margin: 0px;
+    }
+  }
+}

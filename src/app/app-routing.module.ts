@@ -17,7 +17,8 @@ const routes: Routes = [
   { path: 'trade', loadChildren: () => import('./modules/trade/trade.module').then(m => m.TradeModule) },
   { path: 'my-presale', loadChildren: () => import('./modules/my-presale/my-presale.module').then(m => m.MyPresaleModule) },
   { path: 'tokens', loadChildren: () => import('./modules/tokens/tokens.module').then(m => m.TokensModule) },
-  { path: 'staking', loadChildren: () => import('./modules/staking/staking.module').then(m => m.StakingModule) }
+  { path: 'staking', loadChildren: () => import('./modules/staking/staking.module').then(m => m.StakingModule) },
+  { path: 'locker', loadChildren: () => import('./modules/locker/locker.module').then(m => m.LockerModule) }
 ];
 
 @NgModule({
