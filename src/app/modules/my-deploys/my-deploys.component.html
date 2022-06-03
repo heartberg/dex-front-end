@@ -14,7 +14,7 @@
                 <img style="width: 100%;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png" alt="">
               </div>
             </div> -->
-            <div 
+            <div
               class="left-container"
               >
               <div class="left-texts-container">
@@ -53,7 +53,7 @@
             </div>
             <div class="col-md-10 unset-pd content main-content">
               <div class="row" *ngIf="item[1].removeMaxBuyState">
-                <p               
+                <p
                 style="cursor: pointer"
                 routerLink="../tokens/token-detail/{{item[0].projectId}}">
                   Your Token is now fully tradable on the Verse Pad. You can
@@ -73,7 +73,7 @@
 
               <div class="row" *ngIf="item[1].mintState">
                 <p>
-                  Your contract is deployed. The smart ASA has not been minted yet. 
+                  Your contract is deployed. The smart ASA has not been minted yet.
                   Proceed with the deployment process from the minting with clicking the Mint button.
                 </p>
 
@@ -86,7 +86,7 @@
 
               <div class="row" *ngIf="item[1].optInBurnState">
                 <p>
-                  Your contract is deployed and the smart ASA has been minted. 
+                  Your contract is deployed and the smart ASA has been minted.
                   Proceed the deployment process with opting in the burn contract to your smart ASA by clicking the Opt In button.
                 </p>
 
@@ -112,8 +112,8 @@
 
               <div class="row" *ngIf="item[1].finished" style="cursor: pointer" routerLink="../tokens/token-detail/{{item[0].projectId}}">
                 <p>
-                  The setup and the removal of the max buy are finished. 
-                  Enjoy trading your smart ASA and all it's benefits. 
+                  The setup and the removal of the max buy are finished.
+                  Enjoy trading your smart ASA and all it's benefits.
                   Congratulations to your successful launch!
                 </p>
                 <div class="col-md-4 unset-pd aligner-of-content">
@@ -246,3 +246,4 @@
     <!--    </div>-->
   </div>
 </div>
+<app-pop-up (isClosed)="closePopUp($event)" *ngIf="isPopUpOpen" [isPool]="true"></app-pop-up>
