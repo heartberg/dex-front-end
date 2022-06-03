@@ -67,7 +67,10 @@ button {
     }
   }
 }
-
+.scroller {
+  height: calc(100vh - 267px);
+  overflow-y: scroll;
+}
 @media (max-width: 767px) {
   .claim-button {
     justify-content: center;
