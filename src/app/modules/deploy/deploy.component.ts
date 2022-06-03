@@ -36,6 +36,7 @@ export type AsaSettings = {
   rewardsPerInterval?: number,
   poolDuration?: number,
   stakingContractId?: number,
+  isDistribution: boolean,
   presaleSettings?: AsaPresaleSettings
 }
 
@@ -266,8 +267,7 @@ export class DeployComponent implements OnInit, DoCheck {
       initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000 / (1 - this.fee))
       initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
     }
-    console.log(initial_algo_liq_with_fee)
-    console.log(initial_token_liq)
+
     let tradeStart =  parseInt((new Date(this.deployFormGroup.get('tradingStart')?.value).getTime() / 1000).toFixed(0))
 
     let poolStart = parseInt((new Date(this.deployFormGroup.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
@@ -299,7 +299,7 @@ export class DeployComponent implements OnInit, DoCheck {
       initialAlgoLiqWithFee: initial_algo_liq_with_fee,
       initialAlgoLiq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.fee),
       additionalFee: +this.deployFormGroup.get('feesGroup.fee')?.value * 100,
-      additionalFeeAddress: this.deployFormGroup.get('feesGroup.addrees')?.value,
+      additionalFeeAddress: this.deployFormGroup.get('feesGroup.address')?.value,
       poolStart: poolStart,
       poolInterval: poolInterval,
       poolRewards: poolRewards,
@@ -381,6 +381,7 @@ export class DeployComponent implements OnInit, DoCheck {
     let poolInterval = +this.deployFormGroup.get('stakingGroup.rewardInterval')?.value * 86400
     let poolDuration = +this.deployFormGroup.get('stakingGroup.poolDuration')?.value * 86400
     let rewardsPerInterval = undefined
+    let standardDistribution = false
     if(poolRewards != 0 && poolInterval != 0 && poolDuration != 0) {
       rewardsPerInterval = Math.floor(poolRewards / (poolDuration / poolInterval))
     }
@@ -397,6 +398,7 @@ export class DeployComponent implements OnInit, DoCheck {
       poolRewards: poolRewards,
       rewardsPerInterval: rewardsPerInterval,
       poolDuration: poolDuration,
+      isDistribution: false,
       presaleSettings: {
         contractId: 0,
         presaleTokenAmount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
@@ -413,10 +415,10 @@ export class DeployComponent implements OnInit, DoCheck {
     this.asaObjectInitialize()
     localStorage.setItem('standardBlockchainObj', JSON.stringify(this.standardBlockchainObject)!);
     if(this.presaleIsChecked) {
-      this.deployLib.InitializeStandardApiObjectWithPresale()
+      this.deployLib.initializeApiObjWithPresale(this.deployFormGroup)
       this.deployLib.DeployStandardAssetWithPresale()
     } else {
-      this.deployLib.InitializeStandardApiObjectWithoutPresale()
+      this.deployLib.initializeApiObjWithoutPresale(this.deployFormGroup)
       this.deployLib.DeployStandardAssetWithoutPresale()
     }
 
@@ -440,6 +442,9 @@ export class DeployComponent implements OnInit, DoCheck {
       this.purposeIsChecked = true
     } else  {
       this.purposeIsChecked = false;
+      this.deployFormGroup.get('feesGroup.fee')?.setValue(null)
+      this.deployFormGroup.get('feesGroup.purpose')?.setValue(null)
+      this.deployFormGroup.get('feesGroup.address')?.setValue(null)
     }
   }
 
@@ -448,6 +453,16 @@ export class DeployComponent implements OnInit, DoCheck {
       this.presaleIsChecked = true;
     } else {
       this.presaleIsChecked = false;
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleStart')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleEnd')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('hardCap')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('softCap')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('walletCap')?.setValue(null)
+  
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInPresale')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInLiquidity')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('algoToLiquidity')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('presaleFundsToLiquidity')?.setValue(null)
     }
   }
 
@@ -557,6 +572,7 @@ export class DeployComponent implements OnInit, DoCheck {
     this.isSmartAsaDeploy = true;
     this.isStakingDeploy = false;
     this.isAsaDeploy = false;
+    this.resetFormGroup()
     this.setStakingFields()
   }
 
@@ -564,12 +580,14 @@ export class DeployComponent implements OnInit, DoCheck {
     this.isSmartAsaDeploy = false;
     this.isStakingDeploy = false;
     this.isAsaDeploy = true;
+    this.resetFormGroup()
   }
 
   async staking() {
     this.isSmartAsaDeploy = false;
     this.isStakingDeploy = true;
     this.isAsaDeploy = false;
+    this.resetFormGroup()
     this.stakingSectionSetStakingFields()
     let client: Algodv2 = getAlgodClient()
     let wallet = localStorage.getItem('wallet')
@@ -602,6 +620,39 @@ export class DeployComponent implements OnInit, DoCheck {
     arr.forEach( (item, index) => {
       if(item.assetId === ps.platform.verse_asset_id) arr.splice(index,1);
     });
+  }
+
+  resetFormGroup() {
+    this.purposeIsChecked = false
+    this.deployFormGroup.get('tokenInfoGroup')?.get('maxBuy')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('risingPriceFloor')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('backing')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('buyBurn')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('sellBrun')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('sendBurn')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('purpose')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('purpose')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('address')?.setValue(null)
+    this.deployFormGroup.get('feesGroup')?.get('fee')?.setValue(null)
+    
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleStart')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleEnd')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('hardCap')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('softCap')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('walletCap')?.setValue(null)
+
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInPresale')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInLiquidity')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('algoToLiquidity')?.setValue(null)
+    this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('presaleFundsToLiquidity')?.setValue(null)
+
+    this.deployFormGroup.get('liquidity')?.get('tokensToLiq')?.setValue(null)
+    this.deployFormGroup.get('liquidity')?.get('algoToLiq')?.setValue(null)
+    
+    this.deployFormGroup.get('tradingStart')?.setValue(null)
+    this.deployFormGroup.get('extraFeeTime')?.setValue(null)
+
+
   }
 
 }

@@ -35,8 +35,8 @@ export class StakingComponent implements OnInit {
   sessionWallet: SessionWallet | undefined;
 
   pools: [StakingModel, StakingUserInfo][] = []
-  isDistributionSelected = true
-  isStakingSelected = false
+  isDistributionSelected = false
+  isStakingSelected = true
   isFinishedChecked = false
 
   userInfo: StakingUserInfo = {
@@ -70,7 +70,7 @@ export class StakingComponent implements OnInit {
   async getUserInfo(){
     const wallet = localStorage.getItem("wallet");
     if(wallet){
-      this.userInfo = await this.stakingUtils.getVerseStakingUserInfo(this.sessionWallet!.getDefaultAccount());
+      this.userInfo = await this.stakingUtils.getVerseStakingUserInfo(wallet);
       console.log(this.userInfo)
       console.log(new Date(this.userInfo.nextClaimableDate))
       console.log(new Date())
@@ -97,7 +97,6 @@ export class StakingComponent implements OnInit {
     )
     this.getStakingInfo();
     this.getUserInfo();
-    
   }
 
   async getStakingInfo() {
@@ -156,7 +155,7 @@ export class StakingComponent implements OnInit {
     }
   }
 
-  ShowStaking() {
+  async ShowStaking() {
     this.isStakingSelected = true
     this.isDistributionSelected = false
     let addr = this.sessionWallet?.getDefaultAccount()
@@ -171,13 +170,14 @@ export class StakingComponent implements OnInit {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
             this.pools.push([element, extraStakingInfo])
           }
+          console.log(this.pools)
         });
       }
     )
-    
+    console.log(this.pools)
   }
 
-  ShowDistribution(){
+  async ShowDistribution(){
     this.isStakingSelected = false
     this.isDistributionSelected = true
     let addr = this.sessionWallet?.getDefaultAccount()
@@ -192,9 +192,11 @@ export class StakingComponent implements OnInit {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
             this.pools.push([element, extraStakingInfo])
           }
+          console.log(this.pools)
         });
       }
     )
+    console.log(this.pools)
   }
 
   ShowFinished() {

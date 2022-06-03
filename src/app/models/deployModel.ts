@@ -77,7 +77,7 @@ export interface projectMintModel {
   image: string;
   deployerWallet: string;
   decimals: number;
-  smartProperties: SmartProperties
+  smartProperties?: SmartProperties
 }
 // project mint
 

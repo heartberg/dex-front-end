@@ -28,8 +28,8 @@
         "backing_id": 7594,
         "backing_addr": "RGG5NMQAJ32XKF4XGJIKEZKGMABTUGFYX7EIBEJWER4K6E7LQ76NGM5ATU",
         "backing_per_x_token": 1000000,
-        "locker_id": 1231,
-        "locker_addr": "okok"
+        "locker_id": 8337,
+        "locker_addr": "NPDYMV5SZDEGGDYH3GFPGWLWPUDV5U3F2C4E4TG4AFYIFWER5C6AY2DT4A"
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",

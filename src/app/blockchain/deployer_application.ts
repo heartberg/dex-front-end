@@ -24,6 +24,9 @@ import { max } from "rxjs/operators";
 import { environment } from "src/environments/environment";
 import { TradeRoutingModule } from "../modules/trade/trade-routing.module";
 import { send } from "process";
+import { AsaSettings } from "../modules/deploy/deploy.component";
+import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
+import { url } from "inspector";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -109,11 +112,12 @@ export class DeployedApp {
                   algosdk.encodeUint64(this.settings.transferBurn), algosdk.encodeUint64(this.settings.toLp), algosdk.encodeUint64(this.settings.toBacking),
                   algosdk.encodeUint64(this.settings.maxBuy)]
     if(settings.additionalFee) {
+      console.log(settings.additionalFeeAddress)
       args.push(algosdk.encodeUint64(settings.additionalFee))
       accounts.push(settings.additionalFeeAddress!)
     }
     const assets = [ps.platform.verse_asset_id]
-    const apps = [ps.platform.verse_app_id, ps.platform.backing_id]
+    const apps = [ps.platform.verse_app_id, ps.platform.backing_id, ps.platform.locker_id]
 
     const approval = await (await fetch('../../assets/contracts/deployer_token_approval.teal')).text()
     //// console.log('approval', approval)
@@ -124,7 +128,7 @@ export class DeployedApp {
         from: wallet.getDefaultAccount(),
         approvalProgram: await compileProgram(approval),
         clearProgram: await compileProgram(clear),
-        numGlobalInts: 30,
+        numGlobalInts: 31,
         numGlobalByteSlices: 3,
         numLocalInts: 3,
         numLocalByteSlices: 0,
@@ -134,7 +138,7 @@ export class DeployedApp {
         foreignApps: apps,
         accounts: accounts,
         foreignAssets: assets,
-        extraPages: 1,
+        extraPages: 2,
         suggestedParams: suggested,
     })
 
@@ -232,7 +236,7 @@ export class DeployedApp {
 
     // console.log(this.settings.initial_algo_liq_with_fee)
     suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, this.settings.initialAlgoLiqWithFee))
+    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, algoAmountToSend))
 
     const creatorOptin = new Transaction(get_asa_optin_txn(suggested, addr, this.settings.assetId))
     const grouped = [creatorOptin, pay, setup]
@@ -253,6 +257,9 @@ export class DeployedApp {
     algosdk.assignGroupID(grouped)
 
     const signedGroup = await wallet.signTxn(grouped)
+    signedGroup.forEach(element => {
+      console.log(element.txID)
+    });
 
     const result = await sendWait(signedGroup)
     return result
@@ -309,6 +316,28 @@ export class DeployedApp {
     const result = await sendWait(signedGrouped)
 
     return result
+  }
+
+  async deployStandardAsset(wallet: SessionWallet, settings: AsaSettings): Promise<any> {
+    const addr = wallet.getDefaultAccount()
+    let suggested = await getSuggested(10)
+
+    let createTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+      decimals: settings.decimals,
+      defaultFrozen: false,
+      from: addr,
+      suggestedParams: suggested,
+      total: settings.totalSupply,
+      assetName: settings.name,
+      unitName: settings.unit,
+      assetURL: settings.url,
+    })
+
+    let signed = await wallet.signTxn([createTxn])
+    let response = await sendWait(signed)
+    console.log(response)
+    this.settings.assetId = response['asset-index']
+    return response
   }
 
   // Deploy Staking
@@ -443,6 +472,7 @@ export class DeployedApp {
       })
       let [signed] = await wallet.signTxn([createApp])
       let response = await sendWait([signed])
+      this.settings.stakingContractId = response['application-index']
       return response
     }
   
@@ -494,6 +524,7 @@ export class DeployedApp {
       })
       let [signed] = await wallet.signTxn([createApp])
       let response = await sendWait([signed])
+      this.settings.stakingContractId = response['application-index']
       return response
     }
   

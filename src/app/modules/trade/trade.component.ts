@@ -38,6 +38,8 @@ export class TradeComponent implements OnInit {
   minOutput: number = 0;
   priceImapct: number = 0;
   spotPrice: number = 0;
+  totalBuyingFee: number = 0;
+  totalSellingFee: number = 0;
 
   // my
   assetArr: AssetViewModel[] = [];
@@ -48,6 +50,7 @@ export class TradeComponent implements OnInit {
   isOptedIn: boolean = true;
   isShowAll: boolean = true;
   isPopUpOpen: boolean = false;
+  hasAdditionalFee: boolean = false;
 
   @ViewChild('checkBox', { static: false })
   // @ts-ignore
@@ -327,6 +330,10 @@ export class TradeComponent implements OnInit {
         this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contractId!)
       }
     }
+    if(this.selectedOption?.smartProperties?.additionalFee){
+      this.hasAdditionalFee = true;
+    }
+    this.getTotalFees()
     this.getAllBuysAndSells()
     this.getPrice()
     this.updateHoldingOfSelectedAsset()
@@ -587,6 +594,9 @@ export class TradeComponent implements OnInit {
 
   getAutoSlippage() {
     let accumulatedFees = this.selectedOption!.smartProperties!.backing + +environment.Y_FEE! * 10000
+    if(this.selectedOption!.smartProperties!.additionalFee) {
+      accumulatedFees += this.selectedOption!.smartProperties!.additionalFee
+    }
     //console.log(accumulatedFees)
     if(this.isBuy){
       accumulatedFees += this.selectedOption!.smartProperties!.buyBurn
@@ -908,6 +918,15 @@ export class TradeComponent implements OnInit {
       this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }
     console.log(this.smartToolData)
+  }
+
+  getTotalFees() {
+    this.totalBuyingFee = this.selectedOption!.smartProperties!.buyBurn + this.selectedOption!.smartProperties!.backing
+    this.totalSellingFee = this.selectedOption!.smartProperties!.sellBurn + this.selectedOption!.smartProperties!.backing + this.selectedOption!.smartProperties!.risingPriceFloor
+    if(this.selectedOption!.smartProperties!.additionalFee) {
+      this.totalBuyingFee += this.selectedOption!.smartProperties!.additionalFee
+      this.totalSellingFee += this.selectedOption!.smartProperties!.additionalFee
+    }
   }
 
 }
