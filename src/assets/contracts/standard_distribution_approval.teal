@@ -123,8 +123,13 @@ gtxn 0 Sender
 txn Sender
 ==
 assert
-gtxn 0 Receiver
+gtxn 0 AssetReceiver
 global CurrentApplicationAddress
+==
+assert
+gtxn 0 XferAsset
+byte "TK_ID"
+app_global_get
 ==
 assert
 gtxn 0 AssetAmount

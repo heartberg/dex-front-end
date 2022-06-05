@@ -123,10 +123,19 @@ export class StakingComponent implements OnInit {
     this.getStakingInfo()
   }
 
-  async openPopUp(value: string, userInfo?: StakingUserInfo): Promise<void> {
+  async openPopUp(value: string, pool?: StakingModel): Promise<void> {
     this.sessionWallet = this.walletService.sessionWallet
+    let userInfo: StakingUserInfo | undefined; 
     if(this.sessionWallet){
-      await this.getUserInfo()
+      if(pool) {
+        if(pool.project?.asset.smartProperties){
+          userInfo = await this.stakingUtils.getUserSmartStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, this.sessionWallet.getDefaultAccount())
+        } else {
+          userInfo = await this.stakingUtils.getUserStandardStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, this.sessionWallet.getDefaultAccount())
+        }
+      } else {
+        await this.getUserInfo()
+      }
     }
     this.closePopup = true;
       if (value === 'stake') {

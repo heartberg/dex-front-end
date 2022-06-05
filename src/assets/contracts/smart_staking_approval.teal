@@ -297,6 +297,13 @@ main_l27:
 txn GroupIndex
 int 1
 +
+gtxns ApplicationID
+txna Applications 1
+==
+assert
+txn GroupIndex
+int 1
++
 gtxnsa ApplicationArgs 0
 byte "setup_staking"
 ==
@@ -322,7 +329,7 @@ itxn_field Assets
 byte "TA"
 app_global_get
 itxn_field ApplicationID
-byte "claim_staking"
+byte "claim_external"
 itxn_field ApplicationArgs
 load 9
 itob
