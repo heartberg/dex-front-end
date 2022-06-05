@@ -744,15 +744,15 @@
         <h3 *ngIf="!stackingISStake">Withdraw</h3>
         <div class="pretitle">
           <span class="color-violet" *ngIf="stackingISStake">
-                      Stake Verse Tokens to receive more Verse
+                      Stake {{assetInfo['params']['name']}} Tokens to receive more {{assetInfo['params']['name']}}
           </span>
           <span class="color-violet" *ngIf="!stackingISStake">
-            Withdraw your staked Verse Tokens.
+            Withdraw your staked Tokens.
           </span>
         </div>
         <ng-container *ngIf="stackingISStake">
           <div class="inputs second d-flex align-items-center justify-content-between">
-            <h4>Verse</h4>
+            <h4>{{assetInfo['params']['name']}}</h4>
             <input type="number" [formControl]="stakeVerseControl" class="input-costum">
             <span class="color-violet txt">available: {{stakingInfo?.usersHolding}}</span>
           </div>
@@ -763,7 +763,7 @@
               <input type="text" class="input-costum" readonly [value]="stakingInfo?.usersStake">
             </div>
             <div class="inputs d-flex align-items-center justify-content-between">
-              <h4>Withdraw Verse</h4>
+              <h4>Withdraw {{assetInfo['params']['name']}}</h4>
               <input type="number" [formControl]="withdrawVerseControl" class="input-costum">
             </div>
           </ng-container>

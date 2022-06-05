@@ -69,6 +69,9 @@ export class PopUpComponent implements OnInit {
   @Input() isDeployedFaied: boolean = false;
   @Input() isDeployedPending: boolean = false;
   //deployed logic
+
+  assetInfo: any;
+
   isActiveFirst = true;
   isActiveSecond = false;
 
@@ -227,6 +230,11 @@ export class PopUpComponent implements OnInit {
       console.log("is trade backing")
       await this.checkOptedInBackingContract()
       await this.checkOptInBackingTokens()
+    }
+
+    if(this.stacking) {
+      let client: Algodv2 = getAlgodClient()
+      this.assetInfo = await client.getAssetByID(this.stakingInfo!.assetId).do()
     }
   }
 
@@ -555,10 +563,18 @@ export class PopUpComponent implements OnInit {
     console.log("opt in to stake")
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      let response = await this.stakingUtils.optInVerseStaking(wallet)
-      if(response){
-        this.stakingInfo!.optedIn = true;
+      if(this.stakingInfo!.contractId == ps.platform.staking_id) {
+        let response = await this.stakingUtils.optInVerseStaking(wallet)
+        if(response){
+          this.stakingInfo!.optedIn = true;
+        }
+      } else {
+        let response = await this.deployedApp.optInStakingPool(wallet, this.stakingInfo!.contractId)
+        if(response){
+          this.stakingInfo!.optedIn = true;
+        }
       }
+
     } else {
       console.log("please connect")
     }
@@ -568,16 +584,30 @@ export class PopUpComponent implements OnInit {
     let stakeAmount = +this.stakeVerseControl.value | 0
     let wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      if(stakeAmount > 0) {
-        stakeAmount = stakeAmount * Math.pow(10, ps.platform.verse_decimals)
-        let response = await this.verseApp.stake(wallet, stakeAmount)
-        if(response) {
-          console.log("staked")
-          this.closePopUp(true)
+      if(this.stakingInfo!.contractId == ps.platform.staking_id){
+        if(stakeAmount > 0) {
+          stakeAmount = stakeAmount * Math.pow(10, ps.platform.verse_decimals)
+          let response = await this.verseApp.stake(wallet, stakeAmount)
+          if(response) {
+            console.log("staked")
+            this.closePopUp(true)
+          }
+        } else {
+          console.log("input > 0 please")
         }
       } else {
-        console.log("input > 0 please")
+        if(stakeAmount > 0) {
+          stakeAmount = stakeAmount * Math.pow(10, this.assetInfo['params']['decimals'])
+          let response = await this.deployedApp.stakeDistributionPool(wallet, stakeAmount, this.stakingInfo!.contractId, this.stakingInfo!.isSmartPool)
+          if(response) {
+            console.log("staked")
+            this.closePopUp(true)
+          }
+        } else {
+          console.log("input > 0 please")
+        }
       }
+      
     } else {
       console.log("please connect")
     }
@@ -589,12 +619,22 @@ export class PopUpComponent implements OnInit {
     let wallet = this._walletsConnectService.sessionWallet
     if(wallet){
       if(withdraw > 0) {
-        withdraw = withdraw * Math.pow(10, ps.platform.verse_decimals)
-        let response = await this.verseApp.withdraw(wallet, withdraw)
-        if(response) {
-          console.log("withdrew")
-          this.closePopUp(true)
+        if(this.stakingInfo!.contractId == ps.platform.staking_id) {
+          withdraw = withdraw * Math.pow(10, ps.platform.verse_decimals)
+          let response = await this.verseApp.withdraw(wallet, withdraw)
+          if(response) {
+            console.log("withdrew")
+            this.closePopUp(true)
+          }
+        } else {
+          withdraw = withdraw * Math.pow(10, this.assetInfo['params']['decimals'])
+          let response = await this.deployedApp.withdrawDistributionPool(wallet, this.stakingInfo!.contractId, withdraw, this.stakingInfo!.isSmartPool)
+          if(response) {
+            console.log("withdrew")
+            this.closePopUp(true)
+          }
         }
+        
       } else {
         console.log("input > 0 please")
       }

@@ -5,6 +5,7 @@ import { getAlgodClient, getGlobalState, getSuggested, isOptedIntoApp, sendWait,
 import { get_app_call_txn, get_asa_xfer_txn, get_pay_txn } from "./transactions";
 import { DeployerMethod } from "./deployer_application";
 import { getAppLocalStateByKey } from "../services/utils.algo";
+import { Inject, Injectable } from "@angular/core";
 
 export type LockSettings = {
     assetId: number,
@@ -40,6 +41,11 @@ export enum LockerMethods {
     smart_withdraw = "smart_withdraw"
 }
 
+
+
+@Injectable({
+    providedIn: 'root'
+  })
 export class LockerApp {
     async setupStandardLock(wallet: SessionWallet, settings: LockSettings) {
         let suggested = await getSuggested(10)

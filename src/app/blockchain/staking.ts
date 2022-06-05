@@ -13,6 +13,7 @@ import { Injectable } from "@angular/core";
     providedIn: 'root',
   })
 export class StakingUtils {
+
     async getVerseStakingUserInfo(wallet: string) : Promise<StakingUserInfo>{
         let client: Algodv2 = getAlgodClient()
         let accountInfo: any = await client.accountInformation(wallet).do()
@@ -60,7 +61,10 @@ export class StakingUtils {
                 rewards: claimableAmount,
                 userAddedWeek: usersWeekStake,
                 optedIn: true,
-                totalPoolSize: remainingRewards
+                totalPoolSize: remainingRewards,
+                contractId: ps.platform.staking_id,
+                assetId: ps.platform.verse_asset_id,
+                isSmartPool: true
             }
             return stakingInfo
         } else {
@@ -71,7 +75,10 @@ export class StakingUtils {
                 rewards: 0,
                 userAddedWeek: 0,
                 optedIn: false,
-                totalPoolSize: remainingRewards
+                totalPoolSize: remainingRewards,
+                contractId: ps.platform.staking_id,
+                assetId: ps.platform.verse_asset_id,
+                isSmartPool: true
             }
             return stakingInfo
         }
@@ -254,7 +261,10 @@ export class StakingUtils {
                     rewards: claimableAmount,
                     userAddedWeek: 0,
                     optedIn: true,
-                    totalPoolSize: remainingRewards
+                    totalPoolSize: remainingRewards,
+                    contractId: contractId,
+                    assetId: assetId,
+                    isSmartPool: false
                 }
                 return stakingInfo
             }
@@ -267,7 +277,10 @@ export class StakingUtils {
             rewards: 0,
             userAddedWeek: 0,
             optedIn: false,
-            totalPoolSize: remainingRewards
+            totalPoolSize: remainingRewards,
+            contractId: contractId,
+            assetId: assetId,
+            isSmartPool: false
         }
         return stakingInfo 
     }
@@ -337,7 +350,10 @@ export class StakingUtils {
                     rewards: claimableAmount,
                     userAddedWeek: 0,
                     optedIn: true,
-                    totalPoolSize: remainingRewards
+                    totalPoolSize: remainingRewards,
+                    contractId: contractId,
+                    assetId: assetId,
+                    isSmartPool: true
                 }
                 return stakingInfo
             } 
@@ -349,7 +365,10 @@ export class StakingUtils {
             rewards: 0,
             userAddedWeek: 0,
             optedIn: false,
-            totalPoolSize: remainingRewards
+            totalPoolSize: remainingRewards,
+            contractId: contractId,
+            assetId: assetId,
+            isSmartPool: true
         }
         return stakingInfo 
     }

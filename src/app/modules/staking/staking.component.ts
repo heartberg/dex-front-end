@@ -1,5 +1,9 @@
+import { tokenize } from '@angular/compiler/src/ml_parser/lexer';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
+import { time } from 'console';
+import { getAlgodClient } from 'src/app/blockchain/algorand';
+import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { StakingUtils } from 'src/app/blockchain/staking';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { StakingModel } from 'src/app/models/stakingModel';
@@ -19,7 +23,10 @@ export type StakingUserInfo = {
   rewards: number,
   nextClaimableDate: number,
   optedIn: boolean,
-  totalPoolSize: number
+  totalPoolSize: number,
+  contractId: number,
+  assetId: number,
+  isSmartPool: boolean
 }
 
 
@@ -34,10 +41,12 @@ export class StakingComponent implements OnInit {
   isStake: boolean = true;
   sessionWallet: SessionWallet | undefined;
 
-  pools: [StakingModel, StakingUserInfo][] = []
+  pools: [StakingModel, StakingUserInfo, any][] = []
   isDistributionSelected = false
   isStakingSelected = true
   isFinishedChecked = false
+  stakingInput: StakingUserInfo | undefined
+
 
   userInfo: StakingUserInfo = {
     usersStake: 0,
@@ -46,7 +55,10 @@ export class StakingComponent implements OnInit {
     rewards: 0,
     nextClaimableDate: -1,
     optedIn: false,
-    totalPoolSize: 0
+    totalPoolSize: 0,
+    contractId: 0,
+    assetId: 0,
+    isSmartPool: false
   };
 
   stakingInfo: StakingInfo = {
@@ -64,7 +76,8 @@ export class StakingComponent implements OnInit {
     private verse: VerseApp,
     private walletService: WalletsConnectService,
     private projectReqService: projectReqService,
-    private stakingUtils: StakingUtils
+    private stakingUtils: StakingUtils,
+    private deployerApp: DeployedApp
   ) { }
 
   async getUserInfo(){
@@ -85,12 +98,13 @@ export class StakingComponent implements OnInit {
     this.projectReqService.GetStakingPools(false, false).subscribe(
       (res: any) => {
         res.forEach(async (element: StakingModel) => {
+          let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           }
         });
       }
@@ -109,7 +123,7 @@ export class StakingComponent implements OnInit {
     this.getStakingInfo()
   }
 
-  async openPopUp(value: string): Promise<void> {
+  async openPopUp(value: string, userInfo?: StakingUserInfo): Promise<void> {
     this.sessionWallet = this.walletService.sessionWallet
     if(this.sessionWallet){
       await this.getUserInfo()
@@ -117,8 +131,16 @@ export class StakingComponent implements OnInit {
     this.closePopup = true;
       if (value === 'stake') {
         this.isStake = true;
+        this.stakingInput = this.userInfo
+      } else if (value === 'withdraw'){
+        this.isStake = false;
+        this.stakingInput = this.userInfo
+      } else if(value === 'stake_distribution') {
+        this.isStake = true;
+        this.stakingInput = userInfo
       } else {
         this.isStake = false;
+        this.stakingInput = userInfo
       }
   }
 
@@ -163,12 +185,13 @@ export class StakingComponent implements OnInit {
     this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
       (res: any) => {
         res.forEach(async (element: StakingModel) => {
+          let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           }
           console.log(this.pools)
         });
@@ -185,12 +208,13 @@ export class StakingComponent implements OnInit {
     this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
       (res: any) => {
         res.forEach(async (element: StakingModel) => {
+          let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           }
           console.log(this.pools)
         });
@@ -212,12 +236,13 @@ export class StakingComponent implements OnInit {
     this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
       (res: any) => {
         res.forEach(async (element: StakingModel) => {
+          let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
-            this.pools.push([element, extraStakingInfo])
+            this.pools.push([element, extraStakingInfo, tokenInfo])
           }
         });
       }
@@ -231,7 +256,53 @@ export class StakingComponent implements OnInit {
     let userStakingInfo: StakingUserInfo = await this.stakingUtils.getUserSmartStakingInfo(stakingPool.contractId, stakingPool.assetId, stakingPool.isDistribution, addr)
     console.log(userStakingInfo)
     return userStakingInfo
-    
+  }
+
+  async getTokenInformation(assetId: number) {
+    let client = getAlgodClient()
+    let tokenInfo = await client.getAssetByID(assetId).do()
+    return tokenInfo
+  }
+
+  getDuration(timestamp: number): string {
+    let now = Math.floor(new Date().getTime() / 1000)
+    let duration = timestamp - now
+    let hours = duration / 60 / 60
+    if(hours > 0){
+      if(Math.floor(hours / 24) > 0){
+        let suffix = " day"
+        let days = Math.floor(hours / 24)
+        if(days > 1) suffix += "s"
+        return days + suffix
+      } else {
+        if(hours < 10) {
+          return "0" + hours + " h"
+        } else {
+          return hours + " h"
+        }
+      }
+    }
+    return "ending today"
+  }
+
+  async claimStaking(stakingPool: StakingModel) {
+    let wallet = this.walletService.sessionWallet
+    if(wallet) {
+      let response = await this.deployerApp.claimStaking(wallet, stakingPool.contractId, stakingPool.assetId, stakingPool.project?.asset.smartProperties?.contractId)
+      if(response) {
+        console.log("opted in to staking pool")
+      }
+    }
+  }
+
+  async optInStaking(stakingPool: StakingModel) {
+    let wallet = this.walletService.sessionWallet
+    if(wallet) {
+      let response = await this.deployerApp.optInStakingPool(wallet, stakingPool.contractId)
+      if(response) {
+        console.log("opted in to staking pool")
+      }
+    }
   }
 
 }

@@ -4,87 +4,77 @@
       <h3>Verse Locker</h3>
     </div>
     <div class="content">
-      <div class="first">
-        <form action="">
-          <div class="d-flex">
-            <div class="title">
-              <h4>Asset</h4>
-            </div>
-            <div class="field">
-              <app-drop-down-selector  [widthPX]="'400PX'"></app-drop-down-selector>
-            </div>
-          </div>
-          <div class="d-flex">
-            <div class="title">
-              <h4>Amount</h4>
-            </div>
-            <div class="field">
-              <input type="text" class="input-costum">
-            </div>
-          </div>
-          <div class="d-flex">
-            <div class="title">
-              <h4>Lock Time</h4>
-            </div>
-            <div class="field">
-              <input type="datetime-local" class="input-costum" style="width: 406px;">
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="second">
-        <form action="">
-          <div class="check"  (click)="activatePresaleSection()">
-            <input
-              type="checkbox"
-              name="checkPurpose"
-              id="checkPresale"
-              #Vested
-              formControlName="vestedCheck"
-            />
-            <label
-              for="checkPresale"
-              style="
-                          color: #81007f;
-                          font-weight: 700;
-                          margin-left: 5px;
-                          cursor: pointer;
-                          margin-bottom: 0px;
-                        "
-            >Vested Release</label
-            >
-          </div>
-          <ng-container *ngIf="vestedChecked">
+      <form [formGroup]="lockerFormGroup">
+        <div class="first">
             <div class="d-flex">
               <div class="title">
-                <h4>Release Interval</h4>
+                <h4>Asset</h4>
               </div>
               <div class="field">
-                <input type="text" class="input-costum">
+                <app-drop-down-selector  [widthPX]="'400PX'"></app-drop-down-selector>
               </div>
             </div>
             <div class="d-flex">
               <div class="title">
-                <h4>Last Release</h4>
+                <h4>Amount</h4>
               </div>
               <div class="field">
-                <input type="datetime-local" class="input-costum" style="width: 406px">
+                <input type="number" class="input-costum" formControlName="amount">
               </div>
             </div>
-            <div class="d-flex unset">
+            <div class="d-flex">
               <div class="title">
-                <h4>Token Amount per Interval:</h4>
+                <h4>Lock Time</h4>
               </div>
-              <div class="field" >
-                <span class="color-violet">XYXY Tokens</span>
+              <div class="field">
+                <input type="datetime-local" class="input-costum" style="width: 406px;" formControlName="lockTime">
               </div>
             </div>
-          </ng-container>
-          <button class="btn-secondary-costum" style="width: 140px">
-            Lock
-          </button>
-        </form>
-      </div>
+        </div>
+        <div class="second">
+            <div class="check"  (click)="activateVestedSection()">
+              <input
+                type="checkbox"
+                name="checkPurpose"
+                id="checkPresale"
+                #Vested
+                formControlName="vestedCheck"
+              />
+              <label
+                for="checkPresale"
+                style="
+                            color: #81007f;
+                            font-weight: 700;
+                            margin-left: 5px;
+                            cursor: pointer;
+                            margin-bottom: 0px;
+                          "
+              >Vested Release</label
+              >
+            </div>
+            <ng-container *ngIf="vestedChecked">
+              <div class="d-flex">
+                <div class="title">
+                  <h4>Release Interval (Days)</h4>
+                </div>
+                <div class="field">
+                  <input type="number" class="input-costum" formControlName="releaseInterval">
+                </div>
+              </div>
+              <div class="d-flex">
+                <div class="title">
+                  <h4>Release per Interval</h4>
+                </div>
+                <div class="field">
+                  <input type="number" class="input-costum" style="width: 406px" formControlName="releasePerInterval">
+                </div>
+              </div>
+            </ng-container>
+            <button class="btn-secondary-costum" style="width: 140px" (click)="lockTokens()">
+              Lock
+            </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

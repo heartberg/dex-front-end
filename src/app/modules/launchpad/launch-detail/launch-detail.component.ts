@@ -94,7 +94,7 @@ export class LaunchDetailComponent implements OnInit {
   async checkClaimable() {
     let wallet = localStorage.getItem("wallet")
     if(wallet){
-      let claimState = await this.deployedApp.isClaimable(wallet, this.projectData.asset.smartProperties!.contractId)
+      let claimState = await this.deployedApp.isClaimablePresale(wallet, this.projectData.asset.smartProperties!.contractId)
       this.isClaimable = claimState[0]
       this.alreadyClaimed = claimState[1]
     }

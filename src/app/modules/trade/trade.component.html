@@ -36,7 +36,8 @@
             type="number"
             (click)="onUserInput()"
             class="input-costum"
-            [value]="0"
+            [value]="null"
+            placeholder="0"
             (input)="catchValueTop($event)"
             #inputRef
           />
@@ -143,6 +144,7 @@
             class="input-costum"
             (click)="onUserInput()"
             (input)="catchValueBottom($event)"
+            placeholder="0"
           />
         </form>
     </div>

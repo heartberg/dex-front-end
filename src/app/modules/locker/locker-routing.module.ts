@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {LockerComponent} from "./locker/locker.component";
+import {LockerComponent} from "./locker.component";
 
 const routes: Routes = [
-  { path: '', component: LockerComponent },
+  { path: '', component: LockerComponent }
 ];
 
 @NgModule({

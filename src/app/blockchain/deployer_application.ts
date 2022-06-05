@@ -27,6 +27,8 @@ import { send } from "process";
 import { AsaSettings } from "../modules/deploy/deploy.component";
 import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
 import { url } from "inspector";
+import { StakingModel } from "../models/stakingModel";
+import { Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -556,7 +558,7 @@ export class DeployedApp {
       let addr = wallet.getDefaultAccount()
       let suggested = await getSuggested(10)
 
-      let assets = [assetId]
+      let assets = [assetId, ps.platform.verse_asset_id]
       let args = [new Uint8Array(Buffer.from(DeployerMethod.ClaimStaking))]
 
       if(smartAssetContractId){
@@ -1113,7 +1115,7 @@ export class DeployedApp {
     }
   }
 
-  async isClaimable(addr: string, contractId: number){
+  async isClaimablePresale(addr: string, contractId: number){
     let client: Algodv2 = getAlgodClient()
     let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
 
@@ -1133,4 +1135,118 @@ export class DeployedApp {
       return [false, false]
     }
   }
+
+  async optInStakingPool(wallet: SessionWallet, contractId: number) {
+    let addr = wallet.getDefaultAccount()
+    let suggested = getSuggested(30)
+    let optInTxn = new Transaction(get_app_optin_txn(suggested, addr, contractId))
+    let signed = await wallet.signTxn([optInTxn])
+    let response = sendWait(signed)
+    return response
+  }
+
+  async stakeDistributionPool(wallet: SessionWallet, stakeAmount: number, contractId: number, isSmartPool: boolean) {
+    let addr = wallet.getDefaultAccount()
+    let suggested = await getSuggested(30)
+    if(isSmartPool) {
+      let globalState = StateToObj(await getGlobalState(contractId), smartDistributionStateKeys)
+      let args = [new Uint8Array(Buffer.from(Method.Stake))]
+      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i']]
+      let stakeTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, undefined, undefined))
+
+      suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+      suggested.flatFee = true
+      args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(stakeAmount)]
+      let accounts = [ps.platform.burn_addr, getApplicationAddress(contractId)]
+      let assets = [globalState[smartDistributionStateKeys.token_id_key]['i']]
+      let transferToStakeTxn = new Transaction(get_app_call_txn(suggested, addr, globalState[smartDistributionStateKeys.token_app_id_key]['i'], args, undefined, assets, accounts))
+      
+      let grouped = [transferToStakeTxn, stakeTxn]
+      algosdk.assignGroupID(grouped)
+
+      let signed = await wallet.signTxn(grouped)
+      let response = await sendWait(signed)
+      return response
+      
+    } else {
+      let globalState = StateToObj(await getGlobalState(contractId), standardDistributionKeys)
+      let asaId = globalState[standardStakingKeys.token_id_key]['i']
+      let assetTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), asaId, stakeAmount))
+
+      let args = [new Uint8Array(Buffer.from(Method.Stake))]
+      let stakeTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, undefined, undefined))
+
+      let grouped = [assetTxn, stakeTxn]
+      algosdk.assignGroupID(grouped)
+
+      let signed = await wallet.signTxn(grouped)
+      let response = await sendWait(signed)
+      return response
+    }
+  }
+
+  async claimDistributionPool(wallet: SessionWallet, contractId: number, isSmartPool: boolean) {
+    let addr = wallet.getDefaultAccount()
+    let suggested = await getSuggested(30)
+    if(isSmartPool) {
+      let globalState = StateToObj(await getGlobalState(contractId), smartDistributionStateKeys)
+      let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 3000))
+
+      let args = [new Uint8Array(Buffer.from(Method.Claim))]
+      let accounts = [ps.platform.burn_addr]
+      let assets = [globalState[smartDistributionStateKeys.token_id_key]['i']]
+      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i']]
+      let claimTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
+
+      let grouped = [payTxn, claimTxn]
+      algosdk.assignGroupID(grouped)
+
+      let signed = await wallet.signTxn(grouped)
+      let response = await sendWait(signed)
+      return response
+    } else {
+      let globalState = StateToObj(await getGlobalState(contractId), standardDistributionKeys)
+      let assets = [globalState[standardDistributionKeys.token_id_key]['i']]
+      let args = [new Uint8Array(Buffer.from(Method.Claim))]
+      suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+      suggested.flatFee = true
+      let claimTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, undefined))
+      let signed = await wallet.signTxn([claimTxn])
+      let response = await sendWait(signed)
+      return response
+    }
+  }
+
+  async withdrawDistributionPool(wallet: SessionWallet, contractId: number, withdrawAmount: number, isSmartPool: boolean) {
+    let addr = wallet.getDefaultAccount()
+    let suggested = await getSuggested(30)
+    if(isSmartPool) {
+      let globalState = StateToObj(await getGlobalState(contractId), smartDistributionStateKeys)
+      let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 3000))
+
+      let args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk.encodeUint64(withdrawAmount)]
+      let accounts = [ps.platform.burn_addr]
+      let assets = [globalState[smartDistributionStateKeys.token_id_key]['i']]
+      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i']]
+      let withdrawTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
+
+      let grouped = [payTxn, withdrawTxn]
+      algosdk.assignGroupID(grouped)
+
+      let signed = await wallet.signTxn(grouped)
+      let response = await sendWait(signed)
+      return response
+    } else {
+      let globalState = StateToObj(await getGlobalState(contractId), standardDistributionKeys)
+      let assets = [globalState[standardDistributionKeys.token_id_key]['i']]
+      let args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk.encodeUint64(withdrawAmount)]
+      suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+      suggested.flatFee = true
+      let withdrawTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, undefined))
+      let signed = await wallet.signTxn([withdrawTxn])
+      let response = await sendWait(signed)
+      return response
+    }
+  }
+
 }

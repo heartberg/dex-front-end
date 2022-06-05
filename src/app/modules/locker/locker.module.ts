@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LockerComponent } from './locker/locker.component';
+import { LockerComponent } from './locker.component';
 import {LockerRoutingModule} from "./locker-routing.module";
 import {SharedModule} from "../../shared/shared.module";
-
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -13,7 +13,8 @@ import {SharedModule} from "../../shared/shared.module";
   imports: [
     CommonModule,
     LockerRoutingModule,
-    SharedModule
+    SharedModule,
+    ReactiveFormsModule,
   ]
 })
 export class LockerModule { }
