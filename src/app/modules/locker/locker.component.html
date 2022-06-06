@@ -3,7 +3,7 @@
     <div class="header">
       <h3>Verse Locker</h3>
     </div>
-    <div class="content">
+    <div class="content" *ngIf="!walletLockedAlready">
       <form [formGroup]="lockerFormGroup">
         <div class="first">
             <div class="d-flex">
@@ -81,93 +81,92 @@
       </form>
     </div>
   </div>
-</div>
-<div class="wrapper-border second" style="margin-top: 20px">
-  <div class="main">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="row">
-          <div class="col-md-6">
-            <header>
-              <h3>Lock Info</h3>
-            </header>
-              <div class="d-flex">
-                <div>
-                  <span>ASA ID:</span>
+
+    <div class="main" *ngIf="walletLockedAlready">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <header>
+                <h3>Lock Info</h3>
+              </header>
+                <div class="d-flex">
+                  <div>
+                    <span>ASA ID:</span>
+                  </div>
+                  <div>
+                    <span class="color-violet">{{lockSettings!.assetId}}</span>
+                  </div>
                 </div>
-                <div>
-                  <span class="color-violet">XY</span>
+                <div class="d-flex" *ngIf="lockSettings!.assetContractId">
+                  <div>
+                    <span>Contract ID:</span>
+                  </div>
+                  <div>
+                    <span class="color-violet">{{lockSettings!.assetContractId}}</span>
+                  </div>
                 </div>
-              </div>
-              <div class="d-flex">
-                <div>
-                  <span>Contract ID:</span>
-                </div>
-                <div>
-                  <span class="color-violet">XY</span>
-                </div>
-              </div>
-          </div>
-          <div class="col-md-6 top">
-            <div class="d-flex">
-              <div>
-                <span>Locked Amount:</span>
-              </div>
-              <div>
-                <span class="color-violet">XY</span>
-              </div>
             </div>
-            <div class="d-flex">
-              <div>
-                <span>Release Time:</span>
+            <div class="col-md-6 top">
+              <div class="d-flex">
+                <div>
+                  <span>Locked Amount:</span>
+                </div>
+                <div>
+                  <span class="color-violet">{{lockSettings!.amount}}</span>
+                </div>
               </div>
-              <div>
-                <span class="color-violet">XY</span>
+              <div class="d-flex">
+                <div>
+                  <span>Release Time:</span>
+                </div>
+                <div>
+                  <span class="color-violet">{{formatDate(lockSettings!.lockTime)}}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="row">
-          <div class="col-md-6">
-            <header>
-              <h3>Vesting Schedule</h3>
-            </header>
-            <div class="d-flex">
-              <div>
-                <span>Release Period: </span>
+        <div class="col-md-6" *ngIf="lockSettings!.periodTime">
+          <div class="row">
+            <div class="col-md-6">
+              <header>
+                <h3>Vesting Schedule</h3>
+              </header>
+              <div class="d-flex">
+                <div>
+                  <span>Release Period: </span>
+                </div>
+                <div>
+                  <span class="color-violet">{{formatPeriod(lockSettings!.periodTime!)}}</span>
+                </div>
               </div>
-              <div>
-                <span class="color-violet">XY</span>
+              <div class="d-flex">
+                <div>
+                  <span>Tokens Per Period:</span>
+                </div>
+                <div>
+                  <span class="color-violet">{{lockSettings!.tokensPerPeriod!}}</span>
+                </div>
               </div>
             </div>
-            <div class="d-flex">
-              <div>
-                <span>Tokens Per Period:</span>
-              </div>
-              <div>
-                <span class="color-violet">XY</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 top">
-            <div class="d-flex">
-              <div>
-                <span>Until next Release:</span>
-              </div>
-              <div>
-                <span class="color-violet">XY</span>
+            <div class="col-md-6 top">
+              <div class="d-flex">
+                <div>
+                  <span>Until next Release:</span>
+                </div>
+                <div>
+                  <span class="color-violet">{{formatPeriod(lockSettings!.nextClaimableTime!)}}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="button">
-        <button class="btn-secondary-costum">
-          Claim
-        </button>
+        <div class="button">
+          <button class="btn-secondary-costum">
+            Claim
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 </div>

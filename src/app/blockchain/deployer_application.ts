@@ -1139,9 +1139,10 @@ export class DeployedApp {
   async optInStakingPool(wallet: SessionWallet, contractId: number) {
     let addr = wallet.getDefaultAccount()
     let suggested = await getSuggested(30)
-    let optInTxn = new Transaction(get_app_optin_txn(suggested, addr, contractId))
+    let apps = [ps.platform.staking_id]
+    let optInTxn = new Transaction(get_app_optin_txn(suggested, addr, contractId, apps))
     let signed = await wallet.signTxn([optInTxn])
-    let response = sendWait(signed)
+    let response = await sendWait(signed)
     return response
   }
 

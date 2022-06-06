@@ -31,12 +31,13 @@ export function get_pay_txn(suggestedParams, addr, to, amount) {
 }
 
 // @ts-ignore
-export function get_app_optin_txn(suggestedParams, addr, id) {
+export function get_app_optin_txn(suggestedParams, addr, id, apps?) {
     return {
         from: addr,
         appIndex:id,
         type: 'appl',
         appOnComplete: algosdk.OnApplicationComplete.OptInOC,
+        appForeignApps: apps,
         ...suggestedParams
     }
 }

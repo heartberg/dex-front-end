@@ -2,6 +2,7 @@ import { tokenize } from '@angular/compiler/src/ml_parser/lexer';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
 import { time } from 'console';
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { StakingUtils } from 'src/app/blockchain/staking';
@@ -57,7 +58,7 @@ export class StakingComponent implements OnInit {
     optedIn: false,
     totalPoolSize: 0,
     contractId: 0,
-    assetId: 0,
+    assetId: ps.platform.verse_asset_id,
     isSmartPool: false
   };
 
@@ -105,6 +106,7 @@ export class StakingComponent implements OnInit {
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
             this.pools.push([element, extraStakingInfo, tokenInfo])
+            console.log(this.pools)
           }
         });
       }
@@ -125,32 +127,36 @@ export class StakingComponent implements OnInit {
 
   async openPopUp(value: string, pool?: StakingModel): Promise<void> {
     this.sessionWallet = this.walletService.sessionWallet
-    let userInfo: StakingUserInfo | undefined; 
-    if(this.sessionWallet){
-      if(pool) {
-        if(pool.project?.asset.smartProperties){
-          userInfo = await this.stakingUtils.getUserSmartStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, this.sessionWallet.getDefaultAccount())
-        } else {
-          userInfo = await this.stakingUtils.getUserStandardStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, this.sessionWallet.getDefaultAccount())
-        }
+    let addr: string | undefined
+    if(this.sessionWallet) {
+      addr = this.sessionWallet.getDefaultAccount()
+    }
+    let userInfo: StakingUserInfo | undefined;
+
+    if(pool) {
+      if(pool.project?.asset.smartProperties){
+        userInfo = await this.stakingUtils.getUserSmartStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, addr)
       } else {
-        await this.getUserInfo()
+        userInfo = await this.stakingUtils.getUserStandardStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, addr)
       }
+    } else {
+      await this.getUserInfo()
+    }
+    
+    if (value === 'stake') {
+      this.isStake = true;
+      this.stakingInput = this.userInfo
+    } else if (value === 'withdraw'){
+      this.isStake = false;
+      this.stakingInput = this.userInfo
+    } else if(value === 'stake_distribution') {
+      this.isStake = true;
+      this.stakingInput = userInfo
+    } else {
+      this.isStake = false;
+      this.stakingInput = userInfo
     }
     this.closePopup = true;
-      if (value === 'stake') {
-        this.isStake = true;
-        this.stakingInput = this.userInfo
-      } else if (value === 'withdraw'){
-        this.isStake = false;
-        this.stakingInput = this.userInfo
-      } else if(value === 'stake_distribution') {
-        this.isStake = true;
-        this.stakingInput = userInfo
-      } else {
-        this.isStake = false;
-        this.stakingInput = userInfo
-      }
   }
 
   formatDate(date: number): string {
@@ -276,7 +282,7 @@ export class StakingComponent implements OnInit {
   getDuration(timestamp: number): string {
     let now = Math.floor(new Date().getTime() / 1000)
     let duration = timestamp - now
-    let hours = duration / 60 / 60
+    let hours = Math.floor(duration / 60 / 60)
     if(hours > 0){
       if(Math.floor(hours / 24) > 0){
         let suffix = " day"
@@ -310,6 +316,10 @@ export class StakingComponent implements OnInit {
       let response = await this.deployerApp.optInStakingPool(wallet, stakingPool.contractId)
       if(response) {
         console.log("opted in to staking pool")
+        let pool = this.pools.find(p => {
+          return p[0].contractId == stakingPool.contractId
+        })
+        pool![1].optedIn = true;
       }
     }
   }

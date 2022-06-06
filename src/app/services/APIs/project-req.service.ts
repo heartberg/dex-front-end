@@ -63,13 +63,14 @@ export class projectReqService {
     });
   }
 
-  getAllProjects(ordering: string | null = null, page: number = 1, search: string | null = null) {
+  getAllProjects(ordering: string | null = null, page: number = 1, search: string = '') {
     const url = `${this.baseUrl}/project/get/all`;
 
     return this._http.get<ProjectPreviewModel[]>(url, {
       params: {
         ordering: ordering!,
         page: page,
+        search: search
       },
     });
   }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Algodv2 } from 'algosdk';
 import AccountInformation from 'algosdk/dist/types/src/client/v2/algod/accountInformation';
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
-import { reduce } from 'rxjs/operators';
+import { reduce, skip } from 'rxjs/operators';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation, platform_settings as ps} from 'src/app/blockchain/platform-conf';
@@ -117,6 +117,9 @@ export class TrackComponent implements OnInit {
           console.log(res);
           res.forEach(async element => {
               let info: BlockchainTrackInfo = await this.deployedApp.getTrackInfo(wallet!, element.smartProperties!.contractId)
+              if(info.holding == 0) {
+                return
+              }
               if(!element.url){
                 element.url = "-"
               }
