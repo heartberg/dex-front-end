@@ -908,4 +908,21 @@ export class TradeComponent implements OnInit {
     console.log(this.smartToolData)
   }
 
+  searchTop(event: any) {
+    let wallet = localStorage.getItem('wallet');
+    this.assetReqService.getAssetPairs(true, event, wallet!).subscribe((res) => {
+      this.removeVerse(res); // ask
+      res = this.removeFailedPresales(res); // ask
+      this.assetArr.push(...res);
+    });
+  }
+
+  searchBottom(event: any) {
+    let wallet = localStorage.getItem('wallet');
+    this.assetReqService.getAssetPairs(true, event, wallet!).subscribe((res) => {
+      this.removeVerse(res); // ask
+      res = this.removeFailedPresales(res); // ask
+      this.assetArrSecond.push(...res);
+    });
+  }
 }

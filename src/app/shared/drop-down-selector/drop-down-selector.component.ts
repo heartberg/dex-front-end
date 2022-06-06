@@ -59,6 +59,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() buttonTradeChangedValue: string = 'Algo';
   @Input() buttonTradeChangedTopValue: string = 'Algo';
   //trade
+  @Output() searchedData: EventEmitter<any> = new EventEmitter();
+
   public favAssetsArr: AssetViewModel[] = [];
   public allAssetsArr: AssetViewModel[] = [];
   isPlus: boolean = false;
@@ -76,6 +78,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   saveStore: string = '';
   // isMinus: boolean = true;
   // isPlus: boolean = false;
+  isTrade: boolean = false;
 
   // FORM
   dropDownForm = this.fb.group({
@@ -106,6 +109,12 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
      console.log(this.tradeSelectedBottom);
    }, 500)
 
+    // @ts-ignore
+    if (this.route.snapshot._routerState.url === '/trade') {
+      this.isTrade = true;
+    } else {
+      this.isTrade = false;
+    }
   }
 
   ngDoCheck() {
@@ -219,5 +228,10 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   getMinusOrPlusLogic(button: any, index: number) {
     // console.log(button, index);
+  }
+
+  getSearchValue($event: Event) {
+    // @ts-ignore
+    this.searchedData.emit($event.data)
   }
 }

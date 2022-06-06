@@ -17,6 +17,7 @@
             [checkBoxCheckTrade]="checked"
             [incomeData]="assetArr"
             [buttonTradeChangedTop]="changeTop"
+            (searchedData)="searchTop($event)"
           ></app-drop-down-selector>
         </div>
         <div class="col-md-7 second-col-7">
@@ -122,6 +123,7 @@
           [incomeData]="assetArrSecond"
           [secondOnTrade]="true"
           [buttonTradeChanged]="changeBottom"
+          (searchedData)="searchBottom($event)"
           #componentRefB
         >
       </app-drop-down-selector>

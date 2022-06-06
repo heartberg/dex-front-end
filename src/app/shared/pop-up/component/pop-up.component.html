@@ -792,7 +792,7 @@
   <!--#if is stacking-->
   <!--pool-->
     <ng-container *ngIf="isPool">
-      <form formGroupName="stakingGroup" class="pool">
+      <form [formGroup]="stakingGroup" class="pool">
         <ng-container *ngIf="true">
           <div class="createoffer">
             <h4 class="amountheader">Reward Pool</h4>
