@@ -34,12 +34,13 @@
           <form action="" [formGroup]="topForms">
             <input
             formControlName="topInputValue"
-            type="number"
+            type="text"
             (click)="onUserInput()"
             class="input-costum"
             [value]="0"
             (input)="catchValueTop($event)"
             #inputRef
+            [class.input-invalid]="topForms.invalid"
           />
           </form>
         <div class="centered-buttons">
@@ -141,10 +142,11 @@
         <form action="" [formGroup]="bottomForms">
           <input
             formControlName="bottomInputValue"
-            type="number"
+            type="text"
             class="input-costum"
             (click)="onUserInput()"
             (input)="catchValueBottom($event)"
+            [class.input-invalid]="bottomForms.invalid"
           />
         </form>
     </div>

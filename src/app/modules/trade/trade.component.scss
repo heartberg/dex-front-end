@@ -1,7 +1,7 @@
 .main {
   display: flex;
   justify-content: center;
- 
+
   .exchanger {
     display: flex;
     flex-direction: column;
@@ -28,7 +28,7 @@
   margin-bottom: 20px;
 }
 .wrapper-for-btns {
-  
+
   margin-top: 10px;
   justify-content: center;
 }
@@ -155,8 +155,8 @@ app-drop-down-selector {
 }
 
 .top-text {
-  
-  
+
+
 }
 .table {
   margin-top: 50px;
@@ -212,7 +212,7 @@ app-drop-down-selector {
 
 
 .centered-items {
-  
+
 }
 
 .first-col-5 {
@@ -231,16 +231,11 @@ app-drop-down-selector {
   display: grid;
 }
 
-
-
-
-
-
 @media screen and (max-width: 460px) {
   .input-costum{
     width: 100%;
   }
-  
+
 }
 
 @media  (max-width: 767px) {

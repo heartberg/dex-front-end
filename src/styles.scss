@@ -501,6 +501,9 @@ textarea {
   border: rgba(255, 0, 0, 0.5) 2px solid;
   box-shadow: rgba(255, 0, 0, 0.2) 0px 0px 0px 2px;
   background-color: rgba(255, 0, 0, 0.02);
+  &:focus {
+    box-shadow: rgb(255 0 0 / 20%) 0px 0px 0px 2px;
+  }
 }
 
 .error-msg {

@@ -130,11 +130,11 @@ export class TradeComponent implements OnInit {
   });
 
   topForms = this.fb.group({
-    topInputValue: [0],
+    topInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
   });
 
   bottomForms = this.fb.group({
-    bottomInputValue: [0],
+    bottomInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
   });
 
   // FORMS
@@ -178,7 +178,9 @@ export class TradeComponent implements OnInit {
     );
   }
 
-  catchValueTop($event: Event) {
+  catchValueTop($event: any) {
+    let input = this.topForms.value.topInputValue;
+    console.log(input);
     if(!this.rotate){
       // @ts-ignore
       this.topInput = +this.topForms.value.topInputValue;
