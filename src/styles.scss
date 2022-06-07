@@ -575,3 +575,7 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 // slider toggle
+.disable-btn {
+  pointer-events: none !important;
+  background: rgb(129,0,127,0.6) !important;
+}
