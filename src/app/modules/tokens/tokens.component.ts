@@ -85,7 +85,7 @@ export class TokensComponent implements OnInit {
   }
 
   search($event: Event) {
-    let wallet = localStorage.getItem('walllet');
+    let wallet = localStorage.getItem('wallet');
     this.assetReqService.getAssetPairs(true, this.searchInput.value, wallet!).subscribe((item: AssetViewModel[]) => {
       return item;
     })
