@@ -147,6 +147,10 @@ export class LockerComponent implements OnInit {
     }
   }
 
+  getSelectedAsset(event: string) {
+    console.log(event)
+  }
+
 }
 
 

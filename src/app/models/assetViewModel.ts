@@ -26,5 +26,6 @@ export interface AssetViewModel {
     image: string
     deployerWallet: string
     projectId: string
-    smartProperties?: SmartProperties
+    smartProperties?: SmartProperties,
+    isFavorite: boolean
 }

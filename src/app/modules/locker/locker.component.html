@@ -10,13 +10,17 @@
               <div class="title">
                 <h4>Asset</h4>
               </div>
-              <div class="field">
-                <app-drop-down-selector 
-                [dropDownValues]="dropDownValues" 
-                [widthPX]="'400PX'"
-                >
+
+              <div class="createoffer" style="margin-left: 21px">
+                <app-drop-down-selector
+              [isNotAccordion]="false"
+              [dropDownValues]="dropDownValues"
+              (dropDownValue)="getSelectedAsset($event)"
+              [widthPX]="'760px'"
+              >
               </app-drop-down-selector>
               </div>
+
             </div>
             <div class="d-flex">
               <div class="title">

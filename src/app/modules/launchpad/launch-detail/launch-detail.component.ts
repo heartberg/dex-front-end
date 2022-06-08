@@ -67,6 +67,7 @@ export class LaunchDetailComponent implements OnInit {
   minLaunchPrice: number = 0;
   maxLaunchPrice: number = 0;
   
+  finished: boolean = false;
   isClaimable: boolean = false;
   alreadyClaimed: boolean = false;
 
@@ -85,6 +86,11 @@ export class LaunchDetailComponent implements OnInit {
         this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.smartProperties!.contractId)
         this.calcLaunchPrices()
         this.checkClaimable()
+        if(this.presaleData.saleEnd < new Date()){
+          this.finished = true;
+        } else {
+          this.finished = false;
+        }
         console.log(this.projectData)
         console.log(this.presaleData)
       }

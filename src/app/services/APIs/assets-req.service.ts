@@ -103,9 +103,14 @@ export class AssetReqService {
 
   removeFavoriteAsset(assetId: number, wallet: string) {
     const url = `${this.baseUrl}/asset/favorites/remove`;
-    return this._http.get(url, {
+    return this._http.post(url, {
       params: {
         assetId: assetId,
+        wallet: wallet,
+      },
+    }, {
+      params: {
+        assetId: +assetId,
         wallet: wallet,
       },
     });

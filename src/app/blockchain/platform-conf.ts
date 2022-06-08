@@ -133,7 +133,8 @@ const ALGO_VIEWMODEL: AssetViewModel = {
     name: "Algo",
     totalSupply: 1_000_000_000_000_000,
     unitName: "Algo",
-    projectId: ""
+    projectId: "",
+    isFavorite: true
 }
 
 const platform_settings = require("../../environments/config.json") as PlatformConf;

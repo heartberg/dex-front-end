@@ -198,16 +198,25 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     this.showAll.emit(this.dropDownForm.get('showAll')?.value);
   }
 
-  addToFavourites(button: AssetViewModel, i: number) {
+  addToFavourites(button: AssetViewModel) {
     let wallet = localStorage.getItem('wallet')
     console.log(button.assetId);
-    this.req.addFavoriteAsset(button.assetId, wallet!).subscribe((item) => console.log(item) )
+    console.log("ADD FAV")
+    this.req.addFavoriteAsset(button.assetId, wallet!).subscribe((item) => {
+      button.isFavorite = true
+      console.log(item)
+    } )
   }
 
   removeFromFavourites(button: AssetViewModel) {
     let wallet = localStorage.getItem('wallet')
     console.log(button.assetId);
-    this.req.removeFavoriteAsset(button.assetId, wallet!).subscribe((item) => console.log(item) )
+    console.log(wallet)
+    console.log("REMOVE FAV")
+    this.req.removeFavoriteAsset(button.assetId, wallet!).subscribe((item) => {
+      button.isFavorite = false
+      console.log(item)
+    } )
   }
 
   emitCollectionIdAndWallet(

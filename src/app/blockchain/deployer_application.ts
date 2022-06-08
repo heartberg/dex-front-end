@@ -1108,6 +1108,9 @@ export class DeployedApp {
     let raised = globalState[StateKeys.presale_total_raised]['i']
     let presaleEnd = globalState[StateKeys.presale_end_key]['i']
 
+    if(presaleEnd == 0) {
+      return false
+    } 
     if(latestTimestemp > presaleEnd && softCap > raised) {
       return true
     } else {

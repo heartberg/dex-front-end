@@ -147,22 +147,7 @@ export class TradeComponent implements OnInit {
       this.slippageForm.get('slippageInput')?.disable();
     }
 
-    this.assetArr.push(await this.verseApp.getViewModel())
-    this.assetArr.push(ALGO_VIEWMODEL)
-    this.assetArrSecond.push(await this.verseApp.getViewModel())
-    this.assetArrSecond.push(ALGO_VIEWMODEL)
-    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-
-    let wallet = localStorage.getItem('wallet')!;
-    if(!wallet){
-      wallet = "default"
-    }
-    this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-      this.removeVerse(res);
-      res = this.removeFailedPresales(res);
-      this.assetArr.push(...res);
-      this.assetArrSecond.push(...res);
-    });
+    await this.getDefaultPairs()
 
     this.selectedOption = this.assetArr[0]
     await this.selectAsset(this.assetArr[1].assetId);
@@ -187,11 +172,13 @@ export class TradeComponent implements OnInit {
       this.topInput = +this.topForms.value.topInputValue;
       let output = this.calcOtherFieldOutput(true);
       this.bottomForms.get("bottomInputValue")!.setValue(output);
+      this.bottomInput = output
     } else {
       // @ts-ignore
       this.bottomInput = +this.topForms.value.topInputValue;
       let output = this.calcOtherFieldOutput(false);
       this.bottomForms.get("bottomInputValue")!.setValue(output)
+      this.topInput = output
     }
     this.calcPriceImpact()
     this.setMinOutput()
@@ -203,24 +190,16 @@ export class TradeComponent implements OnInit {
       this.bottomInput = +this.bottomForms.value.bottomInputValue;
       let output = this.calcOtherFieldOutput(false);
       this.topForms.get("topInputValue")!.setValue(output);
+      this.topInput = output
     } else {
       // @ts-ignore
       this.topInput = +this.bottomForms.value.bottomInputValue;
       let output = this.calcOtherFieldOutput(true);
       this.topForms.get("topInputValue")!.setValue(output);
+      this.bottomInput = output
     }
     this.calcPriceImpact()
     this.setMinOutput()
-  }
-
-  removeFailedPresales(res: AssetViewModel[]) {
-    let output: AssetViewModel[] = []
-    res.forEach(async model => {
-      if(!await this.deployedApp.isFailedPresale(model.smartProperties!.contractId)){
-        output.push(model)
-      }
-    });
-    return output
   }
 
   makeReverse() {
@@ -245,61 +224,31 @@ export class TradeComponent implements OnInit {
 
   async handleCheckboxUpdate(event: any) {
     this.checked = event;
+    console.log(this.checked)
     const wallet = localStorage.getItem('wallet')!;
-    if (event === true) {
-      this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
-        this.assetArr = []
-        this.removeVerse(res);
-        res = this.removeFailedPresales(res);
-        this.assetArr.push(await this.verseApp.getViewModel())
-        this.assetArr.push(ALGO_VIEWMODEL)
-        this.assetArr.push(...res);
-      });
-    } else if (event === false) {
+    this.assetReqService.getAssetPairs(this.checked, '', wallet).subscribe(async (res) => {
       this.assetArr = []
+      this.removeVerse(res);
       this.assetArr.push(await this.verseApp.getViewModel())
       this.assetArr.push(ALGO_VIEWMODEL)
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-      const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-        this.removeVerse(res)
-        res = this.removeFailedPresales(res);
-        this.assetArr.push(...res);
-      });
-    }
+      this.assetArr.push(...res);
+    });
   }
 
   async handleCheckboxUpdateSecond(event: boolean) {
     this.checkedSecond = event;
+    console.log(this.checkedSecond)
     const wallet = localStorage.getItem('wallet')!;
-    if (event === true) {
-      this.assetReqService.getAssetPairs(true, '', wallet).subscribe(async (res) => {
-        this.assetArrSecond = [];
-        this.removeVerse(res);
-        res = this.removeFailedPresales(res);
-        this.assetArrSecond.push(await this.verseApp.getViewModel())
-        this.assetArrSecond.push(ALGO_VIEWMODEL)
-        this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-        this.assetArrSecond.push(...res);
-        // TODO uncomment for prod
-        console.log(res, 'data');
-        // this.assetArrSecond.push(this.dummyAlgo);
-        // this.removeVerse(res);
-      });
-    } else if (event === false) {
+    this.assetReqService.getAssetPairs(this.checkedSecond, '', wallet).subscribe(async (res) => {
       this.assetArrSecond = [];
+      this.removeVerse(res);
+      console.log("second dropdown: ")
+      console.log(res)
       this.assetArrSecond.push(await this.verseApp.getViewModel())
       this.assetArrSecond.push(ALGO_VIEWMODEL)
-      this.blockchainInfo = await this.verseApp.getBlockchainInformation()
-      const wallet = localStorage.getItem('wallet')!;
-      this.assetReqService.getAssetPairs(false, '', wallet).subscribe((res) => {
-        this.removeVerse(res)
-        res = this.removeFailedPresales(res);
-        this.assetArrSecond.push(...res);
-        // this.assetArrSecond.push(this.dummyAlgo);
-        this.selectAsset(this.assetArr[0].assetId)
-      });
-    }
+      //this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+      this.assetArrSecond.push(...res);
+    });
   }
 
   async selectAsset(assetId: number) {
@@ -344,34 +293,6 @@ export class TradeComponent implements OnInit {
     console.log("spotprice: " + this.spotPrice)
     console.log(this.selectedOption)
     console.log(this.blockchainInfo)
-  }
-
-  addFavorite(assetName: string){
-    let asset = this.assetArr.find((el) => {
-      return el.name === assetName;
-    });
-    if (asset) {
-      this.assetReqService.addFavoriteAsset(asset.assetId, localStorage.getItem('wallet')!)
-        .subscribe(
-        (response: any) => {
-          console.log(response, 'response on add in favorites')
-        }
-      )
-    }
-  }
-
-  removeFavorite(assetName: string){
-    let asset = this.assetArr.find((el) => {
-      return el.name === assetName;
-    });
-    if (asset) {
-      this.assetReqService.removeFavoriteAsset(asset.assetId, localStorage.getItem('wallet')!)
-        .subscribe(
-        (response: any) => {
-          console.log(response, 'response on add in favorites')
-        }
-      )
-    }
   }
 
   checkBoxClicked() {
@@ -771,6 +692,7 @@ export class TradeComponent implements OnInit {
         let response = await this.buy(wallet, this.topInput)
         if(response){
           //if(response['confirmed' ??? ]){}
+          console.log(this.bottomInput)
           let tokenEntryViewModel: TokenEntryViewModel = {
             tokenAmount: this.bottomInput * Math.pow(10, this.selectedOption!.decimals),
             algoAmount: this.topInput * Math.pow(10, 6),
@@ -780,6 +702,7 @@ export class TradeComponent implements OnInit {
             userWallet: wallet.getDefaultAccount(),
             date: 0
           }
+          console.log(tokenEntryViewModel)
           this.assetReqService.postBuy(tokenEntryViewModel).subscribe(
             (value: any) => {
               this.getAllBuysAndSells()
@@ -927,21 +850,59 @@ export class TradeComponent implements OnInit {
     }
   }
 
-  searchTop(event: any) {
+  async searchTop(event: any) {
     let wallet = localStorage.getItem('wallet');
-    this.assetReqService.getAssetPairs(true, event, wallet!).subscribe((res) => {
-      this.removeVerse(res); // ask
-      res = this.removeFailedPresales(res); // ask
+    if(!event){
+      await this.getDefaultPairs()
+      return
+    }
+    this.assetReqService.getAssetPairs(this.checked, event, wallet!).subscribe( (res) => {
+      this.assetArr = []
+      console.log(res)
+      //this.removeVerse(res); // ask
       this.assetArr.push(...res);
     });
   }
 
-  searchBottom(event: any) {
+  async searchBottom(event: any) {
     let wallet = localStorage.getItem('wallet');
-    this.assetReqService.getAssetPairs(true, event, wallet!).subscribe((res) => {
-      this.removeVerse(res); // ask
-      res = this.removeFailedPresales(res); // ask
+    console.log(event)
+    if(!event){
+      await this.getDefaultPairs()
+      return
+    }
+    this.assetReqService.getAssetPairs(this.checkedSecond, event, wallet!).subscribe(async (res) => {
+      //this.removeVerse(res); // ask
+      this.assetArrSecond = []
       this.assetArrSecond.push(...res);
     });
   }
+
+  async getDefaultPairs(){
+    this.assetArr = []
+    this.assetArrSecond = []
+    this.assetArr.push(await this.verseApp.getViewModel())
+    this.assetArr.push(ALGO_VIEWMODEL)
+    this.assetArrSecond.push(await this.verseApp.getViewModel())
+    this.assetArrSecond.push(ALGO_VIEWMODEL)
+    this.blockchainInfo = await this.verseApp.getBlockchainInformation()
+
+    let wallet = localStorage.getItem('wallet')!;
+    if(!wallet){
+      wallet = "default"
+    }
+    this.assetReqService.getAssetPairs(this.checked, '', wallet).subscribe(async (res) => {
+      console.log(res)
+      this.removeVerse(res);
+      console.log(res)
+      this.assetArr.push(...res);
+    });
+    this.assetReqService.getAssetPairs(this.checkedSecond, '', wallet).subscribe(async (res) => {
+      console.log(res)
+      this.removeVerse(res);
+      console.log(res)
+      this.assetArrSecond.push(...res);
+    });
+  }
+
 }

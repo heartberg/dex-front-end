@@ -311,6 +311,7 @@ export class VerseApp {
             image: "",
             deployerWallet: "",
             projectId: "",
+            isFavorite: true,
             smartProperties: {
                 risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
                 backing: state[verseStateKeys.to_backing_key]['i'],
