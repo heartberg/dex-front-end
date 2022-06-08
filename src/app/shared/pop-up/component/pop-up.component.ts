@@ -171,6 +171,7 @@ export class PopUpComponent implements OnInit {
     algoLiq: [],
   });
 
+  stakingGroup = this.fb.group({});
   // FORMS
   constructor(
     private _walletsConnectService: WalletsConnectService,

@@ -666,34 +666,38 @@
                               <div class="col-md-6 desc-middle">
                                 <div class="d-flex flex-column">
                                   <div class="d-flex align-items-center">
-                                    <span>Name</span>
+                                    <span>{{'Name'}}</span>
                                     <input
                                       type="text"
                                       class="input-costum"
                                       formControlName="name"
+                                      [(ngModel)]="name"
                                     />
                                   </div>
                                   <div class="d-flex align-items-center">
-                                    <span>Position</span>
+                                    <span>{{'Position'}}</span>
                                     <input
                                       type="text"
                                       class="input-costum"
                                       formControlName="position"
+                                      [(ngModel)]="position"
                                     />
                                   </div>
                                   <div class="d-flex align-items-center">
-                                    <span>Social</span>
+                                    <span>{{'Social'}}</span>
                                     <input
                                       type="text"
                                       class="input-costum"
                                       formControlName="social"
+                                      [(ngModel)]="social"
+                                      (input)="triggerForm($event, item, i, name, position, social)"
                                     />
                                   </div>
                                 </div>
                               </div>
                               <div
                                 class="col-md-2 plus_icon"
-                                (click)="addExtraFields(i)"
+                                (click)="addExtraFields(item, i)"
                                 style="
                                 left: 0px;
                                 right: 0px;

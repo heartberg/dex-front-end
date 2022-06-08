@@ -7,6 +7,7 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
+import {AssetReqService} from "../../services/APIs/assets-req.service";
 
 @Component({
   selector: 'app-tokens',
@@ -15,7 +16,7 @@ import { AssetViewModel } from 'src/app/models/assetViewModel';
 })
 export class TokensComponent implements OnInit {
 
-  
+
 
   arr: [ProjectPreviewModel, BlockchainInformation][] = [];
 
@@ -28,7 +29,8 @@ export class TokensComponent implements OnInit {
     private projectsReqService: projectReqService,
     private fb: FormBuilder,
     private deployedApp: DeployedApp,
-    private verseApp: VerseApp
+    private verseApp: VerseApp,
+    private assetReqService: AssetReqService
   ) { }
 
   ngOnInit(): void {
@@ -82,4 +84,10 @@ export class TokensComponent implements OnInit {
     return price
   }
 
+  search($event: Event) {
+    let wallet = localStorage.getItem('wallet');
+    this.assetReqService.getAssetPairs(true, this.searchInput.value, wallet!).subscribe((item: AssetViewModel[]) => {
+      return item;
+    })
+  }
 }

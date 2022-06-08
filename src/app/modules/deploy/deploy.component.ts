@@ -11,6 +11,11 @@ import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { platform_settings as ps } from '../../blockchain/platform-conf';
+interface member {
+  name: string,
+  position: string,
+  social: string,
+}
 
 export type AsaPresaleSettings = {
   contractId: number,
@@ -45,7 +50,11 @@ export type AsaSettings = {
   templateUrl: './deploy.component.html',
   styleUrls: ['./deploy.component.scss']
 })
+
 export class DeployComponent implements OnInit, DoCheck {
+  name: string = '';
+  position: string = '';
+  social: string = '';
 
   isSmartAsaDeploy: boolean = true;
   isStakingDeploy: boolean = false;
@@ -55,7 +64,9 @@ export class DeployComponent implements OnInit, DoCheck {
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
   isCheckedStaking: boolean = false;
-  extraFieldsArr: number[] = [1];
+  extraFieldsArr: any[] = [
+    1
+  ];
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
   fee = environment.Y_FEE;
@@ -161,14 +172,22 @@ export class DeployComponent implements OnInit, DoCheck {
     }
   }
 
-  addExtraFields(index: number) {
-    if (index === 0) {
-      this.extraFieldsArr.push(1);
+  addExtraFields(item: any, i: number) {
+
+    let obj = item;
+    if (i === 0) {
+      this.extraFieldsArr.push(obj);
     } else {
-      this.extraFieldsArr.pop()
+      this.extraFieldsArr.splice(i, 1)
     }
+    console.log(i, this.extraFieldsArr);
+    console.log(this.deployFormGroup.value.teamInfoOptionGroup);
   }
 
+  triggerForm(value: any, item: any, i: number, name: string, position: string, social: string) {
+    this.extraFieldsArr[i] = item;
+    console.log(this.extraFieldsArr);
+  }
   // for form intitialize
 
   initializeForm(): void {

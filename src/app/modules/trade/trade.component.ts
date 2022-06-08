@@ -133,11 +133,11 @@ export class TradeComponent implements OnInit {
   });
 
   topForms = this.fb.group({
-    topInputValue: [0],
+    topInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
   });
 
   bottomForms = this.fb.group({
-    bottomInputValue: [0],
+    bottomInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
   });
 
   // FORMS
@@ -179,32 +179,17 @@ export class TradeComponent implements OnInit {
     );
   }
 
-  catchValueTop($event: Event) {
-    if (this.enteredValueTop === 'default') {
-      // @ts-ignore
-      console.log($event.data)
-      // @ts-ignore
-      this.enteredValueTop = 0;
-      console.log(this.enteredValueTop, 'first entering')
-      // @ts-ignore
-      this.enteredValueTop = $event.data;
-      console.log(this.enteredValueTop, 'first entering2')
-    } else {
-      // @ts-ignore
-      this.enteredValueTop = JSON.stringify(this.enteredValueTop) + JSON.stringify($event.data);
-      console.log(this.enteredValueTop, 'adding to eachother')
-      this.enteredValueTop = +this.enteredValueTop;
-      console.log(this.enteredValueTop, 'final result')
-    }
-
+  catchValueTop($event: any) {
+    let input = this.topForms.value.topInputValue;
+    console.log(input);
     if(!this.rotate){
       // @ts-ignore
-      this.topInput = +this.enteredValueTop;
+      this.topInput = +this.topForms.value.topInputValue;
       let output = this.calcOtherFieldOutput(true);
       this.bottomForms.get("bottomInputValue")!.setValue(output);
     } else {
       // @ts-ignore
-      this.bottomInput = +this.enteredValueTop;
+      this.bottomInput = +this.topForms.value.topInputValue;
       let output = this.calcOtherFieldOutput(false);
       this.bottomForms.get("bottomInputValue")!.setValue(output)
     }
@@ -213,25 +198,14 @@ export class TradeComponent implements OnInit {
   }
 
   catchValueBottom($event: Event) {
-    if (this.enteredValue === 'default') {
-      // @ts-ignore
-      this.enteredValue = $event.data;
-      console.log(this.enteredValue, 'first entering')
-    } else {
-      // @ts-ignore
-      this.enteredValue = JSON.stringify(this.enteredValue) + JSON.stringify($event.data);
-      console.log(this.enteredValue, 'adding to eachother')
-      this.enteredValue = +this.enteredValue;
-      console.log(this.enteredValue, 'bottom')
-    }
-
     if(!this.rotate){
-      this.bottomInput = +this.enteredValue;
+      // @ts-ignore
+      this.bottomInput = +this.bottomForms.value.bottomInputValue;
       let output = this.calcOtherFieldOutput(false);
       this.topForms.get("topInputValue")!.setValue(output);
     } else {
       // @ts-ignore
-      this.topInput = +this.enteredValue;
+      this.topInput = +this.bottomForms.value.bottomInputValue;
       let output = this.calcOtherFieldOutput(true);
       this.topForms.get("topInputValue")!.setValue(output);
     }
@@ -953,4 +927,21 @@ export class TradeComponent implements OnInit {
     }
   }
 
+  searchTop(event: any) {
+    let wallet = localStorage.getItem('wallet');
+    this.assetReqService.getAssetPairs(true, event, wallet!).subscribe((res) => {
+      this.removeVerse(res); // ask
+      res = this.removeFailedPresales(res); // ask
+      this.assetArr.push(...res);
+    });
+  }
+
+  searchBottom(event: any) {
+    let wallet = localStorage.getItem('wallet');
+    this.assetReqService.getAssetPairs(true, event, wallet!).subscribe((res) => {
+      this.removeVerse(res); // ask
+      res = this.removeFailedPresales(res); // ask
+      this.assetArrSecond.push(...res);
+    });
+  }
 }

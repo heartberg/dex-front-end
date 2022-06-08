@@ -17,29 +17,30 @@
             [checkBoxCheckTrade]="checked"
             [incomeData]="assetArr"
             [buttonTradeChangedTop]="changeTop"
+            (searchedData)="searchTop($event)"
           ></app-drop-down-selector>
         </div>
         <div class="col-md-7 second-col-7">
           <div
-
-                class="top-text"
+                class="bot-text"
               >
                 <span class="thin-gray-text">Available:</span>
                 <span  class="amount">{{
                   availAmount.toFixed(2)
-                }}</span>
+                }} {{ isBuy ? 'Algo' : selectedOption?.unitName}}</span>
               </div>
 
           <form action="" [formGroup]="topForms">
             <input
             formControlName="topInputValue"
-            type="number"
+            type="text"
             (click)="onUserInput()"
             class="input-costum"
             [value]="null"
             placeholder="0"
             (input)="catchValueTop($event)"
             #inputRef
+            [class.input-invalid]="topForms.invalid"
           />
           </form>
         <div class="centered-buttons">
@@ -123,6 +124,7 @@
           [incomeData]="assetArrSecond"
           [secondOnTrade]="true"
           [buttonTradeChanged]="changeBottom"
+          (searchedData)="searchBottom($event)"
           #componentRefB
         >
       </app-drop-down-selector>
@@ -140,11 +142,11 @@
         <form action="" [formGroup]="bottomForms">
           <input
             formControlName="bottomInputValue"
-            type="number"
+            type="text"
             class="input-costum"
             (click)="onUserInput()"
             (input)="catchValueBottom($event)"
-            placeholder="0"
+            [class.input-invalid]="bottomForms.invalid"
           />
         </form>
     </div>
@@ -259,18 +261,18 @@
 
           </div>
         </div>
-        <div class="d-flex" style="margin-top: 20px">
-          <span>Price Impact:</span>
-          <span style="color: #81007f; margin-left: 10px">{{priceImapct.toFixed(2)}}%</span>
-        </div>
+
       </div>
  -->
 
-
+      <div class="d-flex" style="margin-top: 20px">
+        <span>Price Impact:</span>
+        <span style="color: #81007f; margin-left: 10px">{{priceImapct.toFixed(2)}}%</span>
+      </div>
 
       <button
         *ngIf="isOptedIn"
-        class="btn-secondary-costum unHover"
+        class="btn-secondary-costum unHover disable-btn"
         style="
           margin: 25px auto;
           margin-bottom: 12px;
