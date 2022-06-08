@@ -165,39 +165,25 @@ export class TradeComponent implements OnInit {
   }
 
   catchValueTop($event: any) {
-    let input = this.topForms.value.topInputValue;
-    console.log(input);
-    if(!this.rotate){
-      // @ts-ignore
-      this.topInput = +this.topForms.value.topInputValue;
-      let output = this.calcOtherFieldOutput(true);
-      this.bottomForms.get("bottomInputValue")!.setValue(output);
-      this.bottomInput = output
-    } else {
-      // @ts-ignore
-      this.bottomInput = +this.topForms.value.topInputValue;
-      let output = this.calcOtherFieldOutput(false);
-      this.bottomForms.get("bottomInputValue")!.setValue(output)
-      this.topInput = output
-    }
+    // @ts-ignore
+    this.topInput = +this.topForms.value.topInputValue;
+    let output = this.calcOtherFieldOutput(true);
+    this.bottomForms.get("bottomInputValue")!.setValue(output);
+    this.bottomInput = output
+    console.log("top input: " + this.topInput)
+    console.log("bot input input: " + this.bottomInput)
     this.calcPriceImpact()
     this.setMinOutput()
   }
 
-  catchValueBottom($event: Event) {
-    if(!this.rotate){
-      // @ts-ignore
-      this.bottomInput = +this.bottomForms.value.bottomInputValue;
-      let output = this.calcOtherFieldOutput(false);
-      this.topForms.get("topInputValue")!.setValue(output);
-      this.topInput = output
-    } else {
-      // @ts-ignore
-      this.topInput = +this.bottomForms.value.bottomInputValue;
-      let output = this.calcOtherFieldOutput(true);
-      this.topForms.get("topInputValue")!.setValue(output);
-      this.bottomInput = output
-    }
+  catchValueBottom($event: any) {
+    // @ts-ignore
+    this.bottomInput = +this.bottomForms.value.bottomInputValue;
+    let output = this.calcOtherFieldOutput(false);
+    this.topForms.get("topInputValue")!.setValue(output);
+    this.topInput = output
+    console.log("top input: " + this.topInput)
+    console.log("bot input input: " + this.bottomInput)
     this.calcPriceImpact()
     this.setMinOutput()
   }
@@ -209,8 +195,11 @@ export class TradeComponent implements OnInit {
     if(this.autoSlippage){
       this.getAutoSlippage();
     }
-    this.topForms.get("topInputValue")?.setValue(this.topForms.get("topInputValue")?.value);
-    this.bottomForms.get("bottomInputValue")?.setValue(this.bottomForms.get("bottomInputValue")?.value);
+    let tmp = this.topForms.get("topInputValue")?.value
+    this.topForms.get("topInputValue")?.setValue(this.bottomForms.get("bottomInputValue")?.value);
+    this.bottomForms.get("bottomInputValue")?.setValue(tmp);
+    this.topInput = this.topForms.get("topInputValue")?.value
+    this.bottomInput = this.bottomForms.get("bottomInputValue")?.value
     this.calcPriceImpact()
     this.setMinOutput()
   }
@@ -387,42 +376,27 @@ export class TradeComponent implements OnInit {
       this.btnSecond = false;
       this.btnThird = false;
       this.btnFourth = false;
-      if(!this.rotate){
-        this.topForms.get("topInputValue")!.setValue(this.availAmount / 4);
-      } else {
-        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 4);
-      }
+      this.topForms.get("topInputValue")!.setValue(this.availAmount / 4);
     } else if (index === 2) {
       this.btnSecond = true;
       this.btnFirst = false;
       this.btnThird = false;
       this.btnFourth = false;
-      if(!this.rotate){
-        this.topForms.get("topInputValue")!.setValue(this.availAmount / 2);
-      } else {
-        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 2);
-      }
+      this.topForms.get("topInputValue")!.setValue(this.availAmount / 2);
     } else if (index === 3) {
       this.btnThird = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnFourth = false;
-      if(!this.rotate){
-        this.topForms.get("topInputValue")!.setValue(this.availAmount / 4 * 3);
-      } else {
-        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount / 4 * 3);
-      }
+      this.topForms.get("topInputValue")!.setValue(this.availAmount / 4 * 3);
     } else if (index === 4) {
       this.btnFourth = true;
       this.btnFirst = false;
       this.btnSecond = false;
       this.btnThird = false;
-      if(!this.rotate){
-        this.topForms.get("topInputValue")!.setValue(this.availAmount);
-      } else {
-        this.bottomForms.get("bottomInputValue")!.setValue(this.availAmount);
-      }
+      this.topForms.get("topInputValue")!.setValue(this.availAmount);
     }
+    this.catchValueTop(true)
   }
 
   getMinusPlusValue($event: number) {
