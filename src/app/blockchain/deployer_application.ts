@@ -29,6 +29,7 @@ import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/sugge
 import { url } from "inspector";
 import { StakingModel } from "../models/stakingModel";
 import { Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
+import { start } from "repl";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 
@@ -996,7 +997,7 @@ export class DeployedApp {
     let hardCap = globalState[StateKeys.presale_hard_cap_key]['i'] / 1_000_000
     let walletCap = globalState[StateKeys.presale_wallet_cap_key]['i'] / 1_000_000
     let totalRaised = globalState[StateKeys.presale_total_raised]['i'] / 1_000_000
-
+    let presalePrice = hardCap / tokensInPresale
     
     let presaleInfo: PresaleBlockchainInformation = {
       algoLiq: algoLiquidity,
@@ -1004,7 +1005,8 @@ export class DeployedApp {
       burned: burned,
       tokensInPresale: tokensInPresale,
       presaleFundsToLiqPercentage: presaleFundsToLiquidityPercentage,
-      price: price,
+      initialPrice: price,
+      presalePrice: presalePrice,
       totalSupply: totalSupply,
       tradingStart: new Date(tradingStart * 1000),
       saleEnd: new Date(saleEnd * 1000),
@@ -1251,6 +1253,69 @@ export class DeployedApp {
       let response = await sendWait(signed)
       return response
     }
+  }
+
+  async createAsaPresale(wallet: SessionWallet) {
+
+    const approval = await (await fetch('../../assets/contracts/asa_presale_approval.teal')).text()
+    const clear = await (await fetch('../../assets/contracts/asa_presale_clear.teal')).text()
+
+    let suggested = await getSuggested(10)
+    const createApp = algosdk.makeApplicationCreateTxnFromObject({
+        from: wallet.getDefaultAccount(),
+        approvalProgram: await compileProgram(approval),
+        clearProgram: await compileProgram(clear),
+        numGlobalInts: 11,
+        numGlobalByteSlices: 1,
+        numLocalInts: 1,
+        numLocalByteSlices: 0,
+        onComplete: algosdk.OnApplicationComplete.NoOpOC,
+        note: new Uint8Array(Buffer.from("Deploy App")),
+        suggestedParams: suggested,
+    })
+
+    const [signedTxns] = await wallet.signTxn([createApp])
+
+    const result = await sendWait([signedTxns])
+
+    this.settings.contractId = result['application-index'];
+    this.settings.contractAddress = algosdk.getApplicationAddress(BigInt( result['application-index'] ));
+    return result
+  }
+
+  async setupAsaPresale(wallet: SessionWallet, contractId: number, assetId: number, hardCap: number, softCap: number, presaleStart: number, presaleEnd: number, walletCap: number, presaleTokenAmount: number,
+    stakingId: number | undefined, stakingAmount: number | undefined, periodTime: number | undefined, stakingStart: number | undefined, periodDistributionAmount: number | undefined) {
+    let addr = wallet.getDefaultAccount()
+    let suggested = await getSuggested(10)
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd), algosdk.encodeUint64(hardCap), algosdk.encodeUint64(softCap), algosdk.encodeUint64(walletCap)]
+    let accounts = [ps.platform.fee_addr]
+    let assets = [assetId]
+
+    let paymentTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 200000))
+    
+    suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+    let presaleSetupTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
+    
+    suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
+    let assetToPresaleTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), assetId, presaleTokenAmount))
+    let grouped = [paymentTxn, presaleSetupTxn, assetToPresaleTxn]
+    if(stakingId) {
+      let stakingPayTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(stakingId), 200000))
+
+      suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+      let apps = [ps.platform.staking_id]
+      let assets = [assetId, ps.platform.verse_asset_id]
+      args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(periodDistributionAmount!), algosdk.encodeUint64(stakingStart!), algosdk.encodeUint64(periodTime!)]
+      let stakingSetupTxn = new Transaction(get_app_call_txn(suggested, addr, stakingId, args, apps, assets, undefined))
+      
+      suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
+      let stakingAssetTransferTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(stakingId), assetId, stakingAmount))
+      grouped.unshift(stakingPayTxn, stakingSetupTxn, stakingAssetTransferTxn)
+    }
+    algosdk.assignGroupID(grouped)
+    let signed = await wallet.signTxn(grouped)
+    let response = await sendWait(signed)
+    return response
   }
 
 }

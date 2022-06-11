@@ -203,7 +203,7 @@ global LatestTimestamp
 assert
 global GroupSize
 int 3
-==
+>=
 assert
 txn GroupIndex
 int 1

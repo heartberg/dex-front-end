@@ -1,0 +1,673 @@
+#pragma version 6
+intcblock 0 1 4 2
+bytecblock 0x7072 0x7063 0x706863 0x617361 0x707461 0x7065 0x707363 0x707763 0x7066 0x7073 0x7365747570 0x6661 0x66 0x646c
+txn ApplicationID
+intc_0 // 0
+==
+bnz main_l30
+txn OnCompletion
+pushint 5 // DeleteApplication
+==
+bnz main_l29
+txn OnCompletion
+intc_2 // UpdateApplication
+==
+bnz main_l28
+txn OnCompletion
+intc_1 // OptIn
+==
+bnz main_l27
+txn OnCompletion
+intc_3 // CloseOut
+==
+bnz main_l26
+txna ApplicationArgs 0
+pushbytes 0x6275795f70726573616c65 // "buy_presale"
+==
+bnz main_l25
+txna ApplicationArgs 0
+pushbytes 0x636c61696d5f70726573616c65 // "claim_presale"
+==
+bnz main_l17
+txna ApplicationArgs 0
+bytec 10 // "setup"
+==
+bnz main_l13
+txna ApplicationArgs 0
+pushbytes 0x726573657475705f70726573616c65 // "resetup_presale"
+==
+bnz main_l10
+err
+main_l10:
+global GroupSize
+intc_1 // 1
+>=
+assert
+global LatestTimestamp
+bytec 5 // "pe"
+app_global_get
+>
+assert
+bytec_0 // "pr"
+app_global_get
+bytec 6 // "psc"
+app_global_get
+<
+assert
+txn Sender
+global CreatorAddress
+==
+assert
+txna ApplicationArgs 1
+btoi
+txna ApplicationArgs 2
+btoi
+<
+assert
+txna ApplicationArgs 2
+btoi
+txna ApplicationArgs 1
+btoi
+-
+pushint 2419200 // 2419200
+<=
+assert
+txna ApplicationArgs 3
+btoi
+bytec 6 // "psc"
+app_global_get
+>=
+assert
+txna ApplicationArgs 3
+btoi
+txna ApplicationArgs 4
+btoi
+<=
+assert
+txna ApplicationArgs 4
+btoi
+bytec_2 // "phc"
+app_global_get
+<=
+assert
+txna ApplicationArgs 4
+btoi
+bytec_0 // "pr"
+app_global_get
+>=
+assert
+txna ApplicationArgs 5
+btoi
+bytec 7 // "pwc"
+app_global_get
+>=
+assert
+global GroupSize
+intc_3 // 2
+==
+bnz main_l12
+main_l11:
+bytec 9 // "ps"
+txna ApplicationArgs 1
+btoi
+app_global_put
+bytec 5 // "pe"
+txna ApplicationArgs 2
+btoi
+app_global_put
+bytec 6 // "psc"
+txna ApplicationArgs 3
+btoi
+app_global_put
+bytec_2 // "phc"
+txna ApplicationArgs 4
+btoi
+app_global_put
+bytec 7 // "pwc"
+txna ApplicationArgs 5
+btoi
+app_global_put
+bytec 8 // "pf"
+intc_0 // 0
+app_global_put
+intc_1 // 1
+return
+main_l12:
+txn GroupIndex
+intc_1 // 1
++
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+txn GroupIndex
+intc_1 // 1
++
+gtxns XferAsset
+bytec_3 // "asa"
+app_global_get
+==
+assert
+txn GroupIndex
+intc_1 // 1
++
+gtxns AssetReceiver
+global CurrentApplicationAddress
+==
+assert
+bytec 4 // "pta"
+bytec 4 // "pta"
+app_global_get
+txn GroupIndex
+intc_1 // 1
++
+gtxns AssetAmount
++
+app_global_put
+b main_l11
+main_l13:
+txna Assets 0
+asset_params_get AssetTotal
+store 4
+store 3
+bytec_3 // "asa"
+app_global_get
+intc_0 // 0
+==
+assert
+load 4
+assert
+txn GroupIndex
+intc_1 // 1
++
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+txna Assets 0
+txn GroupIndex
+intc_1 // 1
++
+gtxns XferAsset
+==
+assert
+txn GroupIndex
+intc_1 // 1
+-
+gtxns TypeEnum
+intc_1 // pay
+==
+assert
+txn GroupIndex
+intc_1 // 1
+-
+gtxns Receiver
+global CurrentApplicationAddress
+==
+assert
+bytec_3 // "asa"
+txna Assets 0
+app_global_put
+bytec 11 // "fa"
+txna Accounts 1
+app_global_put
+bytec 12 // "f"
+pushint 100 // 100
+app_global_put
+bytec 13 // "dl"
+intc_0 // 0
+app_global_put
+txna Assets 0
+callsub optinasset_4
+global GroupSize
+pushint 6 // 6
+==
+bnz main_l15
+main_l14:
+txn NumAppArgs
+pushint 6 // 6
+==
+assert
+txna ApplicationArgs 1
+btoi
+global LatestTimestamp
+>
+assert
+txna ApplicationArgs 2
+btoi
+txna ApplicationArgs 1
+btoi
+>
+assert
+txna ApplicationArgs 3
+btoi
+txna ApplicationArgs 4
+btoi
+>=
+assert
+txna ApplicationArgs 3
+btoi
+txna ApplicationArgs 5
+btoi
+>
+assert
+bytec 9 // "ps"
+txna ApplicationArgs 1
+btoi
+app_global_put
+bytec 5 // "pe"
+txna ApplicationArgs 2
+btoi
+app_global_put
+bytec_2 // "phc"
+txna ApplicationArgs 3
+btoi
+app_global_put
+bytec 6 // "psc"
+txna ApplicationArgs 4
+btoi
+app_global_put
+bytec 7 // "pwc"
+txna ApplicationArgs 5
+btoi
+app_global_put
+bytec_0 // "pr"
+intc_0 // 0
+app_global_put
+bytec 4 // "pta"
+txn GroupIndex
+intc_1 // 1
++
+gtxns AssetAmount
+app_global_put
+bytec 8 // "pf"
+intc_0 // 0
+app_global_put
+intc_1 // 1
+return
+main_l15:
+txn GroupIndex
+intc_2 // 4
+-
+gtxns TypeEnum
+intc_1 // pay
+==
+assert
+txn GroupIndex
+intc_2 // 4
+-
+gtxns Receiver
+txn GroupIndex
+pushint 3 // 3
+-
+gtxns ApplicationID
+callsub getappaddress_1
+==
+assert
+txn GroupIndex
+pushint 3 // 3
+-
+gtxns TypeEnum
+pushint 6 // appl
+==
+assert
+txn GroupIndex
+pushint 3 // 3
+-
+gtxnsa ApplicationArgs 0
+bytec 10 // "setup"
+==
+assert
+txn GroupIndex
+intc_3 // 2
+-
+gtxns TypeEnum
+intc_2 // axfer
+==
+assert
+txn GroupIndex
+intc_3 // 2
+-
+gtxns XferAsset
+txn GroupIndex
+intc_1 // 1
++
+gtxns XferAsset
+==
+assert
+load 3
+pushint 300 // 300
+callsub calculateFraction_0
+txn GroupIndex
+intc_3 // 2
+-
+gtxns AssetAmount
+<=
+bz main_l14
+bytec 13 // "dl"
+intc_1 // 1
+app_global_put
+b main_l14
+main_l17:
+global GroupSize
+intc_1 // 1
+==
+assert
+intc_0 // 0
+global CurrentApplicationID
+app_opted_in
+assert
+txna Assets 0
+bytec_3 // "asa"
+app_global_get
+==
+assert
+txn Fee
+intc_3 // 2
+global MinTxnFee
+*
+>=
+assert
+txna Accounts 1
+global CreatorAddress
+==
+assert
+bytec 5 // "pe"
+app_global_get
+global LatestTimestamp
+<
+assert
+bytec_0 // "pr"
+app_global_get
+bytec 6 // "psc"
+app_global_get
+>=
+bnz main_l20
+txn Sender
+intc_0 // 0
+bytec_1 // "pc"
+app_local_get
+callsub sendAlgo_2
+bytec_0 // "pr"
+bytec_0 // "pr"
+app_global_get
+intc_0 // 0
+bytec_1 // "pc"
+app_local_get
+-
+app_global_put
+intc_0 // 0
+bytec_1 // "pc"
+intc_0 // 0
+app_local_put
+main_l19:
+intc_1 // 1
+return
+main_l20:
+bytec 8 // "pf"
+app_global_get
+intc_1 // 1
+!=
+bnz main_l22
+main_l21:
+intc_0 // 0
+bytec_1 // "pc"
+app_local_get
+bytec 4 // "pta"
+app_global_get
+mulw
+intc_0 // 0
+bytec_2 // "phc"
+app_global_get
+divmodw
+pop
+pop
+swap
+!
+assert
+store 0
+txn Sender
+load 0
+callsub sendTokens_3
+intc_0 // 0
+bytec_1 // "pc"
+intc_0 // 0
+app_local_put
+b main_l19
+main_l22:
+txn Fee
+intc_2 // 4
+global MinTxnFee
+*
+>=
+assert
+bytec_0 // "pr"
+app_global_get
+bytec 12 // "f"
+app_global_get
+callsub calculateFraction_0
+store 2
+bytec_0 // "pr"
+app_global_get
+load 2
+-
+store 1
+global CreatorAddress
+load 1
+callsub sendAlgo_2
+bytec 11 // "fa"
+app_global_get
+load 2
+callsub sendAlgo_2
+bytec_2 // "phc"
+app_global_get
+bytec_0 // "pr"
+app_global_get
+>
+bnz main_l24
+main_l23:
+bytec 8 // "pf"
+intc_1 // 1
+app_global_put
+b main_l21
+main_l24:
+bytec 4 // "pta"
+app_global_get
+bytec 4 // "pta"
+app_global_get
+bytec_0 // "pr"
+app_global_get
+mulw
+intc_0 // 0
+bytec_2 // "phc"
+app_global_get
+divmodw
+pop
+pop
+swap
+!
+assert
+-
+store 0
+global CreatorAddress
+load 0
+callsub sendTokens_3
+b main_l23
+main_l25:
+global GroupSize
+intc_3 // 2
+==
+assert
+intc_0 // 0
+global CurrentApplicationID
+app_opted_in
+assert
+bytec 9 // "ps"
+app_global_get
+global LatestTimestamp
+<=
+assert
+bytec 5 // "pe"
+app_global_get
+global LatestTimestamp
+>=
+assert
+gtxn 1 TypeEnum
+intc_1 // pay
+==
+assert
+gtxn 1 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 1 Amount
+intc_0 // 0
+bytec_1 // "pc"
+app_local_get
++
+bytec 7 // "pwc"
+app_global_get
+<=
+assert
+gtxn 1 Amount
+bytec_0 // "pr"
+app_global_get
++
+bytec_2 // "phc"
+app_global_get
+<=
+assert
+intc_0 // 0
+bytec_1 // "pc"
+gtxn 1 Amount
+intc_0 // 0
+bytec_1 // "pc"
+app_local_get
++
+app_local_put
+bytec_0 // "pr"
+bytec_0 // "pr"
+app_global_get
+gtxn 1 Amount
++
+app_global_put
+intc_1 // 1
+return
+main_l26:
+intc_0 // 0
+bytec_1 // "pc"
+app_local_get
+intc_0 // 0
+==
+assert
+intc_1 // 1
+return
+main_l27:
+intc_0 // 0
+bytec_1 // "pc"
+intc_0 // 0
+app_local_put
+intc_1 // 1
+return
+main_l28:
+intc_0 // 0
+return
+main_l29:
+intc_0 // 0
+return
+main_l30:
+bytec_3 // "asa"
+intc_0 // 0
+app_global_put
+intc_1 // 1
+return
+
+// calculateFraction
+calculateFraction_0:
+store 6
+store 5
+load 5
+load 6
+mulw
+intc_0 // 0
+pushint 10000 // 10000
+divmodw
+pop
+pop
+swap
+!
+assert
+retsub
+
+// get_app_address
+getappaddress_1:
+store 7
+pushbytes 0x6170704944 // "appID"
+load 7
+itob
+concat
+sha512_256
+retsub
+
+// sendAlgo
+sendAlgo_2:
+store 9
+store 8
+itxn_begin
+intc_1 // pay
+itxn_field TypeEnum
+global CurrentApplicationAddress
+itxn_field Sender
+load 8
+itxn_field Receiver
+load 9
+itxn_field Amount
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// sendTokens
+sendTokens_3:
+store 11
+store 10
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+global CurrentApplicationAddress
+itxn_field Sender
+bytec_3 // "asa"
+app_global_get
+itxn_field XferAsset
+load 11
+itxn_field AssetAmount
+load 10
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// optin_asset
+optinasset_4:
+store 12
+global CurrentApplicationAddress
+load 12
+asset_holding_get AssetBalance
+store 14
+store 13
+load 14
+!
+bz optinasset_4_l2
+itxn_begin
+intc_2 // axfer
+itxn_field TypeEnum
+load 12
+itxn_field XferAsset
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+intc_0 // 0
+itxn_field Fee
+itxn_submit
+optinasset_4_l2:
+retsub

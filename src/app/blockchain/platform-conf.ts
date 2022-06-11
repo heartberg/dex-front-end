@@ -46,7 +46,7 @@ type Platform = {
     backing_addr: string,
     backing_per_x_token: number,
     locker_id: number,
-    locker_address: string
+    locker_addr: string
 };
 
 type PresaleSettings = {

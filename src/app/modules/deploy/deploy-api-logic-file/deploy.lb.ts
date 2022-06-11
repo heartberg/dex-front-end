@@ -883,67 +883,81 @@ export class DeployLb {
     this.standardAsaBlockchainObject = JSON.parse(localStorage.getItem("standardBlockchainObj")!)
     this.blockchainObj = undefined
     this.sessionWallet = this.wallet.sessionWallet
-    // TODO set asa id here
     of(await this.deployerBC.deployStandardAsset(this.sessionWallet!, this.standardAsaBlockchainObject!)).subscribe(
       (value: any) => {
         if (value) {
-          setTimeout(() => {
+          setTimeout(async () => {
             this.presaleObj.asset.assetId = this.deployerBC.settings.assetId!
-            this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
-              async (value: any) => {
-                if (value) {
-                  this.projectId = value;
-                  if (2 === 2) {
-                    if (this.standardAsaBlockchainObject!.rewardsPerInterval) {
-                      of(await this.deployerBC.deployStandardStaking(this.sessionWallet!)).subscribe(
-                        async (value: any) => {
-                          this.standardAsaBlockchainObject!.stakingContractId = this.deployerBC.settings.stakingContractId!
-                          console.log(this.standardAsaBlockchainObject)
-                          console.log("created staking")
-                          of(await this.deployerBC.setupStandardStaking(this.sessionWallet!, this.standardAsaBlockchainObject!.stakingContractId, this.standardAsaBlockchainObject!.assetId!,
-                            this.standardAsaBlockchainObject?.rewardsPerInterval!, this.standardAsaBlockchainObject?.poolRewards!, this.standardAsaBlockchainObject?.poolStart!, this.standardAsaBlockchainObject?.poolInterval!)).subscribe(
+            this.standardAsaBlockchainObject!.assetId = this.deployerBC.settings.assetId!
+            of(await this.deployerBC.createAsaPresale(this.sessionWallet!)).subscribe(
+              (value: any) => {
+                this.presaleObj.presale.contractId = this.deployerBC.settings.contractId
+                this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
+                  async (value: any) => {
+                    if (value) {
+                      this.projectId = value;
+                      if (2 === 2) {
+                        if (this.standardAsaBlockchainObject!.rewardsPerInterval) {
+                          of(await this.deployerBC.deployStandardStaking(this.sessionWallet!)).subscribe(
+                            async (value: any) => {
+                              this.standardAsaBlockchainObject!.stakingContractId = this.deployerBC.settings.stakingContractId!
+                              console.log(this.standardAsaBlockchainObject)
+                              console.log("created staking")
+                              of(await this.deployerBC.setupAsaPresale(this.sessionWallet!, this.deployerBC.settings.contractId!, this.deployerBC.settings.assetId!,
+                                this.presaleObj.presale.hardCap, this.presaleObj.presale.softCap, this.presaleObj.presale.startingTime, this.presaleObj.presale.endingTime, this.presaleObj.presale.walletCap, this.presaleObj.presale.tokenAmount,
+                                this.standardAsaBlockchainObject!.stakingContractId, this.standardAsaBlockchainObject!.poolRewards, this.standardAsaBlockchainObject!.poolInterval, this.standardAsaBlockchainObject!.poolStart, this.standardAsaBlockchainObject!.rewardsPerInterval)).subscribe(
+                                  (value: any) => {
+                                    if (value) {
+                                      console.log("successfully setuped presale and staking")
+                                    }
+                                  }
+                                )      
+                            }
+                          );
+                        } else {
+                          of(await this.deployerBC.setupAsaPresale(this.sessionWallet!, this.deployerBC.settings.contractId!, this.deployerBC.settings.assetId!,
+                            this.presaleObj.presale.hardCap, this.presaleObj.presale.softCap, this.presaleObj.presale.startingTime, this.presaleObj.presale.endingTime, this.presaleObj.presale.walletCap, this.presaleObj.presale.tokenAmount,
+                            undefined, undefined, undefined, undefined, undefined)).subscribe(
                               (value: any) => {
                                 if (value) {
-                                  console.log("successfully setuped staking")
+                                  console.log("successfully setuped presale")
                                 }
                               }
                             )
                         }
-                      );
-                    }
-                    this.GetProjectSetup(this.projectId).subscribe(
-                      (value: any) => {
-                        console.log("project setup in db")
-                        console.log("value after setup")
-                        console.log(value)
-                        if (this.standardAsaBlockchainObject!.poolRewards) {
-                          console.log("starting add staking")
-                          this.GetStakingSetup().subscribe(
-                            (value: any) => {
-                              console.log("added staking")
+                        this.GetProjectSetup(this.projectId).subscribe(
+                          (value: any) => {
+                            console.log("project setup in db")
+                            if (this.standardAsaBlockchainObject!.poolRewards) {
+                              console.log("starting add staking")
+                              this.GetStakingSetup().subscribe(
+                                (value: any) => {
+                                  console.log("added staking")
+                                }
+                              );
                             }
-                          );
-                        }
-                        console.log('setup is done')
-                        this.finalStepApi = true;
-                        this.isPending = false;
-                        this.isFailed = false;
-                      },
-                      error => {
-                        this.isPending = false;
-                        this.isFailed = true;
-                        this.finalStepApi = false;
+                            console.log('setup is done')
+                            this.finalStepApi = true;
+                            this.isPending = false;
+                            this.isFailed = false;
+                          },
+                          error => {
+                            this.isPending = false;
+                            this.isFailed = true;
+                            this.finalStepApi = false;
+                          }
+                        )
+    
                       }
-                    )
-
+    
+                    }
+                  },
+                  error => {
+                    this.isPending = false;
+                    this.isFailed = true;
+                    this.finalStepApi = false;
                   }
-
-                }
-              },
-              error => {
-                this.isPending = false;
-                this.isFailed = true;
-                this.finalStepApi = false;
+                )
               }
             )
           }, 1200)

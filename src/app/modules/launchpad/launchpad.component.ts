@@ -28,9 +28,10 @@ export class LaunchpadComponent implements OnInit {
 
   dropDownValues = [
     'Ending Soon',
+    'Starting Soon',
     'Finished',
-    'Subscription: High to low',
-    'Subscription: Low to high',
+    'Subscription: High to Low',
+    'Subscription: Low to High',
   ];
 
   @Input() isWallet: boolean = false;
@@ -78,5 +79,32 @@ export class LaunchpadComponent implements OnInit {
     let amount = await getAppLocalStateByKey(client, model.asset.smartProperties!.contractId, this.wallet!, StateKeys.presale_contribution_key)
     return amount
   }
-  
+
+  getValueFromDropDown(event: string){
+    console.log(event)
+    let ordering = OrderingEnum.ending
+    if(event == "Finished") {
+      ordering = OrderingEnum.finished
+    } else if(event == "Subscription: High to Low") {
+      ordering = OrderingEnum.sub_high
+    } else if (event == "Subscription: Low to High") {
+      ordering = OrderingEnum.sub_low
+    } else if(event == "Starting Soon") {
+      ordering = OrderingEnum.starting
+    }
+    this.projectReqService
+      .getAllPresales(ordering, 1)
+      .subscribe((res) => {
+        this.array = []
+        console.log(res);
+        res.forEach((el: ProjectPreviewModel) => {
+          let tupel: TimeTupel = {
+            startTime: new Date(el.presale.startingTime * 1000),
+            endTime: new Date(el.presale.endingTime * 1000)
+          }
+          this.array.push([el, tupel]);
+        });
+      });
+    // All
+    }
 }

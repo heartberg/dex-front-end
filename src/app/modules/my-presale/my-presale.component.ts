@@ -88,8 +88,14 @@ export class MyPresaleComponent implements OnInit {
       this.arr = []
       this.projectReqService.getCreatedPresales(wallet, 1).subscribe((res) => {
         res.forEach(async presaleModel => {
-          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
-          this.arr.push([presaleModel, blockchainInfo])
+          if(presaleModel.asset.smartProperties) {
+            let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+            this.arr.push([presaleModel, blockchainInfo])
+          } else {
+            let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+            this.arr.push([presaleModel, blockchainInfo])
+          }
+          
         });
         console.log(res);
       });

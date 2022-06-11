@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
@@ -26,7 +27,8 @@ export type PresaleEntryData = {
 export type PresaleBlockchainInformation = {
   tokenLiq: number,
   algoLiq: number,
-  price: number,
+  initialPrice: number,
+  presalePrice: number,
   totalSupply: number,
   presaleFundsToLiqPercentage: number,
   burned: number,
@@ -83,8 +85,12 @@ export class LaunchDetailComponent implements OnInit {
     this.projectsReqService.getProjectWithpresaleById(this.currentProjectId).subscribe(
       async (res) => {
         this.projectData = res;
-        this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.smartProperties!.contractId)
-        this.calcLaunchPrices()
+        if(this.projectData.presale?.contractId){
+          this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.presale.contractId)
+        } else {
+          this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.smartProperties!.contractId)
+          this.calcLaunchPrices()
+        }
         this.checkClaimable()
         if(this.presaleData.saleEnd < new Date()){
           this.finished = true;
@@ -100,7 +106,13 @@ export class LaunchDetailComponent implements OnInit {
   async checkClaimable() {
     let wallet = localStorage.getItem("wallet")
     if(wallet){
-      let claimState = await this.deployedApp.isClaimablePresale(wallet, this.projectData.asset.smartProperties!.contractId)
+      let contractId = 0
+      if(this.projectData.asset.smartProperties) {
+        contractId = this.projectData.asset.smartProperties.contractId
+      } else {
+        contractId = this.projectData.presale?.contractId!
+      }
+      let claimState = await this.deployedApp.isClaimablePresale(wallet, contractId)
       this.isClaimable = claimState[0]
       this.alreadyClaimed = claimState[1]
     }
@@ -112,7 +124,12 @@ export class LaunchDetailComponent implements OnInit {
   }
 
   async closePopUp(event: boolean) {
-    this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.smartProperties!.contractId)
+    if(this.projectData.asset.smartProperties){
+      this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.asset.smartProperties!.contractId)
+    } else {
+      this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.presale?.contractId!)
+    }
+    
     this.closePopup = event;
   }
 
@@ -124,14 +141,20 @@ export class LaunchDetailComponent implements OnInit {
 
   async setEntryData() {
     let wallet = localStorage.getItem("wallet")
-    this.presaleEntryData = await this.deployedApp.getPresaleEntryData(this.projectData.asset.smartProperties!.contractId)
-    this.presaleEntryData.presalePrice = this.presaleData.price
+    let contractId = 0
+    if(this.projectData.asset.smartProperties) {
+      contractId = this.projectData.asset.smartProperties.contractId
+    } else {
+      contractId = this.projectData.presale?.contractId!
+    }
+    this.presaleEntryData = await this.deployedApp.getPresaleEntryData(contractId)
+    this.presaleEntryData.presalePrice = this.presaleData.presalePrice
     this.presaleEntryData.presaleId = this.projectData.presale!.presaleId
     if(wallet){
       let client: AlgodClient = getAlgodClient()
       let accInfo = await client.accountInformation(wallet).do()
       this.presaleEntryData.availableAmount = accInfo['amount'] / Math.pow(10, 6)
-      if(await isOptedIntoApp(wallet, this.projectData.asset!.smartProperties!.contractId)){
+      if(await isOptedIntoApp(wallet, contractId)){
         console.log("is opted in")
         this.presaleEntryData.isOptedIn = true
       } else {
@@ -152,7 +175,13 @@ export class LaunchDetailComponent implements OnInit {
   async claim() {
     let wallet = this.walletService.sessionWallet
     if(wallet){
-      let response = await this.deployedApp.claimPresale(wallet, this.projectData.asset.smartProperties!.contractId)
+      let contractId = 0
+      if(this.projectData.asset.smartProperties) {
+        contractId = this.projectData.asset.smartProperties.contractId
+      } else {
+        contractId = this.projectData.presale?.contractId!
+      }
+      let response = await this.deployedApp.claimPresale(wallet, contractId)
       if(response) {
         console.log("claimed data")
         this.checkClaimable()

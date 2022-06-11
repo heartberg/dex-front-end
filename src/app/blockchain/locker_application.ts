@@ -2,7 +2,7 @@ import { SessionWallet } from "algorand-session-wallet";
 import algosdk, { Algodv2, getApplicationAddress, Transaction } from "algosdk";
 import { platform_settings as ps } from "./platform-conf";
 import { getAlgodClient, getGlobalState, getSuggested, isOptedIntoApp, sendWait, StateToObj } from "./algorand";
-import { get_app_call_txn, get_asa_xfer_txn, get_pay_txn } from "./transactions";
+import { get_app_call_txn, get_app_optin_txn, get_asa_xfer_txn, get_pay_txn } from "./transactions";
 import { DeployerMethod } from "./deployer_application";
 import { getAppLocalStateByKey } from "../services/utils.algo";
 import { Inject, Injectable } from "@angular/core";
@@ -47,6 +47,15 @@ export enum LockerMethods {
     providedIn: 'root'
   })
 export class LockerApp {
+    async optIn(wallet: SessionWallet) {
+        const addr = wallet.getDefaultAccount()
+        let suggested = await getSuggested(30)
+        let txn = new Transaction(get_app_optin_txn(suggested, addr, ps.platform.locker_id, undefined))
+        let signed = await wallet.signTxn([txn])
+        let response = await sendWait(signed)
+        return response
+    }
+
     async setupStandardLock(wallet: SessionWallet, settings: LockSettings) {
         let suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
@@ -54,7 +63,7 @@ export class LockerApp {
         let fee = globalState[LockerGlobalKeys.fee_key]['i']
 
         let payAmount = fee + 2 * algosdk.ALGORAND_MIN_TX_FEE + 100000
-        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_address, payAmount))
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, payAmount))
         
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         let assets = [settings.assetId, ps.platform.verse_asset_id]
@@ -68,7 +77,9 @@ export class LockerApp {
 
         suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
 
-        let assetTransfer = new Transaction(get_asa_xfer_txn(suggested, addr, ps.platform.locker_address, settings.assetId, settings.amount))
+        console.log(addr)
+        console.log(ps.platform.locker_addr)
+        let assetTransfer = new Transaction(get_asa_xfer_txn(suggested, addr, ps.platform.locker_addr, settings.assetId, settings.amount))
         
         let grouped = [payTxn, setupTxn, assetTransfer]
         algosdk.assignGroupID(grouped)
@@ -84,7 +95,7 @@ export class LockerApp {
         let fee = globalState[LockerGlobalKeys.fee_key]['i']
 
         let payAmount = fee + 2 * algosdk.ALGORAND_MIN_TX_FEE + 100000
-        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_address, payAmount))
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, payAmount))
         
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         let assets = [settings.assetId, ps.platform.verse_asset_id]
@@ -99,8 +110,11 @@ export class LockerApp {
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
 
         args = [new Uint8Array(Buffer.from(DeployerMethod.SetupLock))]
-        accounts = [ps.platform.locker_address]
-        let setupLock = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, undefined, assets, accounts))
+        accounts = [ps.platform.locker_addr]
+
+        console.log(accounts)
+        console.log(addr)
+        let setupLock = new Transaction(get_app_call_txn(suggested, addr, settings.assetContractId!, args, undefined, assets, accounts))
         
         let grouped = [payTxn, setupTxn, setupLock]
         algosdk.assignGroupID(grouped)
@@ -125,7 +139,7 @@ export class LockerApp {
         let suggested = await getSuggested(10)
         let addr = wallet.getDefaultAccount()
 
-        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_address, 2 * algosdk.ALGORAND_MIN_TX_FEE))
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, 2 * algosdk.ALGORAND_MIN_TX_FEE))
 
         let assets = [settings.assetId]
         let apps = [settings.assetContractId!]
@@ -141,7 +155,7 @@ export class LockerApp {
 
     async getLockData(addr: string) {
         let lockSettings: LockSettings = {
-            amount: 0,
+            amount: -1,
             assetId: 0,
             lockTime: 0,
             assetContractId: 0,

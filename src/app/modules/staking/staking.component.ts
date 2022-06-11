@@ -283,6 +283,9 @@ export class StakingComponent implements OnInit {
     let now = Math.floor(new Date().getTime() / 1000)
     let duration = timestamp - now
     let hours = Math.floor(duration / 60 / 60)
+    if(duration <= 0) {
+      return "ended"
+    }
     if(hours > 0){
       if(Math.floor(hours / 24) > 0){
         let suffix = " day"
@@ -322,6 +325,11 @@ export class StakingComponent implements OnInit {
         pool![1].optedIn = true;
       }
     }
+  }
+
+  async calculateApy(stakingPool: StakingModel) {
+    // TODO
+    return 0
   }
 
 }

@@ -23,12 +23,17 @@ export class LockerComponent implements OnInit {
   walletLockedAlready: boolean = false;
   lockSettings: LockSettings | undefined;
   tokensPerInterval: number = 0;
-
+  assetContractId: number | undefined;
   assetsOwned: any | undefined;
 
   // @ts-ignore
   lockerFormGroup: FormGroup;
   dropDownValues: string[] | undefined;
+  selectedStakingAsset: any;
+  selectedStakingAssetInfo: any;
+  selectedAmount: number = 0;
+  selectedUnit: string = "";
+  optedIn: boolean = false;
 
   constructor(
     private locker: LockerApp,
@@ -50,6 +55,11 @@ export class LockerComponent implements OnInit {
     let wallet = this.walletService.sessionWallet
     if(wallet) {
       this.lockSettings = await this.locker.getLockData(wallet.getDefaultAccount())
+      if(this.lockSettings.amount == -1){
+        this.optedIn = false;
+      } else {
+        this.optedIn = true;
+      }
       console.log(this.lockSettings)
       if(this.lockSettings.amount > 0) {
         this.walletLockedAlready = true;
@@ -70,13 +80,34 @@ export class LockerComponent implements OnInit {
 
   lockTokens() {
     console.log("lock tokens")
-    // this.getLockSettings()
-    console.log(this.lockerFormGroup!.value)
-    // console.log(this.lockSettings)
+    this.getLockSettings()
+    console.log(this.lockSettings)
+    let wallet = this.walletService.sessionWallet
+    if(this.assetContractId) {
+      this.locker.setupSmartLock(wallet!, this.lockSettings!)
+    } else {
+      this.locker.setupStandardLock(wallet!, this.lockSettings!)
+    }
+    
   }
 
   getLockSettings() {
-    console.log("get lock settings")
+    let amount = +this.lockerFormGroup.get("amount")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
+    let lockTime = new Date(this.lockerFormGroup.get("lockTime")?.value).getTime() / 1000
+    let periodTime = undefined
+    let tokensPerPeriod = undefined
+    if(this.vestedChecked) {
+      periodTime = this.lockerFormGroup.get("releaseInterval")?.value * 86400
+      tokensPerPeriod = +this.lockerFormGroup.get("releasePerInterval")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
+    }
+    this.lockSettings = {
+      amount: amount,
+      lockTime: lockTime,
+      assetId: this.selectedStakingAsset['asset-id'],
+      assetContractId: this.assetContractId,
+      periodTime: periodTime,
+      tokensPerPeriod: tokensPerPeriod
+    }
   }
 
   async getAssetsOfAccount() {
@@ -101,8 +132,12 @@ export class LockerComponent implements OnInit {
           } else {
             console.log(asset)
             this.dropDownValues!.push(assetInfo['params']['name'] + " ASA ID: " + element['asset-id'] + " Contract ID: " + asset.smartProperties!.contractId)
+            if(this.dropDownValues!.length == 1){
+              await this.getSelectedAsset(this.dropDownValues![0])
+            }
           }
-        });
+        }
+        );
       }
     )
   }
@@ -147,8 +182,41 @@ export class LockerComponent implements OnInit {
     }
   }
 
-  getSelectedAsset(event: string) {
-    console.log(event)
+  async getSelectedAsset(event: string) {
+    let splits = event.split(" ")
+    console.log(splits)
+    let length = splits.length
+    let assetId = 0
+    if (splits[length-3] == "Contract"){
+      this.assetContractId = parseInt(splits[length-1])
+      assetId = parseInt(splits[length-4])
+    } else {
+      assetId = parseInt(splits[length-1])
+      this.assetContractId = undefined
+    }
+    let asset = this.assetsOwned.find((element: { [x: string]: any; }) => {
+      return element['asset-id'] == assetId
+    });
+    if(asset){
+      this.selectedStakingAsset = asset
+      let client: Algodv2 = getAlgodClient()
+      this.selectedStakingAssetInfo = await client.getAssetByID(assetId).do()
+      this.selectedAmount = this.selectedStakingAsset['amount'] / Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
+
+      this.selectedUnit = this.selectedStakingAssetInfo['params']['unit-name']
+    }
+  }
+
+  async optIn(){
+    let wallet = this.walletService.sessionWallet
+    if(wallet) {
+      let response = await this.locker.optIn(wallet)
+      if(response) {
+        this.optedIn = true
+      } else {
+        this.optedIn = false;
+      }
+    }
   }
 
 }

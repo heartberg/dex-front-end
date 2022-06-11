@@ -26,6 +26,12 @@
               <div class="title">
                 <h4>Amount</h4>
               </div>
+              <div
+                class="bot-text"
+              >
+                <span class="thin-gray-text">Available:</span>
+                <span  class="amount">{{selectedAmount.toFixed(2)}} {{selectedUnit}}</span>
+              </div>
               <div class="field">
                 <input type="number" class="input-costum" formControlName="amount">
               </div>
@@ -78,8 +84,11 @@
                 </div>
               </div>
             </ng-container>
-            <button class="btn-secondary-costum" style="width: 140px" (click)="lockTokens()">
+            <button class="btn-secondary-costum" style="width: 140px" (click)="lockTokens()" *ngIf="optedIn">
               Lock
+            </button>
+            <button class="btn-secondary-costum" style="width: 140px" (click)="optIn()" *ngIf="!optedIn">
+              Opt In
             </button>
         </div>
       </form>

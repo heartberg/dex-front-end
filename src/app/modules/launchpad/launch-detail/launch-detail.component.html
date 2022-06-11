@@ -55,7 +55,7 @@
               </div>
               <div class="d-flex">
                 <h6>Presale Price: </h6>
-                <span>{{presaleData.price.toFixed(6)}} Algo/{{projectData.asset.unitName}} </span>
+                <span>{{presaleData.presalePrice.toFixed(6)}} Algo/{{projectData.asset.unitName}} </span>
               </div>
               <div class="d-flex">
                 <h6>Tokens in Presale: </h6>
@@ -152,7 +152,7 @@
                     <span>{{projectData.asset.decimals}}</span>
                   </div>
                 </div>
-                <div class="token-second">
+                <div class="token-second" *ngIf="projectData.asset.smartProperties">
                   <div class="d-flex">
                     <h6>Buy Burn:</h6>
                     <span>{{(projectData.asset.smartProperties!.buyBurn / 100).toFixed(2)}}%</span>
@@ -171,7 +171,7 @@
                   </div>
                 </div>
               </div>
-              <div class="Liquidity-container">
+              <div class="Liquidity-container" *ngIf="projectData.asset.smartProperties">
                 <h3>Liquidity</h3>
                 <div class="token-first">
                   <div class="d-flex">

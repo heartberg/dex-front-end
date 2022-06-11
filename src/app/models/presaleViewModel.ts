@@ -9,5 +9,5 @@ export interface presaleViewModel {
     endingTime: number
     presaleToLiquidity: number
     toFairLaunch: boolean
-
+    contractId?: number
 }

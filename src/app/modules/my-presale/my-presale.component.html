@@ -206,7 +206,7 @@
                     <button (click)="openPopUp('restart', item[0])" class="bottom-btn btn-secondary-costum">
                       Restart Presale
                     </button>
-                    <button (click)="openPopUp('fair', item[0])" class="bottom-btn btn-secondary-costum">
+                    <button (click)="openPopUp('fair', item[0])" class="bottom-btn btn-secondary-costum" *ngIf="item[0].asset.smartProperties">
                       Fair Launch
                     </button>
                   </div>
