@@ -792,18 +792,22 @@
   <!--#if is stacking-->
   <!--pool-->
     <ng-container *ngIf="isPool">
-      <form [formGroup]="stakingGroup" class="pool">
+      <form [formGroup]="distributionPoolForm" class="pool">
         <ng-container *ngIf="true">
           <div class="createoffer">
             <h4 class="amountheader">Reward Pool</h4>
+            <div style="margin-right: 45px">
+              <span>Available:</span>
+              <span style="color: #81007f; margin-right: 8px">{{availableAmountForDistribution.toFixed(2)}} {{projectForDistributionPool?.asset?.unitName}}</span>
+            </div>
             <input type="text" placeholder="40000" class="input-costum"
-                   formControlName="rewardPool"
+                   formControlName="poolReward"
             >
           </div>
           <div class="createoffer">
             <h4 class="amountheader">Reward Interval (Days)</h4>
             <input type="text" placeholder="1" class="input-costum"
-                   formControlName="rewardInterval"
+                   formControlName="poolInterval"
             >
           </div>
           <div class="createoffer">
@@ -821,12 +825,24 @@
 
           <div class="info-box">
             <h6 class="color-violet">Tokens per Interval: </h6>
-            <h6>  Token/Interval</h6>
+            <h6>{{tokensPerInterval.toFixed(2)}}  Token/Interval</h6>
           </div>
           <div class="info-box">
             <h6 class="color-violet">est. APY: </h6>
             <h6> {{'20'}}%</h6>
           </div>
+          <button
+          style="
+            border-radius: 5px;
+            margin-top: 10px;
+            max-width: 100px;
+            align-self: center;
+          "
+          class="btn-secondary-costum"
+          (click)="createDistributionPool()"
+        >
+          Deploy
+        </button>
         </ng-container>
       </form>
     </ng-container>

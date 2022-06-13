@@ -137,6 +137,7 @@ export class MyDeploysComponent implements OnInit {
 
   openPopUp(model: ProjectPreviewModel) {
     this.projectForDistribution = model
+    console.log(this.projectForDistribution)
     this.isPopUpOpen = true
   }
 

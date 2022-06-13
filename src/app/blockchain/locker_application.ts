@@ -6,6 +6,7 @@ import { get_app_call_txn, get_app_optin_txn, get_asa_xfer_txn, get_pay_txn } fr
 import { DeployerMethod } from "./deployer_application";
 import { getAppLocalStateByKey } from "../services/utils.algo";
 import { Inject, Injectable } from "@angular/core";
+import { Method } from "./keys";
 
 export type LockSettings = {
     assetId: number,
@@ -47,6 +48,36 @@ export enum LockerMethods {
     providedIn: 'root'
   })
 export class LockerApp {
+
+    async claim(wallet: SessionWallet) {
+        const addr = wallet.getDefaultAccount()
+        let suggested = await getSuggested(30)
+        let client: Algodv2 = getAlgodClient()
+        let smartAsaContractId = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.smart_asa_app_id_key)
+        let assets = [await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.lock_pair_key)]
+        
+        let args = []
+        if(smartAsaContractId != 0) {
+            let apps = [smartAsaContractId]
+            args.push(new Uint8Array(Buffer.from(LockerMethods.smart_withdraw)))
+            let claimTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, apps, assets, undefined))
+            let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, 2 * algosdk.ALGORAND_MIN_TX_FEE))
+            let grouped = [payTxn, claimTxn]
+            algosdk.assignGroupID(grouped)
+            let signed = await wallet.signTxn(grouped)
+            let response = await sendWait(signed)
+            return response
+        } else {
+            suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+            suggested.flatFee = true
+            args.push(new Uint8Array(Buffer.from(LockerMethods.withdraw)))
+            let claimTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, undefined, assets, undefined))
+            let signed = await wallet.signTxn([claimTxn])
+            let response = await sendWait(signed)
+            return response
+        }   
+    }
+
     async optIn(wallet: SessionWallet) {
         const addr = wallet.getDefaultAccount()
         let suggested = await getSuggested(30)
@@ -67,7 +98,7 @@ export class LockerApp {
         
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         let assets = [settings.assetId, ps.platform.verse_asset_id]
-        let accounts = [ps.platform.burn_addr]
+        let accounts = [ps.platform.burn_addr, ps.platform.verse_app_addr]
         let apps = [ps.platform.verse_app_id]
         let args = [new Uint8Array(Buffer.from(LockerMethods.setup)), algosdk.encodeUint64(settings.lockTime)]
         if(settings.tokensPerPeriod) {
@@ -98,8 +129,9 @@ export class LockerApp {
         let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, payAmount))
         
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.flatFee = true
         let assets = [settings.assetId, ps.platform.verse_asset_id]
-        let accounts = [ps.platform.burn_addr]
+        let accounts = [ps.platform.burn_addr, ps.platform.verse_app_addr]
         let apps = [ps.platform.verse_app_id, settings.assetContractId!]
         let args = [new Uint8Array(Buffer.from(LockerMethods.smart_setup)), algosdk.encodeUint64(settings.amount) ,algosdk.encodeUint64(settings.lockTime)]
         if(settings.tokensPerPeriod) {
@@ -173,13 +205,19 @@ export class LockerApp {
             let nextReleaseTime = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.next_released_time_key)
             let tokensPerPeriod = await getAppLocalStateByKey(client, ps.platform.locker_id, addr, LockerLocalKeys.tokens_per_period_key)
             
+            if(assetId == 0) {
+                lockSettings.amount = 0
+                return lockSettings
+            }
+
             let assetInfo = await client.getAssetByID(assetId).do()
-            lockSettings.amount = amount / assetInfo['params']['decimals']
+            lockSettings.amount = amount / Math.pow(10, assetInfo['params']['decimals'])
             lockSettings.assetContractId = asaContract
             lockSettings.lockTime = lockTime
             lockSettings.periodTime = releasePeriod
-            lockSettings.tokensPerPeriod = tokensPerPeriod / assetInfo['params']['decimals']
+            lockSettings.tokensPerPeriod = tokensPerPeriod / Math.pow(10, assetInfo['params']['decimals'])
             lockSettings.nextClaimableTime = nextReleaseTime
+            lockSettings.assetId = assetId
         }
 
         return lockSettings

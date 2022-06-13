@@ -103,9 +103,17 @@
               <header>
                 <h3>Lock Info</h3>
               </header>
+              <div class="d-flex">
+              <div>
+                <span>Asset: </span>
+              </div>
+              <div>
+                <span class="color-violet"> {{selectedStakingAssetInfo['params']['name']}}</span>
+              </div>
+              </div>
                 <div class="d-flex">
                   <div>
-                    <span>ASA ID:</span>
+                    <span>ASA ID: </span>
                   </div>
                   <div>
                     <span class="color-violet">{{lockSettings!.assetId}}</span>
@@ -113,7 +121,7 @@
                 </div>
                 <div class="d-flex" *ngIf="lockSettings!.assetContractId">
                   <div>
-                    <span>Contract ID:</span>
+                    <span>Contract ID: </span>
                   </div>
                   <div>
                     <span class="color-violet">{{lockSettings!.assetContractId}}</span>
@@ -151,7 +159,7 @@
                   <span>Release Period: </span>
                 </div>
                 <div>
-                  <span class="color-violet">{{formatPeriod(lockSettings!.periodTime!)}}</span>
+                  <span class="color-violet">{{formatVestingPeriod(lockSettings!.periodTime!)}}</span>
                 </div>
               </div>
               <div class="d-flex">
@@ -169,14 +177,14 @@
                   <span>Until next Release:</span>
                 </div>
                 <div>
-                  <span class="color-violet">{{formatPeriod(lockSettings!.nextClaimableTime!)}}</span>
+                  <span class="color-violet">{{formatNextRelease(lockSettings!.nextClaimableTime!)}}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="button">
-          <button class="btn-secondary-costum">
+          <button class="btn-secondary-costum" (click)="claim()" [class.disable-btn]="!unlocked">
             Claim
           </button>
         </div>

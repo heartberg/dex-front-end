@@ -67,6 +67,7 @@ export class VerseApp {
     async buy(wallet: SessionWallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from("buy")), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
@@ -88,7 +89,8 @@ export class VerseApp {
 
     async sell(wallet: SessionWallet , tokenAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.fee = 6 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
@@ -105,7 +107,8 @@ export class VerseApp {
 
     async transfer(wallet: SessionWallet , tokenAmount: number, to: string): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(tokenAmount)]
@@ -122,7 +125,8 @@ export class VerseApp {
 
     async getBacking(wallet: SessionWallet , tokenAmount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         var args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(tokenAmount)]
@@ -158,6 +162,7 @@ export class VerseApp {
     async borrow(wallet: SessionWallet , tokenAmount: bigint, assetIds: number[]): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Borrow)), algosdk.encodeUint64(tokenAmount)]
@@ -210,6 +215,7 @@ export class VerseApp {
     async stake(wallet: SessionWallet, amount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(amount)]
@@ -233,6 +239,7 @@ export class VerseApp {
 
     async withdraw(wallet: SessionWallet, amount: number): Promise<boolean> {
         const suggested = await getSuggested(10)
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk.encodeUint64(amount)]
@@ -254,6 +261,7 @@ export class VerseApp {
     async claim(wallet: SessionWallet): Promise<boolean> {
         const suggested = await getSuggested(10)
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
+        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Claim))]

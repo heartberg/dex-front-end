@@ -79,8 +79,12 @@
                     <div class="input">
                       <div class="d-flex align-items-center justify-content-between">
                         <h6>Pool Duration:</h6>
-                        <input type="text" class="input-costum" disabled value="{{getDuration(pool[0].endingTime)}}">
+                        <input type="text" class="input-costum" disabled value="{{getDuration(pool[0])}}">
                       </div>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between" *ngIf="poolStarted(pool[0].startingTime)">
+                      <h6>Pool Start:</h6>
+                      <input type="text" class="input-costum" disabled value="{{getStart(pool[0].startingTime)}}">
                     </div>
                     <div class="button top d-flex align-items-center justify-content-between">
                       <button class="btn-secondary-costum" (click)="openPopUp('stake_distribution', pool[0])">Stake</button>
@@ -93,8 +97,12 @@
                     <h4 class="color-violet">Rewards</h4>
                     <div class="input">
                       <div class="d-flex align-items-center justify-content-between">
+                        <h6>Total Rewards:</h6>
+                        <input type="text" class="input-costum" disabled value="{{pool[1].totalPoolSize }}">
+                      </div>
+                      <div class="d-flex align-items-center justify-content-between">
                         <h6>{{pool[2]['params']['name']}} Rewards:</h6>
-                        <input type="text" class="input-costum" placeholder="{{pool[1].rewards}}">
+                        <input type="text" class="input-costum" disabled value="{{pool[1].rewards}}">
                       </div>
                       <div class="d-flex align-items-center justify-content-between">
                         <h6>Next claimable time:</h6>
@@ -102,7 +110,7 @@
                       </div>
                     </div>
                     <div class="d-flex" style="margin-top: 30px; justify-content: flex-end" *ngIf="pool[1].optedIn">
-                      <button class="btn-secondary-costum" (click)="claimStaking(pool[0])">
+                      <button class="btn-secondary-costum" (click)="claimDistribution(pool[0])">
                         Claim
                       </button>
                     </div>
@@ -135,7 +143,11 @@
                       </div>
                       <div class="d-flex align-items-center justify-content-between">
                         <h6>Duration:</h6>
-                        <input type="text" class="input-costum" disabled value="{{getDuration(pool[0].endingTime)}}">
+                        <input type="text" class="input-costum" disabled value="{{getDuration(pool[0])}}">
+                      </div>
+                      <div class="d-flex align-items-center justify-content-between" *ngIf="poolStarted(pool[0].startingTime)">
+                        <h6>Pool Start:</h6>
+                        <input type="text" class="input-costum" disabled value="{{getStart(pool[0].startingTime)}}">
                       </div>
                     </div>
                   </div>

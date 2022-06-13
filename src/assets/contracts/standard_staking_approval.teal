@@ -123,7 +123,6 @@ global LatestTimestamp
 bnz main_l18
 main_l15:
 load 2
-app_global_get
 int 0
 !=
 bnz main_l17

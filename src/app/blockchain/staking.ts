@@ -309,7 +309,7 @@ export class StakingUtils {
         
         let remainingRewards = 0
         if(isDistribution){
-            remainingRewards = globalState[smartDistributionStateKeys.reward_pool_key]['i'] / assetInfo['params']['decimals']
+            remainingRewards = globalState[smartDistributionStateKeys.reward_pool_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
         } else {
             let appAccInfo = await client.accountInformation(getApplicationAddress(contractId)).do()
             let assetOnApp = appAccInfo['assets'].find((el: { [x: string]: number; }) => {
@@ -327,9 +327,12 @@ export class StakingUtils {
                 let usersStake;
                 if(isDistribution) {
                     usersStake = await getAppLocalStateByKey(client, contractId, wallet, smartDistributionStateKeys.token_amount_key)
+                    console.log(usersStake)
                 } else {
                     usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key)
+                    console.log(usersStake)
                 }
+                console.log(isDistribution)
                 
                 let rewardPool = globalState[keys.distribution_asset_amount_key]['i']
                 if(latestTimestemp > globalState[keys.current_end_epoch_key]['i']){

@@ -368,10 +368,6 @@ global MinTxnFee
 *
 >=
 assert
-txna Accounts 1
-global CreatorAddress
-==
-assert
 bytec 5 // "pe"
 app_global_get
 global LatestTimestamp

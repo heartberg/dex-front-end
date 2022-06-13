@@ -119,10 +119,16 @@ export class StakingComponent implements OnInit {
     this.stakingInfo = await this.stakingUtils.getVerseStakingInfo();
   }
 
-  closePopUp(event: boolean) {
+  async closePopUp(event: boolean) {
+    console.log(event)
     this.closePopup = event;
     this.getUserInfo()
     this.getStakingInfo()
+    if(this.isDistributionSelected) {
+      await this.ShowDistribution()
+    } else {
+      await this.ShowStaking()
+    }
   }
 
   async openPopUp(value: string, pool?: StakingModel): Promise<void> {
@@ -161,15 +167,17 @@ export class StakingComponent implements OnInit {
 
   formatDate(date: number): string {
     if (date > 0){
-      let now = Math.floor(new Date().getTime() * 1000)
+      let now = Math.floor(new Date().getTime() / 1000)
       if(now > date) {
         return "claimable"
       } else {
-        let nextClaimableTime = new Date(date - now)
-        if(nextClaimableTime.getHours() > 0){
-            return nextClaimableTime.getHours() + "h " + nextClaimableTime.getMinutes() + "min"
+        let nextClaimableTime = date - now
+        let hours = Math.floor(nextClaimableTime / 60 / 60)
+        let minutes = Math.floor(nextClaimableTime / 60 % 60)
+        if(hours > 0){
+            return hours + "h " + minutes + "min"
         } else {
-          return nextClaimableTime.getMinutes() + "min"
+          return minutes + "min"
         }
       }
     } else if(date == 0){
@@ -225,10 +233,10 @@ export class StakingComponent implements OnInit {
         res.forEach(async (element: StakingModel) => {
           let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
-            let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
+            let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, true, addr)
             this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
-            let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
+            let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, true, addr)
             this.pools.push([element, extraStakingInfo, tokenInfo])
           }
           console.log(this.pools)
@@ -253,10 +261,10 @@ export class StakingComponent implements OnInit {
         res.forEach(async (element: StakingModel) => {
           let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
-            let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
+            let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, this.isDistributionSelected, addr)
             this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
-            let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
+            let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, this.isDistributionSelected, addr)
             this.pools.push([element, extraStakingInfo, tokenInfo])
           }
         });
@@ -279,9 +287,15 @@ export class StakingComponent implements OnInit {
     return tokenInfo
   }
 
-  getDuration(timestamp: number): string {
+  getDuration(pool: StakingModel): string {
+    let start = pool.startingTime
+    let end = pool.endingTime
     let now = Math.floor(new Date().getTime() / 1000)
-    let duration = timestamp - now
+    let duration = end - start
+    if(start < now) {
+      duration = end - now
+    }
+    
     let hours = Math.floor(duration / 60 / 60)
     if(duration <= 0) {
       return "ended"
@@ -308,7 +322,17 @@ export class StakingComponent implements OnInit {
     if(wallet) {
       let response = await this.deployerApp.claimStaking(wallet, stakingPool.contractId, stakingPool.assetId, stakingPool.project?.asset.smartProperties?.contractId)
       if(response) {
-        console.log("opted in to staking pool")
+        console.log("claimed staking pool")
+      }
+    }
+  }
+
+  async claimDistribution(distPool: StakingModel) {
+    let wallet = this.walletService.sessionWallet
+    if(wallet) {
+      let response = await this.deployerApp.claimDistributionPool(wallet, distPool.contractId, distPool.project?.asset.smartProperties?.contractId)
+      if(response) {
+        console.log("claimed dis pool")
       }
     }
   }
@@ -324,6 +348,38 @@ export class StakingComponent implements OnInit {
         })
         pool![1].optedIn = true;
       }
+    }
+  }
+
+  poolStarted(start: number) {
+    let now = Math.floor(new Date().getTime() / 1000)
+    if(start > now) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  getStart(start: number) {
+    let now = Math.floor(new Date().getTime() / 1000)
+    let duration = start - now
+    let hours = Math.floor(duration / 60 / 60)
+    if(hours > 0){
+      if(Math.floor(hours / 24) > 0){
+        let suffix = " day"
+        let days = Math.floor(hours / 24)
+        if(days > 1) suffix += "s"
+        return days + suffix
+      } else {
+        if(hours < 10) {
+          return "0" + hours + " h"
+        } else {
+          return hours + " h"
+        }
+      }
+    } else {
+      let minutes = Math.floor(duration / 60)
+      return minutes + " min"
     }
   }
 

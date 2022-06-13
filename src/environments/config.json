@@ -18,18 +18,18 @@
     "explorer":"algoscan.app",
     "platform": {
         "burn_addr": "MXJT53H5ZO7KWBYMCLZ4ZVWEF5JS4NLVHEII6OI3DCLI3KL26BRDTAFJKA",
-        "fee_addr": "FRSCVC72AY3V5FCGVBDEQG4QXAWGHJXIZ6VSTZ4IP4LAQXAABCVHX6W7UE",
-        "staking_addr": "K526DHV6PUEXDV5VKNUYU4ZQ5VR3RSCG4MKGMUENQFWJTZYPNZW3ZGN4RU",
-        "staking_id": 7610,
-        "verse_app_id": 7596,
-        "verse_app_addr": "ZL4VKFON5OCHDNPGARKEHKWLXTSDYDAL2ZL6OUH2AKC76Y5S467Q4IK4SM",
-        "verse_asset_id": 7599,
+        "fee_addr": "T24WARSOWIDI5JIXNADR5WLFWWLCRB3FPV5H2VTJMUDIHIAFZV62GIRI5M",
+        "staking_addr": "N5OSKGF25PSGZNS6TBYEFTA2LM5LFVGYG322GB3PQWRAWNMZEZPLTHFA7I",
+        "staking_id": 9020,
+        "verse_app_id": 9006,
+        "verse_app_addr": "3LAVH2OME3EKH4KKNFZQOSMIQV2UA7QVNOI2POHSBV6T2OOKV3JI6B2P5E",
+        "verse_asset_id": 9009,
         "verse_decimals": 6,
-        "backing_id": 7594,
-        "backing_addr": "RGG5NMQAJ32XKF4XGJIKEZKGMABTUGFYX7EIBEJWER4K6E7LQ76NGM5ATU",
+        "backing_id": 9004,
+        "backing_addr": "SVT5LMLMDMDTHJ42YE6EGXEEB74PBFVXST3KVNV2FWAESCJG5VBNK5CM2Q",
         "backing_per_x_token": 1000000,
-        "locker_id": 8605,
-        "locker_addr": "YDX6CGO33DJZ36AN7VR3H6FQYVRE7ZDLDN44KKFJZOQKKLZ6YL5FYHZUYE"
+        "locker_id": 9272,
+        "locker_addr": "BCMNMSALTCJYTC6BKDPSTU7TDGLK6O34E47353ESQJNJKND72UM3AEJPL4"
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",

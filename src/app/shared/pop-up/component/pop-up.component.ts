@@ -55,7 +55,6 @@ export class PopUpComponent implements OnInit {
   @Input() isRestart: boolean = false;
   @Input() isFair: boolean = false;
 
-  @Input() isDistributionPool: boolean = false;
   @Input() projectForDistributionPool: ProjectPreviewModel | undefined;
   tokensPerInterval: number = 0;
   availableAmountForDistribution: number = 0;
@@ -170,8 +169,6 @@ export class PopUpComponent implements OnInit {
     tokenLiq: [],
     algoLiq: [],
   });
-
-  stakingGroup = this.fb.group({});
   // FORMS
   constructor(
     private _walletsConnectService: WalletsConnectService,
@@ -217,14 +214,16 @@ export class PopUpComponent implements OnInit {
       }
     )
 
-    if(this.isDistributionPool) {
+    if(this.isPool) {
       let client: Algodv2 = getAlgodClient()
       let wallet = this._walletsConnectService.sessionWallet
       let accInfo = await client.accountInformation(wallet!.getDefaultAccount()).do()
       let asset = accInfo['assets'].find((value: any) => {
         return value['asset-id'] == this.projectForDistributionPool!.asset.assetId
       })
-      this.availableAmountForDistribution = asset['amount']
+      console.log(asset)
+      console.log(accInfo)
+      this.availableAmountForDistribution = asset['amount'] / Math.pow(10, this.projectForDistributionPool!.asset.decimals)
     }
 
     if(this.isTradeBacking){
@@ -475,8 +474,8 @@ export class PopUpComponent implements OnInit {
 
   getDistributionFields() {
     let poolDuration = +this.distributionPoolForm.get('poolDuration')?.value * 86400
-    let poolInterval = this.distributionPoolForm.get('rewardInterval')?.value * 86400
-    let poolRewards = this.distributionPoolForm.get('rewardPool')?.value * Math.pow(10, this.projectForDistributionPool!.asset.decimals)
+    let poolInterval = +this.distributionPoolForm.get('poolInterval')?.value * 86400
+    let poolRewards = +this.distributionPoolForm.get('poolReward')?.value
 
     if(poolRewards != 0 && poolDuration != 0 && poolInterval != 0) {
       this.tokensPerInterval = poolRewards / (poolDuration / poolInterval)
@@ -753,6 +752,8 @@ export class PopUpComponent implements OnInit {
       rewardsPerInterval: poolIntervalRewards,
       isDistribution: true
     }
+    console.log(stakingSetup)
     await this.deployLib.deployStaking(stakingSetup)
+    this.closePopUp(true)
   }
 }

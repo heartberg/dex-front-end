@@ -2,6 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Algodv2 } from 'algosdk';
 import { time } from 'console';
+import { min } from 'rxjs/operators';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { LockSettings, LockerApp } from 'src/app/blockchain/locker_application'
 import { AssetViewModel } from 'src/app/models/assetViewModel';
@@ -34,6 +35,7 @@ export class LockerComponent implements OnInit {
   selectedAmount: number = 0;
   selectedUnit: string = "";
   optedIn: boolean = false;
+  unlocked: boolean = false;
 
   constructor(
     private locker: LockerApp,
@@ -62,7 +64,12 @@ export class LockerComponent implements OnInit {
       }
       console.log(this.lockSettings)
       if(this.lockSettings.amount > 0) {
+        let client: Algodv2 = getAlgodClient()
+        let assetInfo = await client.getAssetByID(this.lockSettings.assetId).do()
+        this.selectedStakingAssetInfo = assetInfo
         this.walletLockedAlready = true;
+        this.isClaimable(this.lockSettings)
+
       } else {
         await this.getAssetsOfAccount()
         console.log(wallet.getDefaultAccount())
@@ -78,27 +85,33 @@ export class LockerComponent implements OnInit {
     }
   }
 
-  lockTokens() {
+  async lockTokens() {
     console.log("lock tokens")
     this.getLockSettings()
     console.log(this.lockSettings)
     let wallet = this.walletService.sessionWallet
+    let response
     if(this.assetContractId) {
-      this.locker.setupSmartLock(wallet!, this.lockSettings!)
+      response = await this.locker.setupSmartLock(wallet!, this.lockSettings!)
     } else {
-      this.locker.setupStandardLock(wallet!, this.lockSettings!)
+      response = await this.locker.setupStandardLock(wallet!, this.lockSettings!)
+    }
+    if(response) {
+      this.walletLockedAlready = true
+      this.lockSettings = await this.locker.getLockData(wallet!.getDefaultAccount())
+      this.isClaimable(this.lockSettings)
     }
     
   }
 
   getLockSettings() {
     let amount = +this.lockerFormGroup.get("amount")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
-    let lockTime = new Date(this.lockerFormGroup.get("lockTime")?.value).getTime() / 1000
+    let lockTime = Math.floor(new Date(this.lockerFormGroup.get("lockTime")?.value).getTime() / 1000)
     let periodTime = undefined
     let tokensPerPeriod = undefined
     if(this.vestedChecked) {
-      periodTime = this.lockerFormGroup.get("releaseInterval")?.value * 86400
-      tokensPerPeriod = +this.lockerFormGroup.get("releasePerInterval")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
+      periodTime = Math.floor(this.lockerFormGroup.get("releaseInterval")?.value * 86400)
+      tokensPerPeriod = Math.floor(+this.lockerFormGroup.get("releasePerInterval")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals']))
     }
     this.lockSettings = {
       amount: amount,
@@ -108,6 +121,7 @@ export class LockerComponent implements OnInit {
       periodTime: periodTime,
       tokensPerPeriod: tokensPerPeriod
     }
+    console.log(this.lockSettings)
   }
 
   async getAssetsOfAccount() {
@@ -155,15 +169,40 @@ export class LockerComponent implements OnInit {
     return date.toDateString() + " - " + hours + ":" + minutes
   }
 
-  formatPeriod(timestamp: number) {
+  formatVestingPeriod(seconds: number) {
+    let days = Math.floor(seconds / 60 / 60 / 24)
+    let hours = Math.floor(seconds / 60 / 60)
+    if(days > 0) {
+      let suffix = " day"
+      if(days > 1) {
+        suffix += "s"
+      }
+      return days.toString() + suffix
+      }
+    if(hours > 0) {
+      return hours.toString() + " h"
+    }
+
+    let minutes = Math.floor(seconds / 60)
+    if(minutes > 0) {
+      return minutes.toString() + " min"
+    }
+    return "less than 1 min"
+  }
+
+  formatNextRelease(timestamp: number) {
     let now = Math.floor(new Date().getTime() / 1000)
     let duration = timestamp - now
-    let hours = duration / 60 / 60
+    if(duration <= 0) {
+      return "claimable"
+    }
+    let hours = Math.floor(duration / 60 / 60)
     if(hours >= 1){
       if(Math.floor(hours / 24) > 0){
         let suffix = " day"
         let days = Math.floor(hours / 24)
         if(days > 1) suffix += "s"
+        if(hours > 0) suffix += " " + (hours % 24).toString() + " h"
         return days + suffix
       } else {
         if(hours < 10) {
@@ -174,11 +213,7 @@ export class LockerComponent implements OnInit {
       }
     } else {
       let minutes = duration / 60
-      if(minutes < 10) {
-        return "0" + minutes + " min"
-      } else {
-        return minutes + " min"
-      }
+      return minutes.toFixed(0) + " min"
     }
   }
 
@@ -216,6 +251,35 @@ export class LockerComponent implements OnInit {
       } else {
         this.optedIn = false;
       }
+    }
+  }
+
+  async claim(){
+    let wallet = this.walletService.sessionWallet
+    if(wallet) {
+      let response = await this.locker.claim(wallet)
+      if(response) {
+        this.lockSettings = await this.locker.getLockData(wallet.getDefaultAccount())
+        if(this.lockSettings?.amount == 0) {
+          this.walletLockedAlready = false
+          await this.getAssetsOfAccount()
+        }
+      }
+    }
+  }
+
+  isClaimable(lockSettings: LockSettings) {
+    let now = Math.floor(new Date().getTime() / 1000)
+    console.log(now)
+    console.log(lockSettings.lockTime)
+    let unlockTime = lockSettings.lockTime
+    if(lockSettings.nextClaimableTime) {
+      unlockTime = lockSettings.nextClaimableTime
+    }
+    if(now >= unlockTime) {
+      this.unlocked = true
+    } else {
+      this.unlocked = false
     }
   }
 
