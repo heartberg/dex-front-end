@@ -197,7 +197,8 @@ export class DeployComponent implements OnInit, DoCheck {
       rewardPool:  null,
       rewardInterval: null,
       poolDuration: null,
-      poolStart: null
+      poolStart: null,
+      distributionPoolCheck: false
     });
 
     this.deployFormGroup = this.fb.group({

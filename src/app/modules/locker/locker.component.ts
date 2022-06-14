@@ -263,6 +263,8 @@ export class LockerComponent implements OnInit {
         if(this.lockSettings?.amount == 0) {
           this.walletLockedAlready = false
           await this.getAssetsOfAccount()
+        } else {
+          this.isClaimable(this.lockSettings)
         }
       }
     }

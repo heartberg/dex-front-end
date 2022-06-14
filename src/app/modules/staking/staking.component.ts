@@ -177,7 +177,7 @@ export class StakingComponent implements OnInit {
         if(hours > 0){
             return hours + "h " + minutes + "min"
         } else {
-          return minutes + "min"
+          return minutes + " min"
         }
       }
     } else if(date == 0){
@@ -226,6 +226,7 @@ export class StakingComponent implements OnInit {
   async ShowDistribution(){
     this.isStakingSelected = false
     this.isDistributionSelected = true
+    this.sessionWallet = this.walletService.sessionWallet
     let addr = this.sessionWallet?.getDefaultAccount()
     this.pools = []
     this.projectReqService.GetStakingPools(this.isFinishedChecked, this.isDistributionSelected).subscribe(
@@ -247,6 +248,7 @@ export class StakingComponent implements OnInit {
   }
 
   ShowFinished() {
+    this.sessionWallet = this.walletService.sessionWallet
     let addr = this.sessionWallet?.getDefaultAccount()
 
     if(this.checkFinished.nativeElement.checked) {
@@ -323,6 +325,7 @@ export class StakingComponent implements OnInit {
       let response = await this.deployerApp.claimStaking(wallet, stakingPool.contractId, stakingPool.assetId, stakingPool.project?.asset.smartProperties?.contractId)
       if(response) {
         console.log("claimed staking pool")
+        this.ShowStaking()
       }
     }
   }
@@ -333,6 +336,7 @@ export class StakingComponent implements OnInit {
       let response = await this.deployerApp.claimDistributionPool(wallet, distPool.contractId, distPool.project?.asset.smartProperties?.contractId)
       if(response) {
         console.log("claimed dis pool")
+        this.ShowDistribution()
       }
     }
   }
@@ -353,7 +357,16 @@ export class StakingComponent implements OnInit {
 
   poolStarted(start: number) {
     let now = Math.floor(new Date().getTime() / 1000)
-    if(start > now) {
+    if(now > start) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  poolClaimable(claimTime: number) {
+    let now = Math.floor(new Date().getTime() / 1000)
+    if(claimTime < now) {
       return true
     } else {
       return false

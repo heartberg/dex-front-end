@@ -48,39 +48,49 @@
         <div class="col-md-6">
           <div class="data-box">
             <span class="property">Price</span>
-            <span class="value">{{ getPrice().toFixed(6)}} Algo/Token</span>
+            <span *ngIf="blockchainData" class="value">{{ getPrice().toFixed(6)}} Algo/Token</span>
+            <span *ngIf="!blockchainData" class="value">Coming Soon</span>
           </div>
         </div>
         <div class="col-md-6">
           <div class="data-box">
             <span class="property">Marketcap</span>
-            <span class="value">{{(getPrice() * blockchainData.totalsupply).toFixed(2)}} Algo</span>
+            <span *ngIf="blockchainData" class="value">{{(getPrice() * blockchainData!.totalsupply).toFixed(2)}} Algo</span>
+            <span *ngIf="!blockchainData" class="value">Coming Soon</span>
           </div>
         </div>
         </div>
         <div class="row">
           <div class="col-md-6">
             <div class="data-box">
-              <span class="property">Remaining Supply</span>
-              <span class="value">{{ blockchainData.totalsupply.toFixed(2) }}</span>
+              <span *ngIf="blockchainData" class="property">Remaining Supply</span>
+              <span *ngIf="blockchainData" class="value">{{ blockchainData.totalsupply.toFixed(2) }}</span>
+              <span *ngIf="!blockchainData" class="property">Total Supply</span>
+              <span *ngIf="!blockchainData" class="value">{{ (projectData.asset.totalSupply / pow(projectData.asset.decimals)).toFixed(0) }}</span>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="blockchainData">
             <div class="data-box">
               <span class="property">Burned</span>
               <span class="value">{{((projectData.asset.totalSupply / pow(projectData.asset.decimals) - blockchainData.totalsupply)).toFixed(2)}} Token</span>
               <span class="value">Value: {{ ((projectData.asset.totalSupply / pow(projectData.asset.decimals) - blockchainData.totalsupply) * getPrice()).toFixed(2)}} Algo</span>
             </div>
           </div>
+          <div class="col-md-6" *ngIf="!blockchainData">
+            <div class="data-box">
+              <span class="property">Holders</span>
+              <span class="value">XY Addresses</span>
+            </div>
+          </div>
         </div>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="blockchainData">
             <div class="data-box">
               <span class="property">Backing</span>
               <span class="value">{{blockchainData.totalBacking.toFixed(2)}}</span>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6" *ngIf="blockchainData">
             <div class="data-box">
               <span class="property">Holders</span>
               <span class="value">XY Addresses</span>
@@ -88,7 +98,7 @@
           </div>
         </div>
       </div>
-      <div class="outer-buttons-container d-flex flex-column">
+      <div class="outer-buttons-container d-flex flex-column" *ngIf="blockchainData">
         <button class="btn-secondary-costum">Buy</button>
         <div class="buttons-container">
           <div class="d-flex flex-column align-items-center">
@@ -129,7 +139,7 @@
                   <h6>ASA Id:</h6>
                   <span>{{ projectData!.asset.assetId}}</span>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex" *ngIf="blockchainData">
                   <h6>Contract Id:</h6>
                   <span>{{ projectData!.asset.smartProperties!.contractId}}</span>
                 </div>
@@ -141,12 +151,12 @@
                   <h6>Token Unit:</h6>
                   <span>{{projectData?.asset?.unitName}}</span>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex" *ngIf="blockchainData">
                   <h6>Initial Token Supply:</h6>
                   <span>{{(projectData!.asset!.totalSupply / pow(projectData!.asset!.decimals)).toFixed(projectData!.asset!.decimals)}}</span>
                 </div>
               </div>
-              <div class="token-second">
+              <div class="token-second" *ngIf="blockchainData">
                 <div class="d-flex">
                   <h6>Buy Burn:</h6>
                   <span>{{(projectData!.asset!.smartProperties!.buyBurn / 100).toFixed(2)}}%</span>
@@ -163,7 +173,14 @@
                   <h6>Rising Pricefloor:</h6>
                   <span>{{(projectData!.asset!.smartProperties!.risingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
-
+                <div class="d-flex" *ngIf="projectData.asset.smartProperties!.additionalFee">
+                  <h6>Additional Fee:</h6>
+                  <span>{{(projectData.asset.smartProperties!.additionalFee / 100).toFixed(2)}}%</span>
+                </div>
+                <div class="d-flex" *ngIf="projectData.asset.smartProperties!.additionalFee">
+                  <h6>Purpose:</h6>
+                  <span>{{projectData.asset.smartProperties!.additionalFeePurpose}}</span>
+                </div>
               </div>
             </div>
           </div>

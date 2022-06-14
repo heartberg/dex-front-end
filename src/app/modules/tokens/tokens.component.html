@@ -75,21 +75,26 @@
                 <div class="column">
                   <div class="data-box">
                     <span class="property">Marketcap</span>
-                    <span class="value">{{ getPrice(item) * item[1].totalsupply}}</span>
+                    <span *ngIf="item[1]" class="value">{{ getPrice(item) * item[1].totalsupply}}</span>
+                    <span *ngIf="!item[1]" class="value">Coming soon</span>
                   </div>
                   <div class="data-box">
-                    <span class="property">Remaining Supply</span>
-                    <span class="value">{{ item[1].totalsupply }}</span>
+                    <span *ngIf="item[1]" class="property">Remaining Supply</span>
+                    <span *ngIf="item[1]" class="value">{{ item[1].totalsupply }}</span>
+                    <span *ngIf="!item[1]" class="property">Total Supply</span>
+                    <span *ngIf="!item[1]" class="value">{{ item[0].asset.totalSupply }}</span>
                   </div>
                 </div>
                 <div class="column">
                   <div class="data-box">
                     <span class="property">Price per Token</span>
-                    <span class="value"> {{ (getPrice(item)).toFixed(6) }} Algo</span>
+                    <span *ngIf="item[1]" class="value"> {{ (getPrice(item)).toFixed(6) }} Algo</span>
+                    <span *ngIf="!item[1]" class="value"> Coming soon</span>
                   </div>
                   <div class="data-box">
                     <span class="property">Backing</span>
-                    <span class="value">{{ item[1].totalBacking }}</span>
+                    <span *ngIf="item[1]" class="value">{{ item[1].totalBacking }}</span>
+                    <span *ngIf="!item[1]" class="value">-</span>
                   </div>
                 </div>
                 <!-- <div class="column"> -->

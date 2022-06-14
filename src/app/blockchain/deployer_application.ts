@@ -91,6 +91,14 @@ export enum DeployerMethod {
   SetupLock = "setup_lock"
 }
 
+export type ClaimState = {
+  canParticipate: boolean,
+  canClaim: boolean,
+  optedIn: boolean,
+  isFinished: boolean,
+  hasStarted: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -600,6 +608,7 @@ export class DeployedApp {
 
   async buyPresale(wallet: SessionWallet, amount: number, contractId: number): Promise<any> {
     const suggested = await getSuggested(30)
+    suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
 
@@ -625,7 +634,7 @@ export class DeployedApp {
     let appInfo = await client.getApplicationByID(contractId).do()
     console.log(appInfo)
     const suggested = await getSuggested(30)
-    suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
+    suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
 
@@ -1143,17 +1152,44 @@ export class DeployedApp {
     let presaleStart = globalState[StateKeys.presale_start_key]['i']
     let isOptedIn = await isOptedIntoApp(addr, contractId)
     let userContribution = await getAppLocalStateByKey(client, contractId, addr, StateKeys.presale_contribution_key)
-    let latestTimestemp = Math.floor(Date.now() / 1000);
+    let latestTimestamp = Math.floor(Date.now() / 1000);
 
-    if((presaleEnd < latestTimestemp || presaleStart > latestTimestemp) && isOptedIn) {
-      if(userContribution > 0) {
-        return [true, false]
-      } else {
-        return [true, true]
-      }
-    } else {
-      return [false, false]
+
+    let claimState: ClaimState = {
+      optedIn: isOptedIn,
+      canClaim: false,
+      canParticipate: false,
+      isFinished: false,
+      hasStarted: false,
     }
+
+    if((presaleEnd < latestTimestamp) || (presaleStart > latestTimestamp)) {
+      if(userContribution > 0) {
+        claimState.canClaim = true
+      } else {
+        claimState.canClaim = false
+      }
+    }
+
+    if(presaleStart < latestTimestamp) {
+      claimState.hasStarted = true
+    } else {
+      claimState.hasStarted = false
+    }
+
+    if(presaleEnd < latestTimestamp) {
+      claimState.isFinished = true
+    } else {
+      claimState.isFinished = false
+    }
+
+    if(!claimState.isFinished && claimState.hasStarted) {
+      claimState.canParticipate = true
+    } else {
+      claimState.canParticipate = false
+    }
+
+    return claimState
   }
 
   async optInStakingPool(wallet: SessionWallet, contractId: number) {

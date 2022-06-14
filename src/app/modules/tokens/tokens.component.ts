@@ -18,7 +18,7 @@ export class TokensComponent implements OnInit {
 
 
 
-  arr: [ProjectPreviewModel, BlockchainInformation][] = [];
+  arr: [ProjectPreviewModel, BlockchainInformation?][] = [];
 
   public isActiveFirst: boolean = false;
   public isActiveSecond: boolean = false;
@@ -41,9 +41,11 @@ export class TokensComponent implements OnInit {
           if(element.asset.assetId == ps.platform.verse_asset_id) {
             let bcInfo = await this.verseApp.getBlockchainInformation();
             this.arr.push([element, bcInfo])
-          } else {
+          } else if(element.asset.smartProperties){
             let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
             this.arr.push([element, bcInfo])
+          } else {
+            this.arr.push([element, undefined])
           }
         });
         console.log(this.arr);
@@ -70,9 +72,9 @@ export class TokensComponent implements OnInit {
     return Math.pow(10, decimals)
   }
 
-  getPrice(item: [ProjectPreviewModel, BlockchainInformation]) {
+  getPrice(item: [ProjectPreviewModel, BlockchainInformation?]) {
     let diff = 0
-    let price = item[1].algoLiquidity / item[1].tokenLiquidity
+    let price = item[1]!.algoLiquidity / item[1]!.tokenLiquidity
     if(item[0].asset.decimals > 6) {
       diff = item[0].asset.decimals - 6
       price = price * Math.pow(10, diff)

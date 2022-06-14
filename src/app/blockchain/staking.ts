@@ -326,10 +326,10 @@ export class StakingUtils {
                 let latestTimestemp = latestRound['block']['ts']
                 let usersStake;
                 if(isDistribution) {
-                    usersStake = await getAppLocalStateByKey(client, contractId, wallet, smartDistributionStateKeys.token_amount_key)
+                    usersStake = await getAppLocalStateByKey(client, contractId, wallet, smartDistributionStateKeys.token_amount_key) / Math.pow(10, assetInfo['params']['decimals'])
                     console.log(usersStake)
                 } else {
-                    usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key)
+                    usersStake = await getAppLocalStateByKey(client, ps.platform.staking_id, wallet, stakingStateKeys.token_amount_key) / Math.pow(10, ps.platform.verse_decimals)
                     console.log(usersStake)
                 }
                 console.log(isDistribution)
@@ -338,14 +338,14 @@ export class StakingUtils {
                 if(latestTimestemp > globalState[keys.current_end_epoch_key]['i']){
                     rewardPool = globalState[keys.period_dist_amount_key]['i'] + globalState[keys.unclaimed_key]['i']
                 }
+                rewardPool = rewardPool / Math.pow(10, assetInfo['params']['decimals'])
                 let claimableAmount
                 if(isDistribution) {
-                    claimableAmount = ((usersStake * rewardPool) / globalState[smartDistributionStateKeys.total_staked_key]['i']) / Math.pow(10, assetInfo['params']['decimals'])
+                    claimableAmount = usersStake * rewardPool / globalState[smartDistributionStateKeys.total_staked_key]['i'] * Math.pow(10, assetInfo['params']['decimals'])
                 } else {
-                    claimableAmount = ((usersStake * rewardPool)) / verseGlobalState[stakingStateKeys.total_staked_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+                    claimableAmount = usersStake * rewardPool / verseGlobalState[stakingStateKeys.total_staked_key]['i'] * Math.pow(10, ps.platform.verse_decimals)
                 }
                 
-                usersStake = usersStake / Math.pow(10, ps.platform.verse_decimals)
                 let stakingInfo: StakingUserInfo = {
                     nextClaimableDate: nextClaimabletime,
                     usersHolding: holding,

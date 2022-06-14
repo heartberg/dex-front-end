@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
+import { Algodv2, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
-import { DeployedApp } from 'src/app/blockchain/deployer_application';
+import { ClaimState, DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
+import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
 // import { ActivatedRoute } from '@angular/router';
 // import { ProjectViewModel } from 'src/app/models/projectView.model';
@@ -72,6 +73,14 @@ export class LaunchDetailComponent implements OnInit {
   finished: boolean = false;
   isClaimable: boolean = false;
   alreadyClaimed: boolean = false;
+  claimState: ClaimState = {
+    isFinished: false,
+    canClaim: false,
+    canParticipate: true,
+    hasStarted: false,
+    optedIn: true
+  };
+  userAllocation: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -92,15 +101,24 @@ export class LaunchDetailComponent implements OnInit {
           this.calcLaunchPrices()
         }
         this.checkClaimable()
-        if(this.presaleData.saleEnd < new Date()){
-          this.finished = true;
-        } else {
-          this.finished = false;
-        }
+        await this.getUserAllocation()
         console.log(this.projectData)
         console.log(this.presaleData)
       }
     )
+  }
+  async getUserAllocation() {
+    let client: Algodv2 = getAlgodClient()
+    let wallet = localStorage.getItem("wallet")
+    if(wallet){
+      if(this.projectData.presale?.contractId){
+        this.userAllocation = await getAppLocalStateByKey(client, this.projectData.presale.contractId, wallet, StateKeys.presale_contribution_key)
+      } else {
+        this.userAllocation = await getAppLocalStateByKey(client, this.projectData.asset.smartProperties!.contractId, wallet, StateKeys.presale_contribution_key)
+      }
+    }
+
+    
   }
 
   async checkClaimable() {
@@ -112,9 +130,8 @@ export class LaunchDetailComponent implements OnInit {
       } else {
         contractId = this.projectData.presale?.contractId!
       }
-      let claimState = await this.deployedApp.isClaimablePresale(wallet, contractId)
-      this.isClaimable = claimState[0]
-      this.alreadyClaimed = claimState[1]
+      this.claimState = await this.deployedApp.isClaimablePresale(wallet, contractId)
+      console.log(this.claimState)
     }
   }
 

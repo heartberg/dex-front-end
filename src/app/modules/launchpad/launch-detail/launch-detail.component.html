@@ -92,26 +92,16 @@
               <span>{{presaleData.totalRaised.toFixed(0)}} Algo</span> <span>/</span> <span>{{presaleData.hardCap.toFixed(0)}} Algo</span>
             </div>
             <div class="between d-flex">
-              <span>Filled:</span> <span>{{(presaleData.totalRaised / presaleData.hardCap * 100).toFixed(2)}}%</span>
+              <span>User Allocation:</span> <span>{{(userAllocation / pow(6)).toFixed(2)}} Algo</span>
             </div>
             <div class="button">
-              <button class="btn-secondary-costum" *ngIf="!isClaimable && !finished" (click)="openPopUp()">
+              <button class="btn-secondary-costum" *ngIf="!claimState.isFinished && claimState.hasStarted" [class.disable-btn]="!claimState.canParticipate" (click)="openPopUp()">
                 Participate
               </button>
             </div>
             <div class="button">
-              <button class="btn-secondary-costum" *ngIf="!isClaimable && finished" [class.disable-btn]="true">
-                Participate
-              </button>
-            </div>
-            <div class="button">
-              <button class="btn-secondary-costum" *ngIf="isClaimable && !alreadyClaimed" (click)="claim()">
+              <button class="btn-secondary-costum" *ngIf="claimState.isFinished || !claimState.hasStarted" [class.disable-btn]="!claimState.canClaim" (click)="claim()">
                 Claim
-              </button>
-            </div>
-            <div class="button">
-              <button class="btn-secondary-costum" *ngIf="isClaimable && alreadyClaimed" [class.disable-btn]="true">
-                Claimed
               </button>
             </div>
           </div>
@@ -168,6 +158,14 @@
                   <div class="d-flex">
                     <h6>Rising Pricefloor:</h6>
                     <span>{{(projectData.asset.smartProperties!.risingPriceFloor / 100).toFixed(2)}}%</span>
+                  </div>
+                  <div class="d-flex" *ngIf="projectData.asset.smartProperties.additionalFee">
+                    <h6>Additional Fee:</h6>
+                    <span>{{(projectData.asset.smartProperties!.additionalFee / 100).toFixed(2)}}%</span>
+                  </div>
+                  <div class="d-flex" *ngIf="projectData.asset.smartProperties!.additionalFee">
+                    <h6>Purpose:</h6>
+                    <span>{{projectData.asset.smartProperties!.additionalFeePurpose}}</span>
                   </div>
                 </div>
               </div>

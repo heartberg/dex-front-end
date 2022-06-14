@@ -39,7 +39,7 @@ export class TokenDetailComponent implements OnInit {
 
   currentProjectId: string = this.route.snapshot.paramMap.get('id')!;
   projectData!: ProjectViewModel;
-  blockchainData!: BlockchainInformation;
+  blockchainData: BlockchainInformation | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -58,8 +58,10 @@ export class TokenDetailComponent implements OnInit {
         console.log(this.projectData)
         if(this.projectData.asset.assetId == ps.platform.verse_asset_id) {
           this.blockchainData = await this.verseApp.getBlockchainInformation();
-        } else {
+        } else if(this.projectData.asset.smartProperties){
           this.blockchainData = await this.deployedApp.getBlockchainInformation(this.projectData.asset.smartProperties!.contractId);
+        } else {
+          this.blockchainData = undefined
         }
       });
       await this.getSmartToolData();
@@ -100,7 +102,7 @@ export class TokenDetailComponent implements OnInit {
 
   getPrice() {
     let diff = 0
-    let price = this.blockchainData.algoLiquidity / this.blockchainData.tokenLiquidity
+    let price = this.blockchainData!.algoLiquidity / this.blockchainData!.tokenLiquidity
     if(this.projectData.asset.decimals > 6) {
       diff = this.projectData.asset.decimals - 6
       price = price * Math.pow(10, diff)

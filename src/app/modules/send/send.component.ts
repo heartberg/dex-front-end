@@ -95,12 +95,12 @@ export class SendComponent implements OnInit {
     if(!wallet){
       wallet = "default";
     }
+    this.tokens.push(await this.verseApp.getViewModel())
+    this.selectAsset(this.tokens[0]);
     this.assetService.getAssetPairs(false, '', wallet!).subscribe(
       async (res) => {
         this.removeVerse(res);
-        this.tokens.push(await this.verseApp.getViewModel())
         this.tokens.push(...res);
-        this.selectAsset(this.tokens[0]);
       }
     );
     

@@ -30,8 +30,10 @@ export class MyPresaleComponent implements OnInit {
   isSoldOut: boolean = false;
   wallet: SessionWallet | undefined
 
+  projectPreviewModel: ProjectPreviewModel | undefined;
   projectModel: ProjectViewModel | undefined;
   presaleData: PresaleBlockchainInformation | undefined;
+  isPool: boolean = false;
 
   constructor(
     private projectReqService: projectReqService,
@@ -41,21 +43,30 @@ export class MyPresaleComponent implements OnInit {
   ) {}
 
   async openPopUp(version: string, presale: ProjectPreviewModel) {
-    this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
-      async (value: ProjectViewModel) => {
-        console.log(value)
-        this.projectModel = value
-        this.presaleData = await this.app.getPresaleInfo(presale.asset.smartProperties!.contractId)
-        this.isPopUpOpen = true;
-        if (version === 'restart') {
-          this.isRestart = true;
-          this.isFair = false;
-        } else if (version === 'fair') {
-          this.isRestart = false;
-          this.isFair = true;
+    if(version === 'dist') {
+      this.isRestart = false;
+      this.isFair = false;
+      this.isPool = true;
+      this.projectPreviewModel = presale
+    } else {
+      this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
+        async (value: ProjectViewModel) => {
+          console.log(value)
+          this.projectModel = value
+          this.presaleData = await this.app.getPresaleInfo(presale.asset.smartProperties!.contractId)
+          if (version === 'restart') {
+            this.isRestart = true;
+            this.isFair = false;
+            this.isPool = false;
+          } else if (version === 'fair') {
+            this.isRestart = false;
+            this.isFair = true;
+            this.isPool = false;
+          }
         }
-      }
-    )
+      )
+    }
+    this.isPopUpOpen = true;
   }
 
   closePopUp(event: boolean) {

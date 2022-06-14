@@ -39,7 +39,7 @@
                     </div>
                   </div>
                   <div class="button d-flex align-items-center claim-button">
-                    <button class="btn-primary-costum" (click)="claim()">Claim</button>
+                    <button class="btn-secondary-costum" (click)="claim()" [class.disable-btn]="!poolClaimable(userInfo!.nextClaimableDate)">Claim</button>
                   </div>
                 </div>
               </div>
@@ -82,7 +82,7 @@
                         <input type="text" class="input-costum" disabled value="{{getDuration(pool[0])}}">
                       </div>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between" *ngIf="poolStarted(pool[0].startingTime)">
+                    <div class="d-flex align-items-center justify-content-between" *ngIf="!poolStarted(pool[0].startingTime)">
                       <h6>Pool Start:</h6>
                       <input type="text" class="input-costum" disabled value="{{getStart(pool[0].startingTime)}}">
                     </div>
@@ -106,11 +106,11 @@
                       </div>
                       <div class="d-flex align-items-center justify-content-between">
                         <h6>Next claimable time:</h6>
-                        <input type="text" class="input-costum" placeholder="{{formatDate(pool[1].nextClaimableDate)}}">
+                        <input type="text" class="input-costum" disabled value="{{formatDate(pool[1].nextClaimableDate)}}">
                       </div>
                     </div>
                     <div class="d-flex" style="margin-top: 30px; justify-content: flex-end" *ngIf="pool[1].optedIn">
-                      <button class="btn-secondary-costum" (click)="claimDistribution(pool[0])">
+                      <button class="btn-secondary-costum" (click)="claimDistribution(pool[0])" [class.disable-btn]="!poolClaimable(pool[1].nextClaimableDate)">
                         Claim
                       </button>
                     </div>
@@ -145,7 +145,7 @@
                         <h6>Duration:</h6>
                         <input type="text" class="input-costum" disabled value="{{getDuration(pool[0])}}">
                       </div>
-                      <div class="d-flex align-items-center justify-content-between" *ngIf="poolStarted(pool[0].startingTime)">
+                      <div class="d-flex align-items-center justify-content-between" *ngIf="!poolStarted(pool[0].startingTime)">
                         <h6>Pool Start:</h6>
                         <input type="text" class="input-costum" disabled value="{{getStart(pool[0].startingTime)}}">
                       </div>
@@ -170,7 +170,7 @@
                         <input type="text" class="input-costum" placeholder="20%">
                       </div>
                       <div class="d-flex" style="margin-top: 30px; justify-content: flex-end" *ngIf="pool[1].optedIn">
-                        <button class="btn-secondary-costum" (click)="claimStaking(pool[0])">
+                        <button class="btn-secondary-costum" (click)="claimStaking(pool[0])" [class.disable-btn]="!poolClaimable(pool[1].nextClaimableDate)">
                           Claim
                         </button>
                       </div>
