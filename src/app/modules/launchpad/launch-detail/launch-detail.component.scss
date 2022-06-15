@@ -104,8 +104,11 @@
     height: calc(100vh - 150px);
   }
 }
+.fix-height {
+  height: calc(100vh - 118px);
+}
 .desc-section {
-  height: 67.5%;
+  height: calc(100vh - 118px) !important;
   overflow-y: scroll;
 
   h3 {
