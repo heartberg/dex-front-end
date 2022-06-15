@@ -21,7 +21,9 @@ export type TimeTupel = {
 
 export class LaunchpadComponent implements OnInit {
   array: [ProjectPreviewModel, TimeTupel][] = [];
-
+  // my entries logic
+  isPresaleEnded: boolean = false;
+  // my entries logic
   wallet = localStorage.getItem('wallet');
 
   searchInput = this.fb.control([]);
@@ -78,5 +80,12 @@ export class LaunchpadComponent implements OnInit {
     let amount = await getAppLocalStateByKey(client, model.asset.contractId, this.wallet!, StateKeys.presale_contribution_key)
     return amount
   }
-  
+
+  claimAlgo() {
+
+  }
+
+  claimToken() {
+
+  }
 }
