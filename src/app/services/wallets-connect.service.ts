@@ -25,6 +25,8 @@ export class WalletsConnectService {
   public myAlgoAddress: any | undefined;
   public myAlgoName: any | undefined;
 
+  multiAcc: any[] = [];
+
   constructor(private userServce: AuthService) { }
 
 
@@ -35,6 +37,12 @@ export class WalletsConnectService {
     if (!await sw.connect()) return alert("Couldnt connect")
 
     this.myAlgoAddress = sw.accountList()
+    // logic for multiple accounts
+    if (this.myAlgoAddress.length > 1 ) {
+      this.multiAcc = [...this.myAlgoAddress];
+      localStorage.setItem('multiAcc', JSON.stringify(this.multiAcc));
+    }
+    // logic for multiple accounts
     console.log("AlgoAddress: " + this.myAlgoAddress)
     localStorage.setItem('wallet', this.myAlgoAddress[0])
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
