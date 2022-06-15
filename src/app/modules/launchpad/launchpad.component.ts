@@ -21,7 +21,7 @@ export type TimeTupel = {
 
 export class LaunchpadComponent implements OnInit {
   array: [ProjectPreviewModel, TimeTupel][] = [];
-
+  isPresaleEnded: boolean = false;
   wallet = localStorage.getItem('wallet');
 
   searchInput = this.fb.control([]);
@@ -107,4 +107,12 @@ export class LaunchpadComponent implements OnInit {
       });
     // All
     }
+
+  claimAlgo() {
+
+  }
+
+  claimToken() {
+
+  }
 }
