@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -73,6 +73,9 @@ export class PopUpComponent implements OnInit {
 
   isActiveFirst = true;
   isActiveSecond = false;
+
+  isLend = false;
+  isLendChecked = this.fb.control([])
 
   returnedBacking: number = 0;
   presalePrice: number = 0;
@@ -189,6 +192,13 @@ export class PopUpComponent implements OnInit {
     //     this.calculateBackingReturn(value)
     //   }
     // )
+
+    this.isLendChecked.setValue(false)
+    this.isLendChecked.valueChanges!.subscribe(
+      (value: any) => {
+        console.log(value)
+      }
+    )
 
     this.tradeBackingControl.valueChanges!.subscribe(
       (value: any) => {
@@ -441,10 +451,10 @@ export class PopUpComponent implements OnInit {
     this.isLiquiditied.emit(true);
   }
 
-  async activateLandAndTrade(id: number) {
+  async activateLendAndTrade(id: number) {
     if (id === 1) {
       this.isTradeLend = false;
-      this.isTradeBacking = false;
+      this.isTradeBacking = true;
     } else if (id === 2) {
       this.isTradeLend = true;
       this.isTradeBacking = false;
@@ -682,9 +692,15 @@ export class PopUpComponent implements OnInit {
           let response = await this.verseApp.getBacking(wallet, amount)
           if(response) {
             console.log("backing done")
+            this.closePopUp(true)
           }
         } else {
-          console.log("enter > 0")
+          amount = amount * Math.pow(10, this.smartToolData.assetDecimals)
+          let response = await this.deployedApp.getBacking(wallet, amount, this.smartToolData.contractId)
+          if(response) {
+            console.log("backing done")
+            this.closePopUp(true)
+          }
         }
       } else {
         console.log("please connect wallet")
@@ -715,10 +731,18 @@ export class PopUpComponent implements OnInit {
   async optInToBacking(){
     const wallet = this._walletsConnectService.sessionWallet
     if(wallet) {
-      let response = await this.verseApp.optIn(wallet)
-      if(response) {
-        this.isOptedInToVerseBacking = true
+      if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+        let response = await this.verseApp.optIn(wallet)
+        if(response) {
+          this.isOptedInToVerseBacking = true
+        }
+      } else {
+        let response = await this.deployedApp.optIn(wallet, this.smartToolData.contractId)
+        if(response) {
+          this.smartToolData.optedIn = true
+        }
       }
+
     }
   }
 

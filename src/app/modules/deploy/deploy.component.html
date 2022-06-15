@@ -279,6 +279,57 @@
                 <!--          </div>-->
                 <div class="presale-section">
                   <div class="wrapper-border">
+                    <div class="wrapper-border">
+                      <div class="d-flex align-items-center" style="margin-bottom: 20px">
+                        <h4>Project Name</h4>
+                        <input
+                          type="text"
+                          class="input-costum"
+                          formControlName="projectName"
+                          placeholder="Project Name"
+                        />
+                      </div>
+                      <h3 class="color-violet title">Project Description</h3>
+                      <div class="desc">
+                      <textarea
+                        formControlName="presaleOptionsGroupDescription"
+                      ></textarea>
+                      </div>
+                      <div class="inputs">
+                        <div class="d-flex align-items-center">
+                          <h4>Website</h4>
+                          <input
+                            type="text"
+                            class="input-costum"
+                            formControlName="website"
+                          />
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4>Discord</h4>
+                          <input
+                            type="text"
+                            class="input-costum"
+                            formControlName="discord"
+                          />
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4>Twitter</h4>
+                          <input
+                            type="text"
+                            class="input-costum"
+                            formControlName="twitter"
+                          />
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <h4>Telegram</h4>
+                          <input
+                            type="text"
+                            class="input-costum"
+                            formControlName="telegram"
+                          />
+                        </div>
+                      </div>
+                    </div>
                     <div
                       class="d-flex align-items-center"
                       [ngStyle]="{
@@ -304,23 +355,6 @@
                       "
                       >Create Presale</label
                       >
-                    </div>
-                    <div class="wrapper-border">
-                      <div class="d-flex align-items-center" style="margin-bottom: 20px">
-                        <h4>Project Name</h4>
-                        <input
-                          type="text"
-                          class="input-costum"
-                          formControlName="projectName"
-                          placeholder="Project Name"
-                        />
-                      </div>
-                      <h3 class="color-violet title">Project Description</h3>
-                      <div class="desc">
-                      <textarea
-                        formControlName="presaleOptionsGroupDescription"
-                      ></textarea>
-                      </div>
                     </div>
                     <form formGroupName="createPresaleOptionGroup">
                       <ng-container *ngIf="presaleIsChecked">

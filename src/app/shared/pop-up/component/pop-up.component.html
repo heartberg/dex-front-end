@@ -118,10 +118,10 @@
           <header>
             <div class="d-flex align-items-center justify-content-start">
               <div class="buttons">
-                <button class="btn-primary-costum" (click)="activateLandAndTrade(2)" [class.btn-secondary-costum]="isTradeLend || isTradeLendVerse" style="margin: 0px 10px;">
-                  Land
+                <button class="btn-primary-costum" (click)="activateLendAndTrade(2)" [class.btn-secondary-costum]="isTradeLend || isTradeLendVerse" style="margin: 0px 10px;">
+                  Lend
                 </button>
-                <button class="btn-primary-costum" (click)="activateLandAndTrade(1)" [class.btn-secondary-costum]="isTradeBacking || isTradeBackingVerse">
+                <button class="btn-primary-costum" (click)="activateLendAndTrade(1)" [class.btn-secondary-costum]="isTradeBacking || isTradeBackingVerse">
                   Backing
                 </button>
               </div>
@@ -142,7 +142,7 @@
                 </div>
                 <div class="selector" style="margin: 0px 8px;">
                   <label class="switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" [formControl]="isLendChecked" unchecked>
                     <span class="slider round"></span>
                   </label>
                 </div>
@@ -158,11 +158,19 @@
               <div style="margin: 30px 0 30px 0">
                 <div class="data-box">
                   <span class="property">Total Backing:</span>
-                  <span class="value">Y Algo</span>
+                  <span class="value">{{smartToolData.totalBacking}} Algo</span>
                 </div>
                 <div class="data-box">
-                  <span class="property">Backing per token</span>
-                  <span class="value">X Algo</span>
+                  <span class="property">Backing per Token</span>
+                  <span class="value">{{(smartToolData.totalBacking / smartToolData.totalSupply).toFixed(6)}} Algo</span>
+                </div>
+                <div class="data-box">
+                  <span class="property">Supplied</span>
+                  <span class="value">{{smartToolData.userSupplied.toFixed(smartToolData.assetDecimals)}} Tokens</span>
+                </div>
+                <div class="data-box">
+                  <span class="property">Borrowed</span>
+                  <span class="value">{{smartToolData.userBorrowed.toFixed(6)}} Algo</span>
                 </div>
               </div>
               <div class="input-section">
@@ -170,7 +178,7 @@
                   <span>Amount</span>
                   <div>
                     <span class="color-violet">Available:</span>
-                    <span style="margin-left: 4px">1000</span>
+                    <span style="margin-left: 4px">{{smartToolData.availableTokenAmount}}</span>
                   </div>
                 </div>
                 <div>
@@ -183,13 +191,14 @@
               </div>
               <div class="data-box" style="margin: 40px 0 20px 0">
                 <span class="property">Output:</span>
-                <span class="value">Y Algo</span>
+                <span class="value">{{returnedBacking.toFixed(6)}} Algo</span>
               </div>
               <div class="d-flex buttons isTrade-buttons">
                 <button class="btn-primary-costum" (click)="closePopUp(false)">
                   Cancel
                 </button>
-                <button class="btn-secondary-costum">Lock Tokens</button>
+                <button *ngIf="smartToolData.optedIn" class="btn-secondary-costum" (click)="lendTrade()">Lend</button>
+                <button *ngIf="!smartToolData.optedIn" class="btn-secondary-costum" (click)="optInToBacking()">OptIn</button>
               </div>
             </div>
             <!--#content of lend-->
@@ -418,9 +427,8 @@
         <button class="btn-primary-costum" (click)="closePopUp(false)">
           Cancel
         </button>
-        <button class="btn-secondary-costum" *ngIf="isOptedInToVerseBacking && assetIdsToOptIn.length == 0" (click)="getBackingTrade()" >Burn Tokens</button>
-        <button class="btn-secondary-costum" *ngIf="assetIdsToOptIn.length != 0" (click)="optInToBackingTokens()" >Opt In Tokens</button>
-        <button class="btn-secondary-costum" *ngIf="!isOptedInToVerseBacking" (click)="optInToBacking()" >Opt In Backing Contract</button>
+        <button class="btn-secondary-costum" (click)="getBackingTrade()" >Burn Tokens</button>
+
       </div>
     </ng-container>
     </ng-container>

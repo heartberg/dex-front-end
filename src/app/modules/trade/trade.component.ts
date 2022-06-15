@@ -313,10 +313,10 @@ export class TradeComponent implements OnInit {
   }
 
   async getValueFromDropDown($event: any, index: number) {
-    if ($event === 'Verse' && index === 1) {
+    if ($event === 'Verse') {
       this.isTradeLendVerse = true;
       this.isTradeBackingVerse = false;
-    } else if ($event !== 'Verse' && index === 1) {
+    } else if ($event !== 'Verse') {
       this.isTradeLend = true;
       this.isTradeBacking = false;
     }

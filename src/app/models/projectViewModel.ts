@@ -12,7 +12,7 @@ export interface ProjectViewModel {
     roadmapImage?: string
     twitter?: string
     telegram?: string
-    instagram?: string
+    discord?: string
     website?: string
     teamMembers: TeamMemberViewModel[]
     asset: AssetViewModel

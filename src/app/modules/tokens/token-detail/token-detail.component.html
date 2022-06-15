@@ -15,31 +15,49 @@
           <div class="col-md-6">
             <h6>{{projectData?.projectName}}</h6>
             <h6>{{projectData?.asset?.name}}</h6>
-            <h6>{{projectData?.asset?.url}}</h6>
 
             <div class="row">
               <div class="d-flex socLinks align-items-center">
-                <div class="col-md-4">
+                
+                <div class="col-md-3" *ngIf="projectData.website">
+                  <a href="{{projectData.website}}" target="_blank">
+                    <img
+                    src="https://www.freepnglogos.com/uploads/logo-website-png/logo-website-world-wide-web-icon-icons-and-png-backgrounds-18.png"
+                    alt=""
+                    style="width: 40px; height: 40px"
+                  />
+                  </a>
+                </div>
+                
+                <div class="col-md-3" *ngIf="projectData.discord">
+                  <a href="{{projectData.discord}}" target="_blank">
+                    <img
+                    src="https://www.freepnglogos.com/uploads/discord-logo-png/discord-logo-logodownload-download-logotipos-1.png"
+                    alt=""
+                    style="width: 40px; height: 40px"
+                  />
+                  </a>
+                </div>
+
+              <div class="col-md-3" *ngIf="projectData.twitter">
+                <a href="{{projectData.twitter}}" target="_blank">
+                  <img
+                  src="https://1000logos.net/wp-content/uploads/2021/04/Twitter-logo.png"
+                  alt=""
+                />
+                </a>
+              </div>
+
+              <div class="col-md-3" *ngIf="projectData.telegram">
+                <a href="{{projectData.telegram}}" target="_blank">
                 <img
                       src="https://1000logos.net/wp-content/uploads/2021/04/Telegram-logo.png"
                       alt=""
+                      
                     />
+                </a>
               </div>
-              <div class="col-md-4">
-                <img
-                      src="https://1000logos.net/wp-content/uploads/2021/04/Twitter-logo.png"
-                      alt=""
-                    />
-              </div>
-              <div class="col-md-4">
-                <img
-                      src="https://image.similarpng.com/very-thumbnail/2020/05/Glossy-Instagram-icon-PNG.png"
-                      alt=""
-                      style="width: 40px; height: 40px"
-                    />
-              </div>
-              </div>
-
+             </div>
             </div>
           </div>
         </div>

@@ -222,6 +222,10 @@ export class DeployComponent implements OnInit, DoCheck {
       }),
       projectName: this.fb.control(''),
       presaleOptionsGroupDescription: this.fb.control(''),
+      website: this.fb.control(''),
+      discord: this.fb.control(''),
+      twitter: this.fb.control(''),
+      telegram: this.fb.control(''),
       createPresaleOptionGroup: this.fb.group({
         presaleSettings: this.fb.group({
           presaleStart: '',
