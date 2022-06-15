@@ -54,8 +54,12 @@
         height: isWallet ? 'calc(100vh - 285px)' : 'calc(100vh - 210px)'
       }"
     >
-      <app-card [data]="item" *ngFor="let item of array" routerLink="../launchpad/launch-detail/{{item[0].projectId}}"></app-card>
-      <ng-container *ngFor="let item of array">
+      <ng-container *ngIf="!entries">
+        <app-card [data]="item" *ngFor="let item of array" routerLink="../launchpad/launch-detail/{{item[0].projectId}}"></app-card>
+      </ng-container>
+
+      <ng-container *ngIf="entries">
+        <ng-container *ngFor="let item of array">
         <div class="card">
           <div class="row">
             <div class="col-md-2 unset-pd avatar-section">
@@ -138,36 +142,39 @@
                   </div>
                 </div>
               </div>
-              <div class="text-area">
-                <ng-container *ngIf="isPresaleEnded">
-                  <p>
-                    Your presale did not reach your Softcap.
-                  </p>
-                  <p>
-                    User can't claim any tokens now.
-                  </p>
-                  <p>
-                    You can start a new presale with better conditions for your users, or do a fair launch.
-                  </p>
-                  <p>
-                    Users participated can claim their comitted Algo before a new presale starts or leave them in
-                    the contract to have a guaranteed allocation in your next presale.
-                  </p>
-                </ng-container>
-              </div>
-              <div class="unset-pd">
-                <div class="btn-container d-flex flex-column">
-                  <button (click)="claimAlgo()" class="bottom-btn btn-secondary-costum">
-                    Claim Algo
-                  </button>
-                  <button (click)="claimToken()" class="bottom-btn btn-secondary-costum">
-                    Claim Token
-                  </button>
+              <div class="col-md-6">
+                <div class="text-area">
+                  <ng-container *ngIf="isPresaleEnded">
+                    <p>
+                      Your presale did not reach your Softcap.
+                    </p>
+                    <p>
+                      User can't claim any tokens now.
+                    </p>
+                    <p>
+                      You can start a new presale with better conditions for your users, or do a fair launch.
+                    </p>
+                    <p>
+                      Users participated can claim their comitted Algo before a new presale starts or leave them in
+                      the contract to have a guaranteed allocation in your next presale.
+                    </p>
+                  </ng-container>
+                </div>
+                <div class="unset-pd">
+                  <div class="btn-container d-flex flex-column">
+                    <button (click)="claimAlgo()" class="bottom-btn btn-secondary-costum">
+                      Claim Algo
+                    </button>
+                    <button (click)="claimToken()" class="bottom-btn btn-secondary-costum">
+                      Claim Token
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </ng-container>
       </ng-container>
     </div>
   </div>

@@ -23,8 +23,9 @@ export class LaunchpadComponent implements OnInit {
   array: [ProjectPreviewModel, TimeTupel][] = [];
   isPresaleEnded: boolean = false;
   wallet = localStorage.getItem('wallet');
-
   searchInput = this.fb.control([]);
+
+  @Input() entries: boolean = false;
 
   dropDownValues = [
     'Ending Soon',

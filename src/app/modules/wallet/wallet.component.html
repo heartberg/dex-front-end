@@ -19,6 +19,6 @@
       </div>
     </div>
     <app-track *ngIf="isActiveFirst"></app-track>
-    <app-launchpad [isWallet]="true" *ngIf="isActiveSecond"></app-launchpad>
+    <app-launchpad [isWallet]="true" *ngIf="isActiveSecond" [entries]="isActiveSecond"></app-launchpad>
   </div>
 </div>
