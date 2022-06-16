@@ -78,7 +78,7 @@
                 </li>
 <!--                <li routerLink="/launchpad">Entries</li>-->
 <!--                <li routerLink="/track">Track</li>-->
-                <li (click)="switcher()">Switch Acc</li>
+                <li (click)="switcher()" *ngIf="walletArr.length > 1">Switch Acc</li>
                 <li (click)="disconnect()" style="color: #81007F">Disconnect</li>
               </ul>
             </div>

@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit {
   public isLoggedIn: boolean = false;
   public isPopUpOpenedSecond: boolean = false;
   @Output() themeWasChanged = new EventEmitter<boolean>();
-
+  public walletArr: any[] = [];
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): any {
-
+    this.walletArr = JSON.parse(localStorage.getItem('sessionWallet')!).wallet.accounts;
     if (this._walletsConnectService.sessionWallet && this._walletsConnectService.sessionWallet!.connected()) {
       this.isLoggedIn = true;
     }
