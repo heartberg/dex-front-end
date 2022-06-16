@@ -16,13 +16,10 @@
       <ng-container *ngIf="firstOnTrade">
         <ng-container *ngFor="let button of dropDownValues; let i = index">
           <button class="btn-default" *ngIf="i === 0">
-            <ng-container *ngIf="buttonTradeChangedTop || showDropDownSelected === ''">
-              {{  isTrade ? buttonTradeChangedValue : button}}
+            <ng-container *ngIf="!topChanged">
+              {{  isTrade ? valueDefault : button}}
             </ng-container>
-<!--            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChangedTop">-->
-<!--              {{ button.name ? button.name : button }} {{'default'}}-->
-<!--            </ng-container>-->
-            <ng-container *ngIf="showDropDownSelected !== '' && !buttonTradeChangedTop">
+            <ng-container *ngIf="topChanged">
               {{ tradeSelectedTop }}
             </ng-container>
           </button>
@@ -32,13 +29,10 @@
       <ng-container *ngIf="secondOnTrade">
         <ng-container *ngFor="let button of dropDownValuesSecond; let i = index">
           <button class="btn-default" *ngIf="i === 0">
-            <ng-container *ngIf="buttonTradeChanged">
-              {{ buttonTradeChangedTopValue }}
+            <ng-container *ngIf="!botChanged">
+              {{ valueDefault }}
             </ng-container>
-<!--            <ng-container *ngIf="showDropDownSelected === '' && !buttonTradeChanged">-->
-<!--              {{ button.name ? button.name : button }} {{'default'}}-->
-<!--            </ng-container>-->
-            <ng-container *ngIf="!buttonTradeChanged">
+            <ng-container *ngIf="botChanged">
               {{ tradeSelectedBottom }}
             </ng-container>
           </button>
@@ -214,7 +208,7 @@
       <div
         class="section"
         *ngFor="let button of dropDownValues; let last = last; let i = index"
-        (click)="selectValue(button.name ? button.name : button, i + 1, '1')"
+        (click)="selectValue(button.name ? button.name : button, i + 1, '1', button)"
         [class.border-none]="last"
         [class.no-border]="tree"
         [class.unHover]="isProfileSection"
@@ -297,7 +291,7 @@
       <div
         class="section"
         *ngFor="let button of dropDownValuesSecond; let last = last; let i = index"
-        (click)="selectValue(button.name ? button.name : button, i + 1, '2')"
+        (click)="selectValue(button.name ? button.name : button, i + 1, '2', button)"
         [class.border-none]="last"
         [class.no-border]="tree"
         [class.unHover]="isProfileSection"
@@ -333,7 +327,7 @@
               <div>
                 <ng-container
                   (click)="addToFavourites(button)"
-                  *ngIf="isPlus"
+                  *ngIf="!button.isFavorite"
                 >
                   <img
                     src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
@@ -341,7 +335,7 @@
                     style="width: 23px; height: 23px"
                   />
                 </ng-container>
-                <ng-container *ngIf="!isPlus" (click)="removeFromFavourites(button)">
+                <ng-container *ngIf="button.isFavorite" (click)="removeFromFavourites(button)">
                   <img
                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                     alt=""

@@ -13,6 +13,8 @@ import {Observable, of} from 'rxjs';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import {take} from "rxjs/operators";
 import {AssetReqService} from "../../services/APIs/assets-req.service";
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import { CompileResponse } from 'algosdk/dist/types/src/client/v2/algod/models/types';
 
 @Component({
   selector: 'app-drop-down-selector',
@@ -52,13 +54,13 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   // for trade show all/show favs
   @Input() public checkBoxCheckTrade: boolean = false;
   @Input() incomeData: AssetViewModel[] = [];
-  // trade
-  @Input() buttonTradeChanged: boolean = false;
-  @Input() buttonTradeChangedTop: boolean = false;
 
-  @Input() buttonTradeChangedValue: string = 'Algo';
-  @Input() buttonTradeChangedTopValue: string = 'Algo';
+  // trade
+  @Input() botChanged: boolean = true;
+  @Input() topChanged: boolean = false;
+  valueDefault: string = 'Algo'
   //trade
+
   @Output() searchedData: EventEmitter<any> = new EventEmitter();
 
   public favAssetsArr: AssetViewModel[] = [];
@@ -70,16 +72,18 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   public isDropDownOpenedCounter = 1;
   public showDropDownSelected: string = '';
 
-  tradeSelectedTop: string = '';
-  tradeSelectedBottom: string = '';
+  @Input() tradeSelectedTop: string = '';
+  @Input() tradeSelectedBottom: string = '';
   //  for while
   publicTradeIsAdded: boolean = false;
 
-  saveStore: string = '';
+  @Input() saveStoreTop: string = '';
+  @Input() saveStoreBottom: string = '';
   // isMinus: boolean = true;
   // isPlus: boolean = false;
   isTrade: boolean = false;
-
+  
+  @Output() wholeObj: EventEmitter<any> = new EventEmitter();
   // FORM
   dropDownForm = this.fb.group({
     search: [],
@@ -105,7 +109,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   ngOnInit(): void {
     console.log(this.incomeData)
    setTimeout(() => {
-     this.incomeData.find( (item: AssetViewModel) => item.assetId === 6813 ? this.tradeSelectedBottom = item.name : null)
+     this.incomeData.find( (item: AssetViewModel) => item.assetId === ps.platform.verse_asset_id ? this.tradeSelectedBottom = item.name : null)
      console.log(this.tradeSelectedBottom);
    }, 500)
 
@@ -118,24 +122,11 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   ngDoCheck() {
-
+     
   }
 
   ngOnChanges() {
-    if (this.secondOnTrade) {
-      return
-    } else {
-      if (this.secondOnTrade) {
-        this.firstOnTrade = false;
-      }
-    }
-    if (this.checkBoxCheckTrade) {
-      this.allAssetsArr = this.incomeData;
-      this.isPlus = true;
-    } else {
-      this.favAssetsArr = this.incomeData;
-      this.isPlus = false;
-    }
+    console.log(this.topChanged, this.tradeSelectedTop)
 
     // this.showDropDownSelected = this.dropDownValueTitleForObj;
   }
@@ -149,38 +140,18 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     }
   }
 
-  selectValue(value: string, i?: any, id?: string) {
+  selectValue(value: string, i?: any, id?: string, item?: any) {
+    this.wholeObj.emit(item);
     if (this.notCloseOnClick) {
       // this.isDropDownOpenedCounter +=1;
       this.openDropDown();
-      console.log(value, 'ssssss', id)
-      if (value !== 'Algo') {
-        this.saveStore = value;
-      }
       this.showDropDownSelected = value
-      // logic for trade
-        if (id === '1'  && this.tradeSelectedTop !== 'Algo') {
-          this.tradeSelectedTop = this.saveStore;
-      } else
-        if (id === '2' && this.tradeSelectedBottom !== 'Algo') {
-          this.tradeSelectedBottom = this.saveStore;
-        } else if (id === '1' && this.buttonTradeChangedTop) {
-          // @ts-ignore
-        } else if (id === '2' && value === 'Algo') {
-          // @ts-ignore
-        }
-      console.log(this.tradeSelectedTop, 'ifis garet ')
-      // logic for trade
-
-
-
       this.dropDownValue.emit(value);
       this.publicTradeIsAdded = !this.publicTradeIsAdded;
     } else {
       // this.isDropDownOpenedCounter +=1;
       this.openDropDown();
       this.showDropDownSelected = value;
-      this.tradeSelectedTop = value;
       // this.tradeSelectedTop = this.showDropDownSelected;
       // this.tradeSelectedBottom = this.showDropDownSelected;
       this.dropDownValue.emit(value);
@@ -241,6 +212,6 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   getSearchValue($event: Event) {
     // @ts-ignore
-    this.searchedData.emit($event.data)
+    this.searchedData.emit(this.dropDownForm.get('search').value)
   }
 }

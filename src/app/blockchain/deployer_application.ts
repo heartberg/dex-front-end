@@ -394,7 +394,6 @@ export class DeployedApp {
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       let stakingTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
       
-      suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
       args = [new Uint8Array(Buffer.from(DeployerMethod.SetupStaking))]
       accounts = [getApplicationAddress(contractId)]
       let setupStaking = new Transaction(get_app_call_txn(suggested, addr, assetContractId, args, undefined, assets, accounts))

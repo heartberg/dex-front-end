@@ -110,6 +110,18 @@ export class TradeComponent implements OnInit {
     unitName: ""
   };
 
+  botChanged: boolean = true;
+  topChanged: boolean = false;
+
+  saveStoreTop: string = '';
+  saveStoreBottom: string = '';
+
+  tradeSelectedTop: string = '';
+  tradeSelectedBottom: string = '';
+
+  topSearched: string = '';
+  bottomSearched: string = '';
+
   constructor(
     private assetReqService: AssetReqService,
     private walletService: WalletsConnectService,
@@ -150,7 +162,7 @@ export class TradeComponent implements OnInit {
     await this.getDefaultPairs()
 
     this.selectedOption = this.assetArr[0]
-    await this.selectAsset(this.assetArr[1].assetId);
+    await this.selectAsset(this.assetArr[1].assetId, 1);
 
     this.slippageForm.get("slippageInput")!.valueChanges.subscribe(
       (input: any) => {
@@ -240,7 +252,7 @@ export class TradeComponent implements OnInit {
     });
   }
 
-  async selectAsset(assetId: number) {
+  async selectAsset(assetId: number, index: number) {
     //console.log(assetId)
     const wallet = localStorage.getItem('wallet')!;
     if(assetId == 0){
@@ -256,9 +268,15 @@ export class TradeComponent implements OnInit {
         this.isOptedIn = true;
       }
     } else {
-      this.selectedOption = this.assetArr.find((el) => {
-        return el.assetId === assetId;
-      });
+      if(index == 1) {
+        this.selectedOption = this.assetArr.find((el) => {
+          return el.assetId === assetId;
+        });
+      } else {
+        this.selectedOption = this.assetArrSecond.find((el) => {
+          return el.assetId === assetId;
+        });
+      }
       if(assetId == ps.platform.verse_asset_id){
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       } else {
@@ -276,12 +294,12 @@ export class TradeComponent implements OnInit {
     if(this.autoSlippage){
       this.getAutoSlippage()
     }
-    console.log("spotprice: " + this.spotPrice)
+    //console.log("spotprice: " + this.spotPrice)
     this.calcPriceImpact()
     this.setMinOutput()
-    console.log("spotprice: " + this.spotPrice)
-    console.log(this.selectedOption)
-    console.log(this.blockchainInfo)
+    //console.log("spotprice: " + this.spotPrice)
+    //console.log(this.selectedOption)
+    //console.log(this.blockchainInfo)
   }
 
   checkBoxClicked() {
@@ -312,61 +330,86 @@ export class TradeComponent implements OnInit {
     this.getSmartToolData()
   }
 
-  async getValueFromDropDown($event: any, index: number) {
-    if ($event === 'Verse') {
+  async getValueFromDropDown($event: AssetViewModel, index: number) {
+    
+    console.log($event)
+    
+    if ($event.assetId === ps.platform.verse_asset_id) {
       this.isTradeLendVerse = true;
       this.isTradeBackingVerse = false;
-    } else if ($event !== 'Verse') {
+    } else if ($event.assetId !== ps.platform.verse_asset_id) {
       this.isTradeLend = true;
       this.isTradeBacking = false;
     }
-    else
-    if ($event !== 'Algo' && index === 1) {
-      this.changeBottom = true;
-      this.changeTop = false;
+
+    // trade logic
+    if ($event.assetId !== 0 && index === 1) {
+      this.tradeSelectedTop = $event.name;
+      this.tradeSelectedBottom = 'Algo'
+      this.topChanged = true;
+      this.botChanged = false;
+      this.saveStoreTop = $event.name;
       if(!this.rotate){
         this.isBuy = false;
       } else {
         this.isBuy = true;
       }
     }
-    // second check
-    if ($event !== 'Algo' && index === 2) {
-      this.changeTop = true;
-      this.changeBottom = false;
+   
+    if ($event.assetId !== 0 && index === 2) {
+      this.tradeSelectedBottom = $event.name;
+      this.tradeSelectedTop = 'Algo'
+      this.topChanged = false;
+      this.botChanged = true;
+      this.saveStoreBottom = $event.name;
       if(!this.rotate){
         this.isBuy = true;
       } else {
         this.isBuy= false;
       }
-    }
-    if ($event === 'Algo' && index === 1) {
-      this.changeTop = true;
-      this.changeBottom = false;
+
+    } else if ($event.assetId === 0 && index === 1 && this.tradeSelectedTop !== 'Algo') {
+      if (this.saveStoreTop === '') {
+        this.tradeSelectedTop = 'Algo'
+        return
+      } else {
+        this.tradeSelectedBottom = this.saveStoreTop;
+        this.tradeSelectedTop = 'Algo'
+        this.topChanged = false;
+        this.botChanged = true;
+      } 
       if(!this.rotate){
         this.isBuy = true;
       } else {
         this.isBuy = false;
       }
-    } else if ($event === 'Algo' && index === 2) {
-      this.changeBottom = true;
-      this.changeTop = false;
+
+    } else if ($event.assetId === 0 && index === 2 && this.tradeSelectedBottom !== 'Algo') {
+      if (this.saveStoreTop === '') {
+        this.tradeSelectedBottom = 'Algo'
+        return
+      } else {
+        this.tradeSelectedTop= this.saveStoreBottom;
+        this.tradeSelectedBottom = 'Algo'
+        this.topChanged = true;
+        this.botChanged = false;
+      }
+
       if(!this.rotate){
         this.isBuy = false;
       } else {
         this.isBuy = true;
       }
     }
-    if($event != 'Algo') {
-      let asset = this.assetArr.find((el) => {
-        return el.name === $event;
-      });
-      console.log("event: " + $event)
-      this.selectAsset(asset!.assetId);
+
+    // trade logic 
+    if($event.assetId != 0) {
+      //console.log("event: " + $event)
+      this.selectAsset($event.assetId, index);
     } else {
-      this.selectAsset(0);
+      this.selectAsset(0, index);
     }
-    console.log("getValueFromDropDown: " + $event + " index: " + index + " isBuy: " + this.isBuy)
+    //console.log("getValueFromDropDown: " + $event + " index: " + index + " isBuy: " + this.isBuy)
   }
 
   getPercentOfButton(index: number) {
@@ -397,10 +440,6 @@ export class TradeComponent implements OnInit {
       this.topForms.get("topInputValue")!.setValue(this.availAmount);
     }
     this.catchValueTop(true)
-  }
-
-  getMinusPlusValue($event: number) {
-   console.log($event);
   }
 
   mapViewModelToAppSettings(model: AssetViewModel) : DeployedAppSettings{
@@ -807,12 +846,11 @@ export class TradeComponent implements OnInit {
   async getSmartToolData() {
     let address = localStorage.getItem("wallet")
     if(this.selectedOption!.smartProperties!.contractId != ps.platform.verse_app_id){
-      console.log("deployer app")
       this.smartToolData = await this.deployedApp.getSmartToolData(this.selectedOption!.smartProperties!.contractId, address);
     } else {
       this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }
-    console.log(this.smartToolData)
+    //console.log(this.smartToolData)
   }
 
   getTotalFees() {
@@ -825,12 +863,14 @@ export class TradeComponent implements OnInit {
   }
 
   async searchTop(event: any) {
+    console.log(event)
+    console.log(this.topSearched)
     let wallet = localStorage.getItem('wallet');
-    if(!event){
+    if(event == ''){
       await this.getDefaultPairs()
       return
     }
-    this.assetReqService.getAssetPairs(this.checked, event, wallet!).subscribe( (res) => {
+    this.assetReqService.getAssetPairs(this.checked, event, wallet!).subscribe((res) => {
       this.assetArr = []
       console.log(res)
       //this.removeVerse(res); // ask
@@ -841,11 +881,11 @@ export class TradeComponent implements OnInit {
   async searchBottom(event: any) {
     let wallet = localStorage.getItem('wallet');
     console.log(event)
-    if(!event){
+    if(event == ''){
       await this.getDefaultPairs()
       return
     }
-    this.assetReqService.getAssetPairs(this.checkedSecond, event, wallet!).subscribe(async (res) => {
+    this.assetReqService.getAssetPairs(this.checkedSecond, event, wallet!).subscribe((res) => {
       //this.removeVerse(res); // ask
       this.assetArrSecond = []
       this.assetArrSecond.push(...res);

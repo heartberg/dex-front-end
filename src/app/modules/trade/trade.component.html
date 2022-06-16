@@ -8,7 +8,7 @@
             [dropDownValues]="assetArr"
             [isNotAccordion]="false"
             [widthPX]="'255px'"
-            (dropDownValue)="getValueFromDropDown($event, 2)"
+            (wholeObj)="getValueFromDropDown($event, 1)"
             [extraDropDown]="true"
             [notCloseOnClick]="true"
             class="first-drop-down"
@@ -16,8 +16,10 @@
             (showAll)="handleCheckboxUpdate($event)"
             [checkBoxCheckTrade]="checked"
             [incomeData]="assetArr"
-            [buttonTradeChangedTop]="changeTop"
             (searchedData)="searchTop($event)"
+            [topChanged]="topChanged"
+            [saveStoreTop]="saveStoreTop"
+            [tradeSelectedTop]="tradeSelectedTop"
           ></app-drop-down-selector>
         </div>
         <div class="col-md-7 second-col-7">
@@ -117,15 +119,17 @@
           [isNotAccordion]="false"
           [widthPX]="'255px'"
           [extraDropDown]="true"
-          (dropDownValue)="getValueFromDropDown($event, 2)"
+          (wholeObj)="getValueFromDropDown($event, 2)"
           [notCloseOnClick]="true"
           (showAll)="handleCheckboxUpdateSecond($event)"
           [checkBoxCheckTrade]="checkedSecond"
           [incomeData]="assetArrSecond"
           [secondOnTrade]="true"
-          [buttonTradeChanged]="changeBottom"
           (searchedData)="searchBottom($event)"
           #componentRefB
+          [botChanged]="botChanged"
+          [saveStoreBottom]="saveStoreBottom"
+          [tradeSelectedBottom]="tradeSelectedBottom"
         >
       </app-drop-down-selector>
     </div>

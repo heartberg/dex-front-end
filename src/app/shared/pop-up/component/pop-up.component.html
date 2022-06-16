@@ -839,18 +839,21 @@
             <h6 class="color-violet">est. APY: </h6>
             <h6> {{'20'}}%</h6>
           </div>
-          <button
-          style="
-            border-radius: 5px;
-            margin-top: 10px;
-            max-width: 100px;
-            align-self: center;
-          "
-          class="btn-secondary-costum"
-          (click)="createDistributionPool()"
-        >
-          Deploy
-        </button>
+          <div class="button-field" style="display: flex; justify-content: center; ">
+            <button
+            style="
+              border-radius: 5px;
+              margin-top: 10px;
+              max-width: 100px;
+              align-self: center;
+              margin: auto;
+            "
+            class="btn-secondary-costum"
+            (click)="createDistributionPool()"
+          >
+            Deploy
+          </button>
+          </div>
         </ng-container>
       </form>
     </ng-container>
