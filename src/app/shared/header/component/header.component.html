@@ -78,7 +78,8 @@
                 </li>
 <!--                <li routerLink="/launchpad">Entries</li>-->
 <!--                <li routerLink="/track">Track</li>-->
-                <li (click)="disconnect()">Disconnect</li>
+                <li (click)="switcher()">Switch Acc</li>
+                <li (click)="disconnect()" style="color: #81007F">Disconnect</li>
               </ul>
             </div>
           </div>
@@ -118,3 +119,4 @@
   </div>
 </div>
 <app-pop-up [openWallet]="true" *ngIf="isPopUpOpened" (isClosed)="closePopUp($event)" (isConnectedToWallet)="connect($event)" (logInValue)="loginIn($event)"></app-pop-up>
+<app-pop-up *ngIf="isPopUpOpenedSecond" (isClosed)="closePopUp($event)" [switcher]="true"></app-pop-up>

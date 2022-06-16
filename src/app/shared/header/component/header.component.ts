@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit {
   // $isLoggedIn: Observable<AuthState>;
   // permanent
   public isLoggedIn: boolean = false;
+  public isPopUpOpenedSecond: boolean = false;
   @Output() themeWasChanged = new EventEmitter<boolean>();
 
   constructor(
@@ -69,6 +70,7 @@ export class HeaderComponent implements OnInit {
 
   closePopUp(event: boolean) {
     this.isPopUpOpened = event;
+    this.isPopUpOpenedSecond = event;
   }
 
   showMenuRespo() {
@@ -128,4 +130,7 @@ export class HeaderComponent implements OnInit {
     console.log('clicked outside');
   }
 
+  switcher() {
+    this.isPopUpOpenedSecond = true;
+  }
 }

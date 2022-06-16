@@ -16,6 +16,7 @@ import { environment } from 'src/environments/environment';
 import { DeployLb } from 'src/app/modules/deploy/deploy-api-logic-file/deploy.lb';
 import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { StakingUtils } from 'src/app/blockchain/staking';
+import {of} from "rxjs";
 
 export type SmartToolData = {
   userSupplied: number,
@@ -62,12 +63,15 @@ export class PopUpComponent implements OnInit {
   @Input() stacking: boolean = false;
   @Input() stackingISStake: boolean = false;
   @Input() isD: boolean  = false;
-
+  @Input() switcher: boolean = false;
   //deployed logic
   @Input() isDeployedSuccess: boolean = false;
   @Input() isDeployedFaied: boolean = false;
   @Input() isDeployedPending: boolean = false;
   //deployed logic
+
+  // wallet switcher
+  walletsForSwitching: any[] = [];
 
   assetInfo: any;
 
@@ -186,7 +190,6 @@ export class PopUpComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
-
     // this.lendControl.valueChanges!.subscribe(
     //   (value: any) => {
     //     this.calculateBackingReturn(value)
@@ -312,9 +315,9 @@ export class PopUpComponent implements OnInit {
 
       let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity,
         tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId)
-      
+
       this.presaleData![1].asset.smartProperties!.tradingStart = tradingStart
-      
+
         if(response){
         let projectView: ProjectViewModel = {
           presale: {
@@ -408,8 +411,11 @@ export class PopUpComponent implements OnInit {
                 .subscribe(
                   (user: any) => {
                     console.log(user);
-                    this.isConnectedToWallet.emit(false);
-                    this.logInValue.emit(wallet);
+                    if (user) {
+                      this.isConnectedToWallet.emit(false);
+                      this.logInValue.emit(wallet);
+                      this.isClosed.emit(false);
+                    }
                   },
                   (error) => {
                     console.log('error', error);
@@ -419,6 +425,7 @@ export class PopUpComponent implements OnInit {
                         if (response) {
                           this.logInValue.emit(wallet);
                           this.isConnectedToWallet.emit(false);
+                          this.isClosed.emit(false);
                         }
                       }
                     );
@@ -618,7 +625,7 @@ export class PopUpComponent implements OnInit {
           console.log("input > 0 please")
         }
       }
-      
+
     } else {
       console.log("please connect")
     }
@@ -645,7 +652,7 @@ export class PopUpComponent implements OnInit {
             this.closePopUp(true)
           }
         }
-        
+
       } else {
         console.log("input > 0 please")
       }
@@ -779,5 +786,33 @@ export class PopUpComponent implements OnInit {
     console.log(stakingSetup)
     await this.deployLib.deployStaking(stakingSetup)
     this.closePopUp(true)
+  }
+
+  wallet(): any {
+      this.walletsForSwitching = JSON.parse(localStorage.getItem('sessionWallet')!).wallet.accounts;
+      return this.walletsForSwitching;
+  }
+
+  returnAddress(acc: string) {
+   let start: string = '';
+   let last: string = ''
+   start = acc.substring(0,3);
+   last = acc.substring(acc.length, acc.length - 3);
+   let final = start + '...' + last;
+   return final
+  }
+
+  getActive(acc: string) {
+    if (localStorage.getItem('wallet') === acc) {
+      return true
+    } else {
+      return  false
+    }
+  }
+
+  switchAcc(acc: string) {
+    localStorage.removeItem('wallet');
+    localStorage.setItem('wallet', acc);
+    this.setelectWalletConnect('MyAlgoWallet');
   }
 }

@@ -24,7 +24,8 @@
             !isBorrow &&
             !isBacking &&
             !isD &&
-            !isPool
+            !isPool &&
+            !switcher
           "
         >
           <h3>Enter Presale</h3>
@@ -52,7 +53,8 @@
             !isBacking &&
             !isBorrow &&
             !isD &&
-            !isPool
+            !isPool &&
+            !switcher
           "
         >
           <div class="d-flex align-items-center justify-content-between">
@@ -891,6 +893,12 @@
             <h3>Transaction Sending</h3>
           </div>
         </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="switcher">
+      <h3 style="text-align: center; margin-bottom: 30px; color: #81007F">Switch Your Wallet</h3>
+      <div class="context-section">
+          <h2 *ngFor="let acc of wallet()" [class.color-violet]="getActive(acc)" (click)="switchAcc(acc)"> {{returnAddress(acc)}}</h2>
       </div>
     </ng-container>
     <!--#deploy-popup-->
