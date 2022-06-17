@@ -810,9 +810,9 @@ export class PopUpComponent implements OnInit {
     }
   }
 
-  switchAcc(acc: string) {
+  switchAcc(i: number) {
     localStorage.removeItem('wallet');
-    localStorage.setItem('wallet', acc);
+    localStorage.setItem('walletIndex', JSON.stringify(i));
     this.setelectWalletConnect('MyAlgoWallet');
   }
 }
