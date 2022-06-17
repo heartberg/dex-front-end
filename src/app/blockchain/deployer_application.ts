@@ -232,7 +232,7 @@ export class DeployedApp {
     if(this.settings.rewardsPerInterval) {
       suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
       accounts = [ps.platform.fee_addr, ps.platform.burn_addr, getApplicationAddress(this.settings.stakingContractId!)]
-      if(settings.poolRewards! > Math.floor(0.03 * settings.totalSupply)) {
+      if(settings.poolRewards! >= Math.floor(0.03 * settings.totalSupply)) {
         algoAmountToSend = this.settings.initialAlgoLiq
       }
     } else {
@@ -259,7 +259,8 @@ export class DeployedApp {
 
       const apps = [this.settings.contractId!, ps.platform.staking_id]
       const stakingAssets = [this.settings.assetId!, ps.platform.verse_asset_id]
-      const stakingArgs = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
+      const stakingArgs = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.poolRewards!), 
+        algosdk.encodeUint64(this.settings.rewardsPerInterval!), algosdk.encodeUint64(this.settings.poolStart!), algosdk.encodeUint64(this.settings.poolInterval!)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       let txn = new Transaction(get_app_call_txn(suggested, addr, this.settings.stakingContractId, stakingArgs, apps, stakingAssets, undefined))
       grouped.unshift(setupPay, txn)

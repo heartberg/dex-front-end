@@ -176,9 +176,7 @@ export class DeployLb {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
               async (value: any) => {
                 if (value) {
-                  this.isPending = true;
-                  this.isFailed = false;
-                  this.finalStepApi = false;
+        
                   this.projectId = value;
                   of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                     (value: any) => {
@@ -218,14 +216,10 @@ export class DeployLb {
                                                       );
                                                     }
                                                     console.log('setup is done')
-                                                    this.finalStepApi = true;
-                                                    this.isPending = false;
-                                                    this.isFailed = false;
+                                                
                                                   },
                                                   error => {
-                                                    this.isPending = false;
-                                                    this.isFailed = true;
-                                                    this.finalStepApi = false;
+                                          
                                                   }
                                                 )
                                               }
@@ -234,9 +228,7 @@ export class DeployLb {
                                         }
                                       },
                                       error => {
-                                        this.isPending = false;
-                                        this.isFailed = true;
-                                        this.finalStepApi = false;
+                          
                                       }
                                     )
                                   }
@@ -256,9 +248,7 @@ export class DeployLb {
                 }
               },
               error => {
-                this.isPending = false;
-                this.isFailed = true;
-                this.finalStepApi = false;
+        
               }
             )
           }, 1200)
