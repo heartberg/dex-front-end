@@ -120,9 +120,23 @@ export class DeployComponent implements OnInit, DoCheck {
 
 
   ngDoCheck() {
-    this.finalStepApi = this.deployLib.finalStepApi;
-    this.isFailed = this.deployLib.isFailed;
-    this.isPending = this.deployLib.isPending;
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopup = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopup = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopup = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+
   }
 
   ngOnInit(): void {
@@ -449,7 +463,6 @@ export class DeployComponent implements OnInit, DoCheck {
   }
 
   async onSubmit() {
-    this.closePopup = true;
     this.sessionWallet = this.walletProviderService.sessionWallet;
     console.log(this.sessionWallet)
     if(this.isSmartAsaDeploy) {
