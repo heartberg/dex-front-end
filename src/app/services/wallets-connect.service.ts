@@ -43,7 +43,16 @@ export class WalletsConnectService {
 
     this.sessionWallet = sw;
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
-    console.log(this.sessionWallet, 'esaaa')
+    console.log(this.sessionWallet, 'esaaa');
+    localStorage.setItem('reload', 'true');
+    if (localStorage.getItem('reload')) {
+      // location.reload();
+      // setTimeout(() => {
+      //   localStorage.removeItem('reload');
+      // }, 2000)
+    } else {
+      return
+    }
   }
 
 
