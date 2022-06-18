@@ -36,7 +36,7 @@ export class WalletsConnectService {
 
     this.myAlgoAddress = sw.accountList()
     console.log("AlgoAddress: " + this.myAlgoAddress)
-    let index = localStorage.getItem(JSON.parse('walletIndex'));
+    let index = localStorage.getItem('walletIndex');
     let finalIndex = +index!;
     localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
