@@ -898,7 +898,15 @@
     <ng-container *ngIf="switcher">
       <h3 style="text-align: center; margin-bottom: 30px; color: #81007F">Switch Your Wallet</h3>
       <div class="context-section">
-          <h2 *ngFor="let acc of wallet(); let i = index" [class.color-violet]="getActive(acc)" (click)="switchAcc(i)"> {{returnAddress(acc)}}</h2>
+<!--          <h2 *ngFor="let acc of wallet(); let i = index" [class.color-violet]="getActive(acc)" (click)="switchAcc(i)"> {{returnAddress(acc)}}</h2>-->
+        <app-drop-down-selector
+          [isNotAccordion]="false"
+          [dropDownValues]="wallet()"
+          (switcherEmit)="getValueFromDropDown($event)"
+          [widthPX]="'330px'"
+          [isSwitcher]="true"
+        >
+        </app-drop-down-selector>
       </div>
     </ng-container>
     <!--#deploy-popup-->

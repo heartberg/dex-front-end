@@ -16,8 +16,16 @@
       <ng-container *ngIf="firstOnTrade">
         <ng-container *ngFor="let button of dropDownValues; let i = index">
           <button class="btn-default" *ngIf="i === 0">
-            <ng-container *ngIf="!topChanged">
-              {{  isTrade ? valueDefault : button}}
+            <ng-container *ngIf="!isTrade && showDropDownSelected === '' && !isSwitcher">
+              <ng-container *ngIf="!topChanged">
+                {{  isTrade ? valueDefault : button}}
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="!isTrade && showDropDownSelected === '' && isSwitcher">
+              {{ returnAddress(button) }}
+            </ng-container>
+            <ng-container *ngIf="!isTrade && showDropDownSelected !== ''">
+              {{ isSwitcher ? returnAddress(showDropDownSelected) : showDropDownSelected }}
             </ng-container>
             <ng-container *ngIf="topChanged">
               {{ tradeSelectedTop }}
@@ -155,8 +163,7 @@
   >
     <div
       class="section unHover forWidth"
-      *ngIf="!isProfileSection && extraDropDown"
-    >
+      *ngIf="!isProfileSection && extraDropDown">
       <div
         [formGroup]="dropDownForm"
         style="
@@ -212,6 +219,7 @@
         [class.border-none]="last"
         [class.no-border]="tree"
         [class.unHover]="isProfileSection"
+        [class.switcher]="isSwitcher"
       >
         <!--      <button class="btn-default" [class.color-violet]="tree" *ngIf="!isProfileSection">{{button}}</button>-->
         <button

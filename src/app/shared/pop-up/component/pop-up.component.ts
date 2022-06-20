@@ -793,26 +793,32 @@ export class PopUpComponent implements OnInit {
       return this.walletsForSwitching;
   }
 
-  returnAddress(acc: string) {
-   let start: string = '';
-   let last: string = ''
-   start = acc.substring(0,3);
-   last = acc.substring(acc.length, acc.length - 3);
-   let final = start + '...' + last;
-   return final
-  }
+  // returnAddress(acc: string) {
+  //  let start: string = '';
+  //  let last: string = ''
+  //  start = acc.substring(0,3);
+  //  last = acc.substring(acc.length, acc.length - 3);
+  //  let final = start + '...' + last;
+  //  return final
+  // }
 
-  getActive(acc: string) {
-    if (localStorage.getItem('wallet') === acc) {
-      return true
-    } else {
-      return  false
-    }
-  }
+  // getActive(acc: string) {
+  //   if (localStorage.getItem('wallet') === acc) {
+  //     return true
+  //   } else {
+  //     return  false
+  //   }
+  // }
 
   switchAcc(i: number) {
     localStorage.removeItem('wallet');
     localStorage.setItem('walletIndex', JSON.stringify(i));
     this.setelectWalletConnect('MyAlgoWallet');
+  }
+
+  getValueFromDropDown($event: any) {
+    let index = +$event.i - 1;
+    this.switchAcc(+index);
+    console.log($event)
   }
 }

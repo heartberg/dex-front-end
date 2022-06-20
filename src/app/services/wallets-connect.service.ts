@@ -46,10 +46,10 @@ export class WalletsConnectService {
     console.log(this.sessionWallet, 'esaaa');
     localStorage.setItem('reload', 'true');
     if (localStorage.getItem('reload')) {
-      // location.reload();
-      // setTimeout(() => {
-      //   localStorage.removeItem('reload');
-      // }, 2000)
+      location.reload();
+      setTimeout(() => {
+        localStorage.removeItem('reload');
+      }, 300)
     } else {
       return
     }
@@ -61,6 +61,14 @@ export class WalletsConnectService {
     this.sessionWallet = undefined;
     //setConnected(false)
     this.myAlgoAddress = []
+    if (localStorage.getItem('reload2')) {
+      location.reload();
+      setTimeout(() => {
+        localStorage.removeItem('reload2');
+      }, 300)
+    } else {
+      return
+    }
   }
 
 

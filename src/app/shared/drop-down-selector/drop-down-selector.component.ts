@@ -62,6 +62,10 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   //trade
 
   @Output() searchedData: EventEmitter<any> = new EventEmitter();
+  // switcher
+  @Input() public isSwitcher: boolean = false;
+  @Output() switcherEmit: EventEmitter<any> = new EventEmitter<any>()
+  // switcher
 
   public favAssetsArr: AssetViewModel[] = [];
   public allAssetsArr: AssetViewModel[] = [];
@@ -82,7 +86,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   // isMinus: boolean = true;
   // isPlus: boolean = false;
   isTrade: boolean = false;
-  
+
   @Output() wholeObj: EventEmitter<any> = new EventEmitter();
   // FORM
   dropDownForm = this.fb.group({
@@ -122,7 +126,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   ngDoCheck() {
-     
+
   }
 
   ngOnChanges() {
@@ -141,6 +145,10 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   selectValue(value: string, i?: any, id?: string, item?: any) {
+    if (this.isSwitcher) {
+      this.switcherEmit.emit({value, i})
+      this.showDropDownSelected = value
+    }
     this.wholeObj.emit(item);
     if (this.notCloseOnClick) {
       // this.isDropDownOpenedCounter +=1;
@@ -214,4 +222,19 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     // @ts-ignore
     this.searchedData.emit(this.dropDownForm.get('search').value)
   }
+
+  //switcher
+  returnAddress(acc: string) {
+    if (localStorage.getItem('wallet')) {
+      acc = localStorage.getItem('wallet')!;
+    }
+    let start: string = '';
+    let last: string = ''
+    start = acc.substring(0,3);
+    last = acc.substring(acc.length, acc.length - 3);
+    let final = start + '...' + last;
+    return final
+  }
+
+  //switcher
 }
