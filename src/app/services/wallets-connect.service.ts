@@ -40,8 +40,8 @@ export class WalletsConnectService {
     let finalIndex = +index!;
     localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
-    // @ts-ignore
-    sw.wallet.getDefaultAccount = finalIndex;
+
+    sw.wallet.defaultAccount = finalIndex;
     const finalSw = sw;
     this.sessionWallet = finalSw!;
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));

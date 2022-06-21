@@ -698,7 +698,10 @@ export class TradeComponent implements OnInit {
   }
   // swap && optIn
   async swap() {
-    const wallet = this.walletService.sessionWallet;
+    const workingWallet = this.walletService.sessionWallet;
+    console.log(workingWallet)
+    const wallet: SessionWallet = JSON.parse(localStorage.getItem("sessionWallet")!)
+    console.log(wallet)
     console.log(this.isBuy)
     if(wallet){
       if (this.isBuy) {
