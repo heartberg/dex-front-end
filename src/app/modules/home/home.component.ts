@@ -3,6 +3,8 @@ import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { TimeTupel } from '../launchpad/launchpad.component';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
+import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-detail.component';
+import { DeployedApp } from 'src/app/blockchain/deployer_application';
 
 @Component({
   selector: 'app-home',
@@ -10,9 +12,10 @@ import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  arr: [ProjectPreviewModel, TimeTupel][] = [];
+  arr: [ProjectPreviewModel, PresaleBlockchainInformation][] = [];
   constructor(
     private projectReqService: projectReqService,
+    private app: DeployedApp
   ) { }
 
   ngOnInit(): void {
@@ -20,12 +23,15 @@ export class HomeComponent implements OnInit {
         .getAllPresales(OrderingEnum.upcomming, 1)
         .subscribe((res) => {
           console.log(res);
-          res.forEach((el: ProjectPreviewModel) => {
-            let tupel: TimeTupel = {
-              startTime: new Date(el.presale.startingTime * 1000),
-              endTime: new Date(el.presale.endingTime * 1000)
+          this.arr = []
+          res.forEach(async (presaleModel: ProjectPreviewModel) => {
+            if(presaleModel.asset.smartProperties) {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+              this.arr.push([presaleModel, blockchainInfo])
+            } else {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+              this.arr.push([presaleModel, blockchainInfo])
             }
-            this.arr.push([el, tupel]);
           });
         });
   }

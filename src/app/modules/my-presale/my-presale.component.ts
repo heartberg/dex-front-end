@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { SessionWallet } from 'algorand-session-wallet';
 import { Algodv2 } from 'algosdk';
+import { time } from 'console';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
@@ -117,7 +118,9 @@ export class MyPresaleComponent implements OnInit {
     return Math.pow(10, decimal)
   }
 
-  formatDate(date: Date): string {
+  formatDate(timestamp: number): string {
+    let date = new Date(timestamp * 1000)
+    console.log(date)
     let minutes = date.getMinutes().toString()
     if(date.getMinutes() < 10) {
       minutes = "0" + minutes
@@ -129,27 +132,27 @@ export class MyPresaleComponent implements OnInit {
     return date.toDateString() + " - " + hours + ":" + minutes
   }
 
-  isFailed(model: ProjectPreviewModel): boolean {
+  isFailed(blockchainInfo: PresaleBlockchainInformation): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
-    if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised < model.presale.softCap) {
+    if(blockchainInfo.saleEnd < currentTimeStamp && blockchainInfo.totalRaised < blockchainInfo.softCap) {
       return true;
     } else {
       return false;
     }
   }
 
-  isSuccessFull(model: ProjectPreviewModel): boolean {
+  isSuccessFull(blockchainInfo: PresaleBlockchainInformation): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
-    if(model.presale.endingTime < currentTimeStamp && model.presale.totalRaised > model.presale.softCap) {
+    if(blockchainInfo.saleEnd < currentTimeStamp && blockchainInfo.totalRaised > blockchainInfo.softCap) {
       return true;
     } else {
       return false;
     }
   }
 
-  isOngoing(model: ProjectPreviewModel): boolean {
+  isOngoing(blockchainInfo: PresaleBlockchainInformation): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
-    if(model.presale.endingTime > currentTimeStamp) {
+    if(blockchainInfo.saleEnd > currentTimeStamp) {
       return true;
     } else {
       return false;

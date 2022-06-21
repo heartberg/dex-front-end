@@ -34,9 +34,9 @@ export type PresaleBlockchainInformation = {
   presaleFundsToLiqPercentage: number,
   burned: number,
   tokensInPresale: number,
-  saleStart: Date,
-  saleEnd: Date,
-  tradingStart: Date,
+  saleStart: number,
+  saleEnd: number,
+  tradingStart: number,
   softCap: number,
   hardCap: number,
   walletCap: number,
@@ -206,7 +206,9 @@ export class LaunchDetailComponent implements OnInit {
     }
   }
 
-  formatDate(date: Date): string {
+  formatDate(timestamp: number): string {
+    let date = new Date(timestamp * 1000)
+    console.log(date)
     let minutes = date.getMinutes().toString()
     if(date.getMinutes() < 10) {
       minutes = "0" + minutes

@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { SessionWallet } from 'algorand-session-wallet';
 import { Algodv2 } from 'algosdk';
 import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { OrderingEnum } from 'src/app/models/orderingEnum.enum';
 import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
-import {StateKeys} from "../../blockchain/deployer_application";
+import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import {ClaimState, DeployedApp, StateKeys} from "../../blockchain/deployer_application";
+import { PresaleBlockchainInformation } from './launch-detail/launch-detail.component';
 
 export type TimeTupel = {
   startTime: Date,
@@ -20,9 +23,10 @@ export type TimeTupel = {
 })
 
 export class LaunchpadComponent implements OnInit {
-  array: [ProjectPreviewModel, TimeTupel][] = [];
+  array: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?][] = [];
   isPresaleEnded: boolean = false;
   wallet = localStorage.getItem('wallet');
+  sessionWallet: SessionWallet | undefined;
   searchInput = this.fb.control([]);
   
   @Input() entries: boolean = false;
@@ -40,21 +44,28 @@ export class LaunchpadComponent implements OnInit {
   constructor(
     private projectReqService: projectReqService,
     private fb: FormBuilder,
+    private app: DeployedApp,
+    private walletService: WalletsConnectService
   ) {}
 
   ngOnInit(): void {
     console.log(this.isWallet);
     if (this.isWallet) {
+      this.sessionWallet = this.walletService.sessionWallet
       console.log('wallet');
       this.projectReqService
         .getParticipatedPresales(this.wallet, 1)
         .subscribe((res) => {
-          res.forEach((el: ProjectPreviewModel) => {
-            let tupel: TimeTupel = {
-              startTime: new Date(el.presale.startingTime * 1000),
-              endTime: new Date(el.presale.endingTime * 1000)
+          res.forEach(async (presaleModel: ProjectPreviewModel) => {
+            if(presaleModel.asset.smartProperties) {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+              let claimState: ClaimState = await this.app.isClaimablePresale(this.wallet!, presaleModel.asset.smartProperties!.contractId)
+              this.array.push([presaleModel, blockchainInfo, claimState])
+            } else {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+              let claimState: ClaimState = await this.app.isClaimablePresale(this.wallet!, presaleModel.presale.contractId!)
+              this.array.push([presaleModel, blockchainInfo, claimState])
             }
-            this.array.push([el, tupel]);
           });
         });
     } else if (!this.isWallet) {
@@ -62,13 +73,14 @@ export class LaunchpadComponent implements OnInit {
       this.projectReqService
         .getAllPresales(OrderingEnum.ending, 1)
         .subscribe((res) => {
-          console.log(res);
-          res.forEach((el: ProjectPreviewModel) => {
-            let tupel: TimeTupel = {
-              startTime: new Date(el.presale.startingTime * 1000),
-              endTime: new Date(el.presale.endingTime * 1000)
+          res.forEach(async (presaleModel: ProjectPreviewModel) => {
+            if(presaleModel.asset.smartProperties) {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+              this.array.push([presaleModel, blockchainInfo])
+            } else {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+              this.array.push([presaleModel, blockchainInfo])
             }
-            this.array.push([el, tupel]);
           });
         });
       // All
@@ -97,23 +109,76 @@ export class LaunchpadComponent implements OnInit {
       .getAllPresales(ordering, 1)
       .subscribe((res) => {
         this.array = []
-        console.log(res);
-        res.forEach((el: ProjectPreviewModel) => {
-          let tupel: TimeTupel = {
-            startTime: new Date(el.presale.startingTime * 1000),
-            endTime: new Date(el.presale.endingTime * 1000)
+        res.forEach(async (presaleModel: ProjectPreviewModel) => {
+          if(presaleModel.asset.smartProperties) {
+            let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+            this.array.push([presaleModel, blockchainInfo])
+          } else {
+            let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+            this.array.push([presaleModel, blockchainInfo])
           }
-          this.array.push([el, tupel]);
         });
       });
     // All
     }
 
-  claimAlgo() {
 
+  formatDate(timestamp: number): string {
+    let date = new Date(timestamp * 1000)
+    console.log(date)
+    let minutes = date.getMinutes().toString()
+    if(date.getMinutes() < 10) {
+      minutes = "0" + minutes
+    }
+    let hours = date.getHours().toString()
+    if(date.getHours() < 10){
+      hours = "0" + hours
+    }
+    return date.toDateString() + " - " + hours + ":" + minutes
   }
 
-  claimToken() {
+  isFailed(blockchainInfo: PresaleBlockchainInformation): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(blockchainInfo.saleEnd < currentTimeStamp && blockchainInfo.totalRaised < blockchainInfo.softCap) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
+  isSuccessFull(blockchainInfo: PresaleBlockchainInformation): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(blockchainInfo.saleEnd < currentTimeStamp && blockchainInfo.totalRaised > blockchainInfo.softCap) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isOngoing(blockchainInfo: PresaleBlockchainInformation): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(blockchainInfo.saleEnd > currentTimeStamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async claimAlgo(item: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?]) {
+    this.sessionWallet = this.walletService.sessionWallet
+    let response = await this.app.claimPresale(this.sessionWallet!, item[1].contractId)
+    if(response) {
+      console.log("CLAIMED ALGO")
+      item[2]!.canClaim = false
+    }
+  }
+
+  async claimToken(item: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?]) {
+    this.sessionWallet = this.walletService.sessionWallet
+    let response = await this.app.claimPresale(this.sessionWallet!, item[1].contractId)
+    if(response) {
+      console.log("CLAIMED TOKEN")
+      item[2]!.canClaim = false
+    }
   }
 }
