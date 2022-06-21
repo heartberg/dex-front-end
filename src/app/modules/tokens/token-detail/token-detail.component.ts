@@ -21,6 +21,8 @@ export class TokenDetailComponent implements OnInit {
   isPopUpOpen: boolean = false;
   isBorrow: boolean = false;
   isBacking: boolean = false;
+  isVerseBorrow: boolean = false;
+  isVerseBacking: boolean = false;
 
   smartToolData: SmartToolData = {
     assetDecimals: 0,
@@ -67,17 +69,22 @@ export class TokenDetailComponent implements OnInit {
       await this.getSmartToolData();
   }
 
-  async openPopUp(version: string) {
+  async openPopUp() {
     await this.getSmartToolData()
     console.log(this.smartToolData)
     this.isPopUpOpen = true;
-    if (version === 'isBorrow') {
+    if(this.smartToolData.contractId == ps.platform.verse_asset_id) {
+      this.isVerseBorrow = true;
+      this.isVerseBacking = false;
+      this.isBorrow = false;
+      this.isBacking = false;
+    } else {
       this.isBorrow = true;
       this.isBacking = false;
-    } else if (version === 'isBacking') {
-      this.isBorrow = false;
-      this.isBacking = true;
+      this.isVerseBorrow = false;
+      this.isVerseBacking = false;
     }
+
   }
 
   async getSmartToolData() {

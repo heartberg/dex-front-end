@@ -117,23 +117,16 @@
         </div>
       </div>
       <div class="outer-buttons-container d-flex flex-column" *ngIf="blockchainData">
-        <button class="btn-secondary-costum">Buy</button>
+        <button class="btn-secondary-costum" routerLink="../../../trade">Buy</button>
         <div class="buttons-container">
           <div class="d-flex flex-column align-items-center">
             <button
-              (click)="openPopUp('isBorrow')"
+              (click)="openPopUp()"
               class="btn-secondary-costum"
             >
-              Borrow
+              Smart Tools
             </button>
-            <span class="interest-span">0% interest</span>
           </div>
-          <button
-            (click)="openPopUp('isBacking')"
-            class="btn-secondary-costum"
-          >
-            Backing
-          </button>
         </div>
       </div>
       </div>
@@ -445,7 +438,7 @@
 <!--  </div>-->
 <!--</div>-->
 
-<app-pop-up
+<!-- <app-pop-up
   [isBorrow]="isBorrow"
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBorrow"
@@ -456,4 +449,15 @@
   (isClosed)="closePopUp($event)"
   *ngIf="isPopUpOpen && isBacking"
   [smartToolData]="smartToolData"
+></app-pop-up> -->
+
+<app-pop-up
+  [isTrade]="true"
+  (isClosed)="closePopUp($event)"
+  [smartToolData]="smartToolData"
+  *ngIf="isPopUpOpen"
+  [isTradeLend]="isBorrow"
+  [isTradeBacking]="isBacking"
+  [isTradeLendVerse]="isVerseBorrow"
+  [isTradeBackingVerse]="isVerseBacking"
 ></app-pop-up>
