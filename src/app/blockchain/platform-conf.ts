@@ -42,6 +42,7 @@ type Platform = {
     verse_app_addr: string,
     verse_asset_id: number,
     verse_decimals: number,
+    verse_project_id: string,
     backing_id: number,
     backing_addr: string,
     backing_per_x_token: number,

@@ -318,7 +318,7 @@ export class VerseApp {
             decimals: ps.platform.verse_decimals,
             image: "",
             deployerWallet: "",
-            projectId: "",
+            projectId: ps.platform.verse_project_id,
             isFavorite: true,
             smartProperties: {
                 risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
