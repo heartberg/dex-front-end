@@ -49,7 +49,7 @@ export class WalletsConnectService {
       location.reload();
       setTimeout(() => {
         localStorage.removeItem('reload');
-      }, 300)
+      }, 1000)
     } else {
       return
     }
