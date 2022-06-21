@@ -40,19 +40,12 @@ export class WalletsConnectService {
     let finalIndex = +index!;
     localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
-
-    this.sessionWallet = sw;
+    // @ts-ignore
+    sw.wallet.getDefaultAccount = finalIndex;
+    const finalSw = sw;
+    this.sessionWallet = finalSw!;
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
     console.log(this.sessionWallet, 'esaaa');
-    localStorage.setItem('reload', 'true');
-    if (localStorage.getItem('reload')) {
-      location.reload();
-      setTimeout(() => {
-        localStorage.removeItem('reload');
-      }, 1000)
-    } else {
-      return
-    }
   }
 
 
