@@ -698,10 +698,10 @@ export class TradeComponent implements OnInit {
   }
   // swap && optIn
   async swap() {
-    const workingWallet = this.walletService.sessionWallet;
-    console.log(workingWallet)
-    const wallet: SessionWallet = JSON.parse(localStorage.getItem("sessionWallet")!)
-    console.log(wallet)
+    const wallet = this.walletService.sessionWallet;
+    //console.log(workingWallet)
+    //const wallet: SessionWallet = JSON.parse(localStorage.getItem("sessionWallet")!)
+    //console.log(wallet)
     console.log(this.isBuy)
     if(wallet){
       if (this.isBuy) {
@@ -853,7 +853,7 @@ export class TradeComponent implements OnInit {
     } else {
       this.smartToolData = await this.stakingUtils.getVerseSmartToolData(address)
     }
-    //console.log(this.smartToolData)
+    console.log(this.smartToolData)
   }
 
   getTotalFees() {

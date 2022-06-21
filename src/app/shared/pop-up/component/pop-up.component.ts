@@ -78,7 +78,7 @@ export class PopUpComponent implements OnInit {
   isActiveFirst = true;
   isActiveSecond = false;
 
-  isLend = false;
+  isLend = true;
   isLendChecked = this.fb.control([])
 
   returnedBacking: number = 0;
@@ -200,6 +200,12 @@ export class PopUpComponent implements OnInit {
     this.isLendChecked.valueChanges!.subscribe(
       (value: any) => {
         console.log(value)
+        console.log(this.smartToolData)
+        if(value == true) {
+          this.isLend = false
+        } else {
+          this.isLend = true
+        }
       }
     )
 
@@ -485,7 +491,17 @@ export class PopUpComponent implements OnInit {
     if(!amount)  {
       this.returnedBacking = 0
     } else {
-      this.returnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+      if(this.isLend) {
+        this.returnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+      } else {
+        if(this.smartToolData.userBorrowed > 0) {
+          this.returnedBacking = amount / this.smartToolData.userBorrowed * this.smartToolData.userSupplied
+        } else {
+          this.returnedBacking = 0
+        }
+        
+      }
+      
     }
   }
 
@@ -690,20 +706,47 @@ export class PopUpComponent implements OnInit {
   }
 
   async lendTrade() {
-    let amount = this.tradeBackingControl.value | 0
+    let amount = parseFloat(this.tradeBackingControl.value)
+    console.log(amount)
     let wallet = this._walletsConnectService.sessionWallet
     if(wallet){
       if(amount > 0) {
         if(this.smartToolData.contractId == ps.platform.verse_app_id) {
           amount = amount * Math.pow(10, ps.platform.verse_decimals)
-          let response = await this.verseApp.getBacking(wallet, amount)
+          // let response = await this.verseApp.borrow(wallet, amount)
+          // if(response) {
+          //   console.log("backing done")
+          //   this.closePopUp(true)
+          // }
+        } else {
+          amount = Math.floor(amount * Math.pow(10, this.smartToolData.assetDecimals))
+          console.log(amount)
+          let response = await this.deployedApp.borrow(wallet, amount, this.smartToolData.contractId)
           if(response) {
             console.log("backing done")
             this.closePopUp(true)
           }
+        }
+      } else {
+        console.log("please connect wallet")
+      }
+    }
+  }
+
+  async repayTrade() {
+    let amount = parseFloat(this.tradeBackingControl.value)
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      if(amount > 0) {
+        amount = Math.floor(amount * Math.pow(10, 6))
+        if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+          // let response = await this.verseApp.repay(wallet, amount)
+          // if(response) {
+          //   console.log("backing done")
+          //   this.closePopUp(true)
+          // }
         } else {
-          amount = amount * Math.pow(10, this.smartToolData.assetDecimals)
-          let response = await this.deployedApp.getBacking(wallet, amount, this.smartToolData.contractId)
+          let response = await this.deployedApp.repay(wallet, amount, this.smartToolData.contractId)
           if(response) {
             console.log("backing done")
             this.closePopUp(true)

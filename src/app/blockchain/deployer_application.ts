@@ -867,35 +867,37 @@ export class DeployedApp {
     return result
   }
 
-  async borrow(wallet: SessionWallet, tokenAmount: bigint, settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async borrow(wallet: SessionWallet, tokenAmount: number, contractId: number): Promise<any> {
+    let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
+    let assetId = globalState[StateKeys.asset_id_key]['i']
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Borrow)), algosdk.encodeUint64(tokenAmount)]
-    const assets = [this.settings.assetId]
+    const assets = [assetId]
 
-    const borrow = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
+    const borrow = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, undefined))
     const [signed] = await wallet.signTxn([borrow])
     const result = await sendWait([signed])
 
     return result
   }
 
-  async repay(wallet: SessionWallet, algoAmount: bigint, settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async repay(wallet: SessionWallet, algoAmount: number, contractId: number): Promise<any> {
+    let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
+    let assetId = globalState[StateKeys.asset_id_key]['i']
     const suggested = await getSuggested(30)
     suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Repay))]
-    const assets = [this.settings.assetId]
+    const assets = [assetId]
 
-    const repay = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
-    const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, algoAmount))
+    const repay = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, undefined))
+    const pay = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), algoAmount))
 
     const grouped = [repay, pay]
 
@@ -1049,6 +1051,7 @@ export class DeployedApp {
 
     let client: Algodv2 = getAlgodClient()
     let globalState: any = StateToObj(await getGlobalState(contractId), StateKeys)
+    console.log(globalState)
     let assetInfo = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
 
     let algos = 0
@@ -1069,8 +1072,10 @@ export class DeployedApp {
 
       if(await isOptedIntoApp(wallet, contractId)) {
         optedIn = true
-        userSupplied = globalState[StateKeys.user_supplied_key]['i']
-        userBorrowed = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_borrowed_key)
+        userSupplied = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_supplied_key) / Math.pow(10, assetInfo['params']['decimals'])
+        userBorrowed = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.user_borrowed_key) / Math.pow(10, 6)
+        console.log(userSupplied)
+        console.log(userBorrowed)
       }
 
     }

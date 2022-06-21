@@ -178,9 +178,13 @@
               <div class="input-section">
                 <div class="d-flex align-items-center justify-content-between">
                   <span>Amount</span>
-                  <div>
+                  <div *ngIf="isLend">
                     <span class="color-violet">Available:</span>
-                    <span style="margin-left: 4px">{{smartToolData.availableTokenAmount}}</span>
+                    <span style="margin-left: 4px">{{smartToolData.availableTokenAmount}} {{smartToolData.unitName}}</span>
+                  </div>
+                  <div *ngIf="!isLend">
+                    <span class="color-violet">Available:</span>
+                    <span style="margin-left: 4px">{{(smartToolData.availableAlgoAmount / 1000000).toFixed(2)}} Algo</span>
                   </div>
                 </div>
                 <div>
@@ -193,13 +197,15 @@
               </div>
               <div class="data-box" style="margin: 40px 0 20px 0">
                 <span class="property">Output:</span>
-                <span class="value">{{returnedBacking.toFixed(6)}} Algo</span>
+                <span *ngIf="isLend" class="value">{{returnedBacking.toFixed(6)}} Algo</span>
+                <span *ngIf="!isLend" class="value">{{returnedBacking.toFixed(smartToolData.assetDecimals)}} {{smartToolData.unitName}}</span>
               </div>
               <div class="d-flex buttons isTrade-buttons">
                 <button class="btn-primary-costum" (click)="closePopUp(false)">
                   Cancel
                 </button>
-                <button *ngIf="smartToolData.optedIn" class="btn-secondary-costum" (click)="lendTrade()">Lend</button>
+                <button *ngIf="smartToolData.optedIn && isLend" class="btn-secondary-costum" (click)="lendTrade()">Lend</button>
+                <button *ngIf="smartToolData.optedIn && !isLend" class="btn-secondary-costum" (click)="repayTrade()">Repay</button>
                 <button *ngIf="!smartToolData.optedIn" class="btn-secondary-costum" (click)="optInToBacking()">OptIn</button>
               </div>
             </div>
@@ -270,7 +276,7 @@
                     <input
                       style="width: 100%"
                       [formControl]="tradeBackingControl"
-                      type="number"
+                      type="text"
                       class="input-costum"
                     />
                   </div>
@@ -410,7 +416,7 @@
           <span>Amount</span>
           <div>
             <span class="color-violet">Available:</span>
-            <span style="margin-left: 4px">{{(smartToolData.availableTokenAmount).toFixed(smartToolData.assetDecimals)}}</span>
+            <span style="margin-left: 4px">{{(smartToolData.availableTokenAmount).toFixed(3)}} {{smartToolData.unitName}}</span>
           </div>
         </div>
         <div>
