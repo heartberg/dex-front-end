@@ -44,7 +44,10 @@ interface projectPresaleCreatePresaleModel {
     startingTime: number,
     endingTime: number,
     presaleToLiquidity: number,
-    contractId?: number
+    contractId?: number,
+    vestingRelease?: number,
+    vestingReleaseInterval?: number,
+    vestingReleaseIntervalNumber?: number
 }
 // presaleCreate
 

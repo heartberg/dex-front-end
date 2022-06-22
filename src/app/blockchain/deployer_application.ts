@@ -1062,7 +1062,7 @@ export class DeployedApp {
 
     if(wallet){
       let accountInfo: any = await client.accountInformation(wallet).do()
-      algos = accountInfo['amount']
+      algos = accountInfo['amount'] / Math.pow(10, 6)
       let asset = accountInfo['assets'].find((el: { [x: string]: number; }) => {
         return el['asset-id'] == globalState[StateKeys.asset_id_key]['i']
       })

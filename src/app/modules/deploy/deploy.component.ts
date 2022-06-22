@@ -61,6 +61,7 @@ export class DeployComponent implements OnInit, DoCheck {
   isAsaDeploy: boolean = false;
   isDistributionPool: boolean = false;
 
+  isCheckedVested: boolean = false;
   isCheckedRoadMap: boolean = false;
   isCheckedTeamInfo: boolean = false;
   isCheckedStaking: boolean = false;
@@ -108,6 +109,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   teamInfo: any[] = [
   ];
+  releasePerInterval: number = 0;
 
   constructor(
     private walletProviderService: WalletsConnectService,
@@ -158,6 +160,10 @@ export class DeployComponent implements OnInit, DoCheck {
   @ViewChild('checkPresale', {static: false})
   // @ts-ignore
   private checkPresale: ElementRef;
+
+  @ViewChild('checkVested', {static: false})
+  // @ts-ignore
+  private checkVested: ElementRef;
 
   @ViewChild('checkDistributionPool', {static: false})
   // @ts-ignore
@@ -246,7 +252,13 @@ export class DeployComponent implements OnInit, DoCheck {
           presaleEnd: '',
           softCap: '',
           hardCap: '',
-          walletCap: '',
+          walletCap: ''
+        }),
+        checkVested: this.fb.control(false),
+        vestedReleaseSettings: this.fb.group({
+          release: '',
+          releaseInterval: '',
+          releaseIntervalNumber: ''
         }),
         presaleLiquidity: this.fb.group({
           tokensInPresale: '',
@@ -286,6 +298,7 @@ export class DeployComponent implements OnInit, DoCheck {
     this.deployFormGroup.valueChanges.subscribe(x => {
       this.setPriceFields()
       this.setStakingFields()
+      this.setVestingFields()
     });
 
     this.stakingFormGroup.valueChanges.subscribe(x => {
@@ -293,14 +306,35 @@ export class DeployComponent implements OnInit, DoCheck {
     })
   }
 
+  setVestingFields() {
+    if(this.isCheckedVested) {
+      let releaseIntervalNumbers = +this.deployFormGroup.get("createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber")?.value
+      if(releaseIntervalNumbers != 0){
+        this.releasePerInterval = (1 / releaseIntervalNumbers) * 100
+      } else {
+        this.releasePerInterval = 0
+      }
+    } else {
+      this.releasePerInterval = 0
+    }
+  }
+
   blockchainObjInitialize(): DeployedAppSettings {
     let initial_algo_liq_with_fee;
     let initial_token_liq;
+    let release;
+    let releaseInterval;
+    let releaseIntervalNumber = undefined;
 
     let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
     if(this.presaleIsChecked){
       initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000 / (1 - this.fee))
       initial_token_liq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, decimals)
+      if(this.isCheckedVested) {
+        release = parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
+        releaseInterval = +this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.value * 86400
+        releaseIntervalNumber = +this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.value
+      }
     } else {
       initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000 / (1 - this.fee))
       initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
@@ -351,8 +385,11 @@ export class DeployComponent implements OnInit, DoCheck {
         softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value * 1_000_000,
         hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value * 1_000_000,
         walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value * 1_000_000,
-      } || null
-    }
+        vestingRelease: release,
+        vestingReleaseInterval: releaseInterval,
+        vestingReleaseIntervalNumber: releaseIntervalNumber
+      } 
+    } || null
   }
 
   async smartAsaDeploy() {
@@ -500,6 +537,23 @@ export class DeployComponent implements OnInit, DoCheck {
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInLiquidity')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('algoToLiquidity')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('presaleFundsToLiquidity')?.setValue(null)
+    
+      this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.checkVested')?.setValue(false)
+      this.isCheckedVested = false;
+    }
+  }
+
+  activateVestedSection() {
+    if(this.checkVested.nativeElement.checked) {
+      this.isCheckedVested = true;
+    } else {
+      this.isCheckedVested = false;
+      this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.setValue(null)
+      this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.setValue(null)
     }
   }
 

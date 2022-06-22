@@ -77,11 +77,17 @@
               </div>
               <div class="d-flex">
                 <div class="title">
-                  <h4>Release per Interval</h4>
+                  <h4>Number of Intervals</h4>
                 </div>
                 <div class="field">
-                  <input type="number" class="input-costum" style="width: 406px" formControlName="releasePerInterval">
+                  <input type="number" class="input-costum" style="width: 406px" formControlName="releaseIntervalNumbers">
                 </div>
+              </div>
+              <div
+                class="bot-text"
+              >
+                <span class="thin-gray-text">Release per Interval: </span>
+                <span  class="amount"> {{releasePerInterval!.toFixed(3)}} {{selectedUnit}}</span>
               </div>
             </ng-container>
             <button class="btn-secondary-costum" style="width: 140px" (click)="lockTokens()" *ngIf="optedIn">
@@ -108,7 +114,7 @@
                 <span>Asset: </span>
               </div>
               <div>
-                <span class="color-violet"> {{selectedStakingAssetInfo['params']['name']}}</span>
+                <span class="color-violet"> {{selectedAssetInfo['params']['name']}}</span>
               </div>
               </div>
                 <div class="d-flex">

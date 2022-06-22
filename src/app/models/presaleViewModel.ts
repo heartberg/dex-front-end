@@ -10,4 +10,7 @@ export interface presaleViewModel {
     presaleToLiquidity: number
     toFairLaunch: boolean
     contractId?: number
+    vestingRelease?: number,
+    vestingReleaseInterval?: number,
+    vestingReleaseIntervalNumber?: number
 }

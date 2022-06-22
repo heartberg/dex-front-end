@@ -286,7 +286,7 @@ export class DeployLb {
 
   async deployFromSetupPresale(projectModel: ProjectViewModel) {
     this.sessionWallet = this.wallet.sessionWallet
-    this.blockchainObj = this.mapPresaleProjectViewToBlockchainObject(projectModel)
+    this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
     of(await this.deployerBC.setupWithPresale(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (value) {
@@ -394,7 +394,7 @@ export class DeployLb {
 
   async deployFromMintPresale(projectModel: ProjectViewModel) {
     this.sessionWallet = this.wallet.sessionWallet
-    this.blockchainObj = this.mapPresaleProjectViewToBlockchainObject(projectModel)
+    this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
     of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (value) {
@@ -450,7 +450,7 @@ export class DeployLb {
 
   async deployFromOptInPresale(projectModel: ProjectViewModel) {
     this.sessionWallet = this.wallet.sessionWallet
-    this.blockchainObj = this.mapPresaleProjectViewToBlockchainObject(projectModel)
+    this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
     of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (value) {
@@ -630,64 +630,23 @@ export class DeployLb {
     }
   }
 
-  mapPresaleProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
-    return {
-      buyBurn: projectView.asset.smartProperties!.buyBurn,
-      creator: projectView.creatorWallet,
-      decimals: projectView.asset.decimals,
-      extraFeeTime: Math.floor(projectView.asset.smartProperties!.extraFeeTime),
-      initialAlgoLiq: projectView.initialAlgoLiquidity,
-      initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
-      initialTokenLiq: projectView.initialTokenLiquidity,
-      maxBuy: projectView.asset.smartProperties!.maxBuy,
-      name: projectView.asset.name,
-      sellBurn: projectView.asset.smartProperties!.sellBurn,
-      toBacking: projectView.asset.smartProperties!.backing,
-      toLp: projectView.asset.smartProperties!.risingPriceFloor,
-      totalSupply: projectView.asset.totalSupply,
-      tradingStart: projectView.asset.smartProperties!.tradingStart,
-      transferBurn: projectView.asset.smartProperties!.sendBurn,
-      unit: projectView.asset.unitName,
-      url: projectView.asset.url || "",
-      assetId: projectView.asset.assetId,
-      contractAddress: projectView.asset.smartProperties!.contractAddress,
-      contractId: projectView.asset.smartProperties!.contractId,
-      presaleSettings: {
+  mapProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
+    let presaleSettings = undefined
+    if(projectView.presale) {
+      presaleSettings = {
         hardcap: projectView.presale!.hardCap,
         presaleEnd: projectView.presale!.endingTime,
         presaleStart: projectView.presale!.startingTime,
         presaleTokenAmount: projectView.presale!.tokenAmount,
         softcap: projectView.presale!.softCap,
         toLp: projectView.presale!.presaleToLiquidity,
-        walletcap: projectView.presale!.walletCap
-      },
-
-    }
-  }
-
-  mapProjectViewToBlockchainObject(projectView: ProjectViewModel): DeployedAppSettings {
-    return {
-      buyBurn: projectView.asset.smartProperties!.buyBurn,
-      creator: projectView.creatorWallet,
-      decimals: projectView.asset.decimals,
-      extraFeeTime: Math.floor(projectView.asset.smartProperties!.extraFeeTime),
-      initialAlgoLiq: projectView.initialAlgoLiquidity,
-      initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
-      initialTokenLiq: projectView.initialTokenLiquidity,
-      maxBuy: projectView.asset.smartProperties!.maxBuy,
-      name: projectView.asset.name,
-      sellBurn: projectView.asset.smartProperties!.sellBurn,
-      toBacking: projectView.asset.smartProperties!.backing,
-      toLp: projectView.asset.smartProperties!.risingPriceFloor,
-      totalSupply: projectView.asset.totalSupply,
-      tradingStart: projectView.asset.smartProperties!.tradingStart,
-      transferBurn: projectView.asset.smartProperties!.sendBurn,
-      unit: projectView.asset.unitName,
-      url: projectView.asset.url || "",
-      assetId: projectView.asset.assetId,
-      contractAddress: projectView.asset.smartProperties!.contractAddress,
-      contractId: projectView.asset.smartProperties!.contractId,
-      presaleSettings: {
+        walletcap: projectView.presale!.walletCap,
+        vestingRelease: projectView.presale!.vestingRelease,
+        vestingReleaseInterval: projectView.presale!.vestingReleaseInterval,
+        vestingReleaseIntervalNumber: projectView.presale!.vestingReleaseIntervalNumber
+      }
+    } else {
+      presaleSettings = {
         hardcap: 0,
         presaleEnd: 0,
         presaleStart: 0,
@@ -695,7 +654,31 @@ export class DeployLb {
         softcap: 0,
         toLp: 0,
         walletcap: 0
-      },
+      }
+    }
+    
+    return {
+      buyBurn: projectView.asset.smartProperties!.buyBurn,
+      creator: projectView.creatorWallet,
+      decimals: projectView.asset.decimals,
+      extraFeeTime: Math.floor(projectView.asset.smartProperties!.extraFeeTime),
+      initialAlgoLiq: projectView.initialAlgoLiquidity,
+      initialAlgoLiqWithFee: projectView.initialAlgoLiquidityWithFee,
+      initialTokenLiq: projectView.initialTokenLiquidity,
+      maxBuy: projectView.asset.smartProperties!.maxBuy,
+      name: projectView.asset.name,
+      sellBurn: projectView.asset.smartProperties!.sellBurn,
+      toBacking: projectView.asset.smartProperties!.backing,
+      toLp: projectView.asset.smartProperties!.risingPriceFloor,
+      totalSupply: projectView.asset.totalSupply,
+      tradingStart: projectView.asset.smartProperties!.tradingStart,
+      transferBurn: projectView.asset.smartProperties!.sendBurn,
+      unit: projectView.asset.unitName,
+      url: projectView.asset.url || "",
+      assetId: projectView.asset.assetId,
+      contractAddress: projectView.asset.smartProperties!.contractAddress,
+      contractId: projectView.asset.smartProperties!.contractId,
+      presaleSettings: presaleSettings,
 
     }
   }
@@ -739,6 +722,15 @@ export class DeployLb {
         contractAddress: 'tbd',
       }
     }
+    let release;
+    let releaseInterval;
+    let releaseIntervalNumber;
+
+    if(form.get("createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber").value) {
+      release = parseInt((new Date(form.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
+      releaseInterval = +form.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.value * 86400
+      releaseIntervalNumber = +form.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.value
+    }
 
     this.presaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
@@ -771,7 +763,11 @@ export class DeployLb {
         walletCap: +form.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value! * 1_000_000,
         startingTime: presaleStartTime,
         endingTime: presaleEndTime,
-        presaleToLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value! * 100
+        presaleToLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value! * 100,
+        vestingRelease: release,
+        vestingReleaseInterval: releaseInterval,
+        vestingReleaseIntervalNumber: releaseIntervalNumber
+
       },
       asset: {
         assetId: 0,

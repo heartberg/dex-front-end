@@ -23,15 +23,15 @@ export class LockerComponent implements OnInit {
   vestedChecked: boolean = false;
   walletLockedAlready: boolean = false;
   lockSettings: LockSettings | undefined;
-  tokensPerInterval: number = 0;
+  releasePerInterval: number = 0;
   assetContractId: number | undefined;
   assetsOwned: any | undefined;
 
   // @ts-ignore
   lockerFormGroup: FormGroup;
   dropDownValues: string[] | undefined;
-  selectedStakingAsset: any;
-  selectedStakingAssetInfo: any;
+  selectedAsset: any;
+  selectedAssetInfo: any;
   selectedAmount: number = 0;
   selectedUnit: string = "";
   optedIn: boolean = false;
@@ -50,9 +50,15 @@ export class LockerComponent implements OnInit {
       amount: null,
       lockTime: null,
       releaseInterval: null,
-      releasePerInterval: null,
+      releaseIntervalNumbers: null,
       vestedCheck: false
     })
+
+    this.lockerFormGroup.valueChanges.subscribe(
+      (value: any) => {
+        this.calculateTokensPerInterval()
+      }
+    )
 
     let wallet = this.walletService.sessionWallet
     if(wallet) {
@@ -66,7 +72,7 @@ export class LockerComponent implements OnInit {
       if(this.lockSettings.amount > 0) {
         let client: Algodv2 = getAlgodClient()
         let assetInfo = await client.getAssetByID(this.lockSettings.assetId).do()
-        this.selectedStakingAssetInfo = assetInfo
+        this.selectedAssetInfo = assetInfo
         this.walletLockedAlready = true;
         this.isClaimable(this.lockSettings)
 
@@ -74,6 +80,23 @@ export class LockerComponent implements OnInit {
         await this.getAssetsOfAccount()
         console.log(wallet.getDefaultAccount())
       }
+    }
+  }
+
+  calculateTokensPerInterval() {
+    if(this.vestedChecked) {
+      let releaseIntervalNumbers = +this.lockerFormGroup.get("releaseIntervalNumbers")?.value
+      let amount = +this.lockerFormGroup.get("amount")?.value
+      if(amount != 0 && releaseIntervalNumbers != 0){
+        console.log(amount)
+        console.log(releaseIntervalNumbers)
+        this.releasePerInterval = amount / releaseIntervalNumbers
+        console.log(this.releasePerInterval)
+      } else {
+        this.releasePerInterval = 0
+      }
+    } else {
+      this.releasePerInterval = 0
     }
   }
 
@@ -101,22 +124,25 @@ export class LockerComponent implements OnInit {
       this.lockSettings = await this.locker.getLockData(wallet!.getDefaultAccount())
       this.isClaimable(this.lockSettings)
     }
-    
   }
 
   getLockSettings() {
-    let amount = +this.lockerFormGroup.get("amount")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
+    let amount = +this.lockerFormGroup.get("amount")?.value * Math.pow(10, this.selectedAssetInfo['params']['decimals'])
     let lockTime = Math.floor(new Date(this.lockerFormGroup.get("lockTime")?.value).getTime() / 1000)
     let periodTime = undefined
+    let numberOfPeriods = undefined
     let tokensPerPeriod = undefined
     if(this.vestedChecked) {
+      numberOfPeriods = +this.lockerFormGroup.get("releaseIntervalNumbers")?.value
       periodTime = Math.floor(this.lockerFormGroup.get("releaseInterval")?.value * 86400)
-      tokensPerPeriod = Math.floor(+this.lockerFormGroup.get("releasePerInterval")?.value * Math.pow(10, this.selectedStakingAssetInfo['params']['decimals']))
+      tokensPerPeriod = Math.floor(amount / numberOfPeriods)
+    } else {
+      tokensPerPeriod = undefined
     }
     this.lockSettings = {
       amount: amount,
       lockTime: lockTime,
-      assetId: this.selectedStakingAsset['asset-id'],
+      assetId: this.selectedAsset['asset-id'],
       assetContractId: this.assetContractId,
       periodTime: periodTime,
       tokensPerPeriod: tokensPerPeriod
@@ -233,12 +259,12 @@ export class LockerComponent implements OnInit {
       return element['asset-id'] == assetId
     });
     if(asset){
-      this.selectedStakingAsset = asset
+      this.selectedAsset = asset
       let client: Algodv2 = getAlgodClient()
-      this.selectedStakingAssetInfo = await client.getAssetByID(assetId).do()
-      this.selectedAmount = this.selectedStakingAsset['amount'] / Math.pow(10, this.selectedStakingAssetInfo['params']['decimals'])
+      this.selectedAssetInfo = await client.getAssetByID(assetId).do()
+      this.selectedAmount = this.selectedAsset['amount'] / Math.pow(10, this.selectedAssetInfo['params']['decimals'])
 
-      this.selectedUnit = this.selectedStakingAssetInfo['params']['unit-name']
+      this.selectedUnit = this.selectedAssetInfo['params']['unit-name']
     }
   }
 

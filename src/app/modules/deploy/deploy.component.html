@@ -407,6 +407,66 @@
                               </div>
                             </div>
                           </form>
+                          <!-- Vested Release of Presale -->
+                          <div
+                          class="d-flex align-items-center"
+                          [ngStyle]="{'margin-bottom': isCheckedVested ? '8px' : '8px'}"
+                          (click)="activateVestedSection()"
+                          >
+                            <input
+                              type="checkbox"
+                              name="checkVested"
+                              id="checkVested"
+                              #checkVested
+                              formControlName="checkVested"
+                            />
+                            <h3
+                              for="checkVested"
+                              style="
+                              color: #81007f;
+                              font-weight: 700;
+                              margin-left: 5px;
+                              margin-right: 5px;
+                              cursor: pointer;
+                              margin-bottom: 0px;
+                            "
+                            >Vested Release</h3
+                            >
+                          </div>
+
+                          <form formGroupName="vestedReleaseSettings" *ngIf="isCheckedVested">
+                            <div class="inputs">
+                              <div class="d-flex align-items-center">
+                                <h4>Release</h4>
+                                <input
+                                  type="datetime-local"
+                                  class="input-costum"
+                                  formControlName="release"
+                                />
+                              </div>
+                              <div class="d-flex align-items-center">
+                                <h4>Release Interval (Days)</h4>
+                                <input
+                                  type="text"
+                                  class="input-costum"
+                                  formControlName="releaseInterval"
+                                />
+                              </div>
+                              <div class="d-flex align-items-center">
+                                <h4>Number of Intervals</h4>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  class="input-costum"
+                                  formControlName="releaseIntervalNumber"
+                                />
+                              </div>
+                              <div class="d-flex align-items-center">
+                                <h4>Tokens Per Interval</h4>
+                                <span>{{releasePerInterval.toFixed(2)}}%</span>
+                              </div>
+                            </div>
+                          </form>
                         </div>
                         <!-- <div class="wrapper-border"> -->
                         <form

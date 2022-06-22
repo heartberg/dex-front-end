@@ -50,6 +50,12 @@ type Platform = {
     locker_addr: string
 };
 
+type VestingSettings = {
+    release: number,
+    releaseInterval: number,
+    releaseIntervalNumber: number
+}
+
 type PresaleSettings = {
     presaleTokenAmount: number,
     presaleStart: number,
@@ -57,7 +63,10 @@ type PresaleSettings = {
     toLp: number,
     softcap: number,
     hardcap: number,
-    walletcap: number
+    walletcap: number,
+    vestingRelease?: number,
+    vestingReleaseInterval?: number,
+    vestingReleaseIntervalNumber?: number
 }
 
 type DeployedAppSettings = {
