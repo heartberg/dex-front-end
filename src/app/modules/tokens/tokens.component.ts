@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
@@ -8,13 +8,14 @@ import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import {AssetReqService} from "../../services/APIs/assets-req.service";
+import {ScrollService} from "../../services/scroll.service";
 
 @Component({
   selector: 'app-tokens',
   templateUrl: './tokens.component.html',
   styleUrls: ['./tokens.component.scss']
 })
-export class TokensComponent implements OnInit {
+export class TokensComponent implements OnInit, DoCheck {
 
 
 
@@ -24,26 +25,49 @@ export class TokensComponent implements OnInit {
   public isActiveSecond: boolean = false;
 
   searchInput = this.fb.control([]);
+  @ViewChild('height', {static: false})
+  public height: ElementRef;
 
   constructor(
     private projectsReqService: projectReqService,
     private fb: FormBuilder,
     private deployedApp: DeployedApp,
     private verseApp: VerseApp,
-    private assetReqService: AssetReqService
-  ) { }
+    private assetReqService: AssetReqService,
+    private scrollService: ScrollService
+  ) {
+  }
+
+  ngDoCheck() {
+    // const el = document.getElementById('s')
+    // document.addEventListener('scroll', () => {
+    //   console.log(el!.getBoundingClientRect())
+    // })
+  }
 
   ngOnInit(): void {
+
+    setTimeout(() => {
+      console.log(this.height, 'ssss')
+      this.scrollService.height = this.height;
+      this.scrollService.currentSection.subscribe(
+        (res) => {
+          console.log("current section: ", res)
+        }
+      )
+    }, 500)
     this.projectsReqService.getAllProjects('a-z', 1).subscribe(
       (res) => {
         this.arr = []
         res.forEach(async element => {
           if(element.asset.assetId == ps.platform.verse_asset_id) {
-            let bcInfo = await this.verseApp.getBlockchainInformation();
-            this.arr.push([element, bcInfo])
+            // let bcInfo = await this.verseApp.getBlockchainInformation();
+            // @ts-ignore
+            this.arr.push([element, 's'])
           } else if(element.asset.smartProperties){
-            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
-            this.arr.push([element, bcInfo])
+            // let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
+            // @ts-ignore
+            this.arr.push([element, 's'])
           } else {
             this.arr.push([element, undefined])
           }
@@ -51,6 +75,12 @@ export class TokensComponent implements OnInit {
         console.log(this.arr);
       }
     )
+    let arr = [...this.arr];
+    for (let i = 0; i > 10; i++) {
+      // @ts-ignore
+      this.arr.push(arr);
+    }
+    console.log(this.arr);
     this.isActiveFirst = true;
   }
 
@@ -91,5 +121,9 @@ export class TokensComponent implements OnInit {
     this.assetReqService.getAssetPairs(true, this.searchInput.value, wallet!).subscribe((item: AssetViewModel[]) => {
       return item;
     })
+  }
+
+  getScroll() {
+
   }
 }

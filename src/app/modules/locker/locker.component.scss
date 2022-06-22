@@ -4,6 +4,12 @@ div.header {
   }
   margin-bottom: 20px;
 }
+.first {
+
+}
+.second {
+
+}
 .content {
   form {
     width: 800px;
@@ -11,7 +17,7 @@ div.header {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     .d-flex {
       margin-bottom: 20px;
       flex-direction: column;

@@ -116,7 +116,8 @@ export class DeployComponent implements OnInit, DoCheck {
     private deployLib: DeployLb,
     private assetService: AssetReqService,
 
-  ) {}
+  ) {
+  }
 
 
   ngDoCheck() {
@@ -495,7 +496,7 @@ export class DeployComponent implements OnInit, DoCheck {
       this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('hardCap')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('softCap')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('walletCap')?.setValue(null)
-  
+
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInPresale')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInLiquidity')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('algoToLiquidity')?.setValue(null)
@@ -671,7 +672,7 @@ export class DeployComponent implements OnInit, DoCheck {
     this.deployFormGroup.get('feesGroup')?.get('purpose')?.setValue(null)
     this.deployFormGroup.get('feesGroup')?.get('address')?.setValue(null)
     this.deployFormGroup.get('feesGroup')?.get('fee')?.setValue(null)
-    
+
     this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleStart')?.setValue(null)
     this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleEnd')?.setValue(null)
     this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('hardCap')?.setValue(null)
@@ -685,7 +686,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
     this.deployFormGroup.get('liquidity')?.get('tokensToLiq')?.setValue(null)
     this.deployFormGroup.get('liquidity')?.get('algoToLiq')?.setValue(null)
-    
+
     this.deployFormGroup.get('tradingStart')?.setValue(null)
     this.deployFormGroup.get('extraFeeTime')?.setValue(null)
 

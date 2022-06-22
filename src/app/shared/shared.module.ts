@@ -7,6 +7,7 @@ import {PopUpComponent} from "./pop-up/component/pop-up.component";
 import { CardComponent } from './card/card.component';
 import { TextLimitPipe } from './pipes/text-limit.pipe';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {InfiniteScrollComponent} from "./infinite-scroll/infinite-scroll.component";
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     PopUpComponent,
     CardComponent,
     TextLimitPipe,
+    InfiniteScrollComponent
   ],
   imports: [
     RouterModule,
@@ -26,7 +28,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     HeaderComponent,
     DropDownSelectorComponent,
     PopUpComponent,
-    CardComponent
+    CardComponent,
+    InfiniteScrollComponent,
   ]
 
 })

@@ -34,8 +34,9 @@
         </div>
       </div>
     </div>
-    <div class="scrollable-content">
+    <div class="scrollable-content" #height id="s">
       <div>
+        <infinite-scroll (scroll)="getScroll()">
         <div class="track-section">
           <ng-container *ngFor="let item of arr">
             <div class="card">
@@ -115,6 +116,7 @@
             </div>
           </ng-container>
         </div>
+        </infinite-scroll>
       </div>
     </div>
   </div>
