@@ -50,12 +50,6 @@ type Platform = {
     locker_addr: string
 };
 
-type VestingSettings = {
-    release: number,
-    releaseInterval: number,
-    releaseIntervalNumber: number
-}
-
 type PresaleSettings = {
     presaleTokenAmount: number,
     presaleStart: number,
