@@ -12,6 +12,7 @@
               [extraDropDown]="true"
               (showAll)="handleCheckboxUpdateSecond($event)"
               (dropDownValue)="getValueFromDropDown($event, 2)"
+              (searchedData)="getSearchDropdown($event)"
             ></app-drop-down-selector>
             <div class="d-flex flex-column align-items-end">
               <div>
@@ -30,7 +31,7 @@
                     font-size: 13px;
                     margin-bottom: 3px;
                   "
-                  >{{availableBalance.toFixed(6)}} {{selectedOption!.unitName}}</span
+                  >{{availableBalance.toFixed(6)}} {{selectedOption?.unitName}}</span
                 >
               </div>
               <div class="input">

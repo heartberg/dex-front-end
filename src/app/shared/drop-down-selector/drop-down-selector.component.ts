@@ -94,7 +94,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     showAll: [],
   });
   // FORM
-
+  isSend: boolean = false;
   // default values for marketplace collection and artists
 
   // public artistsDropDownDefaultName: string = 'All Artists';
@@ -122,6 +122,12 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
       this.isTrade = true;
     } else {
       this.isTrade = false;
+    }
+    // @ts-ignore
+    if (this.route.snapshot._routerState.url === '/send') {
+      this.isSend = true;
+    } else {
+      this.isSend = false;
     }
   }
 
@@ -220,7 +226,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   getSearchValue($event: Event) {
     // @ts-ignore
-    this.searchedData.emit(this.dropDownForm.get('search').value)
+    this.searchedData.emit(this.dropDownForm.get('search')?.value)
   }
 
   //switcher
@@ -237,4 +243,5 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   //switcher
+
 }

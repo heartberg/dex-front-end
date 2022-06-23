@@ -15,12 +15,19 @@
       />
       <ng-container *ngIf="firstOnTrade">
         <ng-container *ngFor="let button of dropDownValues; let i = index">
-          <button class="btn-default" *ngIf="i === 0">
+          <button class="btn-default trade" *ngIf="i === 0">
             <ng-container *ngIf="isTrade && showDropDownSelected === '' && !isSwitcher">
               <ng-container *ngIf="!topChanged">
                 {{  isTrade ? valueDefault : button}}
               </ng-container>
             </ng-container>
+            <!--for send-->
+            <ng-container *ngIf="isSend">
+              <ng-container *ngIf="!topChanged">
+                {{ showDropDownSelected === '' ? button.name : tradeSelectedTop }}
+              </ng-container>
+            </ng-container>
+             <!--#for send-->
             <ng-container *ngIf="!isTrade && showDropDownSelected === '' && isSwitcher">
               {{ returnAddress(button) }}
             </ng-container>

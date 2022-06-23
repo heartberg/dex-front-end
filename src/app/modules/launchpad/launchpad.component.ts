@@ -181,4 +181,21 @@ export class LaunchpadComponent implements OnInit {
       item[2]!.canClaim = false
     }
   }
+
+  search($event: any) {
+    this.projectReqService
+    .getAllPresales(OrderingEnum.ending, 1, this.searchInput.value)
+    .subscribe((res) => {
+      this.array = []
+      res.forEach(async (presaleModel: ProjectPreviewModel) => {
+        if(presaleModel.asset.smartProperties) {
+          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+          this.array.push([presaleModel, blockchainInfo])
+        } else {
+          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+          this.array.push([presaleModel, blockchainInfo])
+        }
+      });
+    });
+  }
 }

@@ -87,9 +87,22 @@ export class TokensComponent implements OnInit {
   }
 
   search($event: Event) {
-    let wallet = localStorage.getItem('wallet');
-    this.assetReqService.getAssetPairs(true, this.searchInput.value, wallet!).subscribe((item: AssetViewModel[]) => {
-      return item;
-    })
+    this.projectsReqService.getAllProjects(this.searchInput.value, 1).subscribe(
+      (res) => {
+        this.arr = []
+        res.forEach(async element => {
+          if(element.asset.assetId == ps.platform.verse_asset_id) {
+            let bcInfo = await this.verseApp.getBlockchainInformation();
+            this.arr.push([element, bcInfo])
+          } else if(element.asset.smartProperties){
+            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
+            this.arr.push([element, bcInfo])
+          } else {
+            this.arr.push([element, undefined])
+          }
+        });
+        console.log(this.arr);
+      }
+    )
   }
 }
