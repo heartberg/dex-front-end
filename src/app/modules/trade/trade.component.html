@@ -18,8 +18,7 @@
             [incomeData]="assetArr"
             (searchedData)="searchTop($event)"
             [topChanged]="topChanged"
-            [saveStoreTop]="saveStoreTop"
-            [tradeSelectedTop]="tradeSelectedTop"
+            [selected]="selected"
           ></app-drop-down-selector>
         </div>
         <div class="col-md-7 second-col-7">
@@ -128,8 +127,7 @@
           (searchedData)="searchBottom($event)"
           #componentRefB
           [botChanged]="botChanged"
-          [saveStoreBottom]="saveStoreBottom"
-          [tradeSelectedBottom]="tradeSelectedBottom"
+          [selected]="selected"
         >
       </app-drop-down-selector>
     </div>
