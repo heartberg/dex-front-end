@@ -23,6 +23,7 @@ export type StakingUserInfo = {
   usersHolding: number,
   rewards: number,
   nextClaimableDate: number,
+  poolEnd: number,
   optedIn: boolean,
   totalPoolSize: number,
   contractId: number,
@@ -59,6 +60,7 @@ export class StakingComponent implements OnInit {
     totalPoolSize: 0,
     contractId: 0,
     assetId: ps.platform.verse_asset_id,
+    poolEnd: 0,
     isSmartPool: false
   };
 
@@ -102,9 +104,11 @@ export class StakingComponent implements OnInit {
           let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
+            extraStakingInfo.poolEnd = element.endingTime
             this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
+            extraStakingInfo.poolEnd = element.endingTime
             this.pools.push([element, extraStakingInfo, tokenInfo])
             console.log(this.pools)
           }
@@ -142,8 +146,10 @@ export class StakingComponent implements OnInit {
     if(pool) {
       if(pool.project?.asset.smartProperties){
         userInfo = await this.stakingUtils.getUserSmartStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, addr)
+        userInfo.poolEnd = pool.endingTime
       } else {
         userInfo = await this.stakingUtils.getUserStandardStakingInfo(pool.contractId, pool.assetId, pool.isDistribution, addr)
+        userInfo.poolEnd = pool.endingTime
       }
     } else {
       await this.getUserInfo()
@@ -211,9 +217,11 @@ export class StakingComponent implements OnInit {
           let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, false, addr)
+            extraStakingInfo.poolEnd = element.endingTime
             this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, false, addr)
+            extraStakingInfo.poolEnd = element.endingTime
             this.pools.push([element, extraStakingInfo, tokenInfo])
           }
           console.log(this.pools)
@@ -235,9 +243,11 @@ export class StakingComponent implements OnInit {
           let tokenInfo = await this.getTokenInformation(element.assetId)
           if(element.project) {
             let extraStakingInfo = await this.stakingUtils.getUserSmartStakingInfo(element.contractId, element.assetId, true, addr)
+            extraStakingInfo.poolEnd = element.endingTime
             this.pools.push([element, extraStakingInfo, tokenInfo])
           } else {
             let extraStakingInfo = await this.stakingUtils.getUserStandardStakingInfo(element.contractId, element.assetId, true, addr)
+            extraStakingInfo.poolEnd = element.endingTime
             this.pools.push([element, extraStakingInfo, tokenInfo])
           }
           console.log(this.pools)
@@ -399,6 +409,29 @@ export class StakingComponent implements OnInit {
   async calculateApy(stakingPool: StakingModel) {
     // TODO
     return 0
+  }
+
+  isFinished(end: number) {
+    let now = Math.floor(new Date().getTime() / 1000)
+    if(now > end) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  async optOutStaking(stakingPool: StakingModel) {
+    let wallet = this.walletService.sessionWallet
+    if(wallet) {
+      let response = await this.deployerApp.optOut(wallet, stakingPool.contractId)
+      if(response) {
+        console.log("opted in to staking pool")
+        let pool = this.pools.find(p => {
+          return p[0].contractId == stakingPool.contractId
+        })
+        pool![1].optedIn = true;
+      }
+    }
   }
 
 }

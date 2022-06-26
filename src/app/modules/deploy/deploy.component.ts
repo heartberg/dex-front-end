@@ -2,7 +2,7 @@ import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 // import {DeployedApp} from "../../blockchain/deployer_application";
 import {WalletsConnectService} from "../../services/wallets-connect.service";
 import {DeployedApp} from "../../blockchain/deployer_application";
-import {DeployedAppSettings, StakingSetup} from "../../blockchain/platform-conf";
+import {DeployedAppSettings, StakingSetup, PresaleSettings} from "../../blockchain/platform-conf";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {environment} from "../../../environments/environment";
 import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
@@ -11,6 +11,7 @@ import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { platform_settings as ps } from '../../blockchain/platform-conf';
+
 interface member {
   name: string,
   position: string,
@@ -24,7 +25,10 @@ export type AsaPresaleSettings = {
   presaleEnd: number,
   softcap: number,
   hardcap: number,
-  walletcap: number
+  walletcap: number,
+  vestingRelease?: number,
+  vestingIntervalNumber?: number,
+  vestingIntervalLength?: number
 }
 
 export type AsaSettings = {
@@ -325,6 +329,7 @@ export class DeployComponent implements OnInit, DoCheck {
     let release;
     let releaseInterval;
     let releaseIntervalNumber = undefined;
+    let presaleSettings = undefined;
 
     let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
     if(this.presaleIsChecked){
@@ -334,6 +339,19 @@ export class DeployComponent implements OnInit, DoCheck {
         release = parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
         releaseInterval = +this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.value * 86400
         releaseIntervalNumber = +this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.value
+      }
+
+      presaleSettings = {
+        presaleTokenAmount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
+        toLp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
+        presaleStart: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
+        presaleEnd: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
+        softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value * 1_000_000,
+        hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value * 1_000_000,
+        walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value * 1_000_000,
+        vestingRelease: release,
+        vestingReleaseInterval: releaseInterval,
+        vestingReleaseIntervalNumber: releaseIntervalNumber
       }
     } else {
       initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000 / (1 - this.fee))
@@ -377,18 +395,7 @@ export class DeployComponent implements OnInit, DoCheck {
       poolRewards: poolRewards,
       rewardsPerInterval: rewardsPerInterval,
       poolDuration: poolDuration,
-      presaleSettings: {
-        presaleTokenAmount: +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInPresale')?.value * Math.pow(10, decimals),
-        toLp: this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.presaleFundsToLiquidity')?.value * 100,
-        presaleStart: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0)),
-        presaleEnd: parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0)),
-        softcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.softCap')?.value * 1_000_000,
-        hardcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value * 1_000_000,
-        walletcap: +this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings.walletCap')?.value * 1_000_000,
-        vestingRelease: release,
-        vestingReleaseInterval: releaseInterval,
-        vestingReleaseIntervalNumber: releaseIntervalNumber
-      } 
+      presaleSettings: presaleSettings
     } || null
   }
 

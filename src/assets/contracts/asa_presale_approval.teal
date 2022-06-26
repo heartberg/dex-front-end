@@ -1,38 +1,38 @@
 #pragma version 6
 intcblock 0 1 4 2
-bytecblock 0x7072 0x7063 0x706863 0x617361 0x707461 0x7065 0x707363 0x707763 0x7066 0x7073 0x7365747570 0x6661 0x66 0x646c
+bytecblock 0x7072 0x7063 0x706863 0x7076696e 0x7065 0x617361 0x707461 0x6376 0x707363 0x7066 0x707763 0x707672 0x7076696c 0x7073 0x7365747570 0x6661 0x66 0x646c
 txn ApplicationID
 intc_0 // 0
 ==
-bnz main_l30
+bnz main_l37
 txn OnCompletion
 pushint 5 // DeleteApplication
 ==
-bnz main_l29
+bnz main_l36
 txn OnCompletion
 intc_2 // UpdateApplication
 ==
-bnz main_l28
+bnz main_l35
 txn OnCompletion
 intc_1 // OptIn
 ==
-bnz main_l27
+bnz main_l34
 txn OnCompletion
 intc_3 // CloseOut
 ==
-bnz main_l26
+bnz main_l33
 txna ApplicationArgs 0
 pushbytes 0x6275795f70726573616c65 // "buy_presale"
 ==
-bnz main_l25
+bnz main_l32
 txna ApplicationArgs 0
 pushbytes 0x636c61696d5f70726573616c65 // "claim_presale"
 ==
-bnz main_l17
+bnz main_l21
 txna ApplicationArgs 0
-bytec 10 // "setup"
+bytec 14 // "setup"
 ==
-bnz main_l13
+bnz main_l15
 txna ApplicationArgs 0
 pushbytes 0x726573657475705f70726573616c65 // "resetup_presale"
 ==
@@ -44,13 +44,13 @@ intc_1 // 1
 >=
 assert
 global LatestTimestamp
-bytec 5 // "pe"
+bytec 4 // "pe"
 app_global_get
 >
 assert
 bytec_0 // "pr"
 app_global_get
-bytec 6 // "psc"
+bytec 8 // "psc"
 app_global_get
 <
 assert
@@ -74,7 +74,7 @@ pushint 2419200 // 2419200
 assert
 txna ApplicationArgs 3
 btoi
-bytec 6 // "psc"
+bytec 8 // "psc"
 app_global_get
 >=
 assert
@@ -98,24 +98,24 @@ app_global_get
 assert
 txna ApplicationArgs 5
 btoi
-bytec 7 // "pwc"
+bytec 10 // "pwc"
 app_global_get
 >=
 assert
 global GroupSize
 intc_3 // 2
 ==
-bnz main_l12
+bnz main_l14
 main_l11:
-bytec 9 // "ps"
+bytec 13 // "ps"
 txna ApplicationArgs 1
 btoi
 app_global_put
-bytec 5 // "pe"
+bytec 4 // "pe"
 txna ApplicationArgs 2
 btoi
 app_global_put
-bytec 6 // "psc"
+bytec 8 // "psc"
 txna ApplicationArgs 3
 btoi
 app_global_put
@@ -123,16 +123,46 @@ bytec_2 // "phc"
 txna ApplicationArgs 4
 btoi
 app_global_put
-bytec 7 // "pwc"
+bytec 10 // "pwc"
 txna ApplicationArgs 5
 btoi
 app_global_put
-bytec 8 // "pf"
+bytec 9 // "pf"
 intc_0 // 0
 app_global_put
+txn NumAppArgs
+pushint 6 // 6
+>
+bnz main_l13
+main_l12:
 intc_1 // 1
 return
-main_l12:
+main_l13:
+txna ApplicationArgs 6
+btoi
+txna ApplicationArgs 2
+btoi
+>=
+assert
+txna ApplicationArgs 8
+btoi
+intc_1 // 1
+>=
+assert
+bytec 11 // "pvr"
+txna ApplicationArgs 6
+btoi
+app_global_put
+bytec 12 // "pvil"
+txna ApplicationArgs 7
+btoi
+app_global_put
+bytec_3 // "pvin"
+txna ApplicationArgs 8
+btoi
+app_global_put
+b main_l12
+main_l14:
 txn GroupIndex
 intc_1 // 1
 +
@@ -144,7 +174,7 @@ txn GroupIndex
 intc_1 // 1
 +
 gtxns XferAsset
-bytec_3 // "asa"
+bytec 5 // "asa"
 app_global_get
 ==
 assert
@@ -155,8 +185,8 @@ gtxns AssetReceiver
 global CurrentApplicationAddress
 ==
 assert
-bytec 4 // "pta"
-bytec 4 // "pta"
+bytec 6 // "pta"
+bytec 6 // "pta"
 app_global_get
 txn GroupIndex
 intc_1 // 1
@@ -165,17 +195,17 @@ gtxns AssetAmount
 +
 app_global_put
 b main_l11
-main_l13:
+main_l15:
 txna Assets 0
 asset_params_get AssetTotal
+store 5
 store 4
-store 3
-bytec_3 // "asa"
+bytec 5 // "asa"
 app_global_get
 intc_0 // 0
 ==
 assert
-load 4
+load 5
 assert
 txn GroupIndex
 intc_1 // 1
@@ -205,16 +235,16 @@ gtxns Receiver
 global CurrentApplicationAddress
 ==
 assert
-bytec_3 // "asa"
+bytec 5 // "asa"
 txna Assets 0
 app_global_put
-bytec 11 // "fa"
+bytec 15 // "fa"
 txna Accounts 1
 app_global_put
-bytec 12 // "f"
+bytec 16 // "f"
 pushint 100 // 100
 app_global_put
-bytec 13 // "dl"
+bytec 17 // "dl"
 intc_0 // 0
 app_global_put
 txna Assets 0
@@ -222,70 +252,81 @@ callsub optinasset_4
 global GroupSize
 pushint 6 // 6
 ==
-bnz main_l15
-main_l14:
+bnz main_l19
+main_l16:
 txn NumAppArgs
-pushint 6 // 6
-==
+intc_2 // 4
+>=
 assert
 txna ApplicationArgs 1
 btoi
-global LatestTimestamp
->
-assert
 txna ApplicationArgs 2
-btoi
-txna ApplicationArgs 1
-btoi
->
-assert
-txna ApplicationArgs 3
-btoi
-txna ApplicationArgs 4
 btoi
 >=
 assert
-txna ApplicationArgs 3
+txna ApplicationArgs 1
 btoi
-txna ApplicationArgs 5
+txna ApplicationArgs 3
 btoi
 >
 assert
-bytec 9 // "ps"
+bytec_2 // "phc"
 txna ApplicationArgs 1
 btoi
 app_global_put
-bytec 5 // "pe"
+bytec 8 // "psc"
 txna ApplicationArgs 2
 btoi
 app_global_put
-bytec_2 // "phc"
+bytec 10 // "pwc"
 txna ApplicationArgs 3
 btoi
 app_global_put
-bytec 6 // "psc"
-txna ApplicationArgs 4
-btoi
-app_global_put
-bytec 7 // "pwc"
-txna ApplicationArgs 5
-btoi
-app_global_put
+txn NumAppArgs
+pushint 7 // 7
+==
+bnz main_l18
+main_l17:
 bytec_0 // "pr"
 intc_0 // 0
 app_global_put
-bytec 4 // "pta"
+bytec 6 // "pta"
 txn GroupIndex
 intc_1 // 1
 +
 gtxns AssetAmount
 app_global_put
-bytec 8 // "pf"
+bytec 9 // "pf"
 intc_0 // 0
 app_global_put
 intc_1 // 1
 return
-main_l15:
+main_l18:
+txna ApplicationArgs 4
+btoi
+bytec 4 // "pe"
+app_global_get
+>=
+assert
+txna ApplicationArgs 6
+btoi
+intc_1 // 1
+>=
+assert
+bytec 11 // "pvr"
+txna ApplicationArgs 4
+btoi
+app_global_put
+bytec 12 // "pvil"
+txna ApplicationArgs 5
+btoi
+app_global_put
+bytec_3 // "pvin"
+txna ApplicationArgs 6
+btoi
+app_global_put
+b main_l17
+main_l19:
 txn GroupIndex
 intc_2 // 4
 -
@@ -315,7 +356,7 @@ txn GroupIndex
 pushint 3 // 3
 -
 gtxnsa ApplicationArgs 0
-bytec 10 // "setup"
+bytec 14 // "setup"
 ==
 assert
 txn GroupIndex
@@ -335,7 +376,7 @@ intc_1 // 1
 gtxns XferAsset
 ==
 assert
-load 3
+load 4
 pushint 300 // 300
 callsub calculateFraction_0
 txn GroupIndex
@@ -343,12 +384,12 @@ intc_3 // 2
 -
 gtxns AssetAmount
 <=
-bz main_l14
-bytec 13 // "dl"
+bz main_l16
+bytec 17 // "dl"
 intc_1 // 1
 app_global_put
-b main_l14
-main_l17:
+b main_l16
+main_l21:
 global GroupSize
 intc_1 // 1
 ==
@@ -358,7 +399,7 @@ global CurrentApplicationID
 app_opted_in
 assert
 txna Assets 0
-bytec_3 // "asa"
+bytec 5 // "asa"
 app_global_get
 ==
 assert
@@ -368,17 +409,17 @@ global MinTxnFee
 *
 >=
 assert
-bytec 5 // "pe"
+bytec 4 // "pe"
 app_global_get
 global LatestTimestamp
 <
 assert
 bytec_0 // "pr"
 app_global_get
-bytec 6 // "psc"
+bytec 8 // "psc"
 app_global_get
 >=
-bnz main_l20
+bnz main_l24
 txn Sender
 intc_0 // 0
 bytec_1 // "pc"
@@ -396,20 +437,20 @@ intc_0 // 0
 bytec_1 // "pc"
 intc_0 // 0
 app_local_put
-main_l19:
+main_l23:
 intc_1 // 1
 return
-main_l20:
-bytec 8 // "pf"
+main_l24:
+bytec 9 // "pf"
 app_global_get
 intc_1 // 1
 !=
-bnz main_l22
-main_l21:
+bnz main_l29
+main_l25:
 intc_0 // 0
 bytec_1 // "pc"
 app_local_get
-bytec 4 // "pta"
+bytec 6 // "pta"
 app_global_get
 mulw
 intc_0 // 0
@@ -422,6 +463,59 @@ swap
 !
 assert
 store 0
+bytec_3 // "pvin"
+app_global_get
+intc_0 // 0
+==
+bnz main_l28
+intc_0 // 0
+bytec 7 // "cv"
+app_local_get
+bytec_3 // "pvin"
+app_global_get
+<
+assert
+bytec 11 // "pvr"
+app_global_get
+intc_0 // 0
+bytec 7 // "cv"
+app_local_get
+bytec 12 // "pvil"
+app_global_get
+*
++
+store 3
+load 3
+global LatestTimestamp
+<=
+assert
+intc_0 // 0
+bytec 7 // "cv"
+intc_0 // 0
+bytec 7 // "cv"
+app_local_get
+intc_1 // 1
++
+app_local_put
+txn Sender
+load 0
+bytec_3 // "pvin"
+app_global_get
+/
+callsub sendTokens_3
+intc_0 // 0
+bytec 7 // "cv"
+app_local_get
+bytec_3 // "pvin"
+app_global_get
+==
+bz main_l23
+intc_0 // 0
+bytec_1 // "pc"
+intc_0 // 0
+app_local_put
+b main_l23
+main_l28:
 txn Sender
 load 0
 callsub sendTokens_3
@@ -429,8 +523,8 @@ intc_0 // 0
 bytec_1 // "pc"
 intc_0 // 0
 app_local_put
-b main_l19
-main_l22:
+b main_l23
+main_l29:
 txn Fee
 intc_2 // 4
 global MinTxnFee
@@ -439,7 +533,7 @@ global MinTxnFee
 assert
 bytec_0 // "pr"
 app_global_get
-bytec 12 // "f"
+bytec 16 // "f"
 app_global_get
 callsub calculateFraction_0
 store 2
@@ -451,7 +545,7 @@ store 1
 global CreatorAddress
 load 1
 callsub sendAlgo_2
-bytec 11 // "fa"
+bytec 15 // "fa"
 app_global_get
 load 2
 callsub sendAlgo_2
@@ -460,16 +554,16 @@ app_global_get
 bytec_0 // "pr"
 app_global_get
 >
-bnz main_l24
-main_l23:
-bytec 8 // "pf"
+bnz main_l31
+main_l30:
+bytec 9 // "pf"
 intc_1 // 1
 app_global_put
-b main_l21
-main_l24:
-bytec 4 // "pta"
+b main_l25
+main_l31:
+bytec 6 // "pta"
 app_global_get
-bytec 4 // "pta"
+bytec 6 // "pta"
 app_global_get
 bytec_0 // "pr"
 app_global_get
@@ -488,8 +582,8 @@ store 0
 global CreatorAddress
 load 0
 callsub sendTokens_3
-b main_l23
-main_l25:
+b main_l30
+main_l32:
 global GroupSize
 intc_3 // 2
 ==
@@ -498,12 +592,12 @@ intc_0 // 0
 global CurrentApplicationID
 app_opted_in
 assert
-bytec 9 // "ps"
+bytec 13 // "ps"
 app_global_get
 global LatestTimestamp
 <=
 assert
-bytec 5 // "pe"
+bytec 4 // "pe"
 app_global_get
 global LatestTimestamp
 >=
@@ -521,7 +615,7 @@ intc_0 // 0
 bytec_1 // "pc"
 app_local_get
 +
-bytec 7 // "pwc"
+bytec 10 // "pwc"
 app_global_get
 <=
 assert
@@ -549,7 +643,7 @@ gtxn 1 Amount
 app_global_put
 intc_1 // 1
 return
-main_l26:
+main_l33:
 intc_0 // 0
 bytec_1 // "pc"
 app_local_get
@@ -558,21 +652,56 @@ intc_0 // 0
 assert
 intc_1 // 1
 return
-main_l27:
+main_l34:
 intc_0 // 0
 bytec_1 // "pc"
 intc_0 // 0
 app_local_put
+intc_0 // 0
+bytec 7 // "cv"
+intc_0 // 0
+app_local_put
 intc_1 // 1
 return
-main_l28:
+main_l35:
 intc_0 // 0
 return
-main_l29:
+main_l36:
 intc_0 // 0
 return
-main_l30:
-bytec_3 // "asa"
+main_l37:
+bytec 5 // "asa"
+intc_0 // 0
+app_global_put
+bytec_3 // "pvin"
+intc_0 // 0
+app_global_put
+bytec 11 // "pvr"
+intc_0 // 0
+app_global_put
+bytec 12 // "pvil"
+intc_0 // 0
+app_global_put
+txna ApplicationArgs 1
+btoi
+txna ApplicationArgs 0
+btoi
+>
+assert
+txna ApplicationArgs 0
+btoi
+global LatestTimestamp
+>
+assert
+bytec 13 // "ps"
+txna ApplicationArgs 0
+btoi
+app_global_put
+bytec 4 // "pe"
+txna ApplicationArgs 1
+btoi
+app_global_put
+bytec 9 // "pf"
 intc_0 // 0
 app_global_put
 intc_1 // 1
@@ -580,10 +709,10 @@ return
 
 // calculateFraction
 calculateFraction_0:
+store 7
 store 6
-store 5
-load 5
 load 6
+load 7
 mulw
 intc_0 // 0
 pushint 10000 // 10000
@@ -597,9 +726,9 @@ retsub
 
 // get_app_address
 getappaddress_1:
-store 7
+store 8
 pushbytes 0x6170704944 // "appID"
-load 7
+load 8
 itob
 concat
 sha512_256
@@ -607,16 +736,16 @@ retsub
 
 // sendAlgo
 sendAlgo_2:
+store 10
 store 9
-store 8
 itxn_begin
 intc_1 // pay
 itxn_field TypeEnum
 global CurrentApplicationAddress
 itxn_field Sender
-load 8
-itxn_field Receiver
 load 9
+itxn_field Receiver
+load 10
 itxn_field Amount
 intc_0 // 0
 itxn_field Fee
@@ -625,19 +754,19 @@ retsub
 
 // sendTokens
 sendTokens_3:
+store 12
 store 11
-store 10
 itxn_begin
 intc_2 // axfer
 itxn_field TypeEnum
 global CurrentApplicationAddress
 itxn_field Sender
-bytec_3 // "asa"
+bytec 5 // "asa"
 app_global_get
 itxn_field XferAsset
-load 11
+load 12
 itxn_field AssetAmount
-load 10
+load 11
 itxn_field AssetReceiver
 intc_0 // 0
 itxn_field Fee
@@ -646,19 +775,19 @@ retsub
 
 // optin_asset
 optinasset_4:
-store 12
-global CurrentApplicationAddress
-load 12
-asset_holding_get AssetBalance
-store 14
 store 13
-load 14
+global CurrentApplicationAddress
+load 13
+asset_holding_get AssetBalance
+store 15
+store 14
+load 15
 !
 bz optinasset_4_l2
 itxn_begin
 intc_2 // axfer
 itxn_field TypeEnum
-load 12
+load 13
 itxn_field XferAsset
 global CurrentApplicationAddress
 itxn_field AssetReceiver

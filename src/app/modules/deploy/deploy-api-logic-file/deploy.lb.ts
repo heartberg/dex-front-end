@@ -728,7 +728,7 @@ export class DeployLb {
 
     if(form.get("createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber").value) {
       release = parseInt((new Date(form.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
-      releaseInterval = +form.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.value * 86400
+      releaseInterval = Math.floor(+form.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.value * 86400)
       releaseIntervalNumber = +form.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.value
     }
 
@@ -875,7 +875,7 @@ export class DeployLb {
           setTimeout(async () => {
             this.presaleObj.asset.assetId = this.deployerBC.settings.assetId!
             this.standardAsaBlockchainObject!.assetId = this.deployerBC.settings.assetId!
-            of(await this.deployerBC.createAsaPresale(this.sessionWallet!)).subscribe(
+            of(await this.deployerBC.createAsaPresale(this.sessionWallet!, this.standardAsaBlockchainObject!.presaleSettings!.presaleStart, this.standardAsaBlockchainObject!.presaleSettings!.presaleEnd)).subscribe(
               (value: any) => {
                 this.presaleObj.presale.contractId = this.deployerBC.settings.contractId
                 this._deployService.ProjectPresaleCreate(this.presaleObj).subscribe(
@@ -890,8 +890,9 @@ export class DeployLb {
                               console.log(this.standardAsaBlockchainObject)
                               console.log("created staking")
                               of(await this.deployerBC.setupAsaPresale(this.sessionWallet!, this.deployerBC.settings.contractId!, this.deployerBC.settings.assetId!,
-                                this.presaleObj.presale.hardCap, this.presaleObj.presale.softCap, this.presaleObj.presale.startingTime, this.presaleObj.presale.endingTime, this.presaleObj.presale.walletCap, this.presaleObj.presale.tokenAmount,
-                                this.standardAsaBlockchainObject!.stakingContractId, this.standardAsaBlockchainObject!.poolRewards, this.standardAsaBlockchainObject!.poolInterval, this.standardAsaBlockchainObject!.poolStart, this.standardAsaBlockchainObject!.rewardsPerInterval)).subscribe(
+                                this.presaleObj.presale.hardCap, this.presaleObj.presale.softCap, this.presaleObj.presale.walletCap, this.presaleObj.presale.tokenAmount,
+                                this.standardAsaBlockchainObject!.stakingContractId, this.standardAsaBlockchainObject!.poolRewards, this.standardAsaBlockchainObject!.poolInterval, this.standardAsaBlockchainObject!.poolStart, this.standardAsaBlockchainObject!.rewardsPerInterval, 
+                                this.presaleObj.presale.vestingRelease, this.presaleObj.presale.vestingReleaseInterval, this.presaleObj.presale.vestingReleaseIntervalNumber)).subscribe(
                                   (value: any) => {
                                     if (value) {
                                       console.log("successfully setuped presale and staking")
@@ -902,8 +903,8 @@ export class DeployLb {
                           );
                         } else {
                           of(await this.deployerBC.setupAsaPresale(this.sessionWallet!, this.deployerBC.settings.contractId!, this.deployerBC.settings.assetId!,
-                            this.presaleObj.presale.hardCap, this.presaleObj.presale.softCap, this.presaleObj.presale.startingTime, this.presaleObj.presale.endingTime, this.presaleObj.presale.walletCap, this.presaleObj.presale.tokenAmount,
-                            undefined, undefined, undefined, undefined, undefined)).subscribe(
+                            this.presaleObj.presale.hardCap, this.presaleObj.presale.softCap, this.presaleObj.presale.walletCap, this.presaleObj.presale.tokenAmount,
+                            undefined, undefined, undefined, undefined, undefined, this.presaleObj.presale.vestingRelease, this.presaleObj.presale.vestingReleaseInterval, this.presaleObj.presale.vestingReleaseIntervalNumber)).subscribe(
                               (value: any) => {
                                 if (value) {
                                   console.log("successfully setuped presale")

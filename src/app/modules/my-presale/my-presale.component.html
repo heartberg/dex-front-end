@@ -16,7 +16,7 @@
                   <img style="width: 65%;"
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
                     alt="">
-                  <span *ngIf="!isFailed(item[1]) && item[1].totalRaised != item[1].hardCap && !item[0].presale.toFairLaunch" class="ended-mark color-violet">ENDED</span>
+                  <span *ngIf="!isFailed(item[1]) && item[1].totalRaised != item[1].hardCap && !item[0].presale.toFairLaunch && !isOngoing(item[1])" class="ended-mark color-violet">ENDED</span>
                   <span *ngIf="!isFailed(item[1]) && item[1].totalRaised == item[1].hardCap && !item[0].presale.toFairLaunch" class="ended-mark color-violet">SOLD OUT</span>
                   <span *ngIf="isFailed(item[1]) && !item[0].presale.toFairLaunch" class="ended-mark color-violet">FAILED</span>
                   <span *ngIf="isOngoing(item[1]) && !item[0].presale.toFairLaunch" class="ended-mark color-violet">OPEN</span>

@@ -64,7 +64,8 @@ export class StakingUtils {
                 totalPoolSize: remainingRewards,
                 contractId: ps.platform.staking_id,
                 assetId: ps.platform.verse_asset_id,
-                isSmartPool: true
+                isSmartPool: true,
+                poolEnd: 0
             }
             return stakingInfo
         } else {
@@ -78,7 +79,8 @@ export class StakingUtils {
                 totalPoolSize: remainingRewards,
                 contractId: ps.platform.staking_id,
                 assetId: ps.platform.verse_asset_id,
-                isSmartPool: true
+                isSmartPool: true,
+                poolEnd: 0
             }
             return stakingInfo
         }
@@ -264,7 +266,8 @@ export class StakingUtils {
                     totalPoolSize: remainingRewards,
                     contractId: contractId,
                     assetId: assetId,
-                    isSmartPool: false
+                    isSmartPool: false,
+                    poolEnd: 0
                 }
                 return stakingInfo
             }
@@ -280,7 +283,8 @@ export class StakingUtils {
             totalPoolSize: remainingRewards,
             contractId: contractId,
             assetId: assetId,
-            isSmartPool: false
+            isSmartPool: false,
+            poolEnd: 0
         }
         return stakingInfo 
     }
@@ -356,7 +360,8 @@ export class StakingUtils {
                     totalPoolSize: remainingRewards,
                     contractId: contractId,
                     assetId: assetId,
-                    isSmartPool: true
+                    isSmartPool: true,
+                    poolEnd: 0
                 }
                 return stakingInfo
             } 
@@ -371,7 +376,8 @@ export class StakingUtils {
             totalPoolSize: remainingRewards,
             contractId: contractId,
             assetId: assetId,
-            isSmartPool: true
+            isSmartPool: true,
+            poolEnd: 0
         }
         return stakingInfo 
     }

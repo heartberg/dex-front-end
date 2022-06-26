@@ -50,7 +50,7 @@ type Platform = {
     locker_addr: string
 };
 
-type PresaleSettings = {
+export type PresaleSettings = {
     presaleTokenAmount: number,
     presaleStart: number,
     presaleEnd: number,
@@ -93,7 +93,7 @@ type DeployedAppSettings = {
     poolDuration?: number,
     stakingContractId?: number,
     isDistribution?: boolean
-    presaleSettings: PresaleSettings
+    presaleSettings?: PresaleSettings
 };
 
 export type StakingSetup = {

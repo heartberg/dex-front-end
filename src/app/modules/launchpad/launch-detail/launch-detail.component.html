@@ -49,7 +49,20 @@
                 <h6>Sale End:</h6>
                 <span>{{formatDate(presaleData.saleEnd)}}</span>
               </div>
-              <div class="d-flex">
+              <div class="d-flex" *ngIf="presaleData.vestingRelease">
+                <h6 *ngIf="presaleData.vestingIntervalNumbers! > 1">Next Vesting:</h6>
+                <h6 *ngIf="presaleData.vestingIntervalNumbers! <= 1">Release:</h6>
+                <span>{{nextVesting()}}</span>
+              </div>
+              <div class="d-flex" *ngIf="presaleData.vestingIntervalLength">
+                <h6 *ngIf="presaleData.vestingIntervalNumbers! > 1">Vesting Interval:</h6>
+                <span *ngIf="presaleData.vestingIntervalNumbers! > 1">{{formatTime(presaleData.vestingIntervalLength)}}</span>
+              </div>
+              <div class="d-flex" *ngIf="presaleData.vestingIntervalNumbers">
+                <h6 *ngIf="presaleData.vestingIntervalNumbers! > 1">Vesting Interval Numbers:</h6>
+                <span *ngIf="presaleData.vestingIntervalNumbers! > 1">{{presaleData.vestingIntervalNumbers}}</span>
+              </div>
+              <div class="d-flex" *ngIf="presaleData.tradingStart > 0">
                 <h6>Trading start: </h6>
                 <span>{{formatDate(presaleData.tradingStart)}}</span>
               </div>

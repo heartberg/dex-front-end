@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Algodv2, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
+import { time, timeStamp } from 'console';
 import { getAlgodClient, isOptedIntoApp } from 'src/app/blockchain/algorand';
 import { ClaimState, DeployedApp, StateKeys } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
@@ -42,7 +43,10 @@ export type PresaleBlockchainInformation = {
   walletCap: number,
   totalRaised: number,
   contractId: number,
-  assetId: number
+  assetId: number,
+  vestingRelease?: number,
+  vestingIntervalLength?: number,
+  vestingIntervalNumbers?: number
 }
 
 @Component({
@@ -112,13 +116,12 @@ export class LaunchDetailComponent implements OnInit {
     let wallet = localStorage.getItem("wallet")
     if(wallet){
       if(this.projectData.presale?.contractId){
-        this.userAllocation = await getAppLocalStateByKey(client, this.projectData.presale.contractId, wallet, StateKeys.presale_contribution_key)
+        this.userAllocation = await getAppLocalStateByKey(client, this.projectData.presale.contractId, wallet, StateKeys.presale_contribution_key) | 0
       } else {
-        this.userAllocation = await getAppLocalStateByKey(client, this.projectData.asset.smartProperties!.contractId, wallet, StateKeys.presale_contribution_key)
+        this.userAllocation = await getAppLocalStateByKey(client, this.projectData.asset.smartProperties!.contractId, wallet, StateKeys.presale_contribution_key) | 0
       }
     }
-
-    
+    console.log(this.userAllocation)
   }
 
   async checkClaimable() {
@@ -208,7 +211,7 @@ export class LaunchDetailComponent implements OnInit {
 
   formatDate(timestamp: number): string {
     let date = new Date(timestamp * 1000)
-    console.log(date)
+    //console.log(date)
     let minutes = date.getMinutes().toString()
     if(date.getMinutes() < 10) {
       minutes = "0" + minutes
@@ -219,4 +222,48 @@ export class LaunchDetailComponent implements OnInit {
     }
     return date.toDateString() + " - " + hours + ":" + minutes
   }
+
+  formatTime(timestamp: number) {
+    let days = Math.floor(timestamp / 60 / 60 / 24)
+    if(days > 0) {
+      return days + " Days"
+    } else {
+      let hours = Math.floor(timestamp / 60 / 60)
+      if(hours > 0) {
+        return hours + " Hours"
+      } else {
+        let minutes = Math.floor(timestamp / 60)
+        if(minutes > 0) {
+          return minutes + " Minutes"
+        } else {
+          return timestamp + " Seconds"
+        }
+      }
+    }
+  }
+
+  nextVesting() {
+    let vestingRelease = this.presaleData.vestingRelease!
+    let vestingIntervalLength = this.presaleData.vestingIntervalLength!
+    let vestingIntervalNumbers = this.presaleData.vestingIntervalNumbers!
+
+    let now = Math.floor(new Date().getTime() / 1000)
+    let nextRelease = vestingRelease
+    let date
+
+    for(let i = 0; i < vestingIntervalNumbers; i++) {
+      nextRelease = nextRelease + i * vestingIntervalLength
+      if(now < nextRelease) {
+        date = nextRelease 
+        break
+      }      
+    }  
+    if(date) {
+      return this.formatDate(date)
+    } else {
+      return "Vesting Finished"
+    }
+    
+  }
+
 }

@@ -788,7 +788,7 @@
               <button class="btn-secondary-costum" *ngIf="stackingISStake && stakingInfo?.optedIn" (click)="stake()">
                 Ok
               </button>
-              <button class="btn-secondary-costum" *ngIf="!stakingInfo?.optedIn" (click)="optInToStaking()">
+              <button class="btn-secondary-costum" *ngIf="!stakingInfo?.optedIn" (click)="optInToStaking()" [class.disable-btn]="isFinishedPool(stakingInfo?.poolEnd)">
                 Opt In
               </button>
               <button class="btn-secondary-costum" *ngIf="!stackingISStake && stakingInfo?.optedIn" (click)="withdrawStake()">

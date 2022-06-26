@@ -30,46 +30,50 @@ import { url } from "inspector";
 import { StakingModel } from "../models/stakingModel";
 import { Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
 import { start } from "repl";
+import { SIGTTIN } from "constants";
 //import { showErrorToaster, showInfo } from "../Toaster";
-
 
 declare const AlgoSigner: any;
 
 export enum StateKeys {
   token_liq_key = "s1",
-    algo_liq_key = "s2",
-    burned_key = "bd",
-    total_supply_key = "ts",
-    buy_burn_key = "bb",
-    sell_burn_key = "sb",
-    transfer_burn_key = "trb",
-    to_lp_key = "lp",
-    to_backing_key = "tb",
-    max_buy_key = "mb",
-    burn_addr_key = "ba",
-    asset_id_key = "asa",
-    verse_asset_id_key = "vasa",
-    verse_app_id_key = "vid",
-    verse_backing_app_id_key = "vbid",
-    verse_backing_key = "vb",
-    platform_fee_address_key = "fa",
-    flat_fee_key = "f",
-    trading_start_key = "t",
-    user_borrowed_key = "ub",
-    user_supplied_key = "us",
-    total_borrowed_key = "tbw",
+  algo_liq_key = "s2",
+  burned_key = "bd",
+  total_supply_key = "ts",
+  buy_burn_key = "bb",
+  sell_burn_key = "sb",
+  transfer_burn_key = "trb",
+  to_lp_key = "lp",
+  to_backing_key = "tb",
+  max_buy_key = "mb",
+  burn_addr_key = "ba",
+  asset_id_key = "asa",
+  verse_asset_id_key = "vasa",
+  verse_app_id_key = "vid",
+  verse_backing_app_id_key = "vbid",
+  verse_backing_key = "vb",
+  platform_fee_address_key = "fa",
+  flat_fee_key = "f",
+  trading_start_key = "t",
+  user_borrowed_key = "ub",
+  user_supplied_key = "us",
+  total_borrowed_key = "tbw",
 
-    presale_start_key = "ps",
-    presale_end_key = "pe",
-    presale_hard_cap_key = "phc",
-    presale_soft_cap_key = "psc",
-    presale_wallet_cap_key = "pwc",
-    presale_to_liq_key = "ptl",
-    presale_contribution_key = "pc",
-    presale_total_raised = "pr",
-    presale_token_amount = "pta",
-    presale_finished_key = "pf",
-    extra_fee_time_key = "eft"
+  presale_start_key = "ps",
+  presale_end_key = "pe",
+  presale_hard_cap_key = "phc",
+  presale_soft_cap_key = "psc",
+  presale_wallet_cap_key = "pwc",
+  presale_to_liq_key = "ptl",
+  presale_contribution_key = "pc",
+  presale_total_raised = "pr",
+  presale_token_amount = "pta",
+  presale_finished_key = "pf",
+  extra_fee_time_key = "eft",
+  presale_vesting_release_key = "pvr",
+  presale_vesting_interval__length_key = "pvil",
+  presalve_vesting_interval_numbers_key = "pvin",
+  vesting_user_claims_key = "cv"
 }
 
 export enum DeployerMethod {
@@ -122,11 +126,17 @@ export class DeployedApp {
     const args = [algosdk.encodeUint64(this.settings.totalSupply), algosdk.encodeUint64(this.settings.buyBurn), algosdk.encodeUint64(this.settings.sellBurn),
                   algosdk.encodeUint64(this.settings.transferBurn), algosdk.encodeUint64(this.settings.toLp), algosdk.encodeUint64(this.settings.toBacking),
                   algosdk.encodeUint64(this.settings.maxBuy)]
+    
     if(settings.additionalFee) {
       console.log(settings.additionalFeeAddress)
       args.push(algosdk.encodeUint64(settings.additionalFee))
       accounts.push(settings.additionalFeeAddress!)
     }
+
+    if(settings.presaleSettings) {
+      args.push(algosdk.encodeUint64(settings.presaleSettings.presaleStart), algosdk.encodeUint64(settings.presaleSettings.presaleEnd))
+    }
+
     const assets = [ps.platform.verse_asset_id]
     const apps = [ps.platform.verse_app_id, ps.platform.backing_id, ps.platform.locker_id]
 
@@ -139,9 +149,9 @@ export class DeployedApp {
         from: wallet.getDefaultAccount(),
         approvalProgram: await compileProgram(approval),
         clearProgram: await compileProgram(clear),
-        numGlobalInts: 31,
+        numGlobalInts: 34,
         numGlobalByteSlices: 3,
-        numLocalInts: 3,
+        numLocalInts: 4,
         numLocalByteSlices: 0,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         note: new Uint8Array(Buffer.from("Deploy App")),
@@ -266,7 +276,7 @@ export class DeployedApp {
       grouped.unshift(setupPay, txn)
       console.log(grouped)
     }
-    
+  
     algosdk.assignGroupID(grouped)
 
     const signedGroup = await wallet.signTxn(grouped)
@@ -293,9 +303,13 @@ export class DeployedApp {
       accounts = [ps.platform.fee_addr, ps.platform.burn_addr]
     }
 
-    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initialTokenLiq), algosdk.encodeUint64(this.settings.tradingStart), algosdk.encodeUint64(this.settings.extraFeeTime), algosdk.encodeUint64(this.settings.presaleSettings.presaleStart),
-      algosdk.encodeUint64(this.settings.presaleSettings?.presaleEnd), algosdk.encodeUint64(this.settings.presaleSettings?.softcap), algosdk.encodeUint64(this.settings.presaleSettings?.hardcap),
-      algosdk.encodeUint64(this.settings.presaleSettings?.walletcap), algosdk.encodeUint64(this.settings.presaleSettings?.toLp), algosdk.encodeUint64(this.settings.presaleSettings?.presaleTokenAmount)]
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initialTokenLiq), algosdk.encodeUint64(this.settings.tradingStart), 
+      algosdk.encodeUint64(this.settings.extraFeeTime), algosdk.encodeUint64(this.settings.presaleSettings!.softcap), algosdk.encodeUint64(this.settings.presaleSettings!.hardcap),
+      algosdk.encodeUint64(this.settings.presaleSettings!.walletcap), algosdk.encodeUint64(this.settings.presaleSettings!.toLp), algosdk.encodeUint64(this.settings.presaleSettings!.presaleTokenAmount)]
+
+    if (settings.presaleSettings?.vestingRelease) {
+      args.push(algosdk.encodeUint64(settings.presaleSettings.vestingRelease!), algosdk.encodeUint64(settings.presaleSettings.vestingReleaseInterval!), algosdk.encodeUint64(settings.presaleSettings.vestingReleaseIntervalNumber!))
+    }
 
     let assets = [this.settings.assetId]
     const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
@@ -756,8 +770,7 @@ export class DeployedApp {
     return result
   }
   // also in token or project page (same page)
-  async optOut(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
-    this.settings = settings
+  async optOut(wallet: SessionWallet, contractId: number): Promise<any> {
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
@@ -1025,6 +1038,10 @@ export class DeployedApp {
     let totalRaised = globalState[StateKeys.presale_total_raised]['i'] / 1_000_000
     let presalePrice = hardCap / tokensInPresale
     
+    let vestingRelease = globalState[StateKeys.presale_vesting_release_key]['i']
+    let vestingIntervalLength = globalState[StateKeys.presale_vesting_interval__length_key]['i']
+    let vestingIntervalNumbers = globalState[StateKeys.presalve_vesting_interval_numbers_key]['i']
+
     let presaleInfo: PresaleBlockchainInformation = {
       algoLiq: algoLiquidity,
       tokenLiq: tokenLiquidity,
@@ -1042,7 +1059,10 @@ export class DeployedApp {
       walletCap: walletCap,
       totalRaised: totalRaised,
       contractId: contractId,
-      assetId: globalState[StateKeys.asset_id_key]['i']
+      assetId: globalState[StateKeys.asset_id_key]['i'],
+      vestingIntervalLength: vestingIntervalLength,
+      vestingIntervalNumbers: vestingIntervalNumbers,
+      vestingRelease: vestingRelease
     }
     return presaleInfo;
   }
@@ -1159,7 +1179,12 @@ export class DeployedApp {
     let userContribution = await getAppLocalStateByKey(client, contractId, addr, StateKeys.presale_contribution_key)
     let latestTimestamp = Math.floor(Date.now() / 1000);
 
+    let vestingRelease = globalState[StateKeys.presale_vesting_release_key]['i']
+    let vestingIntervalLength = globalState[StateKeys.presale_vesting_interval__length_key]['i']
+    let vestingIntervalNumbers = globalState[StateKeys.presalve_vesting_interval_numbers_key]['i']
 
+    let vestingUserClaims = await getAppLocalStateByKey(client, contractId, addr, StateKeys.vesting_user_claims_key)
+    
     let claimState: ClaimState = {
       optedIn: isOptedIn,
       canClaim: false,
@@ -1169,11 +1194,30 @@ export class DeployedApp {
     }
 
     if((presaleEnd < latestTimestamp) || (presaleStart > latestTimestamp)) {
-      if(userContribution > 0) {
-        claimState.canClaim = true
+      if(presaleEnd < latestTimestamp) {
+        if(userContribution > 0) {
+          if(vestingRelease > 0) {
+            if(vestingUserClaims < vestingIntervalNumbers && latestTimestamp > (vestingRelease + vestingUserClaims * vestingIntervalLength)) {
+              claimState.canClaim = true
+            } else {
+              claimState.canClaim = false
+            }
+          } else {
+            claimState.canClaim = true
+          }
+        } else {
+          claimState.canClaim = false
+        }
+      } else if(presaleStart > latestTimestamp) {
+        if(userContribution > 0) {
+          claimState.canClaim = true
+        } else {
+          claimState.canClaim = false
+        }
       } else {
         claimState.canClaim = false
       }
+      
     }
 
     if(presaleStart < latestTimestamp) {
@@ -1311,23 +1355,26 @@ export class DeployedApp {
     }
   }
 
-  async createAsaPresale(wallet: SessionWallet) {
+  async createAsaPresale(wallet: SessionWallet, presaleStart: number, presaleEnd: number) {
 
     const approval = await (await fetch('../../assets/contracts/asa_presale_approval.teal')).text()
     const clear = await (await fetch('../../assets/contracts/asa_presale_clear.teal')).text()
+
+    let args = [algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd)]
 
     let suggested = await getSuggested(10)
     const createApp = algosdk.makeApplicationCreateTxnFromObject({
         from: wallet.getDefaultAccount(),
         approvalProgram: await compileProgram(approval),
         clearProgram: await compileProgram(clear),
-        numGlobalInts: 11,
+        numGlobalInts: 14,
         numGlobalByteSlices: 1,
-        numLocalInts: 1,
+        numLocalInts: 2,
         numLocalByteSlices: 0,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         note: new Uint8Array(Buffer.from("Deploy App")),
         suggestedParams: suggested,
+        appArgs: args
     })
 
     const [signedTxns] = await wallet.signTxn([createApp])
@@ -1339,11 +1386,17 @@ export class DeployedApp {
     return result
   }
 
-  async setupAsaPresale(wallet: SessionWallet, contractId: number, assetId: number, hardCap: number, softCap: number, presaleStart: number, presaleEnd: number, walletCap: number, presaleTokenAmount: number,
-    stakingId: number | undefined, stakingAmount: number | undefined, periodTime: number | undefined, stakingStart: number | undefined, periodDistributionAmount: number | undefined) {
+  async setupAsaPresale(wallet: SessionWallet, contractId: number, assetId: number, hardCap: number, softCap: number, walletCap: number, presaleTokenAmount: number,
+    stakingId: number | undefined, stakingAmount: number | undefined, periodTime: number | undefined, stakingStart: number | undefined, periodDistributionAmount: number | undefined, 
+    vestingRelease: number | undefined, vestingIntervalLength: number | undefined, vestingIntervalNumbers: number | undefined) {
     let addr = wallet.getDefaultAccount()
     let suggested = await getSuggested(10)
-    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd), algosdk.encodeUint64(hardCap), algosdk.encodeUint64(softCap), algosdk.encodeUint64(walletCap)]
+    let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(hardCap), algosdk.encodeUint64(softCap), algosdk.encodeUint64(walletCap)]
+    
+    if(vestingRelease && vestingIntervalLength && vestingIntervalNumbers) {
+      args.push(algosdk.encodeUint64(vestingRelease), algosdk.encodeUint64(vestingIntervalLength), algosdk.encodeUint64(vestingIntervalNumbers))
+    }
+
     let accounts = [ps.platform.fee_addr]
     let assets = [assetId]
 
@@ -1355,13 +1408,13 @@ export class DeployedApp {
     suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
     let assetToPresaleTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), assetId, presaleTokenAmount))
     let grouped = [paymentTxn, presaleSetupTxn, assetToPresaleTxn]
-    if(stakingId) {
+    if(stakingId && periodDistributionAmount && stakingStart && periodTime && stakingAmount) {
       let stakingPayTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(stakingId), 200000))
 
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
       let apps = [ps.platform.staking_id]
       let assets = [assetId, ps.platform.verse_asset_id]
-      args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(periodDistributionAmount!), algosdk.encodeUint64(stakingStart!), algosdk.encodeUint64(periodTime!)]
+      args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(periodDistributionAmount), algosdk.encodeUint64(stakingStart), algosdk.encodeUint64(periodTime)]
       let stakingSetupTxn = new Transaction(get_app_call_txn(suggested, addr, stakingId, args, apps, assets, undefined))
       
       suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE

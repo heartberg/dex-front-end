@@ -864,4 +864,16 @@ export class PopUpComponent implements OnInit {
     this.switchAcc(+index);
     console.log($event)
   }
+
+  isFinishedPool(time: number | undefined){
+    if(!time) {
+      return true
+    }
+    let now = Math.floor(new Date().getTime() / 1000)
+    if(now > time) {
+      return true
+    } else {
+      return false
+    }
+  }
 }
