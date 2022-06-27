@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   DoCheck,
   EventEmitter,
@@ -21,7 +22,7 @@ import { CompileResponse } from 'algosdk/dist/types/src/client/v2/algod/models/t
   templateUrl: './drop-down-selector.component.html',
   styleUrls: ['./drop-down-selector.component.scss'],
 })
-export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
+export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, AfterViewInit {
   @Input() public dropDownValues: AssetViewModel[] | any = [];
   @Input() public dropDownValuesSecond: AssetViewModel[] | any = [];
 
@@ -38,7 +39,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   @Input() public tree: boolean = false;
   @Input() public hasTitle: string = '';
   // marketplace artists and collections
-  @Input() public dropDownForObj: any[] = [];
+  @Input() public dropDownForObj: AssetViewModel[] | any[]= [];
   @Input() public dropDownIsTrue: boolean = false;
   // marketplace artists and collections
   @Output() dropDownValue = new EventEmitter<string>();
@@ -76,13 +77,11 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   public isDropDownOpenedCounter = 1;
   public showDropDownSelected: string = '';
 
-  @Input() tradeSelectedTop: string = '';
-  @Input() tradeSelectedBottom: string = '';
+  @Input() selected: string = '';
+  
   //  for while
   publicTradeIsAdded: boolean = false;
 
-  @Input() saveStoreTop: string = '';
-  @Input() saveStoreBottom: string = '';
   // isMinus: boolean = true;
   // isPlus: boolean = false;
   isTrade: boolean = false;
@@ -94,7 +93,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     showAll: [],
   });
   // FORM
-
+  isSend: boolean = false;
+  @Input() isTradeBinded: boolean = false;
   // default values for marketplace collection and artists
 
   // public artistsDropDownDefaultName: string = 'All Artists';
@@ -102,6 +102,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   //
   // public passedEitherArtist: boolean = false;
   // public passedEitherCollection: boolean = false;
+
+  verseAssetId = ps.platform.verse_asset_id
 
   constructor(
     private route: ActivatedRoute,
@@ -111,11 +113,9 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   ) {}
 
   ngOnInit(): void {
+    console.log(typeof this.verseAssetId)
     console.log(this.incomeData)
-   setTimeout(() => {
-     this.incomeData.find( (item: AssetViewModel) => item.assetId === ps.platform.verse_asset_id ? this.tradeSelectedBottom = item.name : null)
-     console.log(this.tradeSelectedBottom);
-   }, 500)
+
 
     // @ts-ignore
     if (this.route.snapshot._routerState.url === '/trade') {
@@ -123,6 +123,19 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     } else {
       this.isTrade = false;
     }
+    // @ts-ignore
+    if (this.route.snapshot._routerState.url === '/send') {
+      this.isSend = true;
+    } else {
+      this.isSend = false;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.incomeData.find( (item: AssetViewModel) => item.assetId === ps.platform.verse_asset_id ? this.selected = item.name : null)
+      console.log(this.selected);
+    }, 500)
   }
 
   ngDoCheck() {
@@ -130,7 +143,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   ngOnChanges() {
-    console.log(this.topChanged, this.tradeSelectedTop)
+    console.log(this.topChanged)
 
     // this.showDropDownSelected = this.dropDownValueTitleForObj;
   }
@@ -145,32 +158,29 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
   }
 
   selectValue(value: string, i?: any, id?: string, item?: any) {
+    this.wholeObj.emit(item);
     if (this.isSwitcher) {
       this.switcherEmit.emit({value, i})
       this.showDropDownSelected = value
     }
-    this.wholeObj.emit(item);
-    if (this.notCloseOnClick) {
-      // this.isDropDownOpenedCounter +=1;
-      this.openDropDown();
-      this.showDropDownSelected = value
-      this.dropDownValue.emit(value);
-      this.publicTradeIsAdded = !this.publicTradeIsAdded;
-    } else {
-      // this.isDropDownOpenedCounter +=1;
-      this.openDropDown();
-      this.showDropDownSelected = value;
-      // this.tradeSelectedTop = this.showDropDownSelected;
-      // this.tradeSelectedBottom = this.showDropDownSelected;
-      this.dropDownValue.emit(value);
-      this.isDropDownOpened = false;
+      else {
+      if (this.notCloseOnClick) {
+        this.openDropDown();
+        this.showDropDownSelected = value
+        this.dropDownValue.emit(value);
+        this.publicTradeIsAdded = !this.publicTradeIsAdded;
+      } else {
+        this.openDropDown();
+        this.showDropDownSelected = value;
+        this.dropDownValue.emit(value);
+        this.isDropDownOpened = false;
+      }
+  
+      if (value.includes('Sub')) {
+        this.showDropDownSelected = value.substring(value.indexOf(' '), 25);
+      }
     }
 
-    // Store ID
-
-    if (value.includes('Sub')) {
-      this.showDropDownSelected = value.substring(value.indexOf(' '), 25);
-    }
   }
 
   handleCheckBox() {
@@ -220,11 +230,12 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
 
   getSearchValue($event: Event) {
     // @ts-ignore
-    this.searchedData.emit(this.dropDownForm.get('search').value)
+    this.searchedData.emit(this.dropDownForm.get('search')?.value)
   }
 
   //switcher
   returnAddress(acc: string) {
+    console.log(acc);
     if (localStorage.getItem('wallet')) {
       acc = localStorage.getItem('wallet')!;
     }
@@ -233,8 +244,14 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges {
     start = acc.substring(0,3);
     last = acc.substring(acc.length, acc.length - 3);
     let final = start + '...' + last;
+    console.log(final);
     return final
   }
 
   //switcher
+  returnCorrectStatement(button: AssetViewModel){
+    console.log("sss")
+    console.log(button)
+    return true
+  }
 }

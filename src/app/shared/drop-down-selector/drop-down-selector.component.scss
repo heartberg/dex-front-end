@@ -212,3 +212,17 @@
   overflow: hidden;
   margin-right: 14px;
 }
+
+// fot algo and verse showing in dropdown
+.absolute-costum{
+  position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.relative-costum {
+  position: relative;
+}
+.scrollable-section {
+  max-height: calc(100vh - 384px);
+  overflow-y: scroll;
+}

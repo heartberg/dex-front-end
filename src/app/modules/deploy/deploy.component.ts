@@ -11,7 +11,7 @@ import { getAlgodClient } from 'src/app/blockchain/algorand';
 import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { platform_settings as ps } from '../../blockchain/platform-conf';
-
+import { of } from 'rxjs';
 interface member {
   name: string,
   position: string,
@@ -115,6 +115,20 @@ export class DeployComponent implements OnInit, DoCheck {
   ];
   releasePerInterval: number = 0;
 
+  // extra form
+  extraAdded: boolean = false;
+  secondForm: boolean = false;
+  thirdForm: boolean = false;
+  fourthForm: boolean = false;
+  fifthForm: boolean = false;
+
+  teamInfoOptionSecond: FormGroup;
+  teamInfoOptionThird: FormGroup | any = {};
+  teamInfoOptionFourth: FormGroup | any = {};
+  teamInfoOptionFifth: FormGroup | any= {};
+
+  teamMemberFinal: any[] = [];
+
   constructor(
     private walletProviderService: WalletsConnectService,
     private deployedApp: DeployedApp,
@@ -122,7 +136,11 @@ export class DeployComponent implements OnInit, DoCheck {
     private deployLib: DeployLb,
     private assetService: AssetReqService,
 
-  ) {}
+  )
+  {
+    // TODO Tesco
+    this.sessionWallet = this.walletProviderService.sessionWallet;
+  }
 
 
   ngDoCheck() {
@@ -147,6 +165,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.initFormExtra();
   }
 
   @ViewChild('checkbox', { static: false})
@@ -197,20 +216,97 @@ export class DeployComponent implements OnInit, DoCheck {
   }
 
   addExtraFields(item: any, i: number) {
-
-    let obj = item;
-    if (i === 0) {
-      this.extraFieldsArr.push(obj);
-    } else {
-      this.extraFieldsArr.splice(i, 1)
+    if (i === 1) {
+      this.extraAdded = true;
+      if (!this.secondForm) {
+        this.teamMemberFinal.push(this.deployFormGroup.value.teamInfoOptionGroup);
+      } else {
+        return;
+      }
+      this.secondForm = true;
+    } else if (i === 2) {
+      if (!this.thirdForm) {
+        this.teamMemberFinal.push(this.teamInfoOptionSecond.value);
+      } else {
+        return;
+      }
+      this.thirdForm = true;
+    } else if (i === 3) {
+      if (!this.fourthForm) {
+        this.teamMemberFinal.push(this.teamInfoOptionThird.value)
+      } else {
+        return;
+      }
+      this.fourthForm = true;
+    } else if (i === 4) {
+      if (!this.fifthForm) {
+        this.teamMemberFinal.push(this.teamInfoOptionFourth.value)
+      } else {
+        return;
+      }
+      this.fifthForm = true;
+    } else if (i === 5) {
+      this.teamMemberFinal.push(this.teamInfoOptionFifth.value)
+      return
     }
-    console.log(i, this.extraFieldsArr);
-    console.log(this.deployFormGroup.value.teamInfoOptionGroup);
   }
 
-  triggerForm(value: any, item: any, i: number, name: string, position: string, social: string) {
-    this.extraFieldsArr[i] = item;
-    console.log(this.extraFieldsArr);
+  removeExtraField(i: number) {
+    if (i === 2) {
+      this.secondForm = false;
+      this.teamInfoOptionSecond.value.name = '';
+      this.teamInfoOptionSecond.value.social = '';
+      this.teamInfoOptionSecond.value.position = '';
+      this.teamInfoOptionSecond.value.teamInfoImage = '';
+    } else if (i === 3) {
+      this.thirdForm = false;
+      this.teamInfoOptionThird.value.name = '';
+      this.teamInfoOptionThird.value.social = '';
+      this.teamInfoOptionThird.value.position = '';
+      this.teamInfoOptionThird.value.teamInfoImage = '';
+    } else if (i === 4) {
+      this.fourthForm = false;
+      this.teamInfoOptionFourth.value.name = '';
+      this.teamInfoOptionFourth.value.social = '';
+      this.teamInfoOptionFourth.value.position = '';
+      this.teamInfoOptionFourth.value.teamInfoImage = '';
+    } else if (i === 5) {
+      this.fifthForm = false;
+      this.teamInfoOptionFifth.value.name = '';
+      this.teamInfoOptionFifth.value.social = '';
+      this.teamInfoOptionFifth.value.position = '';
+      this.teamInfoOptionFifth.value.teamInfoImage = '';
+    }
+    i = i -1;
+    this.teamMemberFinal = this.teamMemberFinal.splice(i, 1);
+    console.log(this.teamMemberFinal);
+  }
+
+  initFormExtra(): void {
+    this.teamInfoOptionSecond = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+      this.teamInfoOptionThird = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+      this.teamInfoOptionFourth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+      this.teamInfoOptionFifth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
   }
   // for form intitialize
 
@@ -507,6 +603,16 @@ export class DeployComponent implements OnInit, DoCheck {
   }
 
   async onSubmit() {
+    this.teamMemberFinal = [];
+    this.teamMemberFinal.push(this.deployFormGroup.value.teamInfoOptionGroup, this.teamInfoOptionSecond.value, this.teamInfoOptionThird.value, this.teamInfoOptionFourth.value, this.teamInfoOptionFifth.value);
+    this.teamMemberFinal.filter((item: {name: string, social: string, position: string, teamInfoImage: string}, index: number) => {
+      if (!item.name.length) {
+        this.teamMemberFinal.splice(index, 1)
+      } else {
+      }
+    })
+    localStorage.setItem('teamArray', JSON.stringify(this.teamMemberFinal));
+    // end of extra field
     this.sessionWallet = this.walletProviderService.sessionWallet;
     console.log(this.sessionWallet)
     if(this.isSmartAsaDeploy) {
@@ -539,12 +645,12 @@ export class DeployComponent implements OnInit, DoCheck {
       this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('hardCap')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('softCap')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('walletCap')?.setValue(null)
-  
+
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInPresale')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('tokensInLiquidity')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('algoToLiquidity')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity')?.get('presaleFundsToLiquidity')?.setValue(null)
-    
+
       this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseIntervalNumber')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.setValue(null)
       this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.releaseInterval')?.setValue(null)
@@ -732,7 +838,7 @@ export class DeployComponent implements OnInit, DoCheck {
     this.deployFormGroup.get('feesGroup')?.get('purpose')?.setValue(null)
     this.deployFormGroup.get('feesGroup')?.get('address')?.setValue(null)
     this.deployFormGroup.get('feesGroup')?.get('fee')?.setValue(null)
-    
+
     this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleStart')?.setValue(null)
     this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('presaleEnd')?.setValue(null)
     this.deployFormGroup.get('createPresaleOptionGroup.presaleSettings')?.get('hardCap')?.setValue(null)
@@ -746,7 +852,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
     this.deployFormGroup.get('liquidity')?.get('tokensToLiq')?.setValue(null)
     this.deployFormGroup.get('liquidity')?.get('algoToLiq')?.setValue(null)
-    
+
     this.deployFormGroup.get('tradingStart')?.setValue(null)
     this.deployFormGroup.get('extraFeeTime')?.setValue(null)
 

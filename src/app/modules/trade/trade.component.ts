@@ -23,6 +23,9 @@ import { ThisReceiver } from '@angular/compiler';
 import { SmartToolData } from 'src/app/shared/pop-up/component/pop-up.component';
 import { isOptinAsset } from 'src/app/services/utils.algo';
 import { StakingUtils } from 'src/app/blockchain/staking';
+import { throwError } from 'rxjs';
+import { runInThisContext } from 'vm';
+import { fail } from 'assert';
 
 
 @Component({
@@ -113,11 +116,7 @@ export class TradeComponent implements OnInit {
   botChanged: boolean = true;
   topChanged: boolean = false;
 
-  saveStoreTop: string = '';
-  saveStoreBottom: string = '';
-
-  tradeSelectedTop: string = '';
-  tradeSelectedBottom: string = '';
+  selected: string = ''
 
   topSearched: string = '';
   bottomSearched: string = '';
@@ -214,6 +213,9 @@ export class TradeComponent implements OnInit {
     this.bottomInput = this.bottomForms.get("bottomInputValue")?.value
     this.calcPriceImpact()
     this.setMinOutput()
+    // trade logic
+    this.topChanged = !this.topChanged;
+    this.botChanged = !this.botChanged;
   }
 
   onUserInput() {
@@ -331,7 +333,6 @@ export class TradeComponent implements OnInit {
   }
 
   async getValueFromDropDown($event: AssetViewModel, index: number) {
-    
     console.log($event)
     
     if ($event.assetId === ps.platform.verse_asset_id) {
@@ -342,59 +343,40 @@ export class TradeComponent implements OnInit {
       this.isTradeBacking = false;
     }
 
-    // trade logic
     if ($event.assetId !== 0 && index === 1) {
-      this.tradeSelectedTop = $event.name;
-      this.tradeSelectedBottom = 'Algo'
+      this.selected = $event.name;
       this.topChanged = true;
       this.botChanged = false;
-      this.saveStoreTop = $event.name;
+
       if(!this.rotate){
         this.isBuy = false;
       } else {
         this.isBuy = true;
       }
-    }
-   
-    if ($event.assetId !== 0 && index === 2) {
-      this.tradeSelectedBottom = $event.name;
-      this.tradeSelectedTop = 'Algo'
-      this.topChanged = false;
+    } else if ($event.assetId !== 0 && index === 2) {
+      this.selected = $event.name;
       this.botChanged = true;
-      this.saveStoreBottom = $event.name;
+      this.topChanged = false;
+
       if(!this.rotate){
         this.isBuy = true;
       } else {
         this.isBuy= false;
       }
 
-    } else if ($event.assetId === 0 && index === 1 && this.tradeSelectedTop !== 'Algo') {
-      if (this.saveStoreTop === '') {
-        this.tradeSelectedTop = 'Algo'
-        return
-      } else {
-        this.tradeSelectedBottom = this.saveStoreTop;
-        this.tradeSelectedTop = 'Algo'
-        this.topChanged = false;
-        this.botChanged = true;
-      } 
+    } else if ($event.assetId === 0 && index === 1) {
+      this.topChanged = false;
+      this.botChanged = true;
+
       if(!this.rotate){
         this.isBuy = true;
       } else {
         this.isBuy = false;
       }
 
-    } else if ($event.assetId === 0 && index === 2 && this.tradeSelectedBottom !== 'Algo') {
-      if (this.saveStoreTop === '') {
-        this.tradeSelectedBottom = 'Algo'
-        return
-      } else {
-        this.tradeSelectedTop= this.saveStoreBottom;
-        this.tradeSelectedBottom = 'Algo'
-        this.topChanged = true;
-        this.botChanged = false;
-      }
-
+    } else if ($event.assetId === 0 && index === 2) {
+      this.botChanged = false;
+      this.topChanged = true;
       if(!this.rotate){
         this.isBuy = false;
       } else {

@@ -176,7 +176,7 @@ export class DeployLb {
             this._deployService.ProjectCreate(this.withoutPresaleObj).subscribe(
               async (value: any) => {
                 if (value) {
-        
+
                   this.projectId = value;
                   of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
                     (value: any) => {
@@ -216,10 +216,10 @@ export class DeployLb {
                                                       );
                                                     }
                                                     console.log('setup is done')
-                                                
+
                                                   },
                                                   error => {
-                                          
+
                                                   }
                                                 )
                                               }
@@ -228,7 +228,7 @@ export class DeployLb {
                                         }
                                       },
                                       error => {
-                          
+
                                       }
                                     )
                                   }
@@ -248,7 +248,7 @@ export class DeployLb {
                 }
               },
               error => {
-        
+
               }
             )
           }, 1200)
@@ -281,7 +281,7 @@ export class DeployLb {
       console.log(stakingSetup)
       return this._projectService.AddStakingPool(stakingSetup)
     }
-    
+
   }
 
   async deployFromSetupPresale(projectModel: ProjectViewModel) {
@@ -656,7 +656,7 @@ export class DeployLb {
         walletcap: 0
       }
     }
-    
+
     return {
       buyBurn: projectView.asset.smartProperties!.buyBurn,
       creator: projectView.creatorWallet,
@@ -696,6 +696,8 @@ export class DeployLb {
   }
 
   initializeApiObjWithPresale(form: any): void {
+    let team = localStorage.getItem('teamArray');
+    let finalTeam = JSON.parse(team!);
     console.log(form.value);
     let wallet = localStorage.getItem('wallet');
 
@@ -748,14 +750,7 @@ export class DeployLb {
       initialTokenLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
 
       // TODO: SABA
-      teamMembers: [
-        {
-          name: 'saba',
-          image: 'snaas',
-          role: 'asdfklfjdklf',
-          social: 'dksdfkldf'
-        }
-      ],
+      teamMembers: finalTeam,
       presale: {
         softCap: +form.get('createPresaleOptionGroup.presaleSettings.softCap')?.value! * 1_000_000,
         hardCap: +form.get('createPresaleOptionGroup.presaleSettings.hardCap')?.value! * 1_000_000,
@@ -787,9 +782,8 @@ export class DeployLb {
   }
 
   initializeApiObjWithoutPresale(form: any): void {
-
-    console.log(form.value)
-
+    let team = localStorage.getItem('teamArray');
+    let finalTeam = JSON.parse(team!);
     let smartProperties: SmartProperties | undefined;
     if (form.get('feesGroup.risingPriceFloor').value != null) {
       smartProperties = {
@@ -825,14 +819,7 @@ export class DeployLb {
       initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * environment.Y_FEE),
       initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
       initialTokenLiquidity: +form.get('liquidity.tokensToLiq')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
-      teamMembers: [
-        {
-          name: 'saba',
-          image: 'snaas',
-          role: 'asdfklfjdklf',
-          social: 'dksdfkldf'
-        }
-      ],
+      teamMembers: finalTeam,
       asset: {
         assetId: 0,
         projectId: '00000000-0000-0000-0000-000000000000',
@@ -898,7 +885,7 @@ export class DeployLb {
                                       console.log("successfully setuped presale and staking")
                                     }
                                   }
-                                )      
+                                )
                             }
                           );
                         } else {
@@ -934,9 +921,9 @@ export class DeployLb {
                             this.finalStepApi = false;
                           }
                         )
-    
+
                       }
-    
+
                     }
                   },
                   error => {

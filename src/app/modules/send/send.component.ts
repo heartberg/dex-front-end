@@ -24,6 +24,7 @@ export class SendComponent implements OnInit {
   accInfo: Record<string, any> | undefined;
   selectedOption: AssetViewModel |undefined;
   availableBalance: number = 0;
+  showAll: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -62,14 +63,16 @@ export class SendComponent implements OnInit {
   handleCheckboxUpdateSecond(event: boolean) {
     this.tokens = []
     if (event === true) {
-      this.assetService.getAssetPairs(true, '', this.walletUsual!).subscribe(async (res) => {
+      this.showAll = true;
+      this.assetService.getAssetPairs(this.showAll, '', this.walletUsual!).subscribe(async (res) => {
         this.removeVerse(res);
         this.tokens.push(await this.verseApp.getViewModel())
         this.tokens.push(...res);
         this.selectAsset(this.tokens[0]);
       });
     } else if (event === false) {
-      this.assetService.getAssetPairs(false, '', this.walletUsual!).subscribe(async (res) => {
+      this.showAll = false;
+      this.assetService.getAssetPairs(this.showAll, '', this.walletUsual!).subscribe(async (res) => {
         // TODO uncomment for prod
         this.removeVerse(res);
         this.tokens.push(await this.verseApp.getViewModel())
@@ -96,7 +99,9 @@ export class SendComponent implements OnInit {
       wallet = "default";
     }
     this.tokens.push(await this.verseApp.getViewModel())
-    this.selectAsset(this.tokens[0]);
+    setTimeout(() => {
+      this.selectAsset(this.tokens[0]);
+    }, 500)
     this.assetService.getAssetPairs(false, '', wallet!).subscribe(
       async (res) => {
         this.removeVerse(res);
@@ -153,6 +158,36 @@ export class SendComponent implements OnInit {
       }
     } else {
       this.availableBalance = 0;
+    }
+
+  }
+  async getSearchDropdown(event: any) {
+    console.log('i ma gere')
+    let wallet = localStorage.getItem("wallet")
+    if(!wallet){
+      wallet = "default";
+    }
+    if (!event.length) {
+      this.tokens = []
+      this.tokens.push(await this.verseApp.getViewModel())
+    setTimeout(() => {
+      this.selectAsset(this.tokens[0]);
+    }, 500)
+    this.assetService.getAssetPairs(this.showAll, '', wallet!).subscribe(
+      async (res) => {
+        this.removeVerse(res);
+        this.tokens.push(...res);
+      }
+    );
+    } else {
+      this.assetService.getAssetPairs(this.showAll, event, wallet!).subscribe(
+        async (res) => {
+          this.tokens = []
+          this.removeVerse(res);
+          this.tokens.push(...res);
+        }
+      );
+      console.log(this.tokens, 'aa')
     }
 
   }

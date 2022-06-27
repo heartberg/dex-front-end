@@ -25,27 +25,33 @@ export class WalletsConnectService {
   public myAlgoAddress: any | undefined;
   public myAlgoName: any | undefined;
 
-  constructor(private userServce: AuthService) { }
+  constructor(private userServce: AuthService) {
+    if (this.sessionWallet === undefined || !this.sessionWallet) {
+      this.connect('my-algo-connect').then(response => response);
+    }
+  }
 
 
   connect = async (choice: string) => {
     console.log('choice', choice);
     const sw = new SessionWallet("TestNet", undefined, choice);
+    if (sw) {
+      this.myAlgoAddress = sw.accountList();
 
-    if (!await sw.connect()) return alert("Couldnt connect")
+      // if (!await sw.connect()) return alert("Couldnt connect");
 
-    this.myAlgoAddress = sw.accountList()
-    console.log("AlgoAddress: " + this.myAlgoAddress)
-    let index = localStorage.getItem('walletIndex');
-    let finalIndex = +index!;
-    localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
-    this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
+      console.log("AlgoAddress: " + this.myAlgoAddress)
+      let index = localStorage.getItem('walletIndex');
+      let finalIndex = +index!;
+      localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
+      this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
 
-    sw.wallet.defaultAccount = finalIndex;
-    const finalSw = sw;
-    this.sessionWallet = finalSw!;
-    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
-    console.log(this.sessionWallet, 'esaaa');
+      sw.wallet.defaultAccount = finalIndex;
+      const finalSw = sw;
+      this.sessionWallet = finalSw!;
+      localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
+      console.log(this.sessionWallet, 'esaaa');
+    }
   }
 
 
