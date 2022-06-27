@@ -35,10 +35,10 @@ export class WalletsConnectService {
   connect = async (choice: string) => {
     console.log('choice', choice);
     const sw = new SessionWallet("TestNet", undefined, choice);
-    if (sw) {
+    // if (sw) {
       this.myAlgoAddress = sw.accountList();
 
-      // if (!await sw.connect()) return alert("Couldnt connect");
+      if (!await sw.connect()) return alert("Couldnt connect");
 
       console.log("AlgoAddress: " + this.myAlgoAddress)
       let index = localStorage.getItem('walletIndex');
@@ -51,7 +51,7 @@ export class WalletsConnectService {
       this.sessionWallet = finalSw!;
       localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
       console.log(this.sessionWallet, 'esaaa');
-    }
+    // }
   }
 
 
