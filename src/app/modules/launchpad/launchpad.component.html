@@ -81,7 +81,7 @@
               </div>
             </div>
             <div class="right-container col-md-10">
-              <div class="col-md-4 unset-pd" style="line-height: normal;">
+              <div class="col-md-5 unset-pd" style="line-height: normal;">
                 <div class="admin-content-extra-last">
                   <div class="admin-bottom">
                     <div class="left-values">
@@ -140,9 +140,9 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <div class="text-area">
-                  <ng-container>
+              <div class="col-md-3">
+
+                   <!-- <ng-container>
                     <p *ngIf="isFailed(item[1])">
                       Your presale did not reach the Softcap. <br>
                       You can claim your Algo, or wait for resetup of the Presale with better conditions.
@@ -158,8 +158,22 @@
                       The Presale was resetup to a Fair Launch. <br>
                       You can claim your Algo.
                     </p>
-                  </ng-container>
-                </div>
+                  </ng-container> -->
+                  <div class="row">
+                    <div class="d-flex align-items-center">
+                      <h6 class="color-violet">
+                        Contribution: <br>
+                      </h6>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="d-flex align-items-center">
+                    <span style="margin-left: 6px">
+                      {{(item[3]!).toFixed(2)}} Algo
+                    </span>
+                  </div>
+                  </div>
+
               </div>
               <div class="col-md-2">
                 <div class="unset-pd">

@@ -792,7 +792,6 @@ export class PopUpComponent implements OnInit {
           this.smartToolData.optedIn = true
         }
       }
-
     }
   }
 

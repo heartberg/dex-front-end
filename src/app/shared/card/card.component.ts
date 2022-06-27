@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CardComponent implements OnInit {
 
-  @Input() data!: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?];
+  @Input() data!: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?, number?];
 
   constructor() { }
 

@@ -23,7 +23,7 @@ export type TimeTupel = {
 })
 
 export class LaunchpadComponent implements OnInit {
-  array: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?][] = [];
+  array: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?, number?][] = [];
   isPresaleEnded: boolean = false;
   wallet = localStorage.getItem('wallet');
   sessionWallet: SessionWallet | undefined;
@@ -52,21 +52,24 @@ export class LaunchpadComponent implements OnInit {
     console.log(this.isWallet);
     if (this.isWallet) {
       this.sessionWallet = this.walletService.sessionWallet
+      let client: Algodv2 = getAlgodClient()
       console.log('wallet');
       this.projectReqService
         .getParticipatedPresales(this.wallet, 1)
         .subscribe((res) => {
           res.forEach(async (presaleModel: ProjectPreviewModel) => {
+            let contractId = 0
             if(presaleModel.asset.smartProperties) {
-              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
-              let claimState: ClaimState = await this.app.isClaimablePresale(this.wallet!, presaleModel.asset.smartProperties!.contractId)
-              this.array.push([presaleModel, blockchainInfo, claimState])
+              contractId = presaleModel.asset.smartProperties.contractId
             } else {
-              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
-              let claimState: ClaimState = await this.app.isClaimablePresale(this.wallet!, presaleModel.presale.contractId!)
-              this.array.push([presaleModel, blockchainInfo, claimState])
+              contractId = presaleModel.presale.contractId!
             }
+            let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(contractId)
+              let claimState: ClaimState = await this.app.isClaimablePresale(this.wallet!, contractId)
+              let contribution = await getAppLocalStateByKey(client, contractId, this.wallet!, StateKeys.presale_contribution_key) / Math.pow(10, 6)
+              this.array.push([presaleModel, blockchainInfo, claimState, contribution])
           });
+          console.log(res)
         });
     } else if (!this.isWallet) {
       console.log('not wallet');
@@ -125,7 +128,6 @@ export class LaunchpadComponent implements OnInit {
 
   formatDate(timestamp: number): string {
     let date = new Date(timestamp * 1000)
-    console.log(date)
     let minutes = date.getMinutes().toString()
     if(date.getMinutes() < 10) {
       minutes = "0" + minutes
@@ -164,7 +166,7 @@ export class LaunchpadComponent implements OnInit {
     }
   }
 
-  async claimAlgo(item: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?]) {
+  async claimAlgo(item: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?, number?]) {
     this.sessionWallet = this.walletService.sessionWallet
     let response = await this.app.claimPresale(this.sessionWallet!, item[1].contractId)
     if(response) {
@@ -173,7 +175,7 @@ export class LaunchpadComponent implements OnInit {
     }
   }
 
-  async claimToken(item: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?]) {
+  async claimToken(item: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?, number?]) {
     this.sessionWallet = this.walletService.sessionWallet
     let response = await this.app.claimPresale(this.sessionWallet!, item[1].contractId)
     if(response) {
