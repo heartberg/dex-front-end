@@ -254,7 +254,12 @@ export class PopUpComponent implements OnInit {
     if(this.stacking) {
       console.log(this.stakingInfo)
       let client: Algodv2 = getAlgodClient()
-      this.assetInfo = await client.getAssetByID(this.stakingInfo!.assetId).do()
+      // TODO: store in variable
+      setTimeout(async () => {
+        this.assetInfo = await client.getAssetByID(this.stakingInfo!.assetId).do()
+      }, 600
+      )
+      //this.assetInfo = await client.getAssetByID(this.stakingInfo!.assetId).do()
     }
   }
 
