@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { SessionWallet } from 'algorand-session-wallet';
 import { Algodv2, isValidAddress } from 'algosdk';
@@ -15,7 +15,7 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
   templateUrl: './send.component.html',
   styleUrls: ['./send.component.scss'],
 })
-export class SendComponent implements OnInit {
+export class SendComponent implements OnInit, DoCheck {
   addressNotOptedIn: boolean = false;
   invalidAddress: boolean = false;
   walletUsual = localStorage.getItem('wallet')
@@ -25,6 +25,14 @@ export class SendComponent implements OnInit {
   selectedOption: AssetViewModel |undefined;
   availableBalance: number = 0;
   showAll: boolean = false;
+
+
+  //
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  closePopup: boolean = false;
+  //
 
   constructor(
     private fb: FormBuilder,
@@ -38,6 +46,26 @@ export class SendComponent implements OnInit {
     sendInput: [],
     addressInput: [],
   });
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopup = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopup = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopup = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+
+  }
 
   onSubmit() {
     console.log(this.sendForm.value);
@@ -108,9 +136,9 @@ export class SendComponent implements OnInit {
         this.tokens.push(...res);
       }
     );
-    
+
     console.log(this.tokens);
-    
+
     this.sendForm.get("addressInput")!.valueChanges.subscribe(
       async x => {
         console.log(x)
@@ -190,5 +218,9 @@ export class SendComponent implements OnInit {
       console.log(this.tokens, 'aa')
     }
 
+  }
+
+  closePopUp(event: boolean) {
+    this.closePopup = event;
   }
 }
