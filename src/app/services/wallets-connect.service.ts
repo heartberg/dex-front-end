@@ -12,6 +12,7 @@ import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayT
 import MyAlgoConnect from '@randlabs/myalgo-connect';
 import { Buffer } from 'buffer';
 import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
+import {Cookie} from "ng2-cookies";
 
 
 const client = getAlgodClient()
@@ -26,13 +27,48 @@ export class WalletsConnectService {
   public myAlgoName: any | undefined;
 
   constructor(private userServce: AuthService) {
-    if (this.sessionWallet === undefined || !this.sessionWallet) {
-      this.connect('my-algo-connect').then(response => response);
+    if (localStorage.getItem('wallet')) {
+      sessionStorage.setItem('acct-list', JSON.stringify([localStorage.getItem('wallet')]));
+      setTimeout(() => {
+        if (this.sessionWallet === undefined || !this.sessionWallet) {
+          this.connectOnDefault('my-algo-connect').then(response => response);
+        }
+      })
     }
   }
 
 
   connect = async (choice: string) => {
+    console.log('choice', choice);
+    const sw = new SessionWallet("TestNet", undefined, choice);
+
+    if (!await sw.connect()) return alert("Couldnt connect")
+
+    this.myAlgoAddress = sw.accountList()
+    console.log("AlgoAddress: " + this.myAlgoAddress)
+    let index = localStorage.getItem('walletIndex');
+    let finalIndex = +index!;
+    localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
+    this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
+
+    sw.wallet.defaultAccount = finalIndex;
+    const finalSw = sw;
+    this.sessionWallet = finalSw!;
+    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
+    console.log(this.sessionWallet, 'esaaa');
+
+    localStorage.setItem('reload', 'true');
+    if (localStorage.getItem('reload')) {
+      location.reload();
+      setTimeout(() => {
+        localStorage.removeItem('reload');
+      }, 300)
+    } else {
+      return
+    }
+  }
+
+  connectOnDefault = async (choice: string) => {
     console.log('choice', choice);
     const sw = new SessionWallet("TestNet", undefined, choice);
 
@@ -58,10 +94,11 @@ export class WalletsConnectService {
     this.sessionWallet = undefined;
     //setConnected(false)
     this.myAlgoAddress = []
-    if (localStorage.getItem('reload2')) {
+    localStorage.setItem('reload', 'true');
+    if (localStorage.getItem('reload')) {
       location.reload();
       setTimeout(() => {
-        localStorage.removeItem('reload2');
+        localStorage.removeItem('reload');
       }, 300)
     } else {
       return
