@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Algodv2, makePaymentTxnWithSuggestedParamsFromObject } from 'algosdk';
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
@@ -55,7 +55,7 @@ export type PresaleBlockchainInformation = {
   templateUrl: './launch-detail.component.html',
   styleUrls: ['./launch-detail.component.scss']
 })
-export class LaunchDetailComponent implements OnInit {
+export class LaunchDetailComponent implements OnInit, DoCheck {
   closePopup: boolean = false;
   currentProjectId: string = this.route.snapshot.paramMap.get('id')!;
   projectData!: ProjectViewModel;
@@ -75,7 +75,7 @@ export class LaunchDetailComponent implements OnInit {
 
   minLaunchPrice: number = 0;
   maxLaunchPrice: number = 0;
-  
+
   finished: boolean = false;
   isClaimable: boolean = false;
   alreadyClaimed: boolean = false;
@@ -88,12 +88,40 @@ export class LaunchDetailComponent implements OnInit {
   };
   userAllocation: number = 0;
 
+  //
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  closePopupSecond: boolean = false;
+  //
+
+
   constructor(
     private route: ActivatedRoute,
     private projectsReqService: projectReqService,
     private deployedApp: DeployedApp,
     private walletService: WalletsConnectService
   ) { }
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopupSecond = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopupSecond = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopupSecond = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+
+  }
 
   ngOnInit(): void {
     console.log(this.route.snapshot.paramMap.get('id'));
@@ -151,7 +179,7 @@ export class LaunchDetailComponent implements OnInit {
     } else {
       this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.presale?.contractId!)
     }
-    
+
     this.closePopup = event;
   }
 
@@ -258,16 +286,16 @@ export class LaunchDetailComponent implements OnInit {
     for(let i = 0; i < vestingIntervalNumbers; i++) {
       nextRelease = nextRelease + i * vestingIntervalLength
       if(now < nextRelease) {
-        date = nextRelease 
+        date = nextRelease
         break
-      }      
-    }  
+      }
+    }
     if(date) {
       return this.formatDate(date)
     } else {
       return "Vesting Finished"
     }
-    
+
   }
 
 }

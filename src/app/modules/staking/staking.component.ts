@@ -1,5 +1,5 @@
 import { tokenize } from '@angular/compiler/src/ml_parser/lexer';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, DoCheck, OnInit, ViewChild} from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
 import { time } from 'console';
 import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
@@ -38,7 +38,7 @@ export type StakingUserInfo = {
   styleUrls: ['./staking.component.scss']
 })
 
-export class StakingComponent implements OnInit {
+export class StakingComponent implements OnInit, DoCheck {
   closePopup: boolean | undefined;
   isStake: boolean = true;
   sessionWallet: SessionWallet | undefined;
@@ -70,6 +70,13 @@ export class StakingComponent implements OnInit {
     weeklyRewards: 0
   }
 
+  //
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  closePopupSecond: boolean = false;
+  //
+
   @ViewChild('checkboxFinished', {static: false})
   // @ts-ignore
   private checkFinished: ElementRef;
@@ -91,6 +98,25 @@ export class StakingComponent implements OnInit {
       console.log(new Date(this.userInfo.nextClaimableDate))
       console.log(new Date())
       this.nextClaimableDate = this.formatDate(this.userInfo.nextClaimableDate)
+    }
+  }
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopupSecond = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopupSecond = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopupSecond = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
     }
   }
 
@@ -154,7 +180,7 @@ export class StakingComponent implements OnInit {
     } else {
       await this.getUserInfo()
     }
-    
+
     if (value === 'stake') {
       this.isStake = true;
       this.stakingInput = this.userInfo
@@ -307,7 +333,7 @@ export class StakingComponent implements OnInit {
     if(start < now) {
       duration = end - now
     }
-    
+
     let hours = Math.floor(duration / 60 / 60)
     if(duration <= 0) {
       return "ended"

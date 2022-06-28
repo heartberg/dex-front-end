@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, DoCheck, Input, OnInit} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { SessionWallet } from 'algorand-session-wallet';
 import { Algodv2 } from 'algosdk';
@@ -22,13 +22,20 @@ export type TimeTupel = {
   styleUrls: ['./launchpad.component.scss'],
 })
 
-export class LaunchpadComponent implements OnInit {
+export class LaunchpadComponent implements OnInit, DoCheck {
   array: [ProjectPreviewModel, PresaleBlockchainInformation, ClaimState?, number?][] = [];
   isPresaleEnded: boolean = false;
   wallet = localStorage.getItem('wallet');
   sessionWallet: SessionWallet | undefined;
   searchInput = this.fb.control([]);
-  
+
+  //
+  finalStepApi: boolean = false;
+  isFaild: boolean = false;
+  isPending: boolean = false;
+  closePopup: boolean = false;
+  //
+
   @Input() entries: boolean = false;
 
   dropDownValues = [
@@ -47,6 +54,25 @@ export class LaunchpadComponent implements OnInit {
     private app: DeployedApp,
     private walletService: WalletsConnectService
   ) {}
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopup = true;
+      this.isPending = true;
+      this.isFaild = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopup = true;
+      this.isFaild = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopup = true;
+      this.finalStepApi = true;
+      this.isFaild = false;
+      this.isPending = false;
+    }
+  }
 
   ngOnInit(): void {
     console.log(this.isWallet);
@@ -185,19 +211,40 @@ export class LaunchpadComponent implements OnInit {
   }
 
   search($event: any) {
-    this.projectReqService
-    .getAllPresales(OrderingEnum.ending, 1, this.searchInput.value)
-    .subscribe((res) => {
-      this.array = []
-      res.forEach(async (presaleModel: ProjectPreviewModel) => {
-        if(presaleModel.asset.smartProperties) {
-          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
-          this.array.push([presaleModel, blockchainInfo])
-        } else {
-          let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
-          this.array.push([presaleModel, blockchainInfo])
-        }
-      });
-    });
+    if (this.searchInput.value) {
+      this.projectReqService
+        .getAllPresales(OrderingEnum.ending, 1, this.searchInput.value)
+        .subscribe((res) => {
+          this.array = []
+          res.forEach(async (presaleModel: ProjectPreviewModel) => {
+            if(presaleModel.asset.smartProperties) {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+              this.array.push([presaleModel, blockchainInfo])
+            } else {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+              this.array.push([presaleModel, blockchainInfo])
+            }
+          });
+        });
+    } else {
+      this.projectReqService
+        .getAllPresales(OrderingEnum.ending, 1, '')
+        .subscribe((res) => {
+          this.array = []
+          res.forEach(async (presaleModel: ProjectPreviewModel) => {
+            if(presaleModel.asset.smartProperties) {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
+              this.array.push([presaleModel, blockchainInfo])
+            } else {
+              let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
+              this.array.push([presaleModel, blockchainInfo])
+            }
+          });
+        });
+    }
+  }
+
+  closePopUp($event: boolean) {
+    this.closePopup = $event;
   }
 }

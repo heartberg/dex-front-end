@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { platform_settings as ps } from 'src/app/blockchain/platform-conf'; 
+import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { BlockchainInformation } from 'src/app/blockchain/platform-conf';
 import { ProjectViewModel } from 'src/app/models/projectViewModel';
@@ -17,7 +17,7 @@ import { StakingUtils } from 'src/app/blockchain/staking';
   templateUrl: './token-detail.component.html',
   styleUrls: ['./token-detail.component.scss'],
 })
-export class TokenDetailComponent implements OnInit {
+export class TokenDetailComponent implements OnInit, DoCheck {
   isPopUpOpen: boolean = false;
   isBorrow: boolean = false;
   isBacking: boolean = false;
@@ -43,6 +43,13 @@ export class TokenDetailComponent implements OnInit {
   projectData!: ProjectViewModel;
   blockchainData: BlockchainInformation | undefined;
 
+  //
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  closePopup: boolean = false;
+  //
+
   constructor(
     private route: ActivatedRoute,
     private projectsReqService: projectReqService,
@@ -50,6 +57,25 @@ export class TokenDetailComponent implements OnInit {
     private verseApp: VerseApp,
     private stakingUtils: StakingUtils
   ) {}
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopup = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopup = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopup = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+  }
 
   async ngOnInit(): Promise<void> {
     console.log("project id: " + this.route.snapshot.paramMap.get('id'));

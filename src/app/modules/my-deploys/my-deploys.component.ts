@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import { SessionWallet } from 'algorand-session-wallet';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
@@ -27,17 +27,46 @@ export type DeployState = {
   styleUrls: ['./my-deploys.component.scss']
 })
 
-export class MyDeploysComponent implements OnInit {
+export class MyDeploysComponent implements OnInit, DoCheck {
   arr: [ProjectPreviewModel, DeployState][] = [];
   wallet: SessionWallet | undefined;
   isPopUpOpen: boolean = false;
   projectForDistribution: ProjectPreviewModel | undefined;
+  //
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  closePopup: boolean = false;
+  //
+
   constructor(
     private walletService: WalletsConnectService,
     private app: DeployedApp,
     private projectService: projectReqService,
     private deployLib: DeployLb
   ) { }
+
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopup = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopup = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopup = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+
+  }
+
 
   ngOnInit(): void {
     this.wallet = this.walletService.sessionWallet;
