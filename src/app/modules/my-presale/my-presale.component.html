@@ -90,11 +90,11 @@
                     <p *ngIf="!isFailed(item[1]) && !item[0].presale.toFairLaunch && item[0].asset.smartProperties">
                       Users can claim their Tokens.<br>
                       After the Token is tradable you can remove the max buying amount anytime you want. <br>
-                      And add a Distribution Pool. 
+                      And add a Distribution Pool.
                     </p>
                     <p *ngIf="!isFailed(item[1]) && !item[0].presale.toFairLaunch && !item[0].asset.smartProperties">
                       Users can claim their Tokens.<br>
-                      You can add a Distribution Pool. 
+                      You can add a Distribution Pool.
                     </p>
                     <p *ngIf="isFailed(item[1]) && !item[0].presale.toFairLaunch">
                       Your Presale failed, you can resetup a new Presale with better conditions for your participants or convert it into a FairLaunch.
@@ -240,3 +240,12 @@
 </div>
 
 <app-pop-up (makeRequest)="makeRequest($event)"  [presaleData]="[presaleData!, projectModel!]" [projectForDistributionPool]="projectPreviewModel" [isRestart]="isRestart" [isFair]="isFair" [isPool]="isPool"(isClosed)="closePopUp($event)" *ngIf="isPopUpOpen"></app-pop-up>
+<app-pop-up
+  (isClosed)="closePopUp($event)"
+  *ngIf="closePopup"
+  [isDeployedSuccess]="finalStepApi"
+  [isDeployedFaied]="Faild"
+  [isDeployedPending]="isPending"
+  [isD]="true"
+>
+  ></app-pop-up>

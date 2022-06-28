@@ -59,7 +59,7 @@
                     </div>
                   </div>
                   <img
-                    routerLink="/tokens/token-detail/{{ item[0].projectId }}"
+                    routerLink="/tokens/token-detail/{{ item[0]?.projectId }}"
                     style="width: 65%; cursor: pointer"
                     [src]="'data:image/jpeg;base64,' + item[0]?.projectImage"
                     alt=""
@@ -69,7 +69,7 @@
               <!-- LEFT SIDE -->
               <!-- RIGHT SIDE -->
               <div
-                routerLink="/tokens/token-detail/{{ item[0].projectId }}"
+                routerLink="/tokens/token-detail/{{ item[0]?.projectId }}"
                 class="columns-container"
               >
                 <div class="column">
@@ -82,7 +82,7 @@
                     <span *ngIf="item[1]" class="property">Remaining Supply</span>
                     <span *ngIf="item[1]" class="value">{{ item[1].totalsupply }}</span>
                     <span *ngIf="!item[1]" class="property">Total Supply</span>
-                    <span *ngIf="!item[1]" class="value">{{ item[0].asset.totalSupply }}</span>
+                    <span *ngIf="!item[1]" class="value">{{ item[0]?.asset?.totalSupply }}</span>
                   </div>
                 </div>
                 <div class="column">
@@ -102,7 +102,7 @@
                 <!-- RIGHT SIDE -->
               </div>
               <div
-                routerLink="/tokens/token-detail/{{ item[0].projectId }}"
+                routerLink="/tokens/token-detail/{{ item[0]?.projectId }}"
                 class="chart"
               >
                 <span class="property">Price over last 7 Days</span>

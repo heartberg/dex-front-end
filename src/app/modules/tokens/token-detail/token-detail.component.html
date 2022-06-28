@@ -18,7 +18,7 @@
 
             <div class="row">
               <div class="d-flex socLinks align-items-center">
-                
+
                 <div class="col-md-3" *ngIf="projectData.website">
                   <a href="{{projectData.website}}" target="_blank">
                     <img
@@ -28,7 +28,7 @@
                   />
                   </a>
                 </div>
-                
+
                 <div class="col-md-3" *ngIf="projectData.discord">
                   <a href="{{projectData.discord}}" target="_blank">
                     <img
@@ -53,7 +53,7 @@
                 <img
                       src="https://1000logos.net/wp-content/uploads/2021/04/Telegram-logo.png"
                       alt=""
-                      
+
                     />
                 </a>
               </div>
@@ -461,3 +461,13 @@
   [isTradeLendVerse]="isVerseBorrow"
   [isTradeBackingVerse]="isVerseBacking"
 ></app-pop-up>
+
+<app-pop-up
+  (isClosed)="closePopUp($event)"
+  *ngIf="closePopup"
+  [isDeployedSuccess]="finalStepApi"
+  [isDeployedFaied]="isFailed"
+  [isDeployedPending]="isPending"
+  [isD]="true"
+>
+  ></app-pop-up>

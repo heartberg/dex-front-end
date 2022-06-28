@@ -202,3 +202,12 @@
       </div>
     </div>
 </div>
+<app-pop-up
+  (isClosed)="closePopUp($event)"
+  *ngIf="closePopupSecond"
+  [isDeployedSuccess]="finalStepApi"
+  [isDeployedFaied]="isFailed"
+  [isDeployedPending]="isPending"
+  [isD]="true"
+>
+  ></app-pop-up>

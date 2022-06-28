@@ -8,6 +8,7 @@ import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { VerseApp } from 'src/app/blockchain/verse_application';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import {AssetReqService} from "../../services/APIs/assets-req.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-tokens',
@@ -30,7 +31,8 @@ export class TokensComponent implements OnInit {
     private fb: FormBuilder,
     private deployedApp: DeployedApp,
     private verseApp: VerseApp,
-    private assetReqService: AssetReqService
+    private assetReqService: AssetReqService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -87,22 +89,42 @@ export class TokensComponent implements OnInit {
   }
 
   search($event: Event) {
-    this.projectsReqService.getAllProjects(this.searchInput.value, 1).subscribe(
-      (res) => {
-        this.arr = []
-        res.forEach(async element => {
-          if(element.asset.assetId == ps.platform.verse_asset_id) {
-            let bcInfo = await this.verseApp.getBlockchainInformation();
-            this.arr.push([element, bcInfo])
-          } else if(element.asset.smartProperties){
-            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
-            this.arr.push([element, bcInfo])
-          } else {
-            this.arr.push([element, undefined])
-          }
-        });
-        console.log(this.arr);
-      }
-    )
+    this.arr = []
+    if (this.searchInput.value) {
+      this.projectsReqService.getAllProjects( '', 1, this.searchInput.value).subscribe(
+        (res) => {
+          this.arr = []
+          res.forEach(async element => {
+            if(element.asset.assetId == ps.platform.verse_asset_id) {
+              let bcInfo = await this.verseApp.getBlockchainInformation();
+              this.arr.push([element, bcInfo])
+            } else if(element.asset.smartProperties){
+              let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
+              this.arr.push([element, bcInfo])
+            } else {
+              this.arr.push([element, undefined])
+            }
+          });
+        }
+      )
+    } else {
+      this.projectsReqService.getAllProjects('a-z', 1).subscribe(
+        (res) => {
+          this.arr = []
+          res.forEach(async element => {
+            if(element.asset.assetId == ps.platform.verse_asset_id) {
+              let bcInfo = await this.verseApp.getBlockchainInformation();
+              this.arr.push([element, bcInfo])
+            } else if(element.asset.smartProperties){
+              let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
+              this.arr.push([element, bcInfo])
+            } else {
+              this.arr.push([element, undefined])
+            }
+          });
+          console.log(this.arr);
+        }
+      )
+    }
   }
 }

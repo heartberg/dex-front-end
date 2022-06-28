@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { SessionWallet } from 'algorand-session-wallet';
 import { Algodv2 } from 'algosdk';
@@ -20,7 +20,7 @@ import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-
   templateUrl: './my-presale.component.html',
   styleUrls: ['./my-presale.component.scss'],
 })
-export class MyPresaleComponent implements OnInit {
+export class MyPresaleComponent implements OnInit, DoCheck {
   arr: [ProjectPreviewModel, PresaleBlockchainInformation][] = [];
 
   isPopUpOpen: boolean = false;
@@ -35,6 +35,13 @@ export class MyPresaleComponent implements OnInit {
   projectModel: ProjectViewModel | undefined;
   presaleData: PresaleBlockchainInformation | undefined;
   isPool: boolean = false;
+
+  //
+  finalStepApi: boolean = false;
+  Faild: boolean = false;
+  isPending: boolean = false;
+  closePopup: boolean = false;
+  //
 
   constructor(
     private projectReqService: projectReqService,
@@ -94,6 +101,26 @@ export class MyPresaleComponent implements OnInit {
     }
   }
 
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopup = true;
+      this.isPending = true;
+      this.Faild = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopup = true;
+      this.Faild = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopup = true;
+      this.finalStepApi = true;
+      this.Faild = false;
+      this.isPending = false;
+    }
+
+  }
+
   ngOnInit(): void {
     const wallet = localStorage.getItem('wallet');
     if(wallet){
@@ -107,7 +134,7 @@ export class MyPresaleComponent implements OnInit {
             let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
             this.arr.push([presaleModel, blockchainInfo])
           }
-          
+
         });
         console.log(res);
       });

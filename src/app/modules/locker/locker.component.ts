@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Algodv2 } from 'algosdk';
 import { time } from 'console';
@@ -14,7 +14,7 @@ import { WalletsConnectService } from 'src/app/services/wallets-connect.service'
   templateUrl: './locker.component.html',
   styleUrls: ['./locker.component.scss']
 })
-export class LockerComponent implements OnInit {
+export class LockerComponent implements OnInit, DoCheck {
 
   @ViewChild('Vested', {static: false})
   // @ts-ignore
@@ -37,12 +37,39 @@ export class LockerComponent implements OnInit {
   optedIn: boolean = false;
   unlocked: boolean = false;
 
+  //
+  finalStepApi: boolean = false;
+  isFailed: boolean = false;
+  isPending: boolean = false;
+  closePopupSecond: boolean = false;
+  //
+
+
   constructor(
     private locker: LockerApp,
     private walletService: WalletsConnectService,
     private fb: FormBuilder,
     private assetService: AssetReqService
   ) { }
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopupSecond = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopupSecond = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopupSecond = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+  }
 
   async ngOnInit(): Promise<void> {
 
@@ -311,6 +338,9 @@ export class LockerComponent implements OnInit {
     }
   }
 
+  closePopUp($event: boolean) {
+    this.closePopupSecond = $event;
+  }
 }
 
 
