@@ -12,7 +12,6 @@ import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayT
 import MyAlgoConnect from '@randlabs/myalgo-connect';
 import { Buffer } from 'buffer';
 import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
-import {Cookie} from "ng2-cookies";
 
 
 const client = getAlgodClient()

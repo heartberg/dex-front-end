@@ -28,7 +28,7 @@ export class LaunchpadComponent implements OnInit, DoCheck {
   wallet = localStorage.getItem('wallet');
   sessionWallet: SessionWallet | undefined;
   searchInput = this.fb.control([]);
-
+  ordering = OrderingEnum.ending
   //
   finalStepApi: boolean = false;
   isFaild: boolean = false;
@@ -124,18 +124,19 @@ export class LaunchpadComponent implements OnInit, DoCheck {
 
   getValueFromDropDown(event: string){
     console.log(event)
-    let ordering = OrderingEnum.ending
     if(event == "Finished") {
-      ordering = OrderingEnum.finished
+      this.ordering = OrderingEnum.finished
     } else if(event == "Subscription: High to Low") {
-      ordering = OrderingEnum.sub_high
+      this.ordering = OrderingEnum.sub_high
     } else if (event == "Subscription: Low to High") {
-      ordering = OrderingEnum.sub_low
+      this.ordering = OrderingEnum.sub_low
     } else if(event == "Starting Soon") {
-      ordering = OrderingEnum.starting
+      this.ordering = OrderingEnum.starting
+    } else {
+      this.ordering = OrderingEnum.ending
     }
     this.projectReqService
-      .getAllPresales(ordering, 1)
+      .getAllPresales(this.ordering, 1)
       .subscribe((res) => {
         this.array = []
         res.forEach(async (presaleModel: ProjectPreviewModel) => {
@@ -213,7 +214,7 @@ export class LaunchpadComponent implements OnInit, DoCheck {
   search($event: any) {
     if (this.searchInput.value) {
       this.projectReqService
-        .getAllPresales(OrderingEnum.ending, 1, this.searchInput.value)
+        .getAllPresales(this.ordering, 1, this.searchInput.value)
         .subscribe((res) => {
           this.array = []
           res.forEach(async (presaleModel: ProjectPreviewModel) => {
@@ -228,7 +229,7 @@ export class LaunchpadComponent implements OnInit, DoCheck {
         });
     } else {
       this.projectReqService
-        .getAllPresales(OrderingEnum.ending, 1, '')
+        .getAllPresales(this.ordering, 1, '')
         .subscribe((res) => {
           this.array = []
           res.forEach(async (presaleModel: ProjectPreviewModel) => {
