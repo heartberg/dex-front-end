@@ -115,18 +115,39 @@ export class DeployComponent implements OnInit, DoCheck {
   ];
   releasePerInterval: number = 0;
 
-  // extra form
+  // extra added for team members
   extraAdded: boolean = false;
   secondForm: boolean = false;
   thirdForm: boolean = false;
   fourthForm: boolean = false;
   fifthForm: boolean = false;
+  sixthForm: boolean = false;
+  seventhForm: boolean = false;
+  eighthForm: boolean = false;
+  ninethForm: boolean = false;
+  tenthForm: boolean = false;
+  eleventhForm: boolean = false;
+  twelvethForm: boolean = false;
+  thirteenthForm: boolean = false;
+  fourtheenthForm: boolean = false;
+  fifteenthForm: boolean = false;
+  // #extra added for team members
 
   teamInfoOptionSecond: FormGroup;
   teamInfoOptionThird: FormGroup | any = {};
   teamInfoOptionFourth: FormGroup | any = {};
   teamInfoOptionFifth: FormGroup | any= {};
-
+  teamInfoOptionSixth: FormGroup | any= {};
+  // TIO = teamInfoOption
+  TIOSeventh: FormGroup | any= {};
+  TIOEighth: FormGroup | any= {};
+  TIONineth: FormGroup | any= {};
+  TIOTenth: FormGroup | any= {};
+  TIOEleventh: FormGroup | any= {};
+  TIOTwelveth: FormGroup | any= {};
+  TIOThirteenth: FormGroup | any= {};
+  TIOFourtheenth: FormGroup | any= {};
+  TIOFifteenth: FormGroup | any= {};
   teamMemberFinal: any[] = [];
 
   constructor(
@@ -246,9 +267,79 @@ export class DeployComponent implements OnInit, DoCheck {
       }
       this.fifthForm = true;
     } else if (i === 5) {
-      this.teamMemberFinal.push(this.teamInfoOptionFifth.value)
-      return
+      if (!this.sixthForm) {
+        this.teamMemberFinal.push(this.teamInfoOptionFifth.value)
+      } else {
+        return;
+      }
+      this.sixthForm = true;
+    } else if (i === 6) {
+      if (!this.seventhForm) {
+        this.teamMemberFinal.push(this.teamInfoOptionSixth.value)
+      } else {
+        return;
+      }
+      this.seventhForm = true;
+    } else if (i === 7) {
+      if (!this.eighthForm) {
+        this.teamMemberFinal.push(this.TIOSeventh.value)
+      } else {
+        return;
+      }
+      this.eighthForm = true;
+    } else if (i === 8) {
+      if (!this.ninethForm) {
+        this.teamMemberFinal.push(this.TIOEighth.value)
+      } else {
+        return;
+      }
+      this.ninethForm = true;
+    } else if (i === 9) {
+      if (!this.tenthForm) {
+        this.teamMemberFinal.push(this.TIONineth.value)
+      } else {
+        return;
+      }
+      this.tenthForm = true;
+    } else if (i === 10) {
+      if (!this.eleventhForm) {
+        this.teamMemberFinal.push(this.TIOTenth.value)
+      } else {
+        return;
+      }
+      this.eleventhForm = true;
+    } else if (i === 11) {
+      if (!this.twelvethForm) {
+        this.teamMemberFinal.push(this.TIOEleventh.value)
+      } else {
+        return;
+      }
+      this.twelvethForm = true;
+    } else if (i === 12) {
+      if (!this.thirteenthForm) {
+        this.teamMemberFinal.push(this.TIOTwelveth.value)
+      } else {
+        return;
+      }
+      this.thirteenthForm = true;
+    } else if (i === 13) {
+      if (!this.fourtheenthForm) {
+        this.teamMemberFinal.push(this.TIOThirteenth.value)
+      } else {
+        return;
+      }
+      this.fourtheenthForm = true;
+    } else if (i === 14) {
+      if (!this.fifteenthForm) {
+        this.teamMemberFinal.push(this.TIOFourtheenth.value)
+      } else {
+        return;
+      }
+      this.fifteenthForm = true;
+    } else if (i === 15) {
+      this.teamMemberFinal.push(this.TIOFifteenth.value);
     }
+
   }
 
   removeExtraField(i: number) {
@@ -276,6 +367,66 @@ export class DeployComponent implements OnInit, DoCheck {
       this.teamInfoOptionFifth.value.social = '';
       this.teamInfoOptionFifth.value.position = '';
       this.teamInfoOptionFifth.value.teamInfoImage = '';
+    } else if (i === 6) {
+      this.sixthForm = false;
+      this.teamInfoOptionSixth.value.name = '';
+      this.teamInfoOptionSixth.value.social = '';
+      this.teamInfoOptionSixth.value.position = '';
+      this.teamInfoOptionSixth.value.teamInfoImage = '';
+    } else if (i === 7) {
+      this.seventhForm = false;
+      this.TIOSeventh.value.name = '';
+      this.TIOSeventh.value.social = '';
+      this.TIOSeventh.value.position = '';
+      this.TIOSeventh.value.teamInfoImage = '';
+    } else if (i === 8) {
+      this.eighthForm = false;
+      this.TIOEighth.value.name = '';
+      this.TIOEighth.value.social = '';
+      this.TIOEighth.value.position = '';
+      this.TIOEighth.value.teamInfoImage = '';
+    } else if (i === 9) {
+      this.ninethForm = false;
+      this.TIONineth.value.name = '';
+      this.TIONineth.value.social = '';
+      this.TIONineth.value.position = '';
+      this.TIONineth.value.teamInfoImage = '';
+    } else if (i === 10) {
+      this.tenthForm = false;
+      this.TIOTenth.value.name = '';
+      this.TIOTenth.value.social = '';
+      this.TIOTenth.value.position = '';
+      this.TIOTenth.value.teamInfoImage = '';
+    } else if (i === 11) {
+      this.eleventhForm = false;
+      this.TIOEleventh.value.name = '';
+      this.TIOEleventh.value.social = '';
+      this.TIOEleventh.value.position = '';
+      this.TIOEleventh.value.teamInfoImage = '';
+    } else if (i === 12) {
+      this.twelvethForm = false;
+      this.TIOTwelveth.value.name = '';
+      this.TIOTwelveth.value.social = '';
+      this.TIOTwelveth.value.position = '';
+      this.TIOTwelveth.value.teamInfoImage = '';
+    } else if (i === 13) {
+      this.thirteenthForm = false;
+      this.TIOThirteenth.value.name = '';
+      this.TIOThirteenth.value.social = '';
+      this.TIOThirteenth.value.position = '';
+      this.TIOThirteenth.value.teamInfoImage = '';
+    } else if (i === 14) {
+      this.fourtheenthForm = false;
+      this.TIOFourtheenth.value.name = '';
+      this.TIOFourtheenth.value.social = '';
+      this.TIOFourtheenth.value.position = '';
+      this.TIOFourtheenth.value.teamInfoImage = '';
+    } else if (i === 15) {
+      this.fifteenthForm = false;
+      this.TIOFifteenth.value.name = '';
+      this.TIOFifteenth.value.social = '';
+      this.TIOFifteenth.value.position = '';
+      this.TIOFifteenth.value.teamInfoImage = '';
     }
     i = i -1;
     this.teamMemberFinal = this.teamMemberFinal.splice(i, 1);
@@ -302,6 +453,66 @@ export class DeployComponent implements OnInit, DoCheck {
       social: '',
     });
       this.teamInfoOptionFifth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+      this.teamInfoOptionSixth = this.fb.group({
+        teamInfoImage: '',
+        name: '',
+        position: '',
+        social: '',
+      });
+    this.TIOSeventh = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOEighth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIONineth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOTenth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOEleventh = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOTwelveth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOThirteenth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOFourtheenth = this.fb.group({
+      teamInfoImage: '',
+      name: '',
+      position: '',
+      social: '',
+    });
+    this.TIOFifteenth = this.fb.group({
       teamInfoImage: '',
       name: '',
       position: '',
@@ -604,13 +815,18 @@ export class DeployComponent implements OnInit, DoCheck {
 
   async onSubmit() {
     this.teamMemberFinal = [];
-    this.teamMemberFinal.push(this.deployFormGroup.value.teamInfoOptionGroup, this.teamInfoOptionSecond.value, this.teamInfoOptionThird.value, this.teamInfoOptionFourth.value, this.teamInfoOptionFifth.value);
+    this.teamMemberFinal.push(this.deployFormGroup.value.teamInfoOptionGroup, this.teamInfoOptionSecond.value, this.teamInfoOptionThird.value, this.teamInfoOptionFourth.value, this.teamInfoOptionFifth.value, this.teamInfoOptionSixth.value, this.TIOSeventh.value, this.TIOEighth.value, this.TIONineth.value, this.TIOTenth.value, this.TIOEleventh.value, this.TIOTwelveth.value, this.TIOThirteenth.value, this.TIOFourtheenth.value, this.TIOFifteenth.value);
+    let finalArr: any[] = [];
     this.teamMemberFinal.filter((item: {name: string, social: string, position: string, teamInfoImage: string}, index: number) => {
       if (!item.name.length) {
-        this.teamMemberFinal.splice(index, 1)
+        this.teamMemberFinal.splice(index, 1);
       } else {
+        finalArr.push(this.teamMemberFinal[index])
       }
     })
+    this.teamMemberFinal = [];
+    this.teamMemberFinal = [...finalArr];
+    console.log(this.teamMemberFinal, 'final');
     localStorage.setItem('teamArray', JSON.stringify(this.teamMemberFinal));
     // end of extra field
     this.sessionWallet = this.walletProviderService.sessionWallet;
