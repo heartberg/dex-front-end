@@ -364,20 +364,21 @@
                 </div>
                 <div *ngIf="button.assetId != 0 && button.assetId != verseAssetId">
                   <ng-container
-                    (click)="addToFavourites(button)"
                     *ngIf="!button.isFavorite"
                   >
                     <img
                       src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
                       alt=""
                       style="width: 23px; height: 23px"
+                      (click)="addToFavourites(button)"
                     />
                   </ng-container>
-                  <ng-container *ngIf="button.isFavorite" (click)="removeFromFavourites(button)">
+                  <ng-container *ngIf="button.isFavorite">
                     <img
                       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                       alt=""
                       style="width: 23px; height: 23px"
+                      (click)="removeFromFavourites(button)"
                     />
                   </ng-container>
                 </div>

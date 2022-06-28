@@ -40,7 +40,9 @@ export class SendComponent implements OnInit, DoCheck {
     private walletService: WalletsConnectService,
     private app: DeployedApp,
     private verseApp: VerseApp
-  ) {}
+  ) {
+    this.wallet = this.walletService.sessionWallet;
+  }
 
   sendForm = this.fb.group({
     sendInput: [],

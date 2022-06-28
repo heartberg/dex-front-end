@@ -120,7 +120,7 @@ export class MyPresaleComponent implements OnInit {
 
   formatDate(timestamp: number): string {
     let date = new Date(timestamp * 1000)
-    console.log(date)
+    //console.log(date)
     let minutes = date.getMinutes().toString()
     if(date.getMinutes() < 10) {
       minutes = "0" + minutes
@@ -152,7 +152,25 @@ export class MyPresaleComponent implements OnInit {
 
   isOngoing(blockchainInfo: PresaleBlockchainInformation): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
-    if(blockchainInfo.saleEnd > currentTimeStamp) {
+    if(blockchainInfo.saleEnd > currentTimeStamp && blockchainInfo.saleStart < currentTimeStamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  hasEnded(blockchainInfo: PresaleBlockchainInformation): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(blockchainInfo.saleEnd < currentTimeStamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  hasStarted(blockchainInfo: PresaleBlockchainInformation): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(blockchainInfo.saleStart < currentTimeStamp) {
       return true;
     } else {
       return false;

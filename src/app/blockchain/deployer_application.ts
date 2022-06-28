@@ -703,7 +703,8 @@ export class DeployedApp {
   }
 
   async resetupPresale(wallet: SessionWallet, softCap: number, hardCap: number, presaleStart: number, presaleEnd: number, walletCap: number,
-    toLiq: number, tradingStart: number, presaleTokenAmount: number, tokenLiquidity: number, algoLiquidity: number, contractId: number, assetId: number): Promise<any> {
+    toLiq: number, tradingStart: number, presaleTokenAmount: number, tokenLiquidity: number, algoLiquidity: number, contractId: number, assetId: number,
+    release: number | undefined, releaseInterval: number | undefined, releaseIntervalNumbers: number | undefined): Promise<any> {
     
       let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
 
@@ -743,6 +744,11 @@ export class DeployedApp {
         algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd), algosdk.encodeUint64(walletCap),
         algosdk.encodeUint64(toLiq), algosdk.encodeUint64(tradingStart), algosdk.encodeUint64(presaleTokenAmount), algosdk.encodeUint64(extraFeeTime)]
       const assets = [assetId]
+      
+      if(release && releaseInterval && releaseIntervalNumbers) {
+        args.push(algosdk.encodeUint64(release), algosdk.encodeUint64(releaseInterval), algosdk.encodeUint64(releaseIntervalNumbers))
+      }
+      
       const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, contractId, args, undefined, assets, accs))
       
       let result;
@@ -1137,6 +1143,7 @@ export class DeployedApp {
       contractId: contractId,
       presaleId: "",
       isOptedIn: false,
+      userContribution: 0
     }
   }
 

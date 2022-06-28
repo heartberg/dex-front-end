@@ -451,8 +451,8 @@
         </p>
       </div>
       <form [formGroup]="myPresaleRestartForm">
-        <div style="margin-top: 25px" class="d-flex justify-content-between">
-          <div class="d-flex flex-column">
+        <div style="margin-top: 25px;" class="d-flex justify-content-between">
+          <div class="d-flex flex-column" style="margin-right: 25px;">
             <!-- left inputs -->
             <div class="input-box">
               <label for="presale-start">Presale Start</label>
@@ -474,14 +474,19 @@
               <label for="tokenInLiquidity">Token in Liquidity</label>
               <input formControlName="tokenInLiquidity" id="tokenInLiquidity" type="number" placeholder="{{presaleData![0]?.tokenLiq}}"/>
             </div>
-            <div class="input-box" style="margin-bottom: 12px; margin-top: 5px">
-              <h4>Presale Price: </h4>
-                <span class="color-violet">{{presalePrice}} Algo/Token</span>
+            <div class="input-box" style="margin-bottom: 12px; margin-top: 25px">
+              <h4>Presale Price </h4>
+                <span class="color-violet">{{presalePrice}} Algo</span>
             </div>
-            <div class="input-box">
-              <h4>Initial Token Price</h4>
-              <span class="color-violet">{{minInitialPrice.toFixed(6)}} Algo/Token - {{maxInitialPrice.toFixed(6)}} Algo/Token</span>
+            <div class="input-box" style="margin-bottom: 12px;">
+              <h4 style="margin-right: 15px;">Initial Token Price</h4>
+              <span class="color-violet">{{minInitialPrice.toFixed(6)}} Algo - {{maxInitialPrice.toFixed(6)}} Algo</span>
             </div>
+            <div class="input-box" *ngIf="isCheckedVested">
+              <h4>Release Per Interval</h4>
+              <span class="color-violet">{{restartReleasePerInterval.toFixed(2)}} %</span>
+            </div>
+
           </div>
           <div class="d-flex flex-column">
             <div class="input-box">
@@ -503,6 +508,44 @@
             <div class="input-box">
               <label for="wallet-cap">Wallet Cap</label>
               <input formControlName="walletCap" id="wallet-cap" type="number" placeholder="{{presaleData![0]?.walletCap}}"/>
+            </div>
+            <div
+            class="d-flex align-items-center"
+            style="margin-top: 25px;"
+            [ngStyle]="{'margin-bottom': isCheckedVested ? '8px' : '8px'}"
+            (click)="activateVestedSection()"
+            >
+              <input
+                type="checkbox"
+                name="checkVested"
+                id="checkVested"
+                #checkVested
+                formControlName="checkVested"
+              />
+              <h3
+                for="checkVested"
+                style="
+                color: #81007f;
+                font-weight: 700;
+                margin-left: 5px;
+                margin-right: 5px;
+                cursor: pointer;
+                margin-bottom: 5px;
+              "
+              >Vested Release</h3
+              >
+            </div>
+            <div class="input-box" *ngIf="isCheckedVested">
+              <label for="release">Release</label>
+              <input formControlName="release" id="release" type="datetime-local"/>
+            </div>
+            <div class="input-box" *ngIf="isCheckedVested">
+              <label for="releaseInterval">Release Interval (Days)</label>
+              <input formControlName="releaseInterval" id="releaseInterval" type="number"/>
+            </div>
+            <div class="input-box" *ngIf="isCheckedVested">
+              <label for="releaseIntervalNumbers">Release Interval Numbers</label>
+              <input formControlName="releaseIntervalNumbers" id="releaseIntervalNumbers" type="number"/>
             </div>
             <!-- right inputs -->
           </div>

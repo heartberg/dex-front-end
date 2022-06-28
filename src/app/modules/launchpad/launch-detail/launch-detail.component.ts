@@ -23,7 +23,8 @@ export type PresaleEntryData = {
   contractId: number,
   assetId: number,
   presaleId: string,
-  isOptedIn: boolean
+  isOptedIn: boolean,
+  userContribution: number
 }
 
 export type PresaleBlockchainInformation = {
@@ -68,7 +69,8 @@ export class LaunchDetailComponent implements OnInit {
     assetId: 0,
     contractId: 0,
     presaleId: "",
-    isOptedIn: false
+    isOptedIn: false,
+    userContribution: 0
   };
 
   minLaunchPrice: number = 0;
@@ -170,10 +172,12 @@ export class LaunchDetailComponent implements OnInit {
     this.presaleEntryData = await this.deployedApp.getPresaleEntryData(contractId)
     this.presaleEntryData.presalePrice = this.presaleData.presalePrice
     this.presaleEntryData.presaleId = this.projectData.presale!.presaleId
+
     if(wallet){
       let client: AlgodClient = getAlgodClient()
       let accInfo = await client.accountInformation(wallet).do()
       this.presaleEntryData.availableAmount = accInfo['amount'] / Math.pow(10, 6)
+      this.presaleEntryData.userContribution = await getAppLocalStateByKey(client, contractId, wallet, StateKeys.presale_contribution_key)
       if(await isOptedIntoApp(wallet, contractId)){
         console.log("is opted in")
         this.presaleEntryData.isOptedIn = true

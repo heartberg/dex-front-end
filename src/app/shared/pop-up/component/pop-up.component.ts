@@ -169,13 +169,24 @@ export class PopUpComponent implements OnInit {
     hardCap: [],
     walletCap: [],
     toLiquidity: [],
+    checkVested: [],
+    release: [],
+    releaseInterval: [],
+    releaseIntervalNumbers: []
   });
+
+  @ViewChild('checkVested', {static: false})
+  // @ts-ignore
+  private checkVested: ElementRef;
+
+  isCheckedVested: boolean = false;
 
   myPresaleFairLaunchForm = this.fb.group({
     tradingStart: [],
     tokenLiq: [],
     algoLiq: [],
   });
+  restartReleasePerInterval: number = 0;
   // FORMS
   constructor(
     private _walletsConnectService: WalletsConnectService,
@@ -323,9 +334,20 @@ export class PopUpComponent implements OnInit {
       let algoInLiquidity = this.myPresaleRestartForm.get("algoInLiquidity")?.value * 1_000_000
       let walletCap = this.myPresaleRestartForm.get("walletCap")?.value * 1_000_000
       let toLiquidity = this.myPresaleRestartForm.get("toLiquidity")?.value * 100
-
-      let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity,
-        tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId)
+      
+      let vestingRelease = undefined;
+      let vestingIntervalLength = undefined
+      let vestingIntervalNumber = undefined
+      
+      if(this.isCheckedVested) {
+        vestingRelease = parseInt((new Date(this.myPresaleRestartForm.get("release")?.value).getTime() / 1000).toFixed(0))
+        vestingIntervalLength = Math.floor(this.myPresaleRestartForm.get("releaseInterval")?.value * 86400)
+        vestingIntervalNumber = this.myPresaleRestartForm.get("releaseIntervalNumbers")?.value
+        
+      }
+     let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity,
+        tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId,
+        vestingRelease, vestingIntervalLength, vestingIntervalNumber)
 
       this.presaleData![1].asset.smartProperties!.tradingStart = tradingStart
 
@@ -540,6 +562,13 @@ export class PopUpComponent implements OnInit {
       this.presalePrice = 0
     } else {
       this.presalePrice = hardCap / tokensInPresale
+    }
+
+    let releaseIntervalNumber = +this.myPresaleRestartForm.get('releaseIntervalNumbers')?.value || 0
+    if(releaseIntervalNumber > 0) {
+      this.restartReleasePerInterval = 1 / releaseIntervalNumber * 100
+    } else {
+      this.restartReleasePerInterval = 0
     }
   }
 
@@ -880,4 +909,16 @@ export class PopUpComponent implements OnInit {
       return false
     }
   }
+
+  activateVestedSection() {
+    if(this.checkVested.nativeElement.checked) {
+      this.isCheckedVested = true;
+    } else {
+      this.isCheckedVested = false;
+      this.myPresaleRestartForm.get('releaseIntervalNumber')?.setValue(null)
+      this.myPresaleRestartForm.get('release')?.setValue(null)
+      this.myPresaleRestartForm.get('releaseInterval')?.setValue(null)
+    }
+  }
+
 }

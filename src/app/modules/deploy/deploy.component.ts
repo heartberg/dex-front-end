@@ -122,7 +122,7 @@ export class DeployComponent implements OnInit, DoCheck {
   fourthForm: boolean = false;
   fifthForm: boolean = false;
 
-  teamInfoOptionSecond: FormGroup;
+  teamInfoOptionSecond: FormGroup | any = {};
   teamInfoOptionThird: FormGroup | any = {};
   teamInfoOptionFourth: FormGroup | any = {};
   teamInfoOptionFifth: FormGroup | any= {};
@@ -421,6 +421,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   blockchainObjInitialize(): DeployedAppSettings {
     let initial_algo_liq_with_fee;
+    let initial_algo_liq;
     let initial_token_liq;
     let release;
     let releaseInterval;
@@ -429,7 +430,8 @@ export class DeployComponent implements OnInit, DoCheck {
 
     let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
     if(this.presaleIsChecked){
-      initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000 / (1 - this.fee))
+      initial_algo_liq = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000)
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (1 - this.fee))
       initial_token_liq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, decimals)
       if(this.isCheckedVested) {
         release = parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
@@ -450,11 +452,13 @@ export class DeployComponent implements OnInit, DoCheck {
         vestingReleaseIntervalNumber: releaseIntervalNumber
       }
     } else {
-      initial_algo_liq_with_fee = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000 / (1 - this.fee))
+      initial_algo_liq = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000)
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (1 - this.fee))
       initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
     }
 
     let tradeStart =  parseInt((new Date(this.deployFormGroup.get('tradingStart')?.value).getTime() / 1000).toFixed(0))
+    let totalSupply = +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value
 
     let poolStart = parseInt((new Date(this.deployFormGroup.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
     let poolRewards = Math.floor(+this.deployFormGroup.get('stakingGroup.rewardPool')?.value * Math.pow(10, decimals))
@@ -463,13 +467,16 @@ export class DeployComponent implements OnInit, DoCheck {
     let rewardsPerInterval = undefined
     if(poolRewards != 0 && poolInterval != 0 && poolDuration != 0) {
       rewardsPerInterval = Math.floor(poolRewards / (poolDuration / poolInterval))
+      if(poolRewards >= 0.03 * totalSupply) {
+        initial_algo_liq_with_fee = initial_algo_liq
+      }
     }
 
     // @ts-ignore
     return this.blockchainObject = {
       extraFeeTime: +this.deployFormGroup.get('extraFeeTime')?.value,
       creator: this.sessionWallet.wallet.getDefaultAccount(),
-      totalSupply: +this.deployFormGroup.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, decimals),
+      totalSupply: totalSupply * Math.pow(10, decimals),
       buyBurn: +this.deployFormGroup.get('feesGroup.buyBurn')?.value * 100,
       sellBurn: +this.deployFormGroup.get('feesGroup.sellBurn')?.value * 100,
       transferBurn: +this.deployFormGroup.get('feesGroup.sendBurn')?.value * 100,

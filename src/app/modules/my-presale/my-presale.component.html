@@ -78,7 +78,7 @@
                 </div>
                 <div class="text-area">
                   <ng-container>
-                    <p *ngIf="isOngoing(item[1]) && !item[0].presale.toFairLaunch">
+                    <p *ngIf="isOngoing(item[1]) && !item[0].presale.toFairLaunch && hasStarted(item[1])">
                       Your Presale is ongoing.
                     </p>
                     <p *ngIf="!isOngoing(item[1]) && !item[0].presale.toFairLaunch">
@@ -92,7 +92,7 @@
                       After the Token is tradable you can remove the max buying amount anytime you want. <br>
                       And add a Distribution Pool. 
                     </p>
-                    <p *ngIf="!isFailed(item[1]) && !item[0].presale.toFairLaunch && !item[0].asset.smartProperties">
+                    <p *ngIf="!isFailed(item[1]) && !item[0].presale.toFairLaunch && !item[0].asset.smartProperties && hasEnded(item[1])">
                       Users can claim their Tokens.<br>
                       You can add a Distribution Pool. 
                     </p>

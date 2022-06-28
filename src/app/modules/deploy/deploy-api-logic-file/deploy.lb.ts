@@ -696,15 +696,23 @@ export class DeployLb {
   }
 
   initializeApiObjWithPresale(form: any): void {
-    let team = localStorage.getItem('teamArray');
-    let finalTeam = JSON.parse(team!);
+    //let team = localStorage.getItem('teamArray');
+    //let finalTeam = JSON.parse(team!);
+    let finalTeam = undefined
     console.log(form.value);
     let wallet = localStorage.getItem('wallet');
 
     let presaleStartTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleStart')?.value).getTime() / 1000).toFixed(0))
     let presaleEndTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0))
 
-    let initialAlgoLiquidityWithFee = Math.floor(+form.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value * 1_000_000 / (1 - environment.Y_FEE))
+    let initialAlgoLiq = Math.floor(+form.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value * 1_000_000)
+    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (1 - environment.Y_FEE))
+    
+    let totalSupply = +form.get('tokenInfoGroup.totalSupply')?.value
+    let stakingRewards = parseInt((new Date(form.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
+    if(stakingRewards >= 0.03 * totalSupply) {
+      initialAlgoLiquidityWithFee = initialAlgoLiq
+    }
 
     let smartProperties: SmartProperties | undefined;
     if (form.get('feesGroup.risingPriceFloor').value != null) {
@@ -770,7 +778,7 @@ export class DeployLb {
         decimals: +form.get('tokenInfoGroup.decimals')?.value,
         name: form.get('tokenInfoGroup.tokenName')?.value,
         unitName: form.get('tokenInfoGroup.unitName')?.value,
-        totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
+        totalSupply: totalSupply * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
         url: form.get('tokenInfoGroup.URL')?.value,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
@@ -803,7 +811,15 @@ export class DeployLb {
       }
     }
 
-    let initialAlgoLiquidityWithFee = Math.floor(+form.get('liquidity.algoToLiq')?.value * 1_000_000 / (1 - environment.Y_FEE))
+    let initialAlgoLiq = Math.floor(+form.get('liquidity.algoToLiq')?.value * 1_000_000)
+    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (1 - environment.Y_FEE))
+    
+    let totalSupply = +form.get('tokenInfoGroup.totalSupply')?.value
+    let stakingRewards = parseInt((new Date(form.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
+    if(stakingRewards >= 0.03 * totalSupply) {
+      initialAlgoLiquidityWithFee = initialAlgoLiq
+    }
+
     let wallet = localStorage.getItem('wallet');
     this.withoutPresaleObj = {
       description: form.get('presaleOptionsGroupDescription')?.value,
@@ -816,7 +832,7 @@ export class DeployLb {
       telegram: form.get('telegram')?.value,
       discord: form.get('discord')?.value,
       website: form.get('discord')?.value,
-      initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * environment.Y_FEE),
+      initialAlgoLiquidity: initialAlgoLiq,
       initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
       initialTokenLiquidity: +form.get('liquidity.tokensToLiq')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
       teamMembers: finalTeam,
@@ -826,7 +842,7 @@ export class DeployLb {
         decimals: +form.get('tokenInfoGroup.decimals')?.value,
         name: form.get('tokenInfoGroup.tokenName')?.value,
         unitName: form.get('tokenInfoGroup.unitName')?.value,
-        totalSupply: +form.get('tokenInfoGroup.totalSupply')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
+        totalSupply: totalSupply * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value,),
         url: form.get('tokenInfoGroup.URL')?.value,
         image: form.get('addRoadMapOptionGroup.roadmapImage')?.value,
         deployerWallet: localStorage.getItem('wallet')!,
