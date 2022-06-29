@@ -113,11 +113,11 @@ export class TokensComponent implements OnInit {
           this.arr = []
           res.forEach(async element => {
             if(element.asset.assetId == ps.platform.verse_asset_id) {
-              let bcInfo = await this.verseApp.getBlockchainInformation();
-              this.arr.push([element, bcInfo])
+              // let bcInfo = await this.verseApp.getBlockchainInformation();
+              this.arr.push([element, undefined])
             } else if(element.asset.smartProperties){
-              let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
-              this.arr.push([element, bcInfo])
+              // let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
+              this.arr.push([element, undefined])
             } else {
               this.arr.push([element, undefined])
             }
@@ -126,5 +126,8 @@ export class TokensComponent implements OnInit {
         }
       )
     }
+    let arr = [...this.arr];
+    this.arr = [];
+    this.arr = [...new Set(arr)];
   }
 }

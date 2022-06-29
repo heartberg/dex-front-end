@@ -242,6 +242,9 @@ export class LaunchpadComponent implements OnInit, DoCheck {
           });
         });
     }
+    let arr = [...this.array];
+    this.array = [];
+    this.array = [...new Set(arr)];
   }
 
   closePopUp($event: boolean) {
