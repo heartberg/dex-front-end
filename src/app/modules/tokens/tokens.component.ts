@@ -16,9 +16,9 @@ import {Router} from "@angular/router";
   styleUrls: ['./tokens.component.scss']
 })
 export class TokensComponent implements OnInit {
-
-
-
+  modalScrollDistance = 1;
+  modalScrollThrottle = 50;
+  page: number = 1;
   arr: [ProjectPreviewModel, BlockchainInformation?][] = [];
 
   public isActiveFirst: boolean = false;
@@ -33,7 +33,9 @@ export class TokensComponent implements OnInit {
     private verseApp: VerseApp,
     private assetReqService: AssetReqService,
     private router: Router
-  ) { }
+  ) {
+
+  }
 
   ngOnInit(): void {
     this.projectsReqService.getAllProjects('a-z', 1).subscribe(
@@ -129,5 +131,24 @@ export class TokensComponent implements OnInit {
     let arr = [...this.arr];
     this.arr = [];
     this.arr = [...new Set(arr)];
+  }
+
+  onModalScrollDown() {
+    this.page++;
+    this.projectsReqService.getAllProjects('a-z', this.page).subscribe(
+      (res) => {
+        res.forEach(async element => {
+          if(element.asset.assetId == ps.platform.verse_asset_id) {
+            let bcInfo = await this.verseApp.getBlockchainInformation();
+            this.arr.push([element, bcInfo])
+          } else if(element.asset.smartProperties){
+            let bcInfo = await this.deployedApp.getBlockchainInformation(element.asset.smartProperties!.contractId)
+            this.arr.push([element, bcInfo])
+          } else {
+            this.arr.push([element, undefined])
+          }
+        });
+      }
+    )
   }
 }
