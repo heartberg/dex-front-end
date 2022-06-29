@@ -256,8 +256,8 @@ export class PopUpComponent implements OnInit {
       this.availableAmountForDistribution = asset['amount'] / Math.pow(10, this.projectForDistributionPool!.asset.decimals)
     }
 
-    if(this.isTradeBacking){
-      console.log("is trade backing")
+    if(this.isTradeLendVerse){
+      console.log("is trade lending verse")
       await this.checkOptedInBackingContract()
       await this.checkOptInBackingTokens()
     }

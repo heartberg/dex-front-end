@@ -89,7 +89,7 @@ export class TradeComponent implements OnInit {
   // trade popup situations
   isTradeLend: boolean = false;
   isTradeBacking: boolean = false;
-  isTradeLendVerse: boolean = false;
+  isTradeLendVerse: boolean = true;
   isTradeBackingVerse: boolean = false;
   // trade popup situations
 
@@ -322,6 +322,8 @@ export class TradeComponent implements OnInit {
 
   async openPopUp() {
     await this.getSmartToolData()
+    console.log(this.isTradeLendVerse)
+    console.log(this.isTradeBackingVerse)
     this.isPopUpOpen = true;
   }
 
@@ -338,9 +340,13 @@ export class TradeComponent implements OnInit {
     if ($event.assetId === ps.platform.verse_asset_id) {
       this.isTradeLendVerse = true;
       this.isTradeBackingVerse = false;
+      this.isTradeLend = false;
+      this.isTradeBacking = false;
     } else if ($event.assetId !== ps.platform.verse_asset_id) {
       this.isTradeLend = true;
       this.isTradeBacking = false;
+      this.isTradeLendVerse = false;
+      this.isTradeBackingVerse = false;
     }
 
     if ($event.assetId !== 0 && index === 1) {
