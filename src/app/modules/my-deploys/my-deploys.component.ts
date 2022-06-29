@@ -107,7 +107,14 @@ export class MyDeploysComponent implements OnInit, DoCheck {
   }
 
   async isRemoveMaxBuy(model: ProjectPreviewModel): Promise<boolean> {
-    let hasMaxBuy = await this.app.hasMaxBuy(model.asset.smartProperties!.contractId)
+    
+    let contractId = 0
+    let hasMaxBuy = false
+    if(model.asset.smartProperties) {
+      contractId = model.asset.smartProperties!.contractId
+      hasMaxBuy = await this.app.hasMaxBuy(model.asset.smartProperties!.contractId)
+    }
+
     return model.setup && model.burnOptIn && model.minted && hasMaxBuy
   }
 

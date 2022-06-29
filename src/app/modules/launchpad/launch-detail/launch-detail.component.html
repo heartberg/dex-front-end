@@ -74,6 +74,9 @@
                 <h6>Tokens in Presale: </h6>
                 <span>{{presaleData.tokensInPresale}} {{projectData.asset.unitName}} ({{presaleData.tokensInPresale / projectData.asset.totalSupply * pow(projectData.asset.decimals) * 100}}% of total supply)</span>
               </div>
+              <div class="d-flex" *ngIf="projectData.presale!.toFairLaunch">
+                <h6>Presale was converted to Fairlaunch </h6>
+              </div>
             </div>
           </div>
           </div>
@@ -108,7 +111,7 @@
               <span>Contribution:</span> <span>{{(userAllocation / pow(6)).toFixed(2)}} Algo</span>
             </div>
             <div class="button">
-              <button class="btn-secondary-costum" *ngIf="!claimState.isFinished && claimState.hasStarted" [class.disable-btn]="!claimState.canParticipate" (click)="openPopUp()">
+              <button class="btn-secondary-costum" *ngIf="claimState.hasStarted && !claimState.isFinished" [class.disable-btn]="!claimState.canParticipate" (click)="openPopUp()">
                 Participate
               </button>
             </div>
@@ -216,7 +219,7 @@
               </div>
             </div>
           </div>
-          <div class="third-section">
+          <div class="third-section" *ngIf="projectData.teamMembers.length != 0">
             <h3>Team</h3>
             <div class="row">
               <div class="col-md-6">
@@ -253,7 +256,7 @@
             </div>
             <div class="col-md-6"></div>
           </div>
-          <div class="fourth-section">
+          <div class="fourth-section" style="margin-top: 15px;">
             <h3>Roadmap</h3>
             <div class="roadmap-container">
               <img

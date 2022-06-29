@@ -16,10 +16,11 @@
                   <img style="width: 65%;"
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
                     alt="">
-                  <span *ngIf="!isFailed(item[1]) && item[1].totalRaised != item[1].hardCap && !item[0].presale.toFairLaunch && !isOngoing(item[1])" class="ended-mark color-violet">ENDED</span>
-                  <span *ngIf="!isFailed(item[1]) && item[1].totalRaised == item[1].hardCap && !item[0].presale.toFairLaunch" class="ended-mark color-violet">SOLD OUT</span>
+                  <span *ngIf="!isFailed(item[1]) && item[1].totalRaised != item[1].hardCap && !item[0].presale.toFairLaunch && hasEnded(item[1])" class="ended-mark color-violet">ENDED</span>
+                  <span *ngIf="!isFailed(item[1]) && item[1].totalRaised == item[1].hardCap && !item[0].presale.toFairLaunch && hasEnded(item[1])" class="ended-mark color-violet">SOLD OUT</span>
                   <span *ngIf="isFailed(item[1]) && !item[0].presale.toFairLaunch" class="ended-mark color-violet">FAILED</span>
-                  <span *ngIf="isOngoing(item[1]) && !item[0].presale.toFairLaunch" class="ended-mark color-violet">OPEN</span>
+                  <span *ngIf="hasStarted(item[1]) && !hasEnded(item[1]) && !item[0].presale.toFairLaunch" class="ended-mark color-violet">OPEN</span>
+                  <span *ngIf="!hasStarted(item[1]) && !item[0].presale.toFairLaunch" class="ended-mark color-violet">STARTING</span>
                   <span *ngIf="item[0].presale.toFairLaunch" class="ended-mark color-violet">FAIRLAUNCH</span>
                 </div>
               </div>
@@ -78,16 +79,19 @@
                 </div>
                 <div class="text-area">
                   <ng-container>
-                    <p *ngIf="isOngoing(item[1]) && !item[0].presale.toFairLaunch && hasStarted(item[1])">
+                    <p *ngIf="!hasStarted(item[1]) && !item[0].presale.toFairLaunch">
+                      Presale starting soon!
+                    </p>
+                    <p *ngIf="!hasEnded(item[1]) && !item[0].presale.toFairLaunch && hasStarted(item[1])">
                       Your Presale is ongoing.
                     </p>
-                    <p *ngIf="!isOngoing(item[1]) && !item[0].presale.toFairLaunch">
+                    <p *ngIf="hasEnded(item[1]) && !item[0].presale.toFairLaunch">
                       Your Presale ended.
                     </p>
                     <p *ngIf="item[0].presale.toFairLaunch" >
                       Your Presale ended. And is converted to a Fair Launch.
                     </p>
-                    <p *ngIf="!isFailed(item[1]) && !item[0].presale.toFairLaunch && item[0].asset.smartProperties">
+                    <p *ngIf="hasEnded(item[1]) && !isFailed(item[1]) && !item[0].presale.toFairLaunch && item[0].asset.smartProperties">
                       Users can claim their Tokens.<br>
                       After the Token is tradable you can remove the max buying amount anytime you want. <br>
                       And add a Distribution Pool.
@@ -96,14 +100,14 @@
                       Users can claim their Tokens.<br>
                       You can add a Distribution Pool.
                     </p>
-                    <p *ngIf="isFailed(item[1]) && !item[0].presale.toFairLaunch">
+                    <p *ngIf="hasEnded(item[1]) && isFailed(item[1]) && !item[0].presale.toFairLaunch">
                       Your Presale failed, you can resetup a new Presale with better conditions for your participants or convert it into a FairLaunch.
                       Users participated can claim their comitted Algo before a new presale starts or leave them in
                       the contract to have a guaranteed allocation in your next presale.
                     </p>
                   </ng-container>
                 </div>
-                <div class="btn-container d-flex flex-column" *ngIf="!isOngoing(item[1]) && !isFailed(item[1])">
+                <div class="btn-container d-flex flex-column" *ngIf="hasEnded(item[1]) && !isFailed(item[1]) || item[0].presale.toFairLaunch">
                   <button *ngIf="item[0].asset.smartProperties" (click)="removeMaxBuy(item[0].asset.assetId, item[0].asset.smartProperties!.contractId)" class="bottom-btn btn-secondary-costum">
                     Remove Max Buy
                   </button>
@@ -111,11 +115,11 @@
                     Add Distribution Pool
                   </button>
                 </div>
-                <div class="btn-container d-flex flex-column" *ngIf="!isOngoing(item[1]) && isFailed(item[1])">
+                <div class="btn-container d-flex flex-column" *ngIf="hasEnded(item[1]) && isFailed(item[1]) && !item[0].presale.toFairLaunch">
                   <button (click)="openPopUp('restart', item[0])" class="bottom-btn btn-secondary-costum">
                     Restart Presale
                   </button>
-                  <button *ngIf="item[0].asset.smartProperties" (click)="openPopUp('fair', item[0])" class="bottom-btn btn-secondary-costum" >
+                  <button *ngIf="item[0].asset.smartProperties && !item[0].presale.toFairLaunch" (click)="openPopUp('fair', item[0])" class="bottom-btn btn-secondary-costum" >
                     Fair Launch
                   </button>
                 </div>

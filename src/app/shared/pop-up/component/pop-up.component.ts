@@ -320,7 +320,9 @@ export class PopUpComponent implements OnInit {
   // #tradelendVerse
 
   async onSubmit(formName: string) {
+    console.log(this.presaleData![0])
     console.log(this.presaleData![1])
+    console.log(this.myPresaleRestartForm.value)
     let wallet = this._walletsConnectService.sessionWallet!
     if (formName === 'myPresaleRestartForm') {
       //this.makeRequest.next(this.myPresaleRestartForm);

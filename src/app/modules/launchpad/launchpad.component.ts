@@ -184,9 +184,18 @@ export class LaunchpadComponent implements OnInit, DoCheck {
     }
   }
 
-  isOngoing(blockchainInfo: PresaleBlockchainInformation): boolean {
+  hasStarted(blockchainInfo: PresaleBlockchainInformation): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
-    if(blockchainInfo.saleEnd > currentTimeStamp) {
+    if(blockchainInfo.saleStart < currentTimeStamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  hasEnded(blockchainInfo: PresaleBlockchainInformation): boolean {
+    let currentTimeStamp = Math.floor(Date.now() / 1000);
+    if(blockchainInfo.saleEnd < currentTimeStamp) {
       return true;
     } else {
       return false;

@@ -195,7 +195,7 @@
               </div>
             </div>
           </div>
-          <div class="third-section right-section">
+          <div class="third-section right-section" *ngIf="projectData.teamMembers.length != 0">
             <h3>Team</h3>
             <div class="row">
               <div class="col-md-6">
@@ -216,7 +216,7 @@
 
           </div>
         </div>
-        <div class="fourth-section right-section">
+        <div class="fourth-section right-section" style="margin-top: 25px;">
           <h3>Roadmap</h3>
           <span>{{projectData?.roadmap}}</span>
           <div class="roadmap-container">
