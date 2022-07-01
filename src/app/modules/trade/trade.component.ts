@@ -342,7 +342,7 @@ export class TradeComponent implements OnInit {
       this.isTradeBackingVerse = false;
       this.isTradeLend = false;
       this.isTradeBacking = false;
-    } else if ($event.assetId !== ps.platform.verse_asset_id) {
+    } else if ($event.assetId !== ps.platform.verse_asset_id && $event.assetId != 0) {
       this.isTradeLend = true;
       this.isTradeBacking = false;
       this.isTradeLendVerse = false;

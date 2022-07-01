@@ -131,8 +131,8 @@ export class StakingUtils {
             }
             if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
                 optedIn = true
-                userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key)
-                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_algo_borrowed_key)
+                userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key) / Math.pow(10, ps.platform.verse_decimals)
+                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_algo_borrowed_key) / Math.pow(10, 6)
             }
         }
         

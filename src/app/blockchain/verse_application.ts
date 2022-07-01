@@ -9,7 +9,7 @@ import {
     get_asa_xfer_txn,
     get_asa_optin_txn
 } from "./transactions"
-import algosdk, { Algodv2, Transaction } from 'algosdk';
+import algosdk, { Algodv2, getApplicationAddress, Transaction } from 'algosdk';
 import { 
     BlockchainInformation,
     platform_settings as ps
@@ -19,16 +19,31 @@ import { Injectable } from "@angular/core";
 import { AssetViewModel } from "../models/assetViewModel"
 import { BlockchainTrackInfo } from "../modules/track/track.component";
 import { backingStateKeys, Method, verseStateKeys } from "./keys";
+import { sign } from "crypto";
+import { getAppLocalStateByKey } from "../services/utils.algo";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
-
+export type BackingTokenInfo = {
+    name: string,
+    totalBacking: number,
+    backingPerToken: number,
+    assetId: number,
+    output: number,
+    input: number,
+    userBorrowed: number,
+    currentMaxBorrow: number,
+    userHolding: number,
+    assetDecimals: number,
+    isChecked: boolean
+}
 
 @Injectable({
     providedIn: 'root',
   })
 
 export class VerseApp {
+
     constructor(){
     }
 
@@ -146,6 +161,7 @@ export class VerseApp {
                 console.log(key)
                 console.log(assetId)
                 assets.push(assetId)
+                suggested.fee += algosdk.ALGORAND_MIN_TX_FEE
             }
         }
         
@@ -158,27 +174,117 @@ export class VerseApp {
         return result
     }
 
+    async getBackingTokens(wallet: string | undefined): Promise<[BackingTokenInfo]> {
+        let client = getAlgodClient()
+        let globalState = StateToObj(await getGlobalState(ps.platform.backing_id), backingStateKeys)
+        let verseGlobalState = StateToObj(await getGlobalState(ps.platform.verse_app_id), verseStateKeys)
+        let totalSupply = verseGlobalState[verseStateKeys.total_supply_key]['i'] / Math.pow(10, ps.platform.verse_decimals)
+        console.log(totalSupply)
+        let userSupplied = 0
+        if(wallet) {
+            userSupplied = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, backingStateKeys.user_supplied_key) / Math.pow(10, ps.platform.verse_decimals)
+            console.log("usersupplied", userSupplied)
+        }
+        
+        let accInfo = await client.accountInformation(getApplicationAddress(ps.platform.backing_id)).do()
+        console.log(accInfo)
+        console.log(globalState)
 
-    async borrow(wallet: SessionWallet , tokenAmount: bigint, assetIds: number[]): Promise<boolean> {
+        const keys = Object.values(backingStateKeys).filter((v) => v.startsWith("a"))
+        let assetIds: any = []
+        keys.forEach(key => {
+            if(globalState[key]['i'] != 0) {
+                assetIds.push(globalState[key]['i'])
+            }
+        });
+        console.log(assetIds)
+        let userInfo: Record<string, any>;
+        if(wallet) {
+            userInfo = await client.accountInformation(wallet).do()
+            console.log(userInfo['assets'])
+        }
+        let assetInfos: any = []
+        let tokens: any = []
+        let index = 1
+        assetIds.forEach(async (assetId: number) => {
+            let assetInfo = await client.getAssetByID(assetId).do()
+            console.log("borrowed asset: ", index, globalState["tb"+index]['i'])
+            console.log(accInfo['assets'].find((a: any) => {return a['asset-id'] == assetId})['amount'])
+            let holding = (accInfo['assets'].find((a: any) => {return a['asset-id'] == assetId})['amount'] + globalState["tb"+index]['i']) / Math.pow(10, assetInfo['params']['decimals'])
+            let backingPerToken = holding / totalSupply
+            let userBorrowed = 0
+            let userMaxBorrow = 0
+            let userHolding = 0
+            if(wallet) {
+                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, "ub" + index) / Math.pow(10, assetInfo['params']['decimals'])
+                userMaxBorrow = parseFloat((backingPerToken * userSupplied - userBorrowed).toFixed(assetInfo['params']['decimals']))
+                let userAssetInfo = userInfo!['assets'].find((a: any) => {return a['asset-id'] == assetId})
+                if(userAssetInfo) {
+                    userHolding = userAssetInfo['amount']
+                }
+                console.log("holding: ", userHolding)
+            }
+            index++
+            tokens.push({
+                name: assetInfo['params']['name'],
+                assetDecimals: assetInfo['params']['decimals'],
+                totalBacking: holding / Math.pow(10, assetInfo['params']['decimals']),
+                backingPerToken: backingPerToken,
+                assetId: assetId,
+                output: userMaxBorrow,
+                currentMaxBorrow: userMaxBorrow,
+                input: 0,
+                userHolding: userHolding,
+                userBorrowed: userBorrowed,
+                isChecked: false
+            })
+        });
+        console.log(tokens)
+        return tokens
+    }
+
+    async supply(wallet: SessionWallet, tokenAmount: number) {
         const suggested = await getSuggested(10)
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE 
-        suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
-        const args = [new Uint8Array(Buffer.from(Method.Borrow)), algosdk.encodeUint64(tokenAmount)]
-        const assets = [ps.platform.verse_asset_id]
-        assetIds.forEach(id => {
-            assets.push(id)
-        });
+        const payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.backing_addr, 2000))
 
-        const borrow = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, undefined))
-        const [signed] = await wallet.signTxn([borrow])
-        const result = await sendWait([signed])
+        const args = [new Uint8Array(Buffer.from(Method.Supply)), algosdk.encodeUint64(tokenAmount)]
+        const assets = [ps.platform.verse_asset_id]
+        const apps = [ps.platform.verse_app_id]
+
+        const supply = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, apps, assets, undefined))
+        const group = [payTxn, supply]
+        algosdk.assignGroupID(group)
+        const signed = await wallet.signTxn(group)
+        const result = await sendWait(signed)
 
         return result
     }
 
-    async repay(wallet: SessionWallet , algoAmount: bigint, assetIds: number[], assetAmount: number[]): Promise<boolean> {
+    async borrow(wallet: SessionWallet, assetIds: number[]): Promise<boolean> {
+        const suggested = await getSuggested(10)
+        suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE 
+        suggested.flatFee = true
+        const addr = wallet.getDefaultAccount()
+        
+        const args = [new Uint8Array(Buffer.from(Method.Borrow)), new Uint8Array(Buffer.from("algo"))]
+        
+        const apps = [ps.platform.verse_app_id]
+        let assets = [ps.platform.verse_asset_id]
+        assetIds.forEach(id => {
+            assets.push(id)
+            suggested.fee += algosdk.ALGORAND_MIN_TX_FEE
+        });
+        console.log(assetIds)
+        const borrow = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, apps, assets, undefined))
+        const signed = await wallet.signTxn([borrow])
+        const result = await sendWait(signed)
+
+        return result
+    }
+
+    async repay(wallet: SessionWallet , algoAmount: number, assetIds: number[], assetAmount: number[]): Promise<boolean> {
         if(assetAmount.length != assetIds.length) return false
 
         const suggested = await getSuggested(10)
@@ -197,9 +303,9 @@ export class VerseApp {
         }
 
         if(algoAmount > 0){
-            const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.verse_app_addr, algoAmount))
+            const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.backing_addr, algoAmount))
             let args = [new Uint8Array(Buffer.from(Method.RepayAlgo))]
-            const algoRepay = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, undefined, undefined))
+            const algoRepay = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, undefined, undefined, undefined))
             grouped.push(pay)
             grouped.push(algoRepay)
         }
@@ -210,6 +316,24 @@ export class VerseApp {
         const result = await sendWait(signedGroup)
 
         return result
+    }
+
+    async withdrawCollateral(wallet: SessionWallet): Promise<any> {
+        let suggested = await getSuggested(10)
+        let addr = wallet.getDefaultAccount()
+
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(ps.platform.backing_id), 2000))
+
+        let args = [new Uint8Array(Buffer.from(Method.Withdraw))]
+        let apps = [ps.platform.verse_app_id]
+        let assets = [ps.platform.verse_asset_id]
+        let withdrawTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, apps, assets, undefined))
+      
+        let group = [payTxn, withdrawTxn]
+        algosdk.assignGroupID(group)
+        let signed = await wallet.signTxn(group)
+        let response = await sendWait(signed)
+        return response
     }
 
     async stake(wallet: SessionWallet, amount: number): Promise<boolean> {

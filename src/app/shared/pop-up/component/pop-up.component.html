@@ -228,7 +228,7 @@
                   </div>
                   <div class="selector" style="margin: 0px 8px;">
                     <label class="switch">
-                      <input type="checkbox" checked>
+                      <input type="checkbox" [formControl]="isLendVerseChecked" unchecked>
                       <span class="slider round"></span>
                     </label>
                   </div>
@@ -240,57 +240,253 @@
                 </div>
               </div>
             </div>
-            <div class="assets-section">
+            <div class="assets-section" *ngIf="isLend">
               <div class="rows">
-                <div class="restyle-md" *ngFor="let item of lendVerse">
+                <div class="restyle-md" *ngFor="let item of verseBackingTokens">
                   <div style="margin: 30px 0 30px 0">
                     <div class="data-box d-flex align-items-center" style="">
-                      <input type="checkbox">
+                      <input type="checkbox" (click)="assetCheckBoxClicked(item)" checked="{{item.isChecked}}">
                       <label for="" style="margin-left: 4px">
                         {{item.name}}
                       </label>
                     </div>
                     <div class="data-box">
                       <span class="property color-violet">Total Backing:</span>
-                      <span class="svalue">{{item.totalBanking}}</span>
+                      <span class="svalue">{{item.totalBacking}}</span>
                     </div>
                     <div class="data-box">
                       <span class="property color-violet">Backing per token</span>
-                      <span class="svalue">{{item.totalBanking}}</span>
+                      <span class="svalue">{{item.backingPerToken}}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div class="row" *ngIf="isLend">
+              <div class="data-box">
+                <span class="property">Algo Backing:</span>
+                <span class="value">{{smartToolData.totalBacking}} Algo</span>
+              </div>
+              <div class="data-box" style="margin-left: 15px;">
+                <span class="property">Algo Backing per Token</span>
+                <span class="value">{{(smartToolData.totalBacking / smartToolData.totalSupply).toFixed(6)}} Algo</span>
+              </div>
+            </div>
+            <div class="assets-section" *ngIf="!isLend">
+              <div class="rows">
+                <div class="restyle-md" *ngFor="let item of verseBackingTokens">
+                  <div style="margin: 30px 0 30px 0">
+                    <div class="data-box d-flex align-items-center" style="">
+                      <label for="" style="margin-left: 4px">
+                        {{item.name}}
+                      </label>
+                    </div>
+                    <div class="data-box">
+                      <span class="property color-violet">Borrowed:</span>
+                      <span class="svalue">{{item.userBorrowed}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="!isLend">
+              <div class="data-box">
+                <span class="property">Algo Borrowed:</span>
+                <span class="value">{{smartToolData.userBorrowed}} Algo</span>
+              </div>
+            </div>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-9">
+                <h3 *ngIf="!isLend" class="color-violet" style="margin-top: 15px">Repay</h3>
                 <div class="input-section" style="width: 90%;">
                   <div class="d-flex align-items-center justify-content-between">
                     <span>Amount</span>
                     <div>
                       <span class="color-violet">Available:</span>
-                      <span style="margin-left: 4px">1000</span>
+                      <span *ngIf="isLend" style="margin-left: 4px">{{smartToolData.availableTokenAmount}}</span>
+                      <span *ngIf="isLend" class="color-violet" style="margin-left: 4px;"> Verse</span>
+                      <span *ngIf="!isLend" style="margin-left: 4px">{{smartToolData.availableAlgoAmount}}</span>
+                      <span *ngIf="!isLend" class="color-violet" style="margin-left: 4px;"> Algo</span>
                     </div>
                   </div>
                   <div>
                     <input
                       style="width: 100%"
-                      [formControl]="tradeBackingControl"
-                      type="text"
+                      [formControl]="tradeLendVerseControl"
+                      type="number"
                       class="input-costum"
                     />
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-3">
+                <div class="outputs">
+                  <div class="header" style="display: flex; justify-content: start; width: 100%">
+                    <h4>Locked</h4>
+                  </div>
+                      <span class="color-violet">Verse:</span>
+                      <span style="margin-left: 4px;"> {{smartToolData.userSupplied.toFixed(6)}}</span>
+                </div>
+              </div>
+
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl1"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 1">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![1].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![1].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl2"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 2">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![2].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![2].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl3"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 3">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![3].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![3].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl4"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 4">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![4].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![4].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl5"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 5">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![5].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![5].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl6"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngIf=" !isLend && verseBackingTokens!.length > 6">
+                  <div class="input-section" style="width: 90%;">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <span>Amount</span>
+                      <div>
+                        <span class="color-violet">Available:</span>
+                        <span style="margin-left: 4px">{{verseBackingTokens![6].userHolding}}</span>
+                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![6].name}}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <input
+                        style="width: 100%"
+                        [formControl]="tradeLendRepayTokenControl7"
+                        type="number"
+                        class="input-costum"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              <div *ngIf="isLend" class="row">
                 <div class="outputs">
                   <div class="header" style="display: flex; justify-content: start; width: 100%">
                     <h4>Output</h4>
                   </div>
                   <div class="rows">
-                    <div class="outputs restyle-md" *ngFor="let item of [1,2,3,4,5,6,7]">
+                    <div class="outputs restyle-md" style="margin: 4px;" >
                       <span class="color-violet">Algo:</span>
-                      <span> X</span>
+                      <span> {{verseReturnedBacking.toFixed(6)}}</span>
+                    </div>
+                    <div class="outputs restyle-md" style="margin: 4px;" *ngFor="let item of verseBackingTokens">
+                      <span class="color-violet" *ngIf="item.isChecked">{{item.name}}:</span>
+                      <span *ngIf="item.isChecked"> {{item.output.toFixed(item.assetDecimals)}}</span>
                     </div>
                   </div>
                 </div>
@@ -299,7 +495,12 @@
                 <button class="btn-primary-costum" (click)="closePopUp(false)">
                   Cancel
                 </button>
-                <button class="btn-secondary-costum">Lock Tokens</button>
+                <button class="btn-secondary-costum" *ngIf="smartToolData.optedIn && isLend" (click)="lockVerseTokens()">Lock Tokens</button>
+                <button *ngIf="smartToolData.optedIn && assetIdsToOptIn.length == 0 && isLend" class="btn-secondary-costum" (click)="lendTrade()">Borrow</button>
+                <button *ngIf="smartToolData.optedIn && assetIdsToOptIn.length != 0 && isLend" class="btn-secondary-costum" (click)="optInToBackingTokens()">OptIn Assets</button>
+                <button *ngIf="!smartToolData.optedIn && isLend" class="btn-secondary-costum" (click)="optInToBacking()">OptIn Contract</button>
+                <button *ngIf="smartToolData.optedIn && !isLend" class="btn-secondary-costum" (click)="repayTrade()">Repay</button>
+                <button *ngIf="smartToolData.optedIn && !isLend" class="btn-secondary-costum" (click)="withdrawBacking()">Withdraw</button>
               </div>
             </div>
           </ng-container>
@@ -312,87 +513,83 @@
                   <span>Backing <span class="color-violet">(Verse)</span></span>
                 </div>
               </div>
-              <div class="d-flex align-items-center justify-content-center" style="margin-top: 15px">
-                <div class="title-header d-flex align-items-center">
-                  <div>
-                  <span>
-                    Borrow
-                  </span>
-                  </div>
-                  <div class="selector" style="margin: 0px 8px;">
-                    <label class="switch">
-                      <input type="checkbox" checked>
-                      <span class="slider round"></span>
-                    </label>
-                  </div>
-                  <div>
-                  <span>
-                    Repay
-                  </span>
-                  </div>
-                </div>
-              </div>
             </div>
             <div class="assets-section">
               <div class="rows">
-                <div class="restyle-md" *ngFor="let item of lendVerse">
+                <div class="restyle-md" *ngFor="let item of verseBackingTokens">
                   <div style="margin: 30px 0 30px 0">
                     <div class="data-box d-flex align-items-center" style="">
-                      <input type="checkbox">
                       <label for="" style="margin-left: 4px">
                         {{item.name}}
                       </label>
                     </div>
                     <div class="data-box">
                       <span class="property color-violet">Total Backing:</span>
-                      <span class="svalue">{{item.totalBanking}}</span>
+                      <span class="svalue">{{item.totalBacking}}</span>
                     </div>
                     <div class="data-box">
                       <span class="property color-violet">Backing per token</span>
-                      <span class="svalue">{{item.totalBanking}}</span>
+                      <span class="svalue">{{item.backingPerToken}}</span>
                     </div>
                   </div>
                 </div>
               </div>
+
             </div>
             <div class="row">
-              <div class="col-md-6">
+              <div class="data-box">
+                <span class="property">Algo Backing:</span>
+                <span class="value">{{smartToolData.totalBacking}} Algo</span>
+              </div>
+              <div class="data-box" style="margin-left: 15px;">
+                <span class="property">Algo Backing per Token</span>
+                <span class="value">{{(smartToolData.totalBacking / smartToolData.totalSupply).toFixed(6)}} Algo</span>
+              </div>
+            </div>
+            <div class="row">
                 <div class="input-section" style="width: 90%;">
                   <div class="d-flex align-items-center justify-content-between">
                     <span>Amount</span>
                     <div>
                       <span class="color-violet">Available:</span>
-                      <span style="margin-left: 4px">1000</span>
+                      <span style="margin-left: 4px">{{smartToolData.availableTokenAmount}}</span>
+                      <span class="color-violet" style="margin-left: 4px;"> Verse</span>
                     </div>
                   </div>
                   <div>
                     <input
                       style="width: 100%"
-                      [formControl]="tradeBackingControl"
+                      [formControl]="tradeBackingVerseControl"
                       type="number"
                       class="input-costum"
                     />
                   </div>
                 </div>
-              </div>
-              <div class="col-md-6">
+              
+            </div>
+            <div class="row">
+
                 <div class="outputs">
-                  <div class="header" style="display: flex; justify-content: start; width: 100%">
+                  <div class="header" style="display: flex; justify-content: start; width: 100%; margin-top: 10px;">
                     <h4>Output</h4>
                   </div>
                   <div class="rows">
-                    <div class="outputs restyle-md" *ngFor="let item of [1,2,3,4,5,6,7]">
+                    <div class="outputs restyle-md" style="margin: 4px;" >
                       <span class="color-violet">Algo:</span>
-                      <span> X</span>
+                      <span> {{verseReturnedBacking.toFixed(6)}}</span>
+                    </div>
+                    <div class="outputs restyle-md" *ngFor="let item of verseBackingTokens">
+                      <span class="color-violet">{{item.name}}:</span>
+                      <span> {{item.input.toFixed(3)}}</span>
                     </div>
                   </div>
                 </div>
-              </div>
+              
               <div class="d-flex buttons isTrade-buttons" style="    margin-top: 30px; width: 100%; justify-content: center">
                 <button class="btn-primary-costum" (click)="closePopUp(false)">
                   Cancel
                 </button>
-                <button class="btn-secondary-costum">Burn Tokens</button>
+                <button class="btn-secondary-costum" (click)="getBackingTrade()">Burn Tokens</button>
               </div>
             </div>
           </ng-container>
@@ -422,7 +619,7 @@
         <div>
           <input
             [formControl]="tradeBackingControl"
-            type="text"
+            type="number"
             class="input-costum"
           />
         </div>
@@ -612,189 +809,6 @@
     </ng-container>
 
     <!--#isFair(presale)-->
-
-    <!-- token-details(isBacking)-->
-
-    <ng-container *ngIf="isBacking">
-      <div style="max-width: 600px" class="paragraph">
-        <p>
-          Smart ASAs deployed with our technology have an ever growing baseline
-          value, which is called the Backing. You can destroy your owned Smart
-          ASA to receive their respective baseline value.
-        </p>
-        <p>This enforces a guaranteed minimum value for each Smart ASA.</p>
-        <p>
-          Once you destroyed your Smart ASA there is no way to get them back.
-          Think carefully about this interaction
-        </p>
-        <p></p>
-      </div>
-      <form
-        [formGroup]="tokenDetailBackingForm"
-        class="borrow-active-container"
-      >
-        <div class="d-flex flex-column">
-          <span style="align-self: flex-end" class="thin-gray-text"
-          >Available: 2000</span
-          >
-          <div class="input-box">
-            <label for="token-name">Token Name:</label>
-            <input formControlName="tokenName" id="token-name" type="text" />
-          </div>
-        </div>
-        <div class="d-flex flex-column jusitfy-content-center">
-          <div class="input-box">
-            <label for="token-name"></label>
-            <input formControlName="secondInput" id="token-name" type="text" />
-          </div>
-          <span style="align-self: center" class="thin-gray-text"
-          >Please enter 'AGREE' if you consent with burning your Smart
-            ASAs.</span
-          >
-        </div>
-
-        <button
-          style="border-radius: 5px; margin-top: 10px; align-self: center"
-          class="btn-secondary-costum"
-        >
-          Get Backing
-        </button>
-      </form>
-    </ng-container>
-
-    <!--#token-details(isBacking)-->
-
-    <!--token-details(isBorrow)-->
-
-    <ng-container class="isBorrow-version" *ngIf="isBorrow">
-      <div style="max-width: 800px" class="paragraph">
-        <p>
-          Smart ASAs deployed with our technology have an ever growing baseline
-          value. You can borrow against the baseline value of your owned Smart
-          ASAs.
-        </p>
-        <p>
-          There is no borrowing fee, and the backing of the Smart ASA won't
-          change with this interaction.
-        </p>
-        <p>
-          To get your Smart ASA back, simply return the borrowed amount of Algo.
-        </p>
-        <p></p>
-      </div>
-      <div class="wrapper-border">
-        <div class="d-flex flex-row">
-          <div class="section" (click)="activeFirst()">
-            <button
-              [ngClass]="{
-                'btn-secondary-costum': isActiveFirst,
-                'btn-primary-costum': isActiveSecond
-              }"
-              style="border-radius: 4px; margin-right: 10px"
-            >
-              Borrow
-            </button>
-          </div>
-          <div class="section" (click)="activeSecond()">
-            <button
-              [ngClass]="{
-                'btn-secondary-costum': isActiveSecond,
-                'btn-primary-costum': isActiveFirst
-              }"
-              class="btn-primary-costum"
-              style="border-radius: 4px"
-            >
-              Repay
-            </button>
-          </div>
-        </div>
-        <div
-          class="d-flex flex-column align-items-center"
-          style="margin-bottom: 10px"
-        >
-          <form
-            [formGroup]="tokenDetailBorrowForm"
-            *ngIf="isActiveFirst"
-            class="borrow-active-container"
-          >
-            <div class="d-flex flex-column">
-              <span style="align-self: flex-end" class="thin-gray-text"
-              >Available: {{smartToolData.availableTokenAmount / pow(smartToolData.assetDecimals)}}</span
-              >
-              <div class="input-box">
-                <label for="supply-amount">Supply Amount:</label>
-                <input
-                  formControlName="supplyAmount"
-                  id="supply-amount"
-                  type="number"
-                />
-              </div>
-            </div>
-            <div class="d-flex flex-row">
-              <div class="input-box">
-                <label for="borrow-amount">Borrow Amount:</label>
-                <input
-                  formControlName="borrowAmount"
-                  id="borrow-amount"
-                  type="number"
-                />
-              </div>
-              <span
-                class="thin-gray-text"
-                style="position: absolute; right: 125px; top: 343px"
-              >Algo</span
-              >
-            </div>
-            <button
-              style="
-                border-radius: 5px;
-                margin-top: 10px;
-                max-width: 100px;
-                align-self: center;
-              "
-              class="btn-secondary-costum"
-              (click)="borrow"
-            >
-              Borrow
-            </button>
-          </form>
-          <form
-            [formGroup]="tokenDetailRepayForm"
-            *ngIf="isActiveSecond"
-            class="borrow-active-container"
-          >
-            <div style="margin-top: 25px" class="input-box">
-              <label for="borrow-amount">Borrowed Amount:</label>
-              <input
-                formControlName="borrowedAmount"
-                id="borrow-amount"
-                type="number"
-              />
-            </div>
-            <div class="input-box">
-              <label for="repay-amount">Repay Amount:</label>
-              <input
-                formControlName="repayAmount"
-                id="repay-amount"
-                type="text"
-              />
-            </div>
-            <button
-              style="
-                border-radius: 5px;
-                margin-top: 10px;
-                max-width: 100px;
-                align-self: center;
-              "
-              class="btn-secondary-costum"
-            >
-              Repay
-            </button>
-          </form>
-        </div>
-      </div>
-    </ng-container>
-    <!--#token-details(isBorrow)-->
 
 <!-- if is stacking-->
     <ng-container *ngIf="stacking">

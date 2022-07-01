@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { VerseApp } from 'src/app/blockchain/verse_application';
+import { BackingTokenInfo, VerseApp } from 'src/app/blockchain/verse_application';
 import { DeployedApp } from 'src/app/blockchain/deployer_application';
 import { PresaleBlockchainInformation, PresaleEntryData } from 'src/app/modules/launchpad/launch-detail/launch-detail.component';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
@@ -17,6 +17,7 @@ import { DeployLb } from 'src/app/modules/deploy/deploy-api-logic-file/deploy.lb
 import { ProjectPreviewModel } from 'src/app/models/projectPreviewModel';
 import { StakingUtils } from 'src/app/blockchain/staking';
 import {of} from "rxjs";
+import { EOVERFLOW } from 'constants';
 
 export type SmartToolData = {
   userSupplied: number,
@@ -80,7 +81,21 @@ export class PopUpComponent implements OnInit {
 
   isLend = true;
   isLendChecked = this.fb.control([])
+  isLendVerseChecked = this.fb.control([])
+  tradeBackingVerseControl = this.fb.control([])
+  tradeLendVerseControl = this.fb.control([])
+  
+  tradeLendRepayTokenControl1 = this.fb.control([])
+  tradeLendRepayTokenControl2 = this.fb.control([])
+  tradeLendRepayTokenControl3 = this.fb.control([])
+  tradeLendRepayTokenControl4 = this.fb.control([])
+  tradeLendRepayTokenControl5 = this.fb.control([])
+  tradeLendRepayTokenControl6 = this.fb.control([])
+  tradeLendRepayTokenControl7 = this.fb.control([])
 
+  verseBackingTokens: BackingTokenInfo[] | undefined = undefined
+
+  verseReturnedBacking: number = 0;
   returnedBacking: number = 0;
   presalePrice: number = 0;
   minInitialPrice = 0;
@@ -207,6 +222,40 @@ export class PopUpComponent implements OnInit {
     //   }
     // )
 
+    this.tradeBackingVerseControl.valueChanges!.subscribe(
+      (value: any) => {
+        console.log("tradebackingverse: ", value)
+        this.calculateVerseBackingReturn(value)
+        this.calculateTokenBackingReturnVerse(value)
+      }
+    )
+
+    this.tradeLendVerseControl.valueChanges!.subscribe(
+      (value: any) => {
+        console.log("tradelendverse: ", value)
+        this.calculateVerseBackingReturn(value)
+        this.calculateTokenBackingReturnVerse(value)
+      }
+    )
+    if(this.isTradeLendVerse) {
+      console.log("lend verse")
+      this.calculateVerseBackingReturn(0)
+    }
+    
+
+    this.isLendVerseChecked.setValue(false)
+    this.isLendVerseChecked.valueChanges!.subscribe(
+      (value: any) => {
+        console.log("lend verse changed", value)
+        console.log(this.smartToolData)
+        if(value == true) {
+          this.isLend = false
+        } else {
+          this.isLend = true
+        }
+      }
+    )
+
     this.isLendChecked.setValue(false)
     this.isLendChecked.valueChanges!.subscribe(
       (value: any) => {
@@ -258,8 +307,11 @@ export class PopUpComponent implements OnInit {
 
     if(this.isTradeLendVerse){
       console.log("is trade lending verse")
-      await this.checkOptedInBackingContract()
       await this.checkOptInBackingTokens()
+      // tradelendVerse
+      let wallet = this._walletsConnectService.sessionWallet?.getDefaultAccount()
+      console.log(wallet)
+      this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet)
     }
 
     if(this.stacking) {
@@ -274,50 +326,19 @@ export class PopUpComponent implements OnInit {
     }
   }
 
-  // tradelendVerse
-  lendVerse = [
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      BackingPerToken: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
-    },
-    {
-      name: 'Algo',
-      totalBanking: 'Y Algo',
-      Backing: 'X Algo'
+  calculateTokenBackingReturnVerse(value: number) {
+    if(this.isTradeLendVerse) {
+      this.verseBackingTokens!.forEach(tokenInfo => {
+        tokenInfo.output = tokenInfo.currentMaxBorrow + tokenInfo.backingPerToken * value
+      });
+    } else {
+      this.verseBackingTokens!.forEach(tokenInfo => {
+        tokenInfo.input = tokenInfo.backingPerToken * value
+      });
     }
-  ]
-  // #tradelendVerse
+
+  }
+
 
   async onSubmit(formName: string) {
     console.log(this.presaleData![0])
@@ -495,16 +516,35 @@ export class PopUpComponent implements OnInit {
 
   async activateLendAndTrade(id: number) {
     if (id === 1) {
-      this.isTradeLend = false;
-      this.isTradeBacking = true;
+      if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+        console.log("activate backing verse")
+        this.isTradeLend = false;
+        this.isTradeBacking = false;
+        this.isTradeLendVerse = false;
+        this.isTradeBackingVerse = true;
+        await this.checkOptInBackingTokens()
+      } else {
+        this.isTradeLend = false;
+        this.isTradeBacking = true;
+        this.isTradeLendVerse = false;
+        this.isTradeBackingVerse = false;
+        console.log("activate backing")
+      }
     } else if (id === 2) {
-      this.isTradeLend = true;
-      this.isTradeBacking = false;
-    } else if (id === 3) {
-      this.isTradeLend = false;
-      this.isTradeBacking = true;
-      await this.checkOptedInBackingContract()
-      await this.checkOptInBackingTokens()
+      if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+        this.isTradeLend = false;
+        this.isTradeBacking = false;
+        this.isTradeLendVerse = true;
+        this.isTradeBackingVerse = false;
+        await this.checkOptInBackingTokens()
+        console.log("activate lend verse")
+      } else {
+        this.isTradeLend = true;
+        this.isTradeBacking = false;
+        this.isTradeLendVerse = false;
+        this.isTradeBackingVerse = false;
+        console.log("activate lend")
+      }
     }
   }
 
@@ -512,8 +552,13 @@ export class PopUpComponent implements OnInit {
     return Math.pow(10, decimals)
   }
 
-  borrow() {
-    console.log("borrow")
+  calculateVerseBackingReturn(amount: any) {
+    if(this.isTradeBackingVerse) {
+      this.verseReturnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+    } else {
+      let currentBorrowable = this.smartToolData.totalBacking / this.smartToolData.totalSupply * this.smartToolData.userSupplied - this.smartToolData.userBorrowed
+      this.verseReturnedBacking =  currentBorrowable + this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
+    }
   }
 
   calculateBackingReturn(amount: any) {
@@ -528,9 +573,17 @@ export class PopUpComponent implements OnInit {
         } else {
           this.returnedBacking = 0
         }
-        
       }
-      
+    }
+  }
+
+  async withdrawBacking() {
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet) {
+      let response = await this.verseApp.withdrawCollateral(wallet);
+      if(response) {
+        console.log("collateral withdrawn")
+      }
     }
   }
 
@@ -613,7 +666,6 @@ export class PopUpComponent implements OnInit {
     } else {
       console.log("please connect wallet")
     }
-
   }
 
   async optInToPresaleContract(){
@@ -714,11 +766,10 @@ export class PopUpComponent implements OnInit {
   }
 
   async getBackingTrade() {
-    let amount = +this.tradeBackingControl.value
     let wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      if(amount > 0) {
         if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+          let amount = +this.tradeBackingVerseControl.value
           amount = amount * Math.pow(10, ps.platform.verse_decimals)
           let response = await this.verseApp.getBacking(wallet, amount)
           if(response) {
@@ -726,35 +777,46 @@ export class PopUpComponent implements OnInit {
             this.closePopUp(true)
           }
         } else {
+          let amount = +this.tradeBackingControl.value
           amount = amount * Math.pow(10, this.smartToolData.assetDecimals)
           let response = await this.deployedApp.getBacking(wallet, amount, this.smartToolData.contractId)
           if(response) {
             console.log("got backing")
             this.closePopUp(true)
           }
-        }
-      } else {
-        console.log("enter > 0")
       }
     } else {
       console.log("please connect wallet")
     }
   }
 
+  assetCheckBoxClicked(info: BackingTokenInfo) {
+    info.isChecked = !info.isChecked
+  }
+
   async lendTrade() {
-    let amount = parseFloat(this.tradeBackingControl.value)
-    console.log(amount)
     let wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      if(amount > 0) {
-        if(this.smartToolData.contractId == ps.platform.verse_app_id) {
-          amount = amount * Math.pow(10, ps.platform.verse_decimals)
-          // let response = await this.verseApp.borrow(wallet, amount)
-          // if(response) {
-          //   console.log("backing done")
-          //   this.closePopUp(true)
-          // }
-        } else {
+      if(this.smartToolData.contractId == ps.platform.verse_app_id) {
+        console.log("lend verse")
+        let selectedAssets: number[] = []
+        if(this.verseBackingTokens) {
+          this.verseBackingTokens!.forEach(element => {
+            if(element.isChecked) {
+              selectedAssets.push(element.assetId)
+            }
+          });
+        }
+        let response = await this.verseApp.borrow(wallet, selectedAssets)
+        if(response) {
+          console.log("backing done")
+          this.closePopUp(true)
+        }
+      } else {
+        let amount = parseFloat(this.tradeBackingControl.value)
+        console.log(amount)
+        if(amount > 0) {
+
           amount = Math.floor(amount * Math.pow(10, this.smartToolData.assetDecimals))
           console.log(amount)
           let response = await this.deployedApp.borrow(wallet, amount, this.smartToolData.contractId)
@@ -763,25 +825,27 @@ export class PopUpComponent implements OnInit {
             this.closePopUp(true)
           }
         }
-      } else {
-        console.log("please connect wallet")
       }
+    } else {
+      console.log("please connect wallet")
     }
   }
 
   async repayTrade() {
-    let amount = parseFloat(this.tradeBackingControl.value)
+
     let wallet = this._walletsConnectService.sessionWallet
     if(wallet){
-      if(amount > 0) {
-        amount = Math.floor(amount * Math.pow(10, 6))
         if(this.smartToolData.contractId == ps.platform.verse_app_id) {
-          // let response = await this.verseApp.repay(wallet, amount)
-          // if(response) {
-          //   console.log("backing done")
-          //   this.closePopUp(true)
-          // }
+          let amount = parseFloat(this.tradeLendVerseControl.value)
+          amount = Math.floor(amount * Math.pow(10, ps.platform.verse_decimals))
+          let response = await this.verseApp.repay(wallet, amount, [], [])
+          if(response) {
+            console.log("backing done")
+            this.closePopUp(true)
+          }
         } else {
+          let amount = parseFloat(this.tradeBackingControl.value)
+          amount = Math.floor(amount * Math.pow(10, 6))
           let response = await this.deployedApp.repay(wallet, amount, this.smartToolData.contractId)
           if(response) {
             console.log("backing done")
@@ -791,18 +855,6 @@ export class PopUpComponent implements OnInit {
       } else {
         console.log("please connect wallet")
       }
-    }
-  }
-
-  async checkOptedInBackingContract(){
-    const addr = localStorage.getItem("wallet")
-    if(addr) {
-      if (await isOptedIntoApp(addr, ps.platform.backing_id)) {
-        this.isOptedInToVerseBacking = true
-      } else {
-        this.isOptedInToVerseBacking = false
-      }
-    }
   }
 
   async checkOptInBackingTokens(){
@@ -820,12 +872,32 @@ export class PopUpComponent implements OnInit {
       if(this.smartToolData.contractId == ps.platform.verse_app_id) {
         let response = await this.verseApp.optIn(wallet)
         if(response) {
-          this.isOptedInToVerseBacking = true
+          this.smartToolData.optedIn = true
         }
       } else {
         let response = await this.deployedApp.optIn(wallet, this.smartToolData.contractId)
         if(response) {
           this.smartToolData.optedIn = true
+        }
+      }
+    }
+  }
+
+  async lockVerseTokens() {
+    console.log("lock verse")
+    let amount = this.tradeLendVerseControl.value
+    console.log(amount)
+    let wallet = this._walletsConnectService.sessionWallet
+    if(wallet){
+      if(amount > 0) {
+        amount = Math.floor(amount * Math.pow(10, ps.platform.verse_decimals))
+        let response = await this.verseApp.supply(wallet, amount)
+        if(response) {
+          console.log("Supplied")
+          this.smartToolData = await this.stakingUtils.getVerseSmartToolData(wallet.getDefaultAccount())
+          this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet.getDefaultAccount())
+          this.calculateVerseBackingReturn(0)
+          this.calculateTokenBackingReturnVerse(0)
         }
       }
     }
