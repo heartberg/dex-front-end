@@ -10,7 +10,6 @@ import WalletConnect from '@walletconnect/client';
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayTxn, waitForTransaction } from './utils.algo';
 import MyAlgoConnect from '@randlabs/myalgo-connect';
-import { Buffer } from 'buffer';
 import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
 import { Router } from "@angular/router";
 
@@ -72,6 +71,8 @@ export class WalletsConnectService {
   connectOnDefault = async (choice: string) => {
     console.log('choice', choice);
     const sw = new SessionWallet("TestNet", undefined, choice);
+
+    console.log('check', new Uint8Array(Buffer.from("text")))
 
     if (!await sw.connect()) return alert("Couldnt connect")
 

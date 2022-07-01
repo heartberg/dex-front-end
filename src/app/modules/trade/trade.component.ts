@@ -173,6 +173,8 @@ export class TradeComponent implements OnInit {
         this.setMinOutput();
       }
     );
+
+    console.log('check', new Uint8Array(Buffer.from("text")))
   }
 
   catchValueTop($event: any) {
@@ -336,7 +338,7 @@ export class TradeComponent implements OnInit {
 
   async getValueFromDropDown($event: AssetViewModel, index: number) {
     console.log($event)
-    
+
     if ($event.assetId === ps.platform.verse_asset_id) {
       this.isTradeLendVerse = true;
       this.isTradeBackingVerse = false;
@@ -390,7 +392,7 @@ export class TradeComponent implements OnInit {
       }
     }
 
-    // trade logic 
+    // trade logic
     if($event.assetId != 0) {
       //console.log("event: " + $event)
       this.selectAsset($event.assetId, index);

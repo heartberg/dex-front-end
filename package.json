@@ -31,7 +31,6 @@
     "algosdk": "^1.13.1",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
-    "Buffer": "^0.0.0",
     "crypto-browserify": "^3.12.0",
     "fs": "0.0.1-security",
     "https-browserify": "^1.0.0",
