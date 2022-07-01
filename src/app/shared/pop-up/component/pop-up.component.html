@@ -589,7 +589,8 @@
                 <button class="btn-primary-costum" (click)="closePopUp(false)">
                   Cancel
                 </button>
-                <button class="btn-secondary-costum" (click)="getBackingTrade()">Burn Tokens</button>
+                <button class="btn-secondary-costum" *ngIf="assetIdsToOptIn.length != 0"(click)="optInToBackingTokens()">OptIn Assets</button>
+                <button class="btn-secondary-costum" *ngIf="assetIdsToOptIn.length == 0"(click)="getBackingTrade()">Burn Tokens</button>
               </div>
             </div>
           </ng-container>

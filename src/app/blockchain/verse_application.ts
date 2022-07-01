@@ -211,11 +211,11 @@ export class VerseApp {
         let assetInfo = await client.getAssetByID(assetId).do()
         console.log("borrowed asset: ", index, globalState["tb"+index]['i'])
         let holding = (accInfo['assets'].find((a: any) => {return a['asset-id'] == assetId})['amount'] + globalState["tb"+index]['i']) / Math.pow(10, assetInfo['params']['decimals'])
+        console.log(holding)
         let backingPerToken = holding / totalSupply
         let userBorrowed = 0
         let userMaxBorrow = 0
         let userHolding = 0
-        console.log("index before wallet", index)
         if(wallet) {
             userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, "ub" + index) / Math.pow(10, assetInfo['params']['decimals'])
             userMaxBorrow = parseFloat((backingPerToken * userSupplied - userBorrowed).toFixed(assetInfo['params']['decimals']))
@@ -230,7 +230,7 @@ export class VerseApp {
         tokens.push({
             name: assetInfo['params']['name'],
             assetDecimals: assetInfo['params']['decimals'],
-            totalBacking: holding / Math.pow(10, assetInfo['params']['decimals']),
+            totalBacking: holding,
             backingPerToken: backingPerToken,
             assetId: assetId,
             output: userMaxBorrow,
