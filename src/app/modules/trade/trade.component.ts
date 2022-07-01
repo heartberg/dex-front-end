@@ -33,7 +33,7 @@ import { fail } from 'assert';
   templateUrl: './trade.component.html',
   styleUrls: ['./trade.component.scss'],
 })
-export class TradeComponent implements OnInit {
+export class TradeComponent implements OnInit, DoCheck {
   availAmount: number = 0;
   rotate: boolean = false;
   autoSlippage: boolean = true;
@@ -144,13 +144,15 @@ export class TradeComponent implements OnInit {
   });
 
   topForms = this.fb.group({
-    topInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
+    topInputValue: [0,  Validators.pattern('\\d+(\\.\\d{0,6})?')],
   });
 
   bottomForms = this.fb.group({
-    bottomInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
+    bottomInputValue: [0, Validators.pattern('\\d+(\\.\\d{0,6})?')],
   });
 
+  botInputIsNotValid: boolean = false;
+  slippageIsNotValid: boolean = false
   // FORMS
 
   async ngOnInit(): Promise<void> {
@@ -173,6 +175,31 @@ export class TradeComponent implements OnInit {
         this.setMinOutput();
       }
     );
+  }
+
+  ngDoCheck() {
+    if ( this.bottomForms.get('bottomInputValue')!.value) {
+      this.bottomForms.get('bottomInputValue')!.value.valueChanges.subscribe((value: any) => {
+        if (+this.bottomForms.get('bottomInputValue')?.value > +this.selectedOption!) {
+          this.botInputIsNotValid = true;
+        } else {
+          this.botInputIsNotValid = false;
+        }
+        console.log(value);
+      });
+    }
+
+    if ( this.bottomForms.get('slippageInput')!.value) {
+      this.slippageForm.get('slippageInput')!.value.valueChanges.subscribe((value: any) => {
+        if (+this.slippageForm.get('slippageInput')?.value < 100) {
+          this.slippageIsNotValid = true;
+        } else {
+          this.slippageIsNotValid = false;
+        }
+      });
+    }
+
+    // console.log(this.topForms.valid, this.bottomForms.valid)
   }
 
   catchValueTop($event: any) {
@@ -269,6 +296,15 @@ export class TradeComponent implements OnInit {
         this.availAmount = 0;
         this.isOptedIn = true;
       }
+      // this.topForms.get('topInputValue')?.valueChanges.subscribe( (res) => {
+      //   if (+res.length) {
+      //     if (+res > this.selectedOption?.smartProperties?.maxBuy! || +res >= this.blockchainInfo!.algoLiquidity!) {
+      //       this.topForms.invalid = false;
+      //     }
+      //   }
+      // })
+      // TODO SABA
+
     } else {
       if(index == 1) {
         this.selectedOption = this.assetArr.find((el) => {
@@ -334,7 +370,7 @@ export class TradeComponent implements OnInit {
 
   async getValueFromDropDown($event: AssetViewModel, index: number) {
     console.log($event)
-    
+
     if ($event.assetId === ps.platform.verse_asset_id) {
       this.isTradeLendVerse = true;
       this.isTradeBackingVerse = false;
@@ -384,7 +420,7 @@ export class TradeComponent implements OnInit {
       }
     }
 
-    // trade logic 
+    // trade logic
     if($event.assetId != 0) {
       //console.log("event: " + $event)
       this.selectAsset($event.assetId, index);

@@ -44,6 +44,9 @@ export class LockerComponent implements OnInit, DoCheck {
   closePopupSecond: boolean = false;
   //
 
+  amountIsNotValid: boolean = false;
+  releaseIsNotValid: boolean = false;
+  releaseNumberNotValid: boolean = false;
 
   constructor(
     private locker: LockerApp,
@@ -68,6 +71,33 @@ export class LockerComponent implements OnInit, DoCheck {
       this.finalStepApi = true;
       this.isFailed = false;
       this.isPending = false;
+    }
+    // if (this.lockerFormGroup.get('amount')?.value) {
+    //   this.lockerFormGroup.get('amount')?.value.subscribe((res: any) => {
+    //     if (+this.lockerFormGroup.get('amount')?.value.amount <=) {
+    //       this.amountIsNotValid = true;
+    //     } else {
+    //       this.amountIsNotValid = false;
+    //     }
+    //   })
+    // }
+    if (this.lockerFormGroup.get('releaseInterval')?.value) {
+      this.lockerFormGroup.get('releaseInterval')?.value.subscribe((res: any) => {
+        if (+this.lockerFormGroup.get('releaseInterval')?.value.amount >= 1) {
+          this.releaseIsNotValid = true;
+        } else {
+          this.releaseIsNotValid = false;
+        }
+      })
+    }
+    if (this.lockerFormGroup.get('releaseIntervalNumbers')?.value) {
+      this.lockerFormGroup.get('releaseIntervalNumbers')?.value.subscribe((res: any) => {
+        if (+this.lockerFormGroup.get('releaseIntervalNumbers')?.value.amount >= 1) {
+          this.releaseNumberNotValid = true;
+        } else {
+          this.releaseNumberNotValid = false;
+        }
+      })
     }
   }
 

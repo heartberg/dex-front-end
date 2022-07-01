@@ -3,7 +3,7 @@ import {Component, DoCheck, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {WalletsConnectService} from "../../services/wallets-connect.service";
 import {DeployedApp} from "../../blockchain/deployer_application";
 import {DeployedAppSettings, StakingSetup, PresaleSettings} from "../../blockchain/platform-conf";
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {environment} from "../../../environments/environment";
 import {DeployLb} from "./deploy-api-logic-file/deploy.lb";
 import { Algodv2 } from 'algosdk';
@@ -150,6 +150,10 @@ export class DeployComponent implements OnInit, DoCheck {
   TIOFifteenth: FormGroup | any= {};
   teamMemberFinal: any[] = [];
 
+  // validators
+  totalSupplyIsInvalid: boolean = false;
+  maxBuyIsInvalid: boolean = false;
+
   constructor(
     private walletProviderService: WalletsConnectService,
     private deployedApp: DeployedApp,
@@ -165,6 +169,32 @@ export class DeployComponent implements OnInit, DoCheck {
 
 
   ngDoCheck() {
+    if (this.deployFormGroup.get('tokenInfoGroup')?.value) {
+      if (this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value) {
+        this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value.valueChanges((res: any) => {
+          // @ts-ignore
+          if (+this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value * 10 ^ +this.deployFormGroup.get('tokenInfoGroup')?.value.decimals.value < 2 ^ 64 - 1) {
+            this.totalSupplyIsInvalid = true
+          } else {
+            this.totalSupplyIsInvalid = false;
+          }
+        })
+      }
+    }
+
+    if (this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value) {
+      if (this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value) {
+        this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value.valueChanges((res: any) => {
+          // @ts-ignore
+          if (+this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value < 2 ^ 64 - 1) {
+            this.maxBuyIsInvalid = true
+          } else {
+            this.maxBuyIsInvalid = false;
+          }
+        });
+      }
+    }
+
     if(localStorage.getItem('sendWaitSuccess') === 'pending') {
       this.closePopup = true;
       this.isPending = true;
@@ -534,7 +564,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
     this.deployFormGroup = this.fb.group({
       tokenInfoGroup: this.fb.group({
-        tokenName: '',
+        tokenName: ['', ],
         unitName: '',
         totalSupply: '',
         decimals: '',

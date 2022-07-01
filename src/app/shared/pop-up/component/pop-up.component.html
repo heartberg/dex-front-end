@@ -812,7 +812,7 @@
         <ng-container *ngIf="stackingISStake">
           <div class="inputs second d-flex align-items-center justify-content-between">
             <h4>{{assetInfo['params']['name']}}</h4>
-            <input type="number" [formControl]="stakeVerseControl" class="input-costum">
+            <input type="number" [formControl]="stakeVerseControl" class="input-costum" [class.input-invalid]="isStakeInvalid">
             <span class="color-violet txt">available: {{stakingInfo?.usersHolding}}</span>
           </div>
         </ng-container>
@@ -823,7 +823,7 @@
             </div>
             <div class="inputs d-flex align-items-center justify-content-between">
               <h4>Withdraw {{assetInfo['params']['name']}}</h4>
-              <input type="number" [formControl]="withdrawVerseControl" class="input-costum">
+              <input type="number" [formControl]="withdrawVerseControl" class="input-costum" [class.input-invalid]="isWithdrawInvalid">
             </div>
           </ng-container>
           <div class="buttons d-flex align-items-center justify-content-between">
