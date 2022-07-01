@@ -84,7 +84,7 @@ export class PopUpComponent implements OnInit {
   isLendVerseChecked = this.fb.control([])
   tradeBackingVerseControl = this.fb.control([])
   tradeLendVerseControl = this.fb.control([])
-  
+
   tradeLendRepayTokenControl1 = this.fb.control([])
   tradeLendRepayTokenControl2 = this.fb.control([])
   tradeLendRepayTokenControl3 = this.fb.control([])
@@ -583,6 +583,7 @@ export class PopUpComponent implements OnInit {
       let response = await this.verseApp.withdrawCollateral(wallet);
       if(response) {
         console.log("collateral withdrawn")
+        this.closePopUp(false)
       }
     }
   }
@@ -831,6 +832,54 @@ export class PopUpComponent implements OnInit {
     }
   }
 
+  getAssetIdsAndAmounts() {
+    let assetAmounts = []
+    let assetIds = []
+    if(this.verseBackingTokens!.length > 0){
+      if(this.tradeLendRepayTokenControl1.value != 0) {
+        assetIds.push(this.verseBackingTokens![0].assetId)
+        assetAmounts.push(this.tradeLendRepayTokenControl1.value * Math.pow(10, this.verseBackingTokens![0].assetDecimals))
+      }
+      if(this.verseBackingTokens!.length > 1){
+        if(this.tradeLendRepayTokenControl2.value != 0) {
+          assetIds.push(this.verseBackingTokens![1].assetId)
+          assetAmounts.push(this.tradeLendRepayTokenControl2.value * Math.pow(10, this.verseBackingTokens![1].assetDecimals))
+        }
+        if(this.verseBackingTokens!.length > 2){
+          if(this.tradeLendRepayTokenControl3.value != 0) {
+            assetIds.push(this.verseBackingTokens![2].assetId)
+            assetAmounts.push(this.tradeLendRepayTokenControl3.value * Math.pow(10, this.verseBackingTokens![2].assetDecimals))
+          }
+          if(this.verseBackingTokens!.length > 3){
+            if(this.tradeLendRepayTokenControl4.value != 0) {
+              assetIds.push(this.verseBackingTokens![3].assetId)
+              assetAmounts.push(this.tradeLendRepayTokenControl4.value * Math.pow(10, this.verseBackingTokens![3].assetDecimals))
+            }
+            if(this.verseBackingTokens!.length > 4){
+              if(this.tradeLendRepayTokenControl5.value != 0) {
+                assetIds.push(this.verseBackingTokens![4].assetId)
+                assetAmounts.push(this.tradeLendRepayTokenControl5.value * Math.pow(10, this.verseBackingTokens![4].assetDecimals))
+              }
+              if(this.verseBackingTokens!.length > 5){
+                if(this.tradeLendRepayTokenControl6.value != 0) {
+                  assetIds.push(this.verseBackingTokens![5].assetId)
+                  assetAmounts.push(this.tradeLendRepayTokenControl6.value * Math.pow(10, this.verseBackingTokens![5].assetDecimals))
+                }
+                if(this.verseBackingTokens!.length > 6){
+                  if(this.tradeLendRepayTokenControl7.value != 0) {
+                    assetIds.push(this.verseBackingTokens![6].assetId)
+                    assetAmounts.push(this.tradeLendRepayTokenControl7.value * Math.pow(10, this.verseBackingTokens![6].assetDecimals))
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return [assetIds, assetAmounts]
+  }
+
   async repayTrade() {
 
     let wallet = this._walletsConnectService.sessionWallet
@@ -838,7 +887,9 @@ export class PopUpComponent implements OnInit {
         if(this.smartToolData.contractId == ps.platform.verse_app_id) {
           let amount = parseFloat(this.tradeLendVerseControl.value)
           amount = Math.floor(amount * Math.pow(10, ps.platform.verse_decimals))
-          let response = await this.verseApp.repay(wallet, amount, [], [])
+          let data = this.getAssetIdsAndAmounts()
+          console.log(data)
+          let response = await this.verseApp.repay(wallet, amount, data[0], data[1])
           if(response) {
             console.log("backing done")
             this.closePopUp(true)

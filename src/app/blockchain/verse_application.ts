@@ -203,42 +203,44 @@ export class VerseApp {
             userInfo = await client.accountInformation(wallet).do()
             console.log(userInfo['assets'])
         }
-        let assetInfos: any = []
+
         let tokens: any = []
         let index = 1
-        assetIds.forEach(async (assetId: number) => {
-            let assetInfo = await client.getAssetByID(assetId).do()
-            console.log("borrowed asset: ", index, globalState["tb"+index]['i'])
-            console.log(accInfo['assets'].find((a: any) => {return a['asset-id'] == assetId})['amount'])
-            let holding = (accInfo['assets'].find((a: any) => {return a['asset-id'] == assetId})['amount'] + globalState["tb"+index]['i']) / Math.pow(10, assetInfo['params']['decimals'])
-            let backingPerToken = holding / totalSupply
-            let userBorrowed = 0
-            let userMaxBorrow = 0
-            let userHolding = 0
-            if(wallet) {
-                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, "ub" + index) / Math.pow(10, assetInfo['params']['decimals'])
-                userMaxBorrow = parseFloat((backingPerToken * userSupplied - userBorrowed).toFixed(assetInfo['params']['decimals']))
-                let userAssetInfo = userInfo!['assets'].find((a: any) => {return a['asset-id'] == assetId})
-                if(userAssetInfo) {
-                    userHolding = userAssetInfo['amount']
-                }
-                console.log("holding: ", userHolding)
+        await assetIds.reduce(async (memo: any, assetId: number) => {
+        await memo;
+        let assetInfo = await client.getAssetByID(assetId).do()
+        console.log("borrowed asset: ", index, globalState["tb"+index]['i'])
+        let holding = (accInfo['assets'].find((a: any) => {return a['asset-id'] == assetId})['amount'] + globalState["tb"+index]['i']) / Math.pow(10, assetInfo['params']['decimals'])
+        let backingPerToken = holding / totalSupply
+        let userBorrowed = 0
+        let userMaxBorrow = 0
+        let userHolding = 0
+        console.log("index before wallet", index)
+        if(wallet) {
+            userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, "ub" + index) / Math.pow(10, assetInfo['params']['decimals'])
+            userMaxBorrow = parseFloat((backingPerToken * userSupplied - userBorrowed).toFixed(assetInfo['params']['decimals']))
+            let userAssetInfo = userInfo!['assets'].find((a: any) => {return a['asset-id'] == assetId})
+            if(userAssetInfo) {
+                userHolding = userAssetInfo['amount']
             }
-            index++
-            tokens.push({
-                name: assetInfo['params']['name'],
-                assetDecimals: assetInfo['params']['decimals'],
-                totalBacking: holding / Math.pow(10, assetInfo['params']['decimals']),
-                backingPerToken: backingPerToken,
-                assetId: assetId,
-                output: userMaxBorrow,
-                currentMaxBorrow: userMaxBorrow,
-                input: 0,
-                userHolding: userHolding,
-                userBorrowed: userBorrowed,
-                isChecked: false
-            })
-        });
+            console.log("holding: ", userHolding)
+        }
+        index = index + 1
+        console.log("index increased", index)
+        tokens.push({
+            name: assetInfo['params']['name'],
+            assetDecimals: assetInfo['params']['decimals'],
+            totalBacking: holding / Math.pow(10, assetInfo['params']['decimals']),
+            backingPerToken: backingPerToken,
+            assetId: assetId,
+            output: userMaxBorrow,
+            currentMaxBorrow: userMaxBorrow,
+            input: 0,
+            userHolding: userHolding,
+            userBorrowed: userBorrowed,
+            isChecked: false
+        })
+        }, undefined);
         console.log(tokens)
         return tokens
     }
@@ -322,7 +324,7 @@ export class VerseApp {
         let suggested = await getSuggested(10)
         let addr = wallet.getDefaultAccount()
 
-        let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(ps.platform.backing_id), 2000))
+        let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.backing_addr, 2000))
 
         let args = [new Uint8Array(Buffer.from(Method.Withdraw))]
         let apps = [ps.platform.verse_app_id]
