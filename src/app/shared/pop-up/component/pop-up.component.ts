@@ -583,7 +583,7 @@ export class PopUpComponent implements OnInit {
       let response = await this.verseApp.withdrawCollateral(wallet);
       if(response) {
         console.log("collateral withdrawn")
-        this.closePopUp(false)
+        this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet.getDefaultAccount())
       }
     }
   }
