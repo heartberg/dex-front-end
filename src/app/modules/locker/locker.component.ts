@@ -72,15 +72,17 @@ export class LockerComponent implements OnInit, DoCheck {
       this.isFailed = false;
       this.isPending = false;
     }
-    // if (this.lockerFormGroup.get('amount')?.value) {
-    //   this.lockerFormGroup.get('amount')?.value.subscribe((res: any) => {
-    //     if (+this.lockerFormGroup.get('amount')?.value.amount <=) {
-    //       this.amountIsNotValid = true;
-    //     } else {
-    //       this.amountIsNotValid = false;
-    //     }
-    //   })
-    // }
+
+    if (this.lockerFormGroup.get('amount')?.value) {
+      this.lockerFormGroup.get('amount')?.value.subscribe((res: any) => {
+        if (+this.lockerFormGroup.get('amount')?.value.amount <= +this.selectedAmount.toFixed(2)) {
+          this.amountIsNotValid = true;
+        } else {
+          this.amountIsNotValid = false;
+        }
+      })
+    }
+
     if (this.lockerFormGroup.get('releaseInterval')?.value) {
       this.lockerFormGroup.get('releaseInterval')?.value.subscribe((res: any) => {
         if (+this.lockerFormGroup.get('releaseInterval')?.value.amount >= 1) {

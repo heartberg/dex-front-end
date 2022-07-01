@@ -178,7 +178,7 @@ export class TradeComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    if ( this.bottomForms.get('bottomInputValue')!.value) {
+    if ( this.bottomForms.get('bottomInputValue')?.value) {
       this.bottomForms.get('bottomInputValue')!.value.valueChanges.subscribe((value: any) => {
         if (+this.bottomForms.get('bottomInputValue')?.value > +this.selectedOption!) {
           this.botInputIsNotValid = true;
@@ -189,7 +189,7 @@ export class TradeComponent implements OnInit, DoCheck {
       });
     }
 
-    if ( this.bottomForms.get('slippageInput')!.value) {
+    if ( this.bottomForms.get('slippageInput')?.value) {
       this.slippageForm.get('slippageInput')!.value.valueChanges.subscribe((value: any) => {
         if (+this.slippageForm.get('slippageInput')?.value < 100) {
           this.slippageIsNotValid = true;

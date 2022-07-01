@@ -202,8 +202,8 @@ export class PopUpComponent implements OnInit, DoCheck {
   ) {}
 
   ngDoCheck() {
-    if (this.stakeVerseControl.value) {
-      this.stakeVerseControl.value.valueChanges.subscribe((res: any) => {
+    if (this.stakeVerseControl.value.length) {
+      this.stakeVerseControl.valueChanges.subscribe((res: any) => {
         if (+this.stakeVerseControl.value >  this.stakingInfo?.usersHolding!) {
           this.isStakeInvalid = true;
         } else {
@@ -211,8 +211,8 @@ export class PopUpComponent implements OnInit, DoCheck {
         }
       })
     }
-    if (this.withdrawVerseControl.value) {
-      this.withdrawVerseControl.value.valueChanges.subscribe((res: any) => {
+    if (this.withdrawVerseControl.value.length) {
+      this.withdrawVerseControl.valueChanges.subscribe((res: any) => {
         if (+this.withdrawVerseControl.value > this.stakingInfo?.usersStake!) {
           this.isWithdrawInvalid = true;
         } else {
