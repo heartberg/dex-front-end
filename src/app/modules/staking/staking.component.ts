@@ -118,6 +118,9 @@ export class StakingComponent implements OnInit, DoCheck {
       this.isFailed = false;
       this.isPending = false;
     }
+    if (this.closePopupSecond) {
+      this.closePopup = false;
+    }
   }
 
   ngOnInit() {
