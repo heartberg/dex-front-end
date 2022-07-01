@@ -47,4 +47,8 @@ export class WalletComponent implements OnInit {
     this.isActiveSecond = true;
     this.isActiveFirst = false;
   }
+
+  returnAlgo(): any{
+    if(this.totalAlgoValue) {return  this.totalAlgoValue.toFixed(2)}
+  }
 }
