@@ -12,6 +12,7 @@ import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayT
 import MyAlgoConnect from '@randlabs/myalgo-connect';
 import { Buffer } from 'buffer';
 import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
+import { Router } from "@angular/router";
 
 
 const client = getAlgodClient()
@@ -25,14 +26,12 @@ export class WalletsConnectService {
   public myAlgoAddress: any | undefined;
   public myAlgoName: any | undefined;
 
-  constructor(private userServce: AuthService) {
+  constructor(private userServce: AuthService, private router: Router) {
     if (localStorage.getItem('wallet')) {
       sessionStorage.setItem('acct-list', JSON.stringify([localStorage.getItem('wallet')]));
-      setTimeout(() => {
         if (this.sessionWallet === undefined || !this.sessionWallet) {
           this.connectOnDefault('my-algo-connect').then(response => response);
         }
-      })
     }
   }
 
@@ -61,10 +60,13 @@ export class WalletsConnectService {
       location.reload();
       setTimeout(() => {
         localStorage.removeItem('reload');
-      }, 300)
+      }, 1000)
     } else {
       return
     }
+    // this.router.navigateByUrl('/trade', { skipLocationChange: true }).then(() => {
+    //   this.router.navigate(['trade']);
+    // });
   }
 
   connectOnDefault = async (choice: string) => {
