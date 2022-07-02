@@ -31,6 +31,7 @@ import { StakingModel } from "../models/stakingModel";
 import { Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
 import { start } from "repl";
 import { SIGTTIN } from "constants";
+import { pathToFileURL } from "url";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -1426,6 +1427,15 @@ export class DeployedApp {
     }
     algosdk.assignGroupID(grouped)
     let signed = await wallet.signTxn(grouped)
+    let response = await sendWait(signed)
+    return response
+  }
+
+  async addBacking(wallet: SessionWallet, amount: number, contractId: number) {
+    let suggested = await getSuggested(10)
+    let addr = wallet.getDefaultAccount()
+    let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), amount))
+    let signed = await wallet.signTxn([payTxn])
     let response = await sendWait(signed)
     return response
   }

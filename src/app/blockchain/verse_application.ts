@@ -26,6 +26,7 @@ import { getAppLocalStateByKey } from "../services/utils.algo";
 declare const AlgoSigner: any;
 export type BackingTokenInfo = {
     name: string,
+    unit: string,
     totalBacking: number,
     backingPerToken: number,
     assetId: number,
@@ -217,18 +218,21 @@ export class VerseApp {
         let userMaxBorrow = 0
         let userHolding = 0
         if(wallet) {
-            userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, "ub" + index) / Math.pow(10, assetInfo['params']['decimals'])
-            userMaxBorrow = parseFloat((backingPerToken * userSupplied - userBorrowed).toFixed(assetInfo['params']['decimals']))
             let userAssetInfo = userInfo!['assets'].find((a: any) => {return a['asset-id'] == assetId})
-            if(userAssetInfo) {
-                userHolding = userAssetInfo['amount']
+                if(userAssetInfo) {
+                    userHolding = userAssetInfo['amount']
+                }
+            if(await isOptedIntoApp(wallet, ps.platform.backing_id)) {
+                userBorrowed = await getAppLocalStateByKey(client, ps.platform.backing_id, wallet, "ub" + index) / Math.pow(10, assetInfo['params']['decimals'])
+                userMaxBorrow = parseFloat((backingPerToken * userSupplied - userBorrowed).toFixed(assetInfo['params']['decimals']))
             }
-            console.log("holding: ", userHolding)
+            
         }
         index = index + 1
         console.log("index increased", index)
         tokens.push({
             name: assetInfo['params']['name'],
+            unit: assetInfo['params']['unit'],
             assetDecimals: assetInfo['params']['decimals'],
             totalBacking: holding,
             backingPerToken: backingPerToken,

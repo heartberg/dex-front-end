@@ -37,6 +37,7 @@ export class MyDeploysComponent implements OnInit, DoCheck {
   isFailed: boolean = false;
   isPending: boolean = false;
   closePopup: boolean = false;
+  isAddBacking: boolean = false;
   //
 
   constructor(
@@ -174,9 +175,16 @@ export class MyDeploysComponent implements OnInit, DoCheck {
     console.log("start from setup")
   }
 
+  addBacking(model: ProjectPreviewModel) {
+    this.projectForDistribution = model
+    this.isAddBacking = true
+    this.isPopUpOpen = true
+  }
+
   openPopUp(model: ProjectPreviewModel) {
     this.projectForDistribution = model
     console.log(this.projectForDistribution)
+    this.isAddBacking = false;
     this.isPopUpOpen = true
   }
 

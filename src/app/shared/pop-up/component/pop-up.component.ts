@@ -53,6 +53,7 @@ export class PopUpComponent implements OnInit {
   @Input() isTrade: boolean = false;
   @Input() isBorrow: boolean = false;
   @Input() isBacking: boolean = false;
+  @Input() isAddBacking: boolean = false; 
 
   @Input() isRestart: boolean = false;
   @Input() isFair: boolean = false;
@@ -145,6 +146,8 @@ export class PopUpComponent implements OnInit {
 
   @Input() isPool: boolean = false;
 
+  addBackingControl = this.fb.control([])
+
   distributionPoolForm = this.fb.group({
     poolReward: [],
     poolStart: [],
@@ -221,6 +224,13 @@ export class PopUpComponent implements OnInit {
     //     this.calculateBackingReturn(value)
     //   }
     // )
+
+    if(this.isAddBacking) {
+      let wallet = this._walletsConnectService.sessionWallet
+      if(wallet) {
+        this.smartToolData = await this.deployedApp.getSmartToolData(this.projectForDistributionPool!.asset.smartProperties!.contractId, wallet.getDefaultAccount())
+      }
+    }
 
     this.tradeBackingVerseControl.valueChanges!.subscribe(
       (value: any) => {
@@ -562,9 +572,11 @@ export class PopUpComponent implements OnInit {
   }
 
   calculateBackingReturn(amount: any) {
+    console.log(amount)
     if(!amount)  {
       this.returnedBacking = 0
     } else {
+      console.log(this.isLend)
       if(this.isLend) {
         this.returnedBacking = this.smartToolData.totalBacking / this.smartToolData.totalSupply * amount
       } else {
@@ -584,6 +596,7 @@ export class PopUpComponent implements OnInit {
       if(response) {
         console.log("collateral withdrawn")
         this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet.getDefaultAccount())
+        this.smartToolData = await this.stakingUtils.getVerseSmartToolData(wallet.getDefaultAccount())
       }
     }
   }
@@ -811,7 +824,8 @@ export class PopUpComponent implements OnInit {
         let response = await this.verseApp.borrow(wallet, selectedAssets)
         if(response) {
           console.log("backing done")
-          this.closePopUp(true)
+          this.smartToolData = await this.stakingUtils.getVerseSmartToolData(wallet.getDefaultAccount())
+          this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet.getDefaultAccount())
         }
       } else {
         let amount = parseFloat(this.tradeBackingControl.value)
@@ -823,7 +837,7 @@ export class PopUpComponent implements OnInit {
           let response = await this.deployedApp.borrow(wallet, amount, this.smartToolData.contractId)
           if(response) {
             console.log("backing done")
-            this.closePopUp(true)
+            this.smartToolData = await this.deployedApp.getSmartToolData(this.smartToolData.contractId, wallet.getDefaultAccount())
           }
         }
       }
@@ -892,7 +906,8 @@ export class PopUpComponent implements OnInit {
           let response = await this.verseApp.repay(wallet, amount, data[0], data[1])
           if(response) {
             console.log("backing done")
-            this.closePopUp(true)
+            this.smartToolData = await this.stakingUtils.getVerseSmartToolData(wallet.getDefaultAccount())
+            this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet.getDefaultAccount())
           }
         } else {
           let amount = parseFloat(this.tradeBackingControl.value)
@@ -900,7 +915,7 @@ export class PopUpComponent implements OnInit {
           let response = await this.deployedApp.repay(wallet, amount, this.smartToolData.contractId)
           if(response) {
             console.log("backing done")
-            this.closePopUp(true)
+            this.smartToolData = await this.deployedApp.getSmartToolData(this.smartToolData.contractId, wallet.getDefaultAccount());
           }
         }
       } else {
@@ -949,6 +964,7 @@ export class PopUpComponent implements OnInit {
           this.verseBackingTokens = await this.verseApp.getBackingTokens(wallet.getDefaultAccount())
           this.calculateVerseBackingReturn(0)
           this.calculateTokenBackingReturnVerse(0)
+          this.tradeLendVerseControl.setValue(null)
         }
       }
     }
@@ -1043,6 +1059,17 @@ export class PopUpComponent implements OnInit {
       this.myPresaleRestartForm.get('releaseIntervalNumber')?.setValue(null)
       this.myPresaleRestartForm.get('release')?.setValue(null)
       this.myPresaleRestartForm.get('releaseInterval')?.setValue(null)
+    }
+  }
+
+  async addBacking() {
+    let amount = this.addBackingControl.value * Math.pow(10, 6)
+    let wallet = this._walletsConnectService.sessionWallet
+    if(amount > 0) {
+      let response = await this.deployedApp.addBacking(wallet!, amount, this.smartToolData.contractId)
+      if(response) {
+        this.closePopUp(true)
+      }
     }
   }
 
