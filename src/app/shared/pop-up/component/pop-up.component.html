@@ -321,21 +321,18 @@
                   <span class="value">{{smartToolData.userBorrowed}} Algo</span>
                 </div>
               </div>
-                <div class="row" style="width: 100%; margin-bottom: 10px; margin-top: 10px">
+                <div class="row" style="width: 100%; margin-bottom: 10px; margin-top: 10px; max-height: calc(100vh-30px); overflow-y:scroll;">
                   <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
                     <div class="aligner-left" style="width: 100%;">
                       <div class="header">
 
                         <div class="data-box d-flex align-items-center">
-                          <h3 for="" style="margin-left: 4px">
+                          <h3 class="color-violet" style="margin-left: 4px">
                             {{verseBackingTokens![0].name}}
                           </h3>
                         </div>
                       </div>
                     </div>
-                    <!--for while-->
-                  
-                    <!--for while-->
                     <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
                       <div class="input-section" style="width: 100%;" >
                         <div class="d-flex align-items-center justify-content-between">
@@ -365,129 +362,263 @@
                         </div>
                       </div>
                     </div>
-
                   </div>
 
 
-                  <div class="input-section" style="width: 90%;" *ngIf=" !isLend && verseBackingTokens!.length > 1">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <span>Amount</span>
-                      <div>
-                        <span class="color-violet">Available:</span>
-                        <span style="margin-left: 4px">{{verseBackingTokens![1].userHolding}}</span>
-                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![1].name}}</span>
+                  <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                    <div class="aligner-left" style="width: 100%;">
+                      <div class="header">
+
+                        <div class="data-box d-flex align-items-center">
+                          <h3 class="color-violet" style="margin-left: 4px">
+                            {{verseBackingTokens![0].name}}
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <input
-                        style="width: 100%"
-                        [formControl]="tradeLendRepayTokenControl2"
-                        type="number"
-                        class="input-costum"
-                      />
-                    </div>
-                  </div>
-
-
-
-                  <div class="input-section" style="width: 90%;" *ngIf=" !isLend && verseBackingTokens!.length > 2">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <span>Amount</span>
-                      <div>
-                        <span class="color-violet">Available:</span>
-                        <span style="margin-left: 4px">{{verseBackingTokens![2].userHolding}}</span>
-                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![2].name}}</span>
+                    <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                      <div class="input-section" style="width: 100%;" >
+                        <div class="d-flex align-items-center justify-content-between">
+                          <span>Amount</span>
+                          <div>
+                            <span class="color-violet">Available:</span>
+                            <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                            <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            style="width: 100%"
+                            [formControl]="tradeLendRepayTokenControl1"
+                            type="number"
+                            class="input-costum"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <input
-                        style="width: 100%"
-                        [formControl]="tradeLendRepayTokenControl3"
-                        type="number"
-                        class="input-costum"
-                      />
-                    </div>
-                  </div>
-
-
-
-                  <div class="input-section" style="width: 90%;" *ngIf=" !isLend && verseBackingTokens!.length > 3">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <span>Amount</span>
-                      <div>
-                        <span class="color-violet">Available:</span>
-                        <span style="margin-left: 4px">{{verseBackingTokens![3].userHolding}}</span>
-                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![3].name}}</span>
+  
+                        <div class="restyle-md" style="display: flex; justify-content: flex-start;">
+                        <div style="margin: 10px 0px 10px 5px; ">
+                          <div class="data-box">
+                            <span class="property color-violet">Borrowed:</span>
+                            <span class="svalue">{{verseBackingTokens![0].userBorrowed}}</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <input
-                        style="width: 100%"
-                        [formControl]="tradeLendRepayTokenControl4"
-                        type="number"
-                        class="input-costum"
-                      />
                     </div>
                   </div>
 
 
 
-                  <div class="input-section" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 4">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <span>Amount</span>
-                      <div>
-                        <span class="color-violet">Available:</span>
-                        <span style="margin-left: 4px">{{verseBackingTokens![4].userHolding}}</span>
-                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![4].name}}</span>
+                  <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                    <div class="aligner-left" style="width: 100%;">
+                      <div class="header">
+
+                        <div class="data-box d-flex align-items-center">
+                          <h3 class="color-violet" style="margin-left: 4px">
+                            {{verseBackingTokens![0].name}}
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <input
-                        style="width: 100%"
-                        [formControl]="tradeLendRepayTokenControl5"
-                        type="number"
-                        class="input-costum"
-                      />
+                    <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                      <div class="input-section" style="width: 100%;" >
+                        <div class="d-flex align-items-center justify-content-between">
+                          <span>Amount</span>
+                          <div>
+                            <span class="color-violet">Available:</span>
+                            <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                            <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            style="width: 100%"
+                            [formControl]="tradeLendRepayTokenControl1"
+                            type="number"
+                            class="input-costum"
+                          />
+                        </div>
+                      </div>
+  
+                        <div class="restyle-md" style="display: flex; justify-content: flex-start;">
+                        <div style="margin: 10px 0px 10px 5px; ">
+                          <div class="data-box">
+                            <span class="property color-violet">Borrowed:</span>
+                            <span class="svalue">{{verseBackingTokens![0].userBorrowed}}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
 
-                  <div class="input-section" style="width: 90%;" *ngIf=" !isLend && verseBackingTokens!.length > 5">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <span>Amount</span>
-                      <div>
-                        <span class="color-violet">Available:</span>
-                        <span style="margin-left: 4px">{{verseBackingTokens![5].userHolding}}</span>
-                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![5].name}}</span>
+                  <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                    <div class="aligner-left" style="width: 100%;">
+                      <div class="header">
+
+                        <div class="data-box d-flex align-items-center">
+                          <h3 class="color-violet" style="margin-left: 4px">
+                            {{verseBackingTokens![0].name}}
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <input
-                        style="width: 100%"
-                        [formControl]="tradeLendRepayTokenControl6"
-                        type="number"
-                        class="input-costum"
-                      />
+                    <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                      <div class="input-section" style="width: 100%;" >
+                        <div class="d-flex align-items-center justify-content-between">
+                          <span>Amount</span>
+                          <div>
+                            <span class="color-violet">Available:</span>
+                            <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                            <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            style="width: 100%"
+                            [formControl]="tradeLendRepayTokenControl1"
+                            type="number"
+                            class="input-costum"
+                          />
+                        </div>
+                      </div>
+  
+                        <div class="restyle-md" style="display: flex; justify-content: flex-start;">
+                        <div style="margin: 10px 0px 10px 5px; ">
+                          <div class="data-box">
+                            <span class="property color-violet">Borrowed:</span>
+                            <span class="svalue">{{verseBackingTokens![0].userBorrowed}}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
 
-                  <div class="input-section" style="width: 90%;" *ngIf=" !isLend && verseBackingTokens!.length > 6">
-                    <div class="d-flex align-items-center justify-content-between">
-                      <span>Amount</span>
-                      <div>
-                        <span class="color-violet">Available:</span>
-                        <span style="margin-left: 4px">{{verseBackingTokens![6].userHolding}}</span>
-                        <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![6].name}}</span>
+                  <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                    <div class="aligner-left" style="width: 100%;">
+                      <div class="header">
+
+                        <div class="data-box d-flex align-items-center">
+                          <h3 class="color-violet" style="margin-left: 4px">
+                            {{verseBackingTokens![0].name}}
+                          </h3>
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <input
-                        style="width: 100%"
-                        [formControl]="tradeLendRepayTokenControl7"
-                        type="number"
-                        class="input-costum"
-                      />
+                    <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                      <div class="input-section" style="width: 100%;" >
+                        <div class="d-flex align-items-center justify-content-between">
+                          <span>Amount</span>
+                          <div>
+                            <span class="color-violet">Available:</span>
+                            <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                            <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            style="width: 100%"
+                            [formControl]="tradeLendRepayTokenControl1"
+                            type="number"
+                            class="input-costum"
+                          />
+                        </div>
+                      </div>
+  
+                        <div class="restyle-md" style="display: flex; justify-content: flex-start;">
+                        <div style="margin: 10px 0px 10px 5px; ">
+                          <div class="data-box">
+                            <span class="property color-violet">Borrowed:</span>
+                            <span class="svalue">{{verseBackingTokens![0].userBorrowed}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                    <div class="aligner-left" style="width: 100%;">
+                      <div class="header">
+
+                        <div class="data-box d-flex align-items-center">
+                          <h3 class="color-violet" style="margin-left: 4px">
+                            {{verseBackingTokens![0].name}}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                      <div class="input-section" style="width: 100%;" >
+                        <div class="d-flex align-items-center justify-content-between">
+                          <span>Amount</span>
+                          <div>
+                            <span class="color-violet">Available:</span>
+                            <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                            <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            style="width: 100%"
+                            [formControl]="tradeLendRepayTokenControl1"
+                            type="number"
+                            class="input-costum"
+                          />
+                        </div>
+                      </div>
+  
+                        <div class="restyle-md" style="display: flex; justify-content: flex-start;">
+                        <div style="margin: 10px 0px 10px 5px; ">
+                          <div class="data-box">
+                            <span class="property color-violet">Borrowed:</span>
+                            <span class="svalue">{{verseBackingTokens![0].userBorrowed}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="aligner d-flex align-items-center flex-column" style="width: 100%;" *ngIf=" !isLend && verseBackingTokens!.length > 0">
+                    <div class="aligner-left" style="width: 100%;">
+                      <div class="header">
+
+                        <div class="data-box d-flex align-items-center">
+                          <h3 class="color-violet" style="margin-left: 4px">
+                            {{verseBackingTokens![0].name}}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="aligner-right d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                      <div class="input-section" style="width: 100%;" >
+                        <div class="d-flex align-items-center justify-content-between">
+                          <span>Amount</span>
+                          <div>
+                            <span class="color-violet">Available:</span>
+                            <span style="margin-left: 4px">{{verseBackingTokens![0].userHolding}}</span>
+                            <span class="color-violet" style="margin-left: 4px;"> {{verseBackingTokens![0].name}}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <input
+                            style="width: 100%"
+                            [formControl]="tradeLendRepayTokenControl1"
+                            type="number"
+                            class="input-costum"
+                          />
+                        </div>
+                      </div>
+  
+                        <div class="restyle-md" style="display: flex; justify-content: flex-start;">
+                        <div style="margin: 10px 0px 10px 5px; ">
+                          <div class="data-box">
+                            <span class="property color-violet">Borrowed:</span>
+                            <span class="svalue">{{verseBackingTokens![0].userBorrowed}}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
