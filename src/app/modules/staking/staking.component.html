@@ -212,7 +212,7 @@
   <app-pop-up [stacking]="true" [stackingISStake]="isStake" [stakingInfo]="stakingInput" (isClosed)="closePopUp($event)" *ngIf="closePopup"></app-pop-up>
   <app-pop-up
     (isClosed)="closePopUp($event)"
-    *ngIf="closePopup"
+    *ngIf="closePopupSecond"
     [isDeployedSuccess]="finalStepApi"
     [isDeployedFaied]="isFailed"
     [isDeployedPending]="isPending"

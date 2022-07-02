@@ -102,6 +102,9 @@ export class MyPresaleComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
+    if (this.closePopup) {
+      this.isPopUpOpen = false;
+    }
     if(localStorage.getItem('sendWaitSuccess') === 'pending') {
       this.closePopup = true;
       this.isPending = true;

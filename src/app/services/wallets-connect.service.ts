@@ -193,12 +193,12 @@ export class WalletsConnectService {
 
       if (this.myAlgoAddress.length > 0) {
         // paste here
-        this.userServce.getUserByWallet(this.myAlgoAddress[0]).subscribe(
+        this.userServce.getUserByWallet(this.myAlgoAddress[this.sessionWallet!.wallet.defaultAccount]).subscribe(
           (result: any) => console.log('profile', result),
           (error: any) => {
             console.log('error', error)
             if (error.status == 404) {
-              this.userServce.createUser(this.myAlgoAddress[0]).subscribe(
+              this.userServce.createUser(this.myAlgoAddress[this.sessionWallet!.wallet.defaultAccount]).subscribe(
                 (result: any) => console.log('profile', result),
                 (error: any) => console.log('error', error),
               );

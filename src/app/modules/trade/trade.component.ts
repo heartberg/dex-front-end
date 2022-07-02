@@ -181,6 +181,11 @@ export class TradeComponent implements OnInit {
     // @ts-ignore
     this.topInput = +this.topForms.value.topInputValue;
     let output = this.calcOtherFieldOutput(true);
+    if(this.isBuy) {
+      output = Math.round(output * Math.pow(10, this.selectedOption!.decimals)) / Math.pow(10, this.selectedOption!.decimals)
+    } else {
+      output = Math.round(output * Math.pow(10, 6)) / Math.pow(10, 6)
+    }
     this.bottomForms.get("bottomInputValue")!.setValue(output);
     this.bottomInput = output
     console.log("top input: " + this.topInput)
@@ -193,6 +198,12 @@ export class TradeComponent implements OnInit {
     // @ts-ignore
     this.bottomInput = +this.bottomForms.value.bottomInputValue;
     let output = this.calcOtherFieldOutput(false);
+    if(this.isBuy) {
+      output = Math.round(output * Math.pow(10, 6)) / Math.pow(10, 6)
+      
+    } else {
+      output = Math.round(output * Math.pow(10, this.selectedOption!.decimals)) / Math.pow(10, this.selectedOption!.decimals)
+    }
     this.topForms.get("topInputValue")!.setValue(output);
     this.topInput = output
     console.log("top input: " + this.topInput)

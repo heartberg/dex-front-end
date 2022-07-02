@@ -64,6 +64,9 @@ export class MyDeploysComponent implements OnInit, DoCheck {
       this.isFailed = false;
       this.isPending = false;
     }
+    if(this.closePopup) {
+      this.isPopUpOpen = false
+    }
 
   }
 
