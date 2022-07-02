@@ -41,6 +41,7 @@ export class MyPresaleComponent implements OnInit, DoCheck {
   Faild: boolean = false;
   isPending: boolean = false;
   closePopup: boolean = false;
+  isAddBacking: boolean = false;
   //
 
   constructor(
@@ -55,6 +56,13 @@ export class MyPresaleComponent implements OnInit, DoCheck {
       this.isRestart = false;
       this.isFair = false;
       this.isPool = true;
+      this.isAddBacking = false;
+      this.projectPreviewModel = presale
+    } else if(version === 'backing') {
+      this.isRestart = false;
+      this.isFair = false;
+      this.isPool = false;
+      this.isAddBacking = true
       this.projectPreviewModel = presale
     } else {
       this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
@@ -66,10 +74,12 @@ export class MyPresaleComponent implements OnInit, DoCheck {
             this.isRestart = true;
             this.isFair = false;
             this.isPool = false;
+            this.isAddBacking = false;
           } else if (version === 'fair') {
             this.isRestart = false;
             this.isFair = true;
             this.isPool = false;
+            this.isAddBacking = false;
           }
         }
       )
