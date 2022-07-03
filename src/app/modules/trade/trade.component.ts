@@ -33,7 +33,7 @@ import { fail } from 'assert';
   templateUrl: './trade.component.html',
   styleUrls: ['./trade.component.scss'],
 })
-export class TradeComponent implements OnInit {
+export class TradeComponent implements OnInit, DoCheck {
   availAmount: number = 0;
   rotate: boolean = false;
   autoSlippage: boolean = true;
@@ -120,6 +120,10 @@ export class TradeComponent implements OnInit {
 
   topSearched: string = '';
   bottomSearched: string = '';
+  closePopupSecond: boolean = false;
+  isPending: boolean = false;
+  isFailed: boolean = false;
+  finalStepApi: boolean = false;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -175,6 +179,28 @@ export class TradeComponent implements OnInit {
     );
 
     console.log('check', new Uint8Array(Buffer.from("text")))
+  }
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopupSecond = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopupSecond = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopupSecond = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+    if (this.closePopupSecond) {
+      this.isPopUpOpen = false;
+    }
   }
 
   catchValueTop($event: any) {
@@ -342,6 +368,7 @@ export class TradeComponent implements OnInit {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+    this.closePopupSecond = event;
     this.updateBlockchainInfo()
     this.updateHoldingOfSelectedAsset()
     this.getSmartToolData()

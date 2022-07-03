@@ -181,6 +181,7 @@ export class LaunchDetailComponent implements OnInit, DoCheck {
     }
     await this.getUserAllocation()
     this.closePopup = event;
+    this.closePopupSecond = event;
   }
 
   async openPopUp() {

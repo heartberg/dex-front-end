@@ -155,6 +155,7 @@ export class StakingComponent implements OnInit, DoCheck {
   async closePopUp(event: boolean) {
     console.log(event)
     this.closePopup = event;
+    this.closePopupSecond = event
     this.getUserInfo()
     this.getStakingInfo()
     if(this.isDistributionSelected) {

@@ -1040,7 +1040,12 @@ export class PopUpComponent implements OnInit {
   }
 
   isFinishedPool(time: number | undefined){
+    console.log(time)
+    if(time == 0) {
+      return false
+    }
     if(!time) {
+      console.log("not time")
       return true
     }
     let now = Math.floor(new Date().getTime() / 1000)
