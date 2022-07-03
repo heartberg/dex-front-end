@@ -199,11 +199,11 @@ export class TradeComponent implements OnInit, DoCheck {
     }
 
     if ( this.slippageForm.get('slippageInput')!.value) {
-      this.slippageForm.get('slippageInput')!.value.valueChanges.subscribe((value: any) => {
+      this.slippageForm.get('slippageInput')!.valueChanges.subscribe((value: any) => {
         if (+this.slippageForm.get('slippageInput')?.value < 100) {
-          this.slippageIsNotValid = true;
-        } else {
           this.slippageIsNotValid = false;
+        } else {
+          this.slippageIsNotValid = true;
         }
       });
     }
