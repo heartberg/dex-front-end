@@ -73,34 +73,34 @@ export class LockerComponent implements OnInit, DoCheck {
       this.isPending = false;
     }
 
-    if (this.lockerFormGroup.get('amount')?.value) {
-      this.lockerFormGroup.get('amount')?.value.subscribe((res: any) => {
-        if (+this.lockerFormGroup.get('amount')?.value.amount <= +this.selectedAmount.toFixed(2)) {
-          this.amountIsNotValid = true;
-        } else {
-          this.amountIsNotValid = false;
-        }
-      })
-    }
-
-    if (this.lockerFormGroup.get('releaseInterval')?.value) {
-      this.lockerFormGroup.get('releaseInterval')?.value.subscribe((res: any) => {
-        if (+this.lockerFormGroup.get('releaseInterval')?.value.amount >= 1) {
-          this.releaseIsNotValid = true;
-        } else {
-          this.releaseIsNotValid = false;
-        }
-      })
-    }
-    if (this.lockerFormGroup.get('releaseIntervalNumbers')?.value) {
-      this.lockerFormGroup.get('releaseIntervalNumbers')?.value.subscribe((res: any) => {
-        if (+this.lockerFormGroup.get('releaseIntervalNumbers')?.value.amount >= 1) {
-          this.releaseNumberNotValid = true;
-        } else {
-          this.releaseNumberNotValid = false;
-        }
-      })
-    }
+    // if (this.lockerFormGroup.get('amount')?.value) {
+    //   this.lockerFormGroup.get('amount')?.value.subscribe((res: any) => {
+    //     if (+this.lockerFormGroup.get('amount')?.value.amount <= +this.selectedAmount.toFixed(2)) {
+    //       this.amountIsNotValid = true;
+    //     } else {
+    //       this.amountIsNotValid = false;
+    //     }
+    //   })
+    // }
+    //
+    // if (this.lockerFormGroup.get('releaseInterval')?.value) {
+    //   this.lockerFormGroup.get('releaseInterval')?.value.subscribe((res: any) => {
+    //     if (+this.lockerFormGroup.get('releaseInterval')?.value.amount >= 1) {
+    //       this.releaseIsNotValid = true;
+    //     } else {
+    //       this.releaseIsNotValid = false;
+    //     }
+    //   })
+    // }
+    // if (this.lockerFormGroup.get('releaseIntervalNumbers')?.value) {
+    //   this.lockerFormGroup.get('releaseIntervalNumbers')?.value.subscribe((res: any) => {
+    //     if (+this.lockerFormGroup.get('releaseIntervalNumbers')?.value.amount >= 1) {
+    //       this.releaseNumberNotValid = true;
+    //     } else {
+    //       this.releaseNumberNotValid = false;
+    //     }
+    //   })
+    // }
   }
 
   async ngOnInit(): Promise<void> {

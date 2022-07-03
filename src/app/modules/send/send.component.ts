@@ -68,15 +68,15 @@ export class SendComponent implements OnInit, DoCheck {
       this.isFailed = false;
       this.isPending = false;
     }
-    if (this.sendForm.get('sendInput')?.value) {
-      this.sendForm.get('sendInput')?.value.valueChanges.subscribe( (res: any) => {
-        if (this.invalidAddress === true || this.addressNotOptedIn === true || this.sendForm.get('sendInput')?.value > this.availableBalance) {
-          this.sendNotValid = true;
-        } else  {
-          this.sendNotValid = false;
-        }
-      })
-    }
+    // if (this.sendForm.get('sendInput')?.value) {
+    //   this.sendForm.get('sendInput')?.value.valueChanges.subscribe( (res: any) => {
+    //     if (this.invalidAddress === true || this.addressNotOptedIn === true || this.sendForm.get('sendInput')?.value > this.availableBalance) {
+    //       this.sendNotValid = true;
+    //     } else  {
+    //       this.sendNotValid = false;
+    //     }
+    //   })
+    // }
 
   }
 
