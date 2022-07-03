@@ -2,7 +2,7 @@
   <div class="wrapper-border">
     <div class="header-title d-flex">
       <h3>VerseWallet</h3>
-      <span style="margin: 4px 0 15px 40px;">{{totalAlgoValue ? this.totalAlgoValue.toFixed(2) : ''}}<span class="color-violet">Algo</span> ≈ 0 $ lol</span>
+      <span style="margin: 4px 0 15px 40px;">{{returnAlgo()}}<span class="color-violet">Algo</span> ≈ 0 $ lol</span>
     </div>
     <div class="choise d-flex" style="margin-top: 5px; margin-bottom: 10px;">
       <div class="section" (click)="activeFirst()">

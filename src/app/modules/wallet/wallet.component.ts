@@ -19,7 +19,7 @@ export class WalletComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
-    this.totalAlgoValue = JSON.parse(localStorage.getItem('algo')!);
+    // this.totalAlgoValue = JSON.parse(localStorage.getItem('algo')!);
 
     const wallet = localStorage.getItem("wallet");
     if(wallet){
@@ -46,5 +46,9 @@ export class WalletComponent implements OnInit {
   activeSecond() {
     this.isActiveSecond = true;
     this.isActiveFirst = false;
+  }
+
+  returnAlgo(): any{
+    if(this.totalAlgoValue) {return  this.totalAlgoValue.toFixed(2)}
   }
 }

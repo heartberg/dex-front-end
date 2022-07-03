@@ -11,7 +11,7 @@ import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayTxn, waitForTransaction } from './utils.algo';
 import MyAlgoConnect from '@randlabs/myalgo-connect';
 import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
-import { Router } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 
 const client = getAlgodClient()
@@ -25,13 +25,14 @@ export class WalletsConnectService {
   public myAlgoAddress: any | undefined;
   public myAlgoName: any | undefined;
 
-  constructor(private userServce: AuthService, private router: Router) {
-    if (localStorage.getItem('wallet')) {
-      sessionStorage.setItem('acct-list', JSON.stringify([localStorage.getItem('wallet')]));
-        if (this.sessionWallet === undefined || !this.sessionWallet) {
-          this.connectOnDefault('my-algo-connect').then(response => response);
-        }
-    }
+  constructor(private userServce: AuthService, private router: Router, private route: ActivatedRoute) {
+    // if (localStorage.getItem('wallet')) {
+    //   sessionStorage.setItem('acct-list', JSON.stringify([localStorage.getItem('wallet')]));
+    //     if (this.sessionWallet === undefined || !this.sessionWallet) {
+    //       this.connectOnDefault('my-algo-connect').then(response => response);
+    //     }
+    // }
+    // console.log(this.route, 'sss')
   }
 
 
@@ -52,20 +53,22 @@ export class WalletsConnectService {
     const finalSw = sw;
     this.sessionWallet = finalSw!;
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
+    localStorage.setItem('walletsOfUser', JSON.stringify(this.sessionWallet.wallet.accounts));
     console.log(this.sessionWallet, 'esaaa');
 
-    localStorage.setItem('reload', 'true');
-    if (localStorage.getItem('reload')) {
-      location.reload();
-      setTimeout(() => {
-        localStorage.removeItem('reload');
-      }, 1000)
-    } else {
-      return
-    }
-    // this.router.navigateByUrl('/trade', { skipLocationChange: true }).then(() => {
-    //   this.router.navigate(['trade']);
-    // });
+    // localStorage.setItem('reload', 'true');
+    // if (localStorage.getItem('reload')) {
+    //   location.reload();
+    //   setTimeout(() => {
+    //     localStorage.removeItem('reload');
+    //   }, 1000)
+    // } else {
+    //   return
+    // }
+
+    this.router.navigateByUrl('/home', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['home']);
+    });
   }
 
   connectOnDefault = async (choice: string) => {
@@ -86,7 +89,10 @@ export class WalletsConnectService {
     sw.wallet.defaultAccount = finalIndex;
     const finalSw = sw;
     this.sessionWallet = finalSw!;
-    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
+    let userWallets = localStorage.getItem('walletsOfUser');
+    let finalWalletOfUser = JSON.parse(userWallets!);
+    this.sessionWallet.wallet.accounts = [...finalWalletOfUser];
+    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet))
     console.log(this.sessionWallet, 'esaaa');
   }
 

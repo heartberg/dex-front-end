@@ -45,9 +45,11 @@ export class SendComponent implements OnInit, DoCheck {
   }
 
   sendForm = this.fb.group({
-    sendInput: [],
+    sendInput: [0,],
     addressInput: [],
   });
+
+  sendNotValid: boolean = false;
 
   ngDoCheck() {
     if(localStorage.getItem('sendWaitSuccess') === 'pending') {
@@ -65,6 +67,15 @@ export class SendComponent implements OnInit, DoCheck {
       this.finalStepApi = true;
       this.isFailed = false;
       this.isPending = false;
+    }
+    if (this.sendForm.get('sendInput')?.value) {
+      this.sendForm.get('sendInput')?.value.valueChanges.subscribe( (res: any) => {
+        if (this.invalidAddress === true || this.addressNotOptedIn === true || this.sendForm.get('sendInput')?.value > this.availableBalance) {
+          this.sendNotValid = true;
+        } else  {
+          this.sendNotValid = false;
+        }
+      })
     }
 
   }
