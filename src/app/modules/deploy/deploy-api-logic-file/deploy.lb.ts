@@ -395,6 +395,7 @@ export class DeployLb {
   async deployFromMintPresale(projectModel: ProjectViewModel) {
     this.sessionWallet = this.wallet.sessionWallet
     this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
+    this.projectId = projectModel.projectId
     of(await this.deployerBC.mint(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (value) {
@@ -451,6 +452,7 @@ export class DeployLb {
   async deployFromOptInPresale(projectModel: ProjectViewModel) {
     this.sessionWallet = this.wallet.sessionWallet
     this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
+    this.projectId = projectModel.projectId
     of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (value) {
@@ -489,6 +491,7 @@ export class DeployLb {
   async deployFromOptInNoPresale(projectModel: ProjectViewModel) {
     this.sessionWallet = this.wallet.sessionWallet
     this.blockchainObj = this.mapProjectViewToBlockchainObject(projectModel)
+    this.projectId = projectModel.projectId
     of(await this.deployerBC.payAndOptInBurn(this.sessionWallet!, this.blockchainObj!)).subscribe(
       (value: any) => {
         if (value) {
@@ -831,7 +834,7 @@ export class DeployLb {
       twitter: form.get('twitter')?.value,
       telegram: form.get('telegram')?.value,
       discord: form.get('discord')?.value,
-      website: form.get('discord')?.value,
+      website: form.get('website')?.value,
       initialAlgoLiquidity: initialAlgoLiq,
       initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
       initialTokenLiquidity: +form.get('liquidity.tokensToLiq')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
@@ -954,6 +957,35 @@ export class DeployLb {
         }
       }
     )
+  }
+
+  async deployFromSetupAsaPresale(project: ProjectViewModel) {
+    this.standardAsaBlockchainObject = JSON.parse(localStorage.getItem("standardBlockchainObj")!)
+    this.blockchainObj = undefined
+    this.sessionWallet = this.wallet.sessionWallet
+    this.projectId = project.projectId
+    of(await this.deployerBC.setupAsaPresale(this.sessionWallet!, project.presale!.contractId!, project.asset.assetId,
+      project.presale!.hardCap, project.presale!.softCap, project.presale!.walletCap, project.presale!.tokenAmount,
+      undefined, undefined, undefined, undefined, undefined, 
+      project.presale!.vestingRelease, project.presale!.vestingReleaseInterval, project.presale!.vestingReleaseIntervalNumber)).subscribe(
+        (value: any) => {
+          if (value) {
+            this.GetProjectSetup(this.projectId).subscribe(
+              (value: any) => {
+                console.log('setup is done')
+                this.finalStepApi = true;
+                this.isPending = false;
+                this.isFailed = false;
+              },
+              error => {
+                this.isPending = false;
+                this.isFailed = true;
+                this.finalStepApi = false;
+              }
+            )
+          }
+        }
+      )
   }
 
   async DeployStandardAssetWithoutPresale() {

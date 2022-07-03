@@ -1029,50 +1029,78 @@ export class DeployedApp {
     let client: Algodv2 = getAlgodClient()
     let globalState: any = await this.getContractGlobalState(contractId)
     let appAccInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
-    let assetInfo: any = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
-
-    let algoLiquidity = globalState[StateKeys.algo_liq_key]['i'] / 1_000_000
-    let tokenLiquidity = globalState[StateKeys.token_liq_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
-    let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
-    let price = algoLiquidity / tokenLiquidity
-    let burned = globalState[StateKeys.burned_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
-    let tradingStart = globalState[StateKeys.trading_start_key]['i']
-    let tokensInPresale = globalState[StateKeys.presale_token_amount]['i'] / Math.pow(10, assetInfo['params']['decimals'])
-    let presaleFundsToLiquidityPercentage = globalState[StateKeys.presale_to_liq_key]['i'] / 10000
+    let presaleInfo: PresaleBlockchainInformation;
     let saleEnd = globalState[StateKeys.presale_end_key]['i']
     let saleStart = globalState[StateKeys.presale_start_key]['i']
-    let softCap = globalState[StateKeys.presale_soft_cap_key]['i'] / 1_000_000
-    let hardCap = globalState[StateKeys.presale_hard_cap_key]['i'] / 1_000_000
-    let walletCap = globalState[StateKeys.presale_wallet_cap_key]['i'] / 1_000_000
-    let totalRaised = globalState[StateKeys.presale_total_raised]['i'] / 1_000_000
-    let presalePrice = hardCap / tokensInPresale
-    
-    let vestingRelease = globalState[StateKeys.presale_vesting_release_key]['i']
-    let vestingIntervalLength = globalState[StateKeys.presale_vesting_interval__length_key]['i']
-    let vestingIntervalNumbers = globalState[StateKeys.presalve_vesting_interval_numbers_key]['i']
-
-    let presaleInfo: PresaleBlockchainInformation = {
-      algoLiq: algoLiquidity,
-      tokenLiq: tokenLiquidity,
-      burned: burned,
-      tokensInPresale: tokensInPresale,
-      presaleFundsToLiqPercentage: presaleFundsToLiquidityPercentage,
-      initialPrice: price,
-      presalePrice: presalePrice,
-      totalSupply: totalSupply,
-      tradingStart: tradingStart,
-      saleEnd: saleEnd,
-      saleStart: saleStart,
-      softCap: softCap,
-      hardCap: hardCap,
-      walletCap: walletCap,
-      totalRaised: totalRaised,
-      contractId: contractId,
-      assetId: globalState[StateKeys.asset_id_key]['i'],
-      vestingIntervalLength: vestingIntervalLength,
-      vestingIntervalNumbers: vestingIntervalNumbers,
-      vestingRelease: vestingRelease
+    if(globalState[StateKeys.asset_id_key]['i'] != 0) {
+      let assetInfo: any = await client.getAssetByID(globalState[StateKeys.asset_id_key]['i']).do()
+      let algoLiquidity = globalState[StateKeys.algo_liq_key]['i'] / 1_000_000
+      let tokenLiquidity = globalState[StateKeys.token_liq_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+      let totalSupply = globalState[StateKeys.total_supply_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+      let price = algoLiquidity / tokenLiquidity
+      let burned = globalState[StateKeys.burned_key]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+      let tradingStart = globalState[StateKeys.trading_start_key]['i']
+      let tokensInPresale = globalState[StateKeys.presale_token_amount]['i'] / Math.pow(10, assetInfo['params']['decimals'])
+      let presaleFundsToLiquidityPercentage = globalState[StateKeys.presale_to_liq_key]['i'] / 10000
+      let softCap = globalState[StateKeys.presale_soft_cap_key]['i'] / 1_000_000
+      let hardCap = globalState[StateKeys.presale_hard_cap_key]['i'] / 1_000_000
+      let walletCap = globalState[StateKeys.presale_wallet_cap_key]['i'] / 1_000_000
+      let totalRaised = globalState[StateKeys.presale_total_raised]['i'] / 1_000_000
+      let presalePrice = hardCap / tokensInPresale
+      
+      let vestingRelease = globalState[StateKeys.presale_vesting_release_key]['i']
+      let vestingIntervalLength = globalState[StateKeys.presale_vesting_interval__length_key]['i']
+      let vestingIntervalNumbers = globalState[StateKeys.presalve_vesting_interval_numbers_key]['i']
+  
+      presaleInfo = {
+        algoLiq: algoLiquidity,
+        tokenLiq: tokenLiquidity,
+        burned: burned,
+        tokensInPresale: tokensInPresale,
+        presaleFundsToLiqPercentage: presaleFundsToLiquidityPercentage,
+        initialPrice: price,
+        presalePrice: presalePrice,
+        totalSupply: totalSupply,
+        tradingStart: tradingStart,
+        saleEnd: saleEnd,
+        saleStart: saleStart,
+        softCap: softCap,
+        hardCap: hardCap,
+        walletCap: walletCap,
+        totalRaised: totalRaised,
+        contractId: contractId,
+        assetId: globalState[StateKeys.asset_id_key]['i'],
+        vestingIntervalLength: vestingIntervalLength,
+        vestingIntervalNumbers: vestingIntervalNumbers,
+        vestingRelease: vestingRelease
+      }
+    } else {
+      presaleInfo = {
+        algoLiq: 0,
+        tokenLiq: 0,
+        burned: 0,
+        tokensInPresale: 0,
+        presaleFundsToLiqPercentage: 0,
+        initialPrice: 0,
+        presalePrice: 0,
+        totalSupply: 0,
+        tradingStart: 0,
+        saleEnd: saleEnd,
+        saleStart: saleStart,
+        softCap: 0,
+        hardCap: 0,
+        walletCap: 0,
+        totalRaised: 0,
+        contractId: contractId,
+        assetId: 0,
+        vestingIntervalLength: 0,
+        vestingIntervalNumbers: 0,
+        vestingRelease: 0
+      }
     }
+    
+
+    
     return presaleInfo;
   }
 

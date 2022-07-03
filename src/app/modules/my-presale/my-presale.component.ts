@@ -12,7 +12,10 @@ import { deployService } from 'src/app/services/APIs/deploy/deploy-service';
 import { projectReqService } from 'src/app/services/APIs/project-req.service';
 import { getAppLocalStateByKey } from 'src/app/services/utils.algo';
 import { WalletsConnectService } from 'src/app/services/wallets-connect.service';
+import { DeployLb } from '../deploy/deploy-api-logic-file/deploy.lb';
+import { AsaPresaleSettings, AsaSettings } from '../deploy/deploy.component';
 import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-detail.component';
+import { DeployState } from '../my-deploys/my-deploys.component';
 
 
 @Component({
@@ -21,7 +24,7 @@ import { PresaleBlockchainInformation } from '../launchpad/launch-detail/launch-
   styleUrls: ['./my-presale.component.scss'],
 })
 export class MyPresaleComponent implements OnInit, DoCheck {
-  arr: [ProjectPreviewModel, PresaleBlockchainInformation][] = [];
+  arr: [ProjectPreviewModel, PresaleBlockchainInformation, DeployState][] = [];
 
   isPopUpOpen: boolean = false;
   isRestart: boolean = false;
@@ -48,7 +51,8 @@ export class MyPresaleComponent implements OnInit, DoCheck {
     private projectReqService: projectReqService,
     private assetReqService: AssetReqService,
     private app: DeployedApp,
-    private walletService: WalletsConnectService
+    private walletService: WalletsConnectService,
+    private deployLib: DeployLb
   ) {}
 
   async openPopUp(version: string, presale: ProjectPreviewModel) {
@@ -89,6 +93,7 @@ export class MyPresaleComponent implements OnInit, DoCheck {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+    this.closePopup = event;
   }
 
   async removeMaxBuy(assetId: number, contractId: number) {
@@ -142,14 +147,15 @@ export class MyPresaleComponent implements OnInit, DoCheck {
         res.forEach(async presaleModel => {
           if(presaleModel.asset.smartProperties) {
             let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.asset.smartProperties!.contractId)
-            this.arr.push([presaleModel, blockchainInfo])
+            let deployState: DeployState = await this.getDeployState(presaleModel)
+            this.arr.push([presaleModel, blockchainInfo, deployState])
           } else {
             let blockchainInfo: PresaleBlockchainInformation = await this.app.getPresaleInfo(presaleModel.presale.contractId!)
-            this.arr.push([presaleModel, blockchainInfo])
+            let deployState: DeployState = await this.getDeployState(presaleModel)
+            this.arr.push([presaleModel, blockchainInfo, deployState])
           }
-
         });
-        console.log(res);
+        console.log(this.arr);
       });
     }
   }
@@ -208,12 +214,124 @@ export class MyPresaleComponent implements OnInit, DoCheck {
     }
   }
 
+  // async hasMaxBuy(model: ProjectPreviewModel): Promise<boolean> {
+  //   let hasMaxBuy = false;
+  //   if(model.asset.smartProperties) {
+  //     hasMaxBuy = await this.app.hasMaxBuy(model.asset.smartProperties!.contractId)
+  //   }
+  //   return hasMaxBuy
+  // }
+
   async claim(contractId: number) {
     let wallet = this.walletService.sessionWallet
     let response = await this.app.claimPresale(wallet!, contractId)
     if(response) {
       console.log("successful claimed")
     }
+  }
+
+  async isRemoveMaxBuy(model: ProjectPreviewModel): Promise<boolean> {
+    let hasMaxBuy = false
+    if(model.asset.smartProperties) {
+      hasMaxBuy = await this.app.hasMaxBuy(model.asset.smartProperties!.contractId)
+    }
+
+    return model.setup && model.burnOptIn && model.minted && hasMaxBuy
+  }
+
+  isOptInBurn(model: ProjectPreviewModel): boolean {
+    return model.minted && !model.burnOptIn && !model.setup
+  }
+
+  isSetup(model: ProjectPreviewModel): boolean {
+    return model.minted && model.burnOptIn && !model.setup
+  }
+
+  isMint(model: ProjectPreviewModel): boolean {
+    return !model.minted && !model.burnOptIn && !model.setup
+  }
+
+  async getDeployState(project: ProjectPreviewModel): Promise<DeployState> {
+    let optInState = false
+    let removeState = false
+    let mintState = false
+    if(project.asset.smartProperties) {
+      optInState = this.isOptInBurn(project)
+      removeState = await this.isRemoveMaxBuy(project)
+      mintState = this.isMint(project)
+    }
+    let setupState = this.isSetup(project)
+    let finished = !(mintState || optInState || removeState || setupState)
+    return {
+      mintState: mintState,
+      optInBurnState: optInState,
+      removeMaxBuyState: removeState,
+      setupState: setupState,
+      finished: finished
+    }
+  }
+
+  async deployFromMint(model: ProjectPreviewModel) {
+    this.projectReqService.getProjectWithpresaleById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromMintPresale(projectModel)
+      }
+    )
+  }
+
+  asaObjectInitialize(project: ProjectViewModel) {
+    let sessionWallet = this.walletService.sessionWallet!
+    let standardBlockchainObject: AsaSettings = {
+      creator: sessionWallet.getDefaultAccount(),
+      totalSupply: project.asset.totalSupply,
+      name: project.asset.name,
+      unit: project.asset.unitName,
+      decimals: project.asset.decimals,
+      url: project.asset.url!,
+      poolStart: undefined,
+      poolInterval: undefined,
+      poolRewards: undefined,
+      rewardsPerInterval: undefined,
+      poolDuration: undefined,
+      isDistribution: false,
+      presaleSettings: {
+        contractId: 0,
+        presaleTokenAmount: project.presale!.tokenAmount,
+        presaleStart: project.presale!.startingTime,
+        presaleEnd: project.presale!.endingTime,
+        softcap: project.presale!.softCap,
+        hardcap: project.presale!.hardCap,
+        walletcap: project.presale!.walletCap,
+      }
+    }
+    localStorage.setItem("standardBlockchainObj", JSON.stringify(standardBlockchainObject))
+  }
+
+  async deployFromSetup(model: ProjectPreviewModel) {
+    this.projectReqService.getProjectWithpresaleById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        if(projectModel.asset.smartProperties) {
+          await this.deployLib.deployFromSetupPresale(projectModel)
+        } else {
+          await this.deployLib.deployFromSetupAsaPresale(projectModel)
+        }
+        
+      }
+    )
+  }
+
+  async deployFromOptIn(model: ProjectPreviewModel) {
+    this.projectReqService.getProjectWithpresaleById(model.projectId).subscribe(
+      async (value: ProjectViewModel) => {
+        let projectModel = value
+        console.log(projectModel)
+        await this.deployLib.deployFromOptInPresale(projectModel)
+      }
+    )
   }
 
 }

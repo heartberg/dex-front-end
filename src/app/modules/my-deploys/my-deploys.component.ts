@@ -190,5 +190,6 @@ export class MyDeploysComponent implements OnInit, DoCheck {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+    this.closePopup = event;
   }
 }
