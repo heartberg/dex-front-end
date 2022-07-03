@@ -203,9 +203,7 @@ export class TradeComponent implements OnInit, DoCheck {
     if (this.closePopupSecond) {
       this.isPopUpOpen = false;
     }
-  }
 
-  ngDoCheck() {
     if ( this.bottomForms.get('bottomInputValue')?.value) {
       this.bottomForms.get('bottomInputValue')!.value.valueChanges.subscribe((value: any) => {
         if (+this.bottomForms.get('bottomInputValue')?.value > +this.selectedOption!) {
@@ -253,7 +251,7 @@ export class TradeComponent implements OnInit, DoCheck {
     let output = this.calcOtherFieldOutput(false);
     if(this.isBuy) {
       output = Math.round(output * Math.pow(10, 6)) / Math.pow(10, 6)
-      
+
     } else {
       output = Math.round(output * Math.pow(10, this.selectedOption!.decimals)) / Math.pow(10, this.selectedOption!.decimals)
     }
