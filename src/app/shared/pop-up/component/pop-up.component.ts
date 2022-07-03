@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {Component, DoCheck, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import { WalletsConnectService } from '../../../services/wallets-connect.service';
 import { AuthService } from '../../../services/authService.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -39,7 +39,7 @@ export type SmartToolData = {
   templateUrl: './pop-up.component.html',
   styleUrls: ['./pop-up.component.scss'],
 })
-export class PopUpComponent implements OnInit {
+export class PopUpComponent implements OnInit, DoCheck {
   @Output() isConnectedToWallet = new EventEmitter<boolean>();
   @Output() isClosed = new EventEmitter<boolean>();
   @Output() logInValue = new EventEmitter<string | null>();
@@ -53,7 +53,7 @@ export class PopUpComponent implements OnInit {
   @Input() isTrade: boolean = false;
   @Input() isBorrow: boolean = false;
   @Input() isBacking: boolean = false;
-  @Input() isAddBacking: boolean = false; 
+  @Input() isAddBacking: boolean = false;
 
   @Input() isRestart: boolean = false;
   @Input() isFair: boolean = false;
@@ -173,8 +173,10 @@ export class PopUpComponent implements OnInit {
   launchDetailControl = this.fb.control([]);
   tradeBackingControl = this.fb.control([]);
 
-  stakeVerseControl = this.fb.control([])
+  stakeVerseControl = this.fb.control([0,])
   withdrawVerseControl = this.fb.control([])
+  isStakeInvalid: boolean = false;
+  isWithdrawInvalid: boolean = false;
 
   myPresaleRestartForm = this.fb.group({
     presaleStart: [],
@@ -217,6 +219,26 @@ export class PopUpComponent implements OnInit {
     private stakingUtils: StakingUtils
   ) {}
 
+  ngDoCheck() {
+    if (this.stakeVerseControl.value.length) {
+      this.stakeVerseControl.valueChanges.subscribe((res: any) => {
+        if (+this.stakeVerseControl.value >  this.stakingInfo?.usersHolding!) {
+          this.isStakeInvalid = true;
+        } else {
+          this.isStakeInvalid = false;
+        }
+      })
+    }
+    if (this.withdrawVerseControl.value.length) {
+      this.withdrawVerseControl.valueChanges.subscribe((res: any) => {
+        if (+this.withdrawVerseControl.value > this.stakingInfo?.usersStake!) {
+          this.isWithdrawInvalid = true;
+        } else {
+          this.isWithdrawInvalid = false;
+        }
+      })
+    }
+  }
 
   async ngOnInit(): Promise<void> {
     // this.lendControl.valueChanges!.subscribe(
@@ -251,7 +273,7 @@ export class PopUpComponent implements OnInit {
       console.log("lend verse")
       this.calculateVerseBackingReturn(0)
     }
-    
+
 
     this.isLendVerseChecked.setValue(false)
     this.isLendVerseChecked.valueChanges!.subscribe(
@@ -367,16 +389,16 @@ export class PopUpComponent implements OnInit {
       let algoInLiquidity = this.myPresaleRestartForm.get("algoInLiquidity")?.value * 1_000_000
       let walletCap = this.myPresaleRestartForm.get("walletCap")?.value * 1_000_000
       let toLiquidity = this.myPresaleRestartForm.get("toLiquidity")?.value * 100
-      
+
       let vestingRelease = undefined;
       let vestingIntervalLength = undefined
       let vestingIntervalNumber = undefined
-      
+
       if(this.isCheckedVested) {
         vestingRelease = parseInt((new Date(this.myPresaleRestartForm.get("release")?.value).getTime() / 1000).toFixed(0))
         vestingIntervalLength = Math.floor(this.myPresaleRestartForm.get("releaseInterval")?.value * 86400)
         vestingIntervalNumber = this.myPresaleRestartForm.get("releaseIntervalNumbers")?.value
-        
+
       }
      let response = await this.deployedApp.resetupPresale(wallet, softCap, hardCap, presaleStart, presaleEnd, walletCap, toLiquidity,
         tradingStart, tokenInPresale, tokenInLiquidity, algoInLiquidity, this.presaleData![0].contractId, this.presaleData![0].assetId,
