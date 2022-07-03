@@ -89,7 +89,7 @@ export class TradeComponent implements OnInit, DoCheck {
   // trade popup situations
   isTradeLend: boolean = false;
   isTradeBacking: boolean = false;
-  isTradeLendVerse: boolean = false;
+  isTradeLendVerse: boolean = true;
   isTradeBackingVerse: boolean = false;
   // trade popup situations
 
@@ -120,6 +120,10 @@ export class TradeComponent implements OnInit, DoCheck {
 
   topSearched: string = '';
   bottomSearched: string = '';
+  closePopupSecond: boolean = false;
+  isPending: boolean = false;
+  isFailed: boolean = false;
+  finalStepApi: boolean = false;
 
   constructor(
     private assetReqService: AssetReqService,
@@ -175,6 +179,30 @@ export class TradeComponent implements OnInit, DoCheck {
         this.setMinOutput();
       }
     );
+
+    console.log('check', new Uint8Array(Buffer.from("text")))
+  }
+
+  ngDoCheck() {
+    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
+      this.closePopupSecond = true;
+      this.isPending = true;
+      this.isFailed = false;
+      this.finalStepApi = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
+      this.closePopupSecond = true;
+      this.isFailed = true;
+      this.finalStepApi = false;
+      this.isPending = false;
+    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
+      this.closePopupSecond = true;
+      this.finalStepApi = true;
+      this.isFailed = false;
+      this.isPending = false;
+    }
+    if (this.closePopupSecond) {
+      this.isPopUpOpen = false;
+    }
   }
 
   ngDoCheck() {
@@ -206,6 +234,11 @@ export class TradeComponent implements OnInit, DoCheck {
     // @ts-ignore
     this.topInput = +this.topForms.value.topInputValue;
     let output = this.calcOtherFieldOutput(true);
+    if(this.isBuy) {
+      output = Math.round(output * Math.pow(10, this.selectedOption!.decimals)) / Math.pow(10, this.selectedOption!.decimals)
+    } else {
+      output = Math.round(output * Math.pow(10, 6)) / Math.pow(10, 6)
+    }
     this.bottomForms.get("bottomInputValue")!.setValue(output);
     this.bottomInput = output
     console.log("top input: " + this.topInput)
@@ -218,6 +251,12 @@ export class TradeComponent implements OnInit, DoCheck {
     // @ts-ignore
     this.bottomInput = +this.bottomForms.value.bottomInputValue;
     let output = this.calcOtherFieldOutput(false);
+    if(this.isBuy) {
+      output = Math.round(output * Math.pow(10, 6)) / Math.pow(10, 6)
+      
+    } else {
+      output = Math.round(output * Math.pow(10, this.selectedOption!.decimals)) / Math.pow(10, this.selectedOption!.decimals)
+    }
     this.topForms.get("topInputValue")!.setValue(output);
     this.topInput = output
     console.log("top input: " + this.topInput)
@@ -358,11 +397,14 @@ export class TradeComponent implements OnInit, DoCheck {
 
   async openPopUp() {
     await this.getSmartToolData()
+    console.log(this.isTradeLendVerse)
+    console.log(this.isTradeBackingVerse)
     this.isPopUpOpen = true;
   }
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+    this.closePopupSecond = event;
     this.updateBlockchainInfo()
     this.updateHoldingOfSelectedAsset()
     this.getSmartToolData()
@@ -374,9 +416,13 @@ export class TradeComponent implements OnInit, DoCheck {
     if ($event.assetId === ps.platform.verse_asset_id) {
       this.isTradeLendVerse = true;
       this.isTradeBackingVerse = false;
-    } else if ($event.assetId !== ps.platform.verse_asset_id) {
+      this.isTradeLend = false;
+      this.isTradeBacking = false;
+    } else if ($event.assetId !== ps.platform.verse_asset_id && $event.assetId != 0) {
       this.isTradeLend = true;
       this.isTradeBacking = false;
+      this.isTradeLendVerse = false;
+      this.isTradeBackingVerse = false;
     }
 
     if ($event.assetId !== 0 && index === 1) {

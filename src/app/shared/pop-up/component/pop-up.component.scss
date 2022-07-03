@@ -111,10 +111,12 @@
   margin: 2px 0;
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   .property {
     color: #81007f;
     margin-bottom: 5px;
+    margin-right: 10px;
   }
   .value {
     margin-left: 4px;
@@ -243,8 +245,14 @@
   flex-wrap: wrap;
 }
 .restyle-md {
-  width: 25%;
+  width: 100%;
 }
+.assets-section {
+  height: 200px !important;
+  overflow-y: scroll !important;
+  margin-bottom: 20px;
+}
+
 .w {
   width: 60% !important;
 }

@@ -696,9 +696,9 @@ export class DeployLb {
   }
 
   initializeApiObjWithPresale(form: any): void {
-    //let team = localStorage.getItem('teamArray');
-    //let finalTeam = JSON.parse(team!);
-    let finalTeam = undefined
+    let team = localStorage.getItem('teamArray');
+    let finalTeam = JSON.parse(team!);
+    //let finalTeam = undefined
     console.log(form.value);
     let wallet = localStorage.getItem('wallet');
 

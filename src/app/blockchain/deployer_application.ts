@@ -31,6 +31,7 @@ import { StakingModel } from "../models/stakingModel";
 import { Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
 import { start } from "repl";
 import { SIGTTIN } from "constants";
+import { pathToFileURL } from "url";
 //import { showErrorToaster, showInfo } from "../Toaster";
 
 declare const AlgoSigner: any;
@@ -668,7 +669,7 @@ export class DeployedApp {
     
     let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
     console.log(globalState)
-    let extraFeeTime = globalState[StateKeys.extra_fee_time_key]['i']
+    let extraFeeTime = globalState[StateKeys.extra_fee_time_key]['i'] - globalState[StateKeys.trading_start_key]['i']
     let initialAlgoLiq = globalState[StateKeys.algo_liq_key]['i']
     let initialTokenLiq = globalState[StateKeys.token_liq_key]['i']
     let suggested = await getSuggested(30)
@@ -697,7 +698,7 @@ export class DeployedApp {
       return result
     } else {
       const signedResetup = await wallet.signTxn([resetup])
-      const result = await sendWait([signedResetup])
+      const result = await sendWait(signedResetup)
       return result
     }
   }
@@ -718,7 +719,7 @@ export class DeployedApp {
       console.log("token liq: " + tokenLiquidity)      
       console.log("algoliq: " + algoLiquidity)      
 
-      let extraFeeTime = globalState[StateKeys.extra_fee_time_key]['i']
+      let extraFeeTime = globalState[StateKeys.extra_fee_time_key]['i'] - globalState[StateKeys.trading_start_key]['i']
       let initialAlgoLiq = globalState[StateKeys.algo_liq_key]['i']
       let initialTokenLiq = globalState[StateKeys.token_liq_key]['i']
       
@@ -748,18 +749,20 @@ export class DeployedApp {
       if(release && releaseInterval && releaseIntervalNumbers) {
         args.push(algosdk.encodeUint64(release), algosdk.encodeUint64(releaseInterval), algosdk.encodeUint64(releaseIntervalNumbers))
       }
-      
+      console.log(args)
       const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, contractId, args, undefined, assets, accs))
       
       let result;
       if(payTxn) {
-        algosdk.assignGroupID([resetup, payTxn])
-        const signedGrp = await wallet.signTxn([resetup, payTxn])
+        console.log("more liq: ")
+        console.log(payTxn)
+        algosdk.assignGroupID([payTxn, resetup])
+        const signedGrp = await wallet.signTxn([payTxn, resetup])
         result = await sendWait(signedGrp)
       } else {
-
+        console.log("not more liq")
         const signedResetup = await wallet.signTxn([resetup])
-        result = await sendWait([signedResetup])
+        result = await sendWait(signedResetup)
       }
 
       return result
@@ -1186,6 +1189,9 @@ export class DeployedApp {
     let userContribution = await getAppLocalStateByKey(client, contractId, addr, StateKeys.presale_contribution_key)
     let latestTimestamp = Math.floor(Date.now() / 1000);
 
+    let totalRaised = globalState[StateKeys.presale_total_raised]['i']
+    let softCap = globalState[StateKeys.presale_soft_cap_key]['i']
+
     let vestingRelease = globalState[StateKeys.presale_vesting_release_key]['i']
     let vestingIntervalLength = globalState[StateKeys.presale_vesting_interval__length_key]['i']
     let vestingIntervalNumbers = globalState[StateKeys.presalve_vesting_interval_numbers_key]['i']
@@ -1200,10 +1206,15 @@ export class DeployedApp {
       hasStarted: false,
     }
 
-    if((presaleEnd < latestTimestamp) || (presaleStart > latestTimestamp)) {
-      if(presaleEnd < latestTimestamp) {
-        if(userContribution > 0) {
-          if(vestingRelease > 0) {
+    let ended = presaleEnd < latestTimestamp
+    let started = presaleStart < latestTimestamp
+    let hasVesting = vestingIntervalNumbers != 0
+    let hasRaisedEnough = totalRaised >= softCap
+
+    if(ended) {
+      if(userContribution > 0) {
+        if(hasRaisedEnough){
+          if(hasVesting) {
             if(vestingUserClaims < vestingIntervalNumbers && latestTimestamp > (vestingRelease + vestingUserClaims * vestingIntervalLength)) {
               claimState.canClaim = true
             } else {
@@ -1213,33 +1224,19 @@ export class DeployedApp {
             claimState.canClaim = true
           }
         } else {
-          claimState.canClaim = false
-        }
-      } else if(presaleStart > latestTimestamp) {
-        if(userContribution > 0) {
           claimState.canClaim = true
-        } else {
-          claimState.canClaim = false
         }
       } else {
         claimState.canClaim = false
       }
-      
-    }
-
-    if(presaleStart < latestTimestamp) {
-      claimState.hasStarted = true
     } else {
-      claimState.hasStarted = false
+      claimState.canClaim = false
     }
 
-    if(presaleEnd < latestTimestamp) {
-      claimState.isFinished = true
-    } else {
-      claimState.isFinished = false
-    }
+    claimState.hasStarted = started
+    claimState.isFinished = ended
 
-    if(!claimState.isFinished && claimState.hasStarted) {
+    if(!ended && started) {
       claimState.canParticipate = true
     } else {
       claimState.canParticipate = false
@@ -1430,6 +1427,15 @@ export class DeployedApp {
     }
     algosdk.assignGroupID(grouped)
     let signed = await wallet.signTxn(grouped)
+    let response = await sendWait(signed)
+    return response
+  }
+
+  async addBacking(wallet: SessionWallet, amount: number, contractId: number) {
+    let suggested = await getSuggested(10)
+    let addr = wallet.getDefaultAccount()
+    let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), amount))
+    let signed = await wallet.signTxn([payTxn])
     let response = await sendWait(signed)
     return response
   }

@@ -59,7 +59,9 @@
  */
 import 'zone.js';  // Included with Angular CLI.
 
-global.Buffer = global.Buffer || require('buffer').Buffer;
+// aws-sdk requires global to exist
+(window as any).global = window
+global. Buffer = global. Buffer || require('buffer').Buffer;
 (window as any).process = { env: {DEBUG: undefined}, };
 /***************************************************************************************************
  * APPLICATION IMPORTS

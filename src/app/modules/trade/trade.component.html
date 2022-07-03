@@ -469,4 +469,13 @@
   [isTradeLendVerse]="isTradeLendVerse"
   [isTradeBackingVerse]="isTradeBackingVerse"
 ></app-pop-up>
+
+<app-pop-up
+  (isClosed)="closePopUp($event)"
+  *ngIf="closePopupSecond"
+  [isDeployedSuccess]="finalStepApi"
+  [isDeployedFaied]="isFailed"
+  [isDeployedPending]="isPending"
+  [isD]="true"
+></app-pop-up>
 <!--(indexerOfChosenSection)="getPopUpChosenSection($event)"-->

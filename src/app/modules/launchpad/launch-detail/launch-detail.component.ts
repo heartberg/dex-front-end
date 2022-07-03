@@ -179,8 +179,9 @@ export class LaunchDetailComponent implements OnInit, DoCheck {
     } else {
       this.presaleData = await this.deployedApp.getPresaleInfo(this.projectData.presale?.contractId!)
     }
-
+    await this.getUserAllocation()
     this.closePopup = event;
+    this.closePopupSecond = event;
   }
 
   async openPopUp() {

@@ -37,6 +37,7 @@ export class MyDeploysComponent implements OnInit, DoCheck {
   isFailed: boolean = false;
   isPending: boolean = false;
   closePopup: boolean = false;
+  isAddBacking: boolean = false;
   //
 
   constructor(
@@ -63,6 +64,9 @@ export class MyDeploysComponent implements OnInit, DoCheck {
       this.finalStepApi = true;
       this.isFailed = false;
       this.isPending = false;
+    }
+    if(this.closePopup) {
+      this.isPopUpOpen = false
     }
 
   }
@@ -107,7 +111,14 @@ export class MyDeploysComponent implements OnInit, DoCheck {
   }
 
   async isRemoveMaxBuy(model: ProjectPreviewModel): Promise<boolean> {
-    let hasMaxBuy = await this.app.hasMaxBuy(model.asset.smartProperties!.contractId)
+    
+    let contractId = 0
+    let hasMaxBuy = false
+    if(model.asset.smartProperties) {
+      contractId = model.asset.smartProperties!.contractId
+      hasMaxBuy = await this.app.hasMaxBuy(model.asset.smartProperties!.contractId)
+    }
+
     return model.setup && model.burnOptIn && model.minted && hasMaxBuy
   }
 
@@ -164,9 +175,16 @@ export class MyDeploysComponent implements OnInit, DoCheck {
     console.log("start from setup")
   }
 
+  addBacking(model: ProjectPreviewModel) {
+    this.projectForDistribution = model
+    this.isAddBacking = true
+    this.isPopUpOpen = true
+  }
+
   openPopUp(model: ProjectPreviewModel) {
     this.projectForDistribution = model
     console.log(this.projectForDistribution)
+    this.isAddBacking = false;
     this.isPopUpOpen = true
   }
 

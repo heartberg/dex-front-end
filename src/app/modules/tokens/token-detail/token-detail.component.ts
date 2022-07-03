@@ -127,6 +127,7 @@ export class TokenDetailComponent implements OnInit, DoCheck {
 
   closePopUp(event: boolean) {
     this.isPopUpOpen = event;
+    this.closePopup = event;
   }
 
   pow(decimal: number){

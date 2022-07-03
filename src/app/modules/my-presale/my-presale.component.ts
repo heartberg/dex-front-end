@@ -41,6 +41,7 @@ export class MyPresaleComponent implements OnInit, DoCheck {
   Faild: boolean = false;
   isPending: boolean = false;
   closePopup: boolean = false;
+  isAddBacking: boolean = false;
   //
 
   constructor(
@@ -55,6 +56,13 @@ export class MyPresaleComponent implements OnInit, DoCheck {
       this.isRestart = false;
       this.isFair = false;
       this.isPool = true;
+      this.isAddBacking = false;
+      this.projectPreviewModel = presale
+    } else if(version === 'backing') {
+      this.isRestart = false;
+      this.isFair = false;
+      this.isPool = false;
+      this.isAddBacking = true
       this.projectPreviewModel = presale
     } else {
       this.projectReqService.getProjectWithpresaleById(presale.projectId).subscribe(
@@ -66,10 +74,12 @@ export class MyPresaleComponent implements OnInit, DoCheck {
             this.isRestart = true;
             this.isFair = false;
             this.isPool = false;
+            this.isAddBacking = false;
           } else if (version === 'fair') {
             this.isRestart = false;
             this.isFair = true;
             this.isPool = false;
+            this.isAddBacking = false;
           }
         }
       )
@@ -102,6 +112,9 @@ export class MyPresaleComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
+    if (this.closePopup) {
+      this.isPopUpOpen = false;
+    }
     if(localStorage.getItem('sendWaitSuccess') === 'pending') {
       this.closePopup = true;
       this.isPending = true;
@@ -171,15 +184,6 @@ export class MyPresaleComponent implements OnInit, DoCheck {
   isSuccessFull(blockchainInfo: PresaleBlockchainInformation): boolean {
     let currentTimeStamp = Math.floor(Date.now() / 1000);
     if(blockchainInfo.saleEnd < currentTimeStamp && blockchainInfo.totalRaised > blockchainInfo.softCap) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  isOngoing(blockchainInfo: PresaleBlockchainInformation): boolean {
-    let currentTimeStamp = Math.floor(Date.now() / 1000);
-    if(blockchainInfo.saleEnd > currentTimeStamp && blockchainInfo.saleStart < currentTimeStamp) {
       return true;
     } else {
       return false;

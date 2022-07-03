@@ -14,7 +14,7 @@ import { platform_settings as ps } from '../../blockchain/platform-conf';
 import { of } from 'rxjs';
 interface member {
   name: string,
-  position: string,
+  role: string,
   social: string,
 }
 
@@ -57,7 +57,7 @@ export type AsaSettings = {
 
 export class DeployComponent implements OnInit, DoCheck {
   name: string = '';
-  position: string = '';
+  role: string = '';
   social: string = '';
 
   isSmartAsaDeploy: boolean = true;
@@ -377,86 +377,86 @@ export class DeployComponent implements OnInit, DoCheck {
       this.secondForm = false;
       this.teamInfoOptionSecond.value.name = '';
       this.teamInfoOptionSecond.value.social = '';
-      this.teamInfoOptionSecond.value.position = '';
-      this.teamInfoOptionSecond.value.teamInfoImage = '';
+      this.teamInfoOptionSecond.value.role = '';
+      this.teamInfoOptionSecond.value.image = '';
     } else if (i === 3) {
       this.thirdForm = false;
       this.teamInfoOptionThird.value.name = '';
       this.teamInfoOptionThird.value.social = '';
-      this.teamInfoOptionThird.value.position = '';
-      this.teamInfoOptionThird.value.teamInfoImage = '';
+      this.teamInfoOptionThird.value.role = '';
+      this.teamInfoOptionThird.value.image = '';
     } else if (i === 4) {
       this.fourthForm = false;
       this.teamInfoOptionFourth.value.name = '';
       this.teamInfoOptionFourth.value.social = '';
-      this.teamInfoOptionFourth.value.position = '';
-      this.teamInfoOptionFourth.value.teamInfoImage = '';
+      this.teamInfoOptionFourth.value.role = '';
+      this.teamInfoOptionFourth.value.image = '';
     } else if (i === 5) {
       this.fifthForm = false;
       this.teamInfoOptionFifth.value.name = '';
       this.teamInfoOptionFifth.value.social = '';
-      this.teamInfoOptionFifth.value.position = '';
-      this.teamInfoOptionFifth.value.teamInfoImage = '';
+      this.teamInfoOptionFifth.value.role = '';
+      this.teamInfoOptionFifth.value.image = '';
     } else if (i === 6) {
       this.sixthForm = false;
       this.teamInfoOptionSixth.value.name = '';
       this.teamInfoOptionSixth.value.social = '';
-      this.teamInfoOptionSixth.value.position = '';
-      this.teamInfoOptionSixth.value.teamInfoImage = '';
+      this.teamInfoOptionSixth.value.role = '';
+      this.teamInfoOptionSixth.value.image = '';
     } else if (i === 7) {
       this.seventhForm = false;
       this.TIOSeventh.value.name = '';
       this.TIOSeventh.value.social = '';
-      this.TIOSeventh.value.position = '';
-      this.TIOSeventh.value.teamInfoImage = '';
+      this.TIOSeventh.value.role = '';
+      this.TIOSeventh.value.image = '';
     } else if (i === 8) {
       this.eighthForm = false;
       this.TIOEighth.value.name = '';
       this.TIOEighth.value.social = '';
-      this.TIOEighth.value.position = '';
-      this.TIOEighth.value.teamInfoImage = '';
+      this.TIOEighth.value.role = '';
+      this.TIOEighth.value.image = '';
     } else if (i === 9) {
       this.ninethForm = false;
       this.TIONineth.value.name = '';
       this.TIONineth.value.social = '';
-      this.TIONineth.value.position = '';
-      this.TIONineth.value.teamInfoImage = '';
+      this.TIONineth.value.role = '';
+      this.TIONineth.value.image = '';
     } else if (i === 10) {
       this.tenthForm = false;
       this.TIOTenth.value.name = '';
       this.TIOTenth.value.social = '';
-      this.TIOTenth.value.position = '';
-      this.TIOTenth.value.teamInfoImage = '';
+      this.TIOTenth.value.role = '';
+      this.TIOTenth.value.image = '';
     } else if (i === 11) {
       this.eleventhForm = false;
       this.TIOEleventh.value.name = '';
       this.TIOEleventh.value.social = '';
-      this.TIOEleventh.value.position = '';
-      this.TIOEleventh.value.teamInfoImage = '';
+      this.TIOEleventh.value.role = '';
+      this.TIOEleventh.value.image = '';
     } else if (i === 12) {
       this.twelvethForm = false;
       this.TIOTwelveth.value.name = '';
       this.TIOTwelveth.value.social = '';
-      this.TIOTwelveth.value.position = '';
-      this.TIOTwelveth.value.teamInfoImage = '';
+      this.TIOTwelveth.value.role = '';
+      this.TIOTwelveth.value.image = '';
     } else if (i === 13) {
       this.thirteenthForm = false;
       this.TIOThirteenth.value.name = '';
       this.TIOThirteenth.value.social = '';
-      this.TIOThirteenth.value.position = '';
-      this.TIOThirteenth.value.teamInfoImage = '';
+      this.TIOThirteenth.value.role = '';
+      this.TIOThirteenth.value.image = '';
     } else if (i === 14) {
       this.fourtheenthForm = false;
       this.TIOFourtheenth.value.name = '';
       this.TIOFourtheenth.value.social = '';
-      this.TIOFourtheenth.value.position = '';
-      this.TIOFourtheenth.value.teamInfoImage = '';
+      this.TIOFourtheenth.value.role = '';
+      this.TIOFourtheenth.value.image = '';
     } else if (i === 15) {
       this.fifteenthForm = false;
       this.TIOFifteenth.value.name = '';
       this.TIOFifteenth.value.social = '';
-      this.TIOFifteenth.value.position = '';
-      this.TIOFifteenth.value.teamInfoImage = '';
+      this.TIOFifteenth.value.role = '';
+      this.TIOFifteenth.value.image = '';
     }
     i = i -1;
     this.teamMemberFinal = this.teamMemberFinal.splice(i, 1);
@@ -465,87 +465,87 @@ export class DeployComponent implements OnInit, DoCheck {
 
   initFormExtra(): void {
     this.teamInfoOptionSecond = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
       this.teamInfoOptionThird = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
       this.teamInfoOptionFourth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
       this.teamInfoOptionFifth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
       this.teamInfoOptionSixth = this.fb.group({
-        teamInfoImage: '',
+        image: '',
         name: '',
-        position: '',
+        role: '',
         social: '',
       });
     this.TIOSeventh = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOEighth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIONineth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOTenth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOEleventh = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOTwelveth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOThirteenth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOFourtheenth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
     this.TIOFifteenth = this.fb.group({
-      teamInfoImage: '',
+      image: '',
       name: '',
-      position: '',
+      role: '',
       social: '',
     });
   }
@@ -619,9 +619,9 @@ export class DeployComponent implements OnInit, DoCheck {
         roadmapImage: '',
       }),
       teamInfoOptionGroup: this.fb.group({
-        teamInfoImage: '',
+        image: '',
         name: '',
-        position: '',
+        role: '',
         social: '',
       }),
       presaleCheck: this.fb.control(false),
@@ -854,7 +854,7 @@ export class DeployComponent implements OnInit, DoCheck {
     this.teamMemberFinal = [];
     this.teamMemberFinal.push(this.deployFormGroup.value.teamInfoOptionGroup, this.teamInfoOptionSecond.value, this.teamInfoOptionThird.value, this.teamInfoOptionFourth.value, this.teamInfoOptionFifth.value, this.teamInfoOptionSixth.value, this.TIOSeventh.value, this.TIOEighth.value, this.TIONineth.value, this.TIOTenth.value, this.TIOEleventh.value, this.TIOTwelveth.value, this.TIOThirteenth.value, this.TIOFourtheenth.value, this.TIOFifteenth.value);
     let finalArr: any[] = [];
-    this.teamMemberFinal.filter((item: {name: string, social: string, position: string, teamInfoImage: string}, index: number) => {
+    this.teamMemberFinal.filter((item: {name: string, social: string, role: string, image: string}, index: number) => {
       if (!item.name.length) {
         this.teamMemberFinal.splice(index, 1);
       } else {

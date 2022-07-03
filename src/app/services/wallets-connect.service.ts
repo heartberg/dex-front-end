@@ -10,9 +10,8 @@ import WalletConnect from '@walletconnect/client';
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { getAlgodClient, getAppLocalStateByKey, getTransactionParams, singlePayTxn, waitForTransaction } from './utils.algo';
 import MyAlgoConnect from '@randlabs/myalgo-connect';
-import { Buffer } from 'buffer';
 import { PermissionResult, SessionWallet, SignedTxn, allowedWallets, PermissionCallback } from 'algorand-session-wallet';
-import {Router} from "@angular/router";
+import { Router } from "@angular/router";
 
 
 const client = getAlgodClient()
@@ -72,6 +71,8 @@ export class WalletsConnectService {
   connectOnDefault = async (choice: string) => {
     console.log('choice', choice);
     const sw = new SessionWallet("TestNet", undefined, choice);
+
+    console.log('check', new Uint8Array(Buffer.from("text")))
 
     if (!await sw.connect()) return alert("Couldnt connect")
 
@@ -192,12 +193,12 @@ export class WalletsConnectService {
 
       if (this.myAlgoAddress.length > 0) {
         // paste here
-        this.userServce.getUserByWallet(this.myAlgoAddress[0]).subscribe(
+        this.userServce.getUserByWallet(this.myAlgoAddress[this.sessionWallet!.wallet.defaultAccount]).subscribe(
           (result: any) => console.log('profile', result),
           (error: any) => {
             console.log('error', error)
             if (error.status == 404) {
-              this.userServce.createUser(this.myAlgoAddress[0]).subscribe(
+              this.userServce.createUser(this.myAlgoAddress[this.sessionWallet!.wallet.defaultAccount]).subscribe(
                 (result: any) => console.log('profile', result),
                 (error: any) => console.log('error', error),
               );
