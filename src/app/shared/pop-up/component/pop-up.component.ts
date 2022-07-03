@@ -475,6 +475,7 @@ export class PopUpComponent implements OnInit, DoCheck {
       if (this._walletsConnectService.myAlgoAddress && this._walletsConnectService.myAlgoName !== undefined) {
         // this.isConnectedToWallet.emit(false);
             let wallet = localStorage.getItem('wallet');
+            console.log('sss');
             if (
               this._walletsConnectService.myAlgoAddress &&
               this._walletsConnectService.myAlgoName !== undefined

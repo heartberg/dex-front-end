@@ -204,16 +204,16 @@ export class TradeComponent implements OnInit, DoCheck {
       this.isPopUpOpen = false;
     }
 
-    if ( this.bottomForms.get('bottomInputValue')?.value) {
-      this.bottomForms.get('bottomInputValue')!.value.valueChanges.subscribe((value: any) => {
-        if (+this.bottomForms.get('bottomInputValue')?.value > +this.selectedOption!) {
-          this.botInputIsNotValid = true;
-        } else {
-          this.botInputIsNotValid = false;
-        }
-        console.log(value);
-      });
-    }
+    // if ( this.bottomForms.get('bottomInputValue')?.value) {
+    //   this.bottomForms.get('bottomInputValue')!.value.valueChanges.subscribe((value: any) => {
+    //     if (+this.bottomForms.get('bottomInputValue')?.value > +this.selectedOption!) {
+    //       this.botInputIsNotValid = true;
+    //     } else {
+    //       this.botInputIsNotValid = false;
+    //     }
+    //     console.log(value);
+    //   });
+    // }
 
     if ( this.bottomForms.get('slippageInput')?.value) {
       this.slippageForm.get('slippageInput')!.value.valueChanges.subscribe((value: any) => {

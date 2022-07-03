@@ -54,15 +54,15 @@ export class WalletsConnectService {
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
     console.log(this.sessionWallet, 'esaaa');
 
-    localStorage.setItem('reload', 'true');
-    if (localStorage.getItem('reload')) {
-      location.reload();
-      setTimeout(() => {
-        localStorage.removeItem('reload');
-      }, 1000)
-    } else {
-      return
-    }
+    // localStorage.setItem('reload', 'true');
+    // if (localStorage.getItem('reload')) {
+    //   location.reload();
+    //   setTimeout(() => {
+    //     localStorage.removeItem('reload');
+    //   }, 1000)
+    // } else {
+    //   return
+    // }
     // this.router.navigateByUrl('/trade', { skipLocationChange: true }).then(() => {
     //   this.router.navigate(['trade']);
     // });
