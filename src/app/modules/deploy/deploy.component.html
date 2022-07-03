@@ -33,10 +33,10 @@
     </div>
     <div class="whole" style="padding-right: 5px">
       <div class="row" *ngIf="isSmartAsaDeploy || isAsaDeploy" style="width: 100%">
-          <form
+        <form
           class="col-md-12 scrollable-section-first"
           [formGroup]="deployFormGroup"
-          >
+        >
           <!-- <div class="col-md-12 scrollable-section-first"> -->
           <div class="inside wrapper-border">
             <div class="header" *ngIf="isSmartAsaDeploy">
@@ -250,19 +250,19 @@
                   <div class="createoffer">
                     <h4 class="amountheader">Purpose</h4>
                     <input type="text" placeholder="Marketing" class="input-costum"
-                    formControlName="purpose"
+                           formControlName="purpose"
                     >
                   </div>
                   <div class="createoffer">
                     <h4 class="amountheader">Address</h4>
                     <input type="text" placeholder="address" class="input-costum"
-                    formControlName="address"
+                           formControlName="address"
                     >
                   </div>
                   <div class="createoffer">
                     <h4 class="amountheader">Fee</h4>
                     <input type="number" placeholder="1" class="input-costum"
-                    formControlName="fee"
+                           formControlName="fee"
                     >
                   </div>
                 </ng-container>
@@ -414,9 +414,9 @@
                           </form>
                           <!-- Vested Release of Presale -->
                           <div
-                          class="d-flex align-items-center"
-                          [ngStyle]="{'margin-bottom': isCheckedVested ? '8px' : '8px'}"
-                          (click)="activateVestedSection()"
+                            class="d-flex align-items-center"
+                            [ngStyle]="{'margin-bottom': isCheckedVested ? '8px' : '8px'}"
+                            (click)="activateVestedSection()"
                           >
                             <input
                               type="checkbox"
@@ -475,65 +475,65 @@
                         </div>
                         <!-- <div class="wrapper-border"> -->
                         <form
-                        formGroupName="presaleLiquidity"
+                          formGroupName="presaleLiquidity"
                         >
-                        <div class="wrapper-border">
-                          <h3 class="color-violet">Presale Token Allocation</h3>
-                          <div class="inputs">
-                            <div class="d-flex align-items-center">
-                              <h4>Tokens in Presale</h4>
-                              <input
-                                type="text"
-                                class="input-costum"
-                                formControlName="tokensInPresale"
-                              />
-                              <h4
-                                class="color-violet"
-                                style="padding-left: 10px; font-size: 14px"
-                              >
-                                {{tokenPresalePercentage.toFixed(2)}}% of total supply
-                              </h4>
-                            </div>
+                          <div class="wrapper-border">
+                            <h3 class="color-violet">Presale Token Allocation</h3>
+                            <div class="inputs">
+                              <div class="d-flex align-items-center">
+                                <h4>Tokens in Presale</h4>
+                                <input
+                                  type="text"
+                                  class="input-costum"
+                                  formControlName="tokensInPresale"
+                                />
+                                <h4
+                                  class="color-violet"
+                                  style="padding-left: 10px; font-size: 14px"
+                                >
+                                  {{tokenPresalePercentage.toFixed(2)}}% of total supply
+                                </h4>
+                              </div>
 
-                            <div class="d-flex align-items-center" *ngIf="isSmartAsaDeploy">
-                              <h4>Presale funds to liquidity (in %)</h4>
-                              <input
-                                type="number"
-                                class="input-costum"
-                                formControlName="presaleFundsToLiquidity"
-                              />
+                              <div class="d-flex align-items-center" *ngIf="isSmartAsaDeploy">
+                                <h4>Presale funds to liquidity (in %)</h4>
+                                <input
+                                  type="number"
+                                  class="input-costum"
+                                  formControlName="presaleFundsToLiquidity"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="wrapper-border" *ngIf="isSmartAsaDeploy">
-                          <h3 class="color-violet">Initial Liquidity</h3>
-                          <div class="inputs">
-                            <div class="d-flex align-items-center">
-                              <h4>Tokens in liquidity</h4>
-                              <input
-                                type="text"
-                                class="input-costum"
-                                formControlName="tokensInLiquidity"
-                              />
-                              <h4
-                                class="color-violet"
-                                style="padding-left: 10px; font-size: 14px"
-                              >
-                                {{tokenLiquidityPercentage.toFixed(2)}}% of total supply
-                              </h4>
+                          <div class="wrapper-border" *ngIf="isSmartAsaDeploy">
+                            <h3 class="color-violet">Initial Liquidity</h3>
+                            <div class="inputs">
+                              <div class="d-flex align-items-center">
+                                <h4>Tokens in liquidity</h4>
+                                <input
+                                  type="text"
+                                  class="input-costum"
+                                  formControlName="tokensInLiquidity"
+                                />
+                                <h4
+                                  class="color-violet"
+                                  style="padding-left: 10px; font-size: 14px"
+                                >
+                                  {{tokenLiquidityPercentage.toFixed(2)}}% of total supply
+                                </h4>
+                              </div>
+                            </div>
+                            <div class="inputs">
+                              <div class="d-flex align-items-center">
+                                <h4>Algo to liquidity</h4>
+                                <input
+                                  type="text"
+                                  class="input-costum"
+                                  formControlName="algoToLiquidity"
+                                />
+                              </div>
                             </div>
                           </div>
-                          <div class="inputs">
-                            <div class="d-flex align-items-center">
-                              <h4>Algo to liquidity</h4>
-                              <input
-                                type="text"
-                                class="input-costum"
-                                formControlName="algoToLiquidity"
-                              />
-                            </div>
-                          </div>
-                        </div>
                         </form>
 
                         <!-- </div> -->
@@ -619,25 +619,25 @@
                         <div class="createoffer">
                           <h4 class="amountheader">Reward Pool</h4>
                           <input type="text" placeholder="40000" class="input-costum"
-                          formControlName="rewardPool"
+                                 formControlName="rewardPool"
                           >
                         </div>
                         <div class="createoffer">
                           <h4 class="amountheader">Reward Interval (Days)</h4>
                           <input type="text" placeholder="1" class="input-costum"
-                          formControlName="rewardInterval"
+                                 formControlName="rewardInterval"
                           >
                         </div>
                         <div class="createoffer">
                           <h4 class="amountheader">Pool Duration (Days)</h4>
                           <input type="number" placeholder="30" class="input-costum"
-                          formControlName="poolDuration"
+                                 formControlName="poolDuration"
                           >
                         </div>
                         <div class="createoffer">
                           <h4 class="amountheader">Pool Start</h4>
                           <input type="datetime-local" class="input-costum"
-                          formControlName="poolStart"
+                                 formControlName="poolStart"
                           >
                         </div>
 
@@ -744,7 +744,7 @@
                                     type="file"
                                     id="myFile"
                                     name="filename"
-                                    formControlName="image"
+                                    formControlName="teamInfoImage"
                                     style="
                                     position: absolute;
                                     height: 60px;
@@ -777,7 +777,7 @@
                                     <input
                                       type="text"
                                       class="input-costum"
-                                      formControlName="role"
+                                      formControlName="position"
                                     />
                                   </div>
                                   <div class="d-flex align-items-center">
@@ -805,10 +805,10 @@
                                   src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
                                   alt=""
                                   style="width: 30px; height: 30px"
-                                  *ngIf="i === 0"
+                                  *ngIf="!secondForm"
                                 />
                                 <img
-                                  *ngIf="i !== 0"
+                                  *ngIf="!secondForm"
                                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                                   alt=""
                                   style="height: 30px; width: 30px"
@@ -835,7 +835,7 @@
                                         type="file"
                                         id="myFile"
                                         name="filename"
-                                        formControlName="image"
+                                        formControlName="teamInfoImage"
                                         style="
                                     position: absolute;
                                     height: 60px;
@@ -868,7 +868,7 @@
                                         <input
                                           type="text"
                                           class="input-costum"
-                                          formControlName="role"
+                                          formControlName="position"
                                         />
                                       </div>
                                       <div class="d-flex align-items-center">
@@ -895,11 +895,11 @@
                                       src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
                                       alt=""
                                       style="width: 30px; height: 30px"
-                                      *ngIf="i === 0"
+                                      *ngIf="!this.thirdForm"
                                       (click)="addExtraFields(item, 2)"
                                     />
                                     <img
-                                      *ngIf="true"
+                                      *ngIf="!this.thirdForm"
                                       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                                       alt=""
                                       style="height: 30px; width: 30px"
@@ -927,7 +927,7 @@
                                         type="file"
                                         id="myFile"
                                         name="filename"
-                                        formControlName="image"
+                                        formControlName="teamInfoImage"
                                         style="
                                     position: absolute;
                                     height: 60px;
@@ -960,7 +960,7 @@
                                         <input
                                           type="text"
                                           class="input-costum"
-                                          formControlName="role"
+                                          formControlName="position"
                                         />
                                       </div>
                                       <div class="d-flex align-items-center">
@@ -987,13 +987,14 @@
                                       src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
                                       alt=""
                                       style="width: 30px; height: 30px"
-                                      *ngIf="i === 0"
+                                      *ngIf="!this.fourthForm"
                                       (click)="addExtraFields(item, 3)"
                                     />
                                     <img
                                       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                                       alt=""
                                       style="height: 30px; width: 30px"
+                                      *ngIf="!this.fourthForm"
                                       (click)="removeExtraField(3)"
                                     />
                                   </div>
@@ -1018,7 +1019,7 @@
                                         type="file"
                                         id="myFile"
                                         name="filename"
-                                        formControlName="image"
+                                        formControlName="teamInfoImage"
                                         style="
                                     position: absolute;
                                     height: 60px;
@@ -1051,7 +1052,7 @@
                                         <input
                                           type="text"
                                           class="input-costum"
-                                          formControlName="role"
+                                          formControlName="position"
                                         />
                                       </div>
                                       <div class="d-flex align-items-center">
@@ -1078,13 +1079,14 @@
                                       src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
                                       alt=""
                                       style="width: 30px; height: 30px"
-                                      *ngIf="i === 0"
+                                      *ngIf="!this.fifthForm"
                                       (click)="addExtraFields(item, 4)"
                                     />
                                     <img
                                       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                                       alt=""
                                       style="height: 30px; width: 30px"
+                                      *ngIf="!this.fifthForm"
                                       (click)="removeExtraField(4)"
                                     />
                                   </div>
@@ -1109,7 +1111,7 @@
                                         type="file"
                                         id="myFile"
                                         name="filename"
-                                        formControlName="image"
+                                        formControlName="teamInfoImage"
                                         style="
                                     position: absolute;
                                     height: 60px;
@@ -1142,7 +1144,7 @@
                                         <input
                                           type="text"
                                           class="input-costum"
-                                          formControlName="role"
+                                          formControlName="position"
                                         />
                                       </div>
                                       <div class="d-flex align-items-center">
@@ -1169,15 +1171,936 @@
                                       src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
                                       alt=""
                                       style="width: 30px; height: 30px"
-                                      *ngIf="i === 0"
+                                      *ngIf="!this.sixthForm"
                                       (click)="addExtraFields(item, 5)"
                                     />
                                     <img
-                                      *ngIf="i !== 0"
+                                      *ngIf="!this.sixthForm"
                                       src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
                                       alt=""
                                       style="height: 30px; width: 30px"
                                       (click)="removeExtraField(5)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <!--                              added extra ten field for team members-->
+                              <ng-container *ngIf="sixthForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="teamInfoOptionSixth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!this.seventhForm"
+                                      (click)="addExtraFields(item, 6)"
+                                    />
+                                    <img
+                                      *ngIf="!this.seventhForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(6)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="seventhForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOSeventh"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!this.eighthForm"
+                                      (click)="addExtraFields(item, 7)"
+                                    />
+                                    <img
+                                      *ngIf="!this.eighthForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(7)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="eighthForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOEighth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!this.ninethForm"
+                                      (click)="addExtraFields(item, 8)"
+                                    />
+                                    <img
+                                      *ngIf="!this.ninethForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(8)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="ninethForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIONineth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!this.tenthForm"
+                                      (click)="addExtraFields(item, 9)"
+                                    />
+                                    <img
+                                      *ngIf="!this.tenthForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(9)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="tenthForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOTenth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!eleventhForm"
+                                      (click)="addExtraFields(item, 10)"
+                                    />
+                                    <img
+                                      *ngIf="!eleventhForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(10)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="eleventhForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOEleventh"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!twelvethForm"
+                                      (click)="addExtraFields(item, 11)"
+                                    />
+                                    <img
+                                      *ngIf="!twelvethForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(11)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="twelvethForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOTwelveth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!thirteenthForm"
+                                      (click)="addExtraFields(item, 12)"
+                                    />
+                                    <img
+                                      *ngIf="!thirteenthForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(12)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="thirteenthForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOThirteenth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!fourtheenthForm"
+                                      (click)="addExtraFields(item, 13)"
+                                    />
+                                    <img
+                                      *ngIf="!fourtheenthForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(13)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="fourtheenthForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOFourtheenth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="!fifteenthForm"
+                                      (click)="addExtraFields(item, 14)"
+                                    />
+                                    <img
+                                      *ngIf="!fifteenthForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(14)"
+                                    />
+                                  </div>
+                                </form>
+                              </ng-container>
+                              <ng-container *ngIf="fifteenthForm">
+                                <form
+                                  class="col-md-6"
+                                  [formGroup]="TIOFifteenth"
+                                >
+                                  <div class="col-md-6">
+                                    <div
+                                      class="image-place d-flex flex-column"
+                                      style="
+                                  justify-content: center;
+                                  align-items: center;
+                                  width: 100%;
+                                  margin-top: 30px;
+                                "
+                                    >
+                                      <input
+                                        type="file"
+                                        id="myFile"
+                                        name="filename"
+                                        formControlName="teamInfoImage"
+                                        style="
+                                    position: absolute;
+                                    height: 60px;
+                                    background: red;
+                                    top: 35px;
+                                    width: 100%;
+                                    opacity: 0;
+                                    cursor: pointer;
+                                  "
+                                      />
+                                      <i
+                                        aria-hidden="true"
+                                        class="fa fa-user"
+                                        style="font-size: 70px; cursor: pointer"
+                                      ></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 desc-middle">
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Name'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="name"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Position'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="position"
+                                        />
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                        <span>{{'Social'}}</span>
+                                        <input
+                                          type="text"
+                                          class="input-costum"
+                                          formControlName="social"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    class="col-md-2 plus_icon"
+                                    style="
+                                left: 0px;
+                                right: 0px;
+                                bottom: -20px;
+                                margin: auto;
+                                position: absolute;
+                              "
+                                  >
+                                    <img
+                                      src="https://icon-library.com/images/google-plus-icon/google-plus-icon-12.jpg"
+                                      alt=""
+                                      style="width: 30px; height: 30px"
+                                      *ngIf="false"
+                                      (click)="addExtraFields(item, 15)"
+                                    />
+                                    <img
+                                      *ngIf="fifteenthForm"
+                                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIC8ZLkazkjfwGB6Z2CvvdGCWXfSv8nXlIlw&usqp=CAU"
+                                      alt=""
+                                      style="height: 30px; width: 30px"
+                                      (click)="removeExtraField(15)"
                                     />
                                   </div>
                                 </form>
@@ -1199,7 +2122,7 @@
         <form
           class="col-md-12 scrollable-section-first"
           [formGroup]="stakingFormGroup"
-          >
+        >
           <!-- <div class="col-md-12 scrollable-section-first"> -->
           <div class="inside wrapper-border">
             <div class="header">
@@ -1207,20 +2130,20 @@
             </div>
 
             <div class="metaheader">
-            <h6 class="color-violet">Staking Setup</h6>
-            <hr>
+              <h6 class="color-violet">Staking Setup</h6>
+              <hr>
               <ng-container>
                 <div class="row">
                   <div class="createoffer" style="margin-left: 21px">
                     <h4 class="amountheader">Asset</h4>
                     <app-drop-down-selector
-                  [isNotAccordion]="false"
-                  [dropDownValues]="assetArray"
-                  (dropDownValue)="getSelectedAsset($event)"
-                  [widthPX]="'760px'"
-                  [isTradeBinded]="true"
-                  >
-                  </app-drop-down-selector>
+                      [isNotAccordion]="false"
+                      [dropDownValues]="assetArray"
+                      (dropDownValue)="getSelectedAsset($event)"
+                      [widthPX]="'760px'"
+                      [isTradeBinded]="true"
+                    >
+                    </app-drop-down-selector>
                   </div>
 
                   <span> Available Amount: {{availableStakingAmount}}</span>
@@ -1228,54 +2151,54 @@
                 </div>
                 <div class="row">
                   <div
-                  class="d-flex align-items-center"
-                  (click)="activateDistributionPool()"
-                  style="margin-left: 21px"
-                >
-                  <input
-                    type="checkbox"
-                    name="checkDistributionPool"
-                    id="checkDistributionPool"
-                    #checkDistributionPool
-                    formControlName="distributionPoolCheck"
-                  />
-                  <label
-                    for="checkDistributionPool"
-                    style="
+                    class="d-flex align-items-center"
+                    (click)="activateDistributionPool()"
+                    style="margin-left: 21px"
+                  >
+                    <input
+                      type="checkbox"
+                      name="checkDistributionPool"
+                      id="checkDistributionPool"
+                      #checkDistributionPool
+                      formControlName="distributionPoolCheck"
+                    />
+                    <label
+                      for="checkDistributionPool"
+                      style="
                     color: #81007f;
                     font-weight: 700;
                     margin-left: 5px;
                     cursor: pointer;
                     margin-bottom: 0px;
                   "
-                  >Create Distribution Pool</label
-                  >
-                </div>
+                    >Create Distribution Pool</label
+                    >
+                  </div>
                 </div>
                 <hr>
 
                 <div class="createoffer">
                   <h4 class="amountheader">Reward Pool</h4>
                   <input type="text" placeholder="40000" class="input-costum"
-                  formControlName="rewardPool"
+                         formControlName="rewardPool"
                   >
                 </div>
                 <div class="createoffer">
                   <h4 class="amountheader">Reward Interval (Days)</h4>
                   <input type="text" placeholder="1" class="input-costum"
-                  formControlName="rewardInterval"
+                         formControlName="rewardInterval"
                   >
                 </div>
                 <div class="createoffer">
                   <h4 class="amountheader">Pool Duration (Days)</h4>
                   <input type="number" placeholder="30" class="input-costum"
-                  formControlName="poolDuration"
+                         formControlName="poolDuration"
                   >
                 </div>
                 <div class="createoffer">
                   <h4 class="amountheader">Pool Start</h4>
                   <input type="datetime-local" class="input-costum"
-                  formControlName="poolStart"
+                         formControlName="poolStart"
                   >
                 </div>
 
@@ -1314,7 +2237,7 @@
             [isDeployedSuccess]="finalStepApi"
             [isDeployedFaied]="isFailed"
             [isDeployedPending]="isPending"
-            >
+>
 
 </app-pop-up>
 
