@@ -169,31 +169,31 @@ export class DeployComponent implements OnInit, DoCheck {
 
 
   ngDoCheck() {
-    if (this.deployFormGroup.get('tokenInfoGroup')?.value) {
-      if (this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value) {
-        this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value.valueChanges((res: any) => {
-          // @ts-ignore
-          if (+this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value * 10 ^ +this.deployFormGroup.get('tokenInfoGroup')?.value.decimals.value < 2 ^ 64 - 1) {
-            this.totalSupplyIsInvalid = true
-          } else {
-            this.totalSupplyIsInvalid = false;
-          }
-        })
-      }
-    }
-
-    if (this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value) {
-      if (this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value) {
-        this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value.valueChanges((res: any) => {
-          // @ts-ignore
-          if (+this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value < 2 ^ 64 - 1) {
-            this.maxBuyIsInvalid = true
-          } else {
-            this.maxBuyIsInvalid = false;
-          }
-        });
-      }
-    }
+    // if (this.deployFormGroup.get('tokenInfoGroup')?.value) {
+    //   if (this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value) {
+    //     this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value.valueChanges((res: any) => {
+    //       // @ts-ignore
+    //       if (+this.deployFormGroup.get('tokenInfoGroup')?.value.totalSupply.value * 10 ^ +this.deployFormGroup.get('tokenInfoGroup')?.value.decimals.value < 2 ^ 64 - 1) {
+    //         this.totalSupplyIsInvalid = true
+    //       } else {
+    //         this.totalSupplyIsInvalid = false;
+    //       }
+    //     })
+    //   }
+    // }
+    //
+    // if (this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value) {
+    //   if (this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value) {
+    //     this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value.valueChanges((res: any) => {
+    //       // @ts-ignore
+    //       if (+this.deployFormGroup.get('tokenInfoGroup')?.value.maxBuy.value < 2 ^ 64 - 1) {
+    //         this.maxBuyIsInvalid = true
+    //       } else {
+    //         this.maxBuyIsInvalid = false;
+    //       }
+    //     });
+    //   }
+    // }
 
     if(localStorage.getItem('sendWaitSuccess') === 'pending') {
       this.closePopup = true;
