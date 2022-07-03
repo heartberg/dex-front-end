@@ -30,7 +30,12 @@
     </div>
     <div class="content">
       <h3>Upcoming Projects</h3>
-      <div class="scroll">
+      <div class="scroll"
+           infinite-scroll
+           [infiniteScrollDistance]="modalScrollDistance"
+           [infiniteScrollThrottle]="modalScrollThrottle"
+           [scrollWindow]="false"
+           (scrolled)="onModalScrollDown()">
         <app-card *ngFor="let item of arr;" [data]="item" routerLink="../launchpad/launch-detail/{{item[0].projectId}}"></app-card>
       </div>
     </div>

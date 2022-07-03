@@ -60,6 +60,8 @@
             class="btn-secondary-costum"
             style="margin: 25px auto; width: 160px; font-size: 20px"
             (click)="onSubmit()"
+            [disabled]="sendNotValid"
+            [class.disable-btn]="sendNotValid"
           >
             Send
           </button>

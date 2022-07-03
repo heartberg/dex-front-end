@@ -148,7 +148,7 @@
             class="input-costum"
             (click)="onUserInput()"
             (input)="catchValueBottom($event)"
-            [class.input-invalid]="bottomForms.invalid"
+            [class.input-invalid]="bottomForms.invalid || botInputIsNotValid"
           />
         </form>
     </div>
@@ -172,6 +172,7 @@
                 color: #040405;
                 padding-left: 5px;
               "
+              [class.input-invalid]="slippageIsNotValid"
             />
             <span style="color: #81007f">%</span>
           </div>
@@ -282,6 +283,7 @@
           font-size: 20px;
         "
         (click)="swap()"
+        [disabled]="!this.topForms.valid && !this.bottomForms.valid"
       >
         Swap
       </button>
@@ -294,7 +296,8 @@
           width: 160px;
           font-size: 20px;
         "
-      (click)="optInAsset()">
+        (click)="optInAsset()"
+        [disabled]="!this.topForms.valid && !this.bottomForms.valid">
         Opt In
       </button>
     </div>
