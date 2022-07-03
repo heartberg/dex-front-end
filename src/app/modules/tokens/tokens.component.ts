@@ -150,5 +150,8 @@ export class TokensComponent implements OnInit {
         });
       }
     )
+    let arr = [...this.arr];
+    this.arr = [];
+    this.arr = [...new Set(arr)];
   }
 }

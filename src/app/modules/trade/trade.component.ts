@@ -89,7 +89,7 @@ export class TradeComponent implements OnInit, DoCheck {
   // trade popup situations
   isTradeLend: boolean = false;
   isTradeBacking: boolean = false;
-  isTradeLendVerse: boolean = true;
+  isTradeLendVerse: boolean = false;
   isTradeBackingVerse: boolean = false;
   // trade popup situations
 
@@ -148,13 +148,15 @@ export class TradeComponent implements OnInit, DoCheck {
   });
 
   topForms = this.fb.group({
-    topInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
+    topInputValue: [0,  Validators.pattern('\\d+(\\.\\d{0,6})?')],
   });
 
   bottomForms = this.fb.group({
-    bottomInputValue: [0, Validators.pattern('[0-9]+[.,]?[0-9]*')],
+    bottomInputValue: [0, Validators.pattern('\\d+(\\.\\d{0,6})?')],
   });
 
+  botInputIsNotValid: boolean = false;
+  slippageIsNotValid: boolean = false
   // FORMS
 
   async ngOnInit(): Promise<void> {
@@ -182,25 +184,31 @@ export class TradeComponent implements OnInit, DoCheck {
   }
 
   ngDoCheck() {
-    if(localStorage.getItem('sendWaitSuccess') === 'pending') {
-      this.closePopupSecond = true;
-      this.isPending = true;
-      this.isFailed = false;
-      this.finalStepApi = false;
-    } else if (localStorage.getItem('sendWaitSuccess') === 'fail') {
-      this.closePopupSecond = true;
-      this.isFailed = true;
-      this.finalStepApi = false;
-      this.isPending = false;
-    } else if (localStorage.getItem('sendWaitSuccess') === 'success') {
-      this.closePopupSecond = true;
-      this.finalStepApi = true;
-      this.isFailed = false;
-      this.isPending = false;
-    }
+    // if ( this.bottomForms.get('bottomInputValue')!.value) {
+    //   this.bottomForms.get('bottomInputValue')!.value.valueChanges.subscribe((value: any) => {
+    //     if (+this.bottomForms.get('bottomInputValue')?.value > +this.selectedOption!) {
+    //       this.botInputIsNotValid = true;
+    //     } else {
+    //       this.botInputIsNotValid = false;
+    //     }
+    //     console.log(value);
+    //   });
+    // }
     if (this.closePopupSecond) {
       this.isPopUpOpen = false;
     }
+
+    if ( this.slippageForm.get('slippageInput')!.value) {
+      this.slippageForm.get('slippageInput')!.value.valueChanges.subscribe((value: any) => {
+        if (+this.slippageForm.get('slippageInput')?.value < 100) {
+          this.slippageIsNotValid = true;
+        } else {
+          this.slippageIsNotValid = false;
+        }
+      });
+    }
+
+    // console.log(this.topForms.valid, this.bottomForms.valid)
   }
 
   catchValueTop($event: any) {
@@ -226,7 +234,7 @@ export class TradeComponent implements OnInit, DoCheck {
     let output = this.calcOtherFieldOutput(false);
     if(this.isBuy) {
       output = Math.round(output * Math.pow(10, 6)) / Math.pow(10, 6)
-      
+
     } else {
       output = Math.round(output * Math.pow(10, this.selectedOption!.decimals)) / Math.pow(10, this.selectedOption!.decimals)
     }
@@ -308,6 +316,15 @@ export class TradeComponent implements OnInit, DoCheck {
         this.availAmount = 0;
         this.isOptedIn = true;
       }
+      // this.topForms.get('topInputValue')?.valueChanges.subscribe( (res) => {
+      //   if (+res.length) {
+      //     if (+res > this.selectedOption?.smartProperties?.maxBuy! || +res >= this.blockchainInfo!.algoLiquidity!) {
+      //       this.topForms.invalid = false;
+      //     }
+      //   }
+      // })
+      // TODO SABA
+
     } else {
       if(index == 1) {
         this.selectedOption = this.assetArr.find((el) => {
