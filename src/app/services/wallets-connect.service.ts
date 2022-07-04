@@ -61,7 +61,9 @@ export class WalletsConnectService {
     if (sessionStorage.getItem('acct-list')!.length) {
       let wallets = sessionStorage.getItem('acct-list');
       let fWallets = JSON.parse(wallets!);
-      localStorage.setItem('walletsOfUser', sessionStorage.getItem('acct-list')!);
+      if (!localStorage.getItem('walletsOfUser')) {
+        localStorage.setItem('walletsOfUser', sessionStorage.getItem('acct-list')!);
+      }
     }
     console.log(this.sessionWallet, 'esaaa');
 
@@ -92,7 +94,11 @@ export class WalletsConnectService {
     console.log("AlgoAddress: " + this.myAlgoAddress)
     let index = localStorage.getItem('walletIndex');
     let finalIndex = +index!;
-    localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
+    if (localStorage.getItem('walletsOfUser')) {
+      localStorage.setItem('wallet', JSON.stringify(JSON.parse(localStorage.getItem('walletsOfUser')!)[finalIndex]));
+    } else {
+      localStorage.setItem('wallet', this.myAlgoAddress[finalIndex]);
+    }
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
 
     sw.wallet.defaultAccount = finalIndex;
