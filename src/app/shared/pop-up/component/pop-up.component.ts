@@ -220,24 +220,24 @@ export class PopUpComponent implements OnInit, DoCheck {
   ) {}
 
   ngDoCheck() {
-    if (this.stakeVerseControl.value.length) {
-      this.stakeVerseControl.valueChanges.subscribe((res: any) => {
-        if (+this.stakeVerseControl.value >  this.stakingInfo?.usersHolding!) {
-          this.isStakeInvalid = true;
-        } else {
-          this.isStakeInvalid = false;
-        }
-      })
-    }
-    if (this.withdrawVerseControl.value.length) {
-      this.withdrawVerseControl.valueChanges.subscribe((res: any) => {
-        if (+this.withdrawVerseControl.value > this.stakingInfo?.usersStake!) {
-          this.isWithdrawInvalid = true;
-        } else {
-          this.isWithdrawInvalid = false;
-        }
-      })
-    }
+    // if (this.stakeVerseControl.value.length) {
+    //   this.stakeVerseControl.valueChanges.subscribe((res: any) => {
+    //     if (+this.stakeVerseControl.value >  this.stakingInfo?.usersHolding!) {
+    //       this.isStakeInvalid = true;
+    //     } else {
+    //       this.isStakeInvalid = false;
+    //     }
+    //   })
+    // }
+    // if (this.withdrawVerseControl.value.length) {
+    //   this.withdrawVerseControl.valueChanges.subscribe((res: any) => {
+    //     if (+this.withdrawVerseControl.value > this.stakingInfo?.usersStake!) {
+    //       this.isWithdrawInvalid = true;
+    //     } else {
+    //       this.isWithdrawInvalid = false;
+    //     }
+    //   })
+    // }
   }
 
   async ngOnInit(): Promise<void> {
@@ -1028,7 +1028,7 @@ export class PopUpComponent implements OnInit, DoCheck {
   }
 
   wallet(): any {
-      this.walletsForSwitching = JSON.parse(localStorage.getItem('sessionWallet')!).wallet.accounts;
+      this.walletsForSwitching = JSON.parse(localStorage.getItem('walletsOfUser')!);
       return this.walletsForSwitching;
   }
 

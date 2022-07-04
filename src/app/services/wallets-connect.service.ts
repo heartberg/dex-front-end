@@ -26,12 +26,12 @@ export class WalletsConnectService {
   public myAlgoName: any | undefined;
 
   constructor(private userServce: AuthService, private router: Router, private route: ActivatedRoute) {
-    // if (localStorage.getItem('wallet')) {
-    //   sessionStorage.setItem('acct-list', JSON.stringify([localStorage.getItem('wallet')]));
-    //     if (this.sessionWallet === undefined || !this.sessionWallet) {
-    //       this.connectOnDefault('my-algo-connect').then(response => response);
-    //     }
-    // }
+    if (localStorage.getItem('wallet')) {
+      sessionStorage.setItem('acct-list', JSON.stringify([localStorage.getItem('wallet')]));
+        if (this.sessionWallet === undefined || !this.sessionWallet) {
+          this.connectOnDefault('my-algo-connect').then(response => response);
+        }
+    }
     // console.log(this.route, 'sss')
   }
 
@@ -46,14 +46,23 @@ export class WalletsConnectService {
     console.log("AlgoAddress: " + this.myAlgoAddress)
     let index = localStorage.getItem('walletIndex');
     let finalIndex = +index!;
-    localStorage.setItem('wallet', this.myAlgoAddress[finalIndex])
+    if (localStorage.getItem('walletsOfUser')) {
+      localStorage.setItem('wallet', JSON.stringify(JSON.parse(localStorage.getItem('walletsOfUser')!)[finalIndex]));
+    } else {
+      localStorage.setItem('wallet', this.myAlgoAddress[finalIndex]);
+    }
     this.myAlgoName = this.myAlgoAddress.map((value: { name: any; }) => value.name)
 
     sw.wallet.defaultAccount = finalIndex;
     const finalSw = sw;
     this.sessionWallet = finalSw!;
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
-    localStorage.setItem('walletsOfUser', JSON.stringify(this.sessionWallet.wallet.accounts));
+    // localStorage.setItem('walletsOfUser', JSON.stringify(this.sessionWallet.wallet.accounts));
+    if (sessionStorage.getItem('acct-list')!.length) {
+      let wallets = sessionStorage.getItem('acct-list');
+      let fWallets = JSON.parse(wallets!);
+      localStorage.setItem('walletsOfUser', sessionStorage.getItem('acct-list')!);
+    }
     console.log(this.sessionWallet, 'esaaa');
 
     // localStorage.setItem('reload', 'true');
@@ -91,13 +100,15 @@ export class WalletsConnectService {
     this.sessionWallet = finalSw!;
     let userWallets = localStorage.getItem('walletsOfUser');
     let finalWalletOfUser = JSON.parse(userWallets!);
-    this.sessionWallet.wallet.accounts = [...finalWalletOfUser];
+    this.sessionWallet.wallet.accounts = finalWalletOfUser;
     localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet))
-    console.log(this.sessionWallet, 'esaaa');
+    console.log(this.sessionWallet, 'esaaa 22222');
   }
 
 
   disconnect(): void{
+    localStorage.removeItem('walletIndex');
+    localStorage.removeItem('walletsOfUser');
     this.sessionWallet!.disconnect()
     this.sessionWallet = undefined;
     //setConnected(false)

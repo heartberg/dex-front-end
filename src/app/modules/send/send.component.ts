@@ -135,6 +135,7 @@ export class SendComponent implements OnInit, DoCheck {
   }
 
   async ngOnInit() {
+
     let wallet = localStorage.getItem("wallet")
     if(!wallet){
       wallet = "default";
