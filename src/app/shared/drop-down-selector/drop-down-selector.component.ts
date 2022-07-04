@@ -78,7 +78,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, Af
   public showDropDownSelected: string = '';
 
   @Input() selected: string = '';
-  
+
   //  for while
   publicTradeIsAdded: boolean = false;
 
@@ -175,7 +175,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, Af
         this.dropDownValue.emit(value);
         this.isDropDownOpened = false;
       }
-  
+
       if (value.includes('Sub')) {
         this.showDropDownSelected = value.substring(value.indexOf(' '), 25);
       }
@@ -236,13 +236,15 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, Af
   //switcher
   returnAddress(acc: string) {
     console.log(acc);
+    let finalAcc;
     if (localStorage.getItem('wallet')) {
       acc = localStorage.getItem('wallet')!;
+      finalAcc = JSON.parse(acc);
     }
     let start: string = '';
     let last: string = ''
-    start = acc.substring(0,3);
-    last = acc.substring(acc.length, acc.length - 3);
+    start = finalAcc.substring(0,3);
+    last = finalAcc.substring(acc.length, acc.length - 3);
     let final = start + '...' + last;
     console.log(final);
     return final
