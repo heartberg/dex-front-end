@@ -56,8 +56,7 @@ export class WalletsConnectService {
     sw.wallet.defaultAccount = finalIndex;
     const finalSw = sw;
     this.sessionWallet = finalSw!;
-    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
-    // localStorage.setItem('walletsOfUser', JSON.stringify(this.sessionWallet.wallet.accounts));
+    // check
     if (sessionStorage.getItem('acct-list')!.length) {
       let wallets = sessionStorage.getItem('acct-list');
       let fWallets = JSON.parse(wallets!);
@@ -65,6 +64,12 @@ export class WalletsConnectService {
         localStorage.setItem('walletsOfUser', sessionStorage.getItem('acct-list')!);
       }
     }
+    let parsedWallets = localStorage.getItem('walletsOfUser');
+
+    this.sessionWallet.wallet.accounts = JSON.parse(parsedWallets!);
+    // check
+    localStorage.setItem('sessionWallet', JSON.stringify(this.sessionWallet));
+    // localStorage.setItem('walletsOfUser', JSON.stringify(this.sessionWallet.wallet.accounts));
     console.log(this.sessionWallet, 'esaaa');
 
     // localStorage.setItem('reload', 'true');
