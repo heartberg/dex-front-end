@@ -240,6 +240,8 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, Af
     if (localStorage.getItem('wallet')) {
       acc = localStorage.getItem('wallet')!;
       finalAcc = JSON.parse(acc);
+      console.log(finalAcc, 
+        '22222222222')
     }
     let start: string = '';
     let last: string = ''

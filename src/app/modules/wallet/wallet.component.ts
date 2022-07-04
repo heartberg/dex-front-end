@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { getIndexer } from 'src/app/blockchain/algorand';
 import { TrackComponent } from '../track/track.component';
 import { platform_settings as ps } from 'src/app/blockchain/platform-conf';
+import { CompileResponse } from 'algosdk/dist/types/src/client/v2/algod/models/types';
 
 @Component({
   selector: 'app-wallet',
@@ -49,6 +50,6 @@ export class WalletComponent implements OnInit {
   }
 
   returnAlgo(): any{
-    if(this.totalAlgoValue) {return  this.totalAlgoValue.toFixed(2)}
+      return JSON.parse(localStorage.getItem('algo')!).toFixed(2);
   }
 }

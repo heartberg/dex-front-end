@@ -304,6 +304,7 @@ export class TradeComponent implements OnInit, DoCheck {
   async selectAsset(assetId: number, index: number) {
     //console.log(assetId)
     const wallet = localStorage.getItem('wallet')!;
+    console.log(wallet)
     if(assetId == 0){
       if(wallet){
         let client: Algodv2 = getAlgodClient();
