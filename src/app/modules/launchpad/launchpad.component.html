@@ -6,7 +6,7 @@
 >
   <div class="" [ngClass]="{ 'wrapper-border': !isWallet }">
     <div class="header d-flex justify-content-between">
-      <div class="search-section hide-respo">
+      <div class="search-section hide-respo" *ngIf="!isWallet">
         <div
           class="search"
           [ngStyle]="{ margin: isWallet ? '4px 0px 0px 4px' : 'unset' }"
