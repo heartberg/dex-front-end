@@ -1,10 +1,10 @@
 {
     "domain": "Vexpad",
     "algod":{
-        "server":"https://node.testnet.algoexplorerapi.io",
-        "port":"",
-        "token":"",
-        "network": "TestNet"
+        "server":"http://localhost",
+        "port":"4001",
+        "token":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "network": "LocalNet"
     },
     "indexer": {
         "server":"http://localhost",
@@ -18,19 +18,19 @@
     "explorer":"algoscan.app",
     "platform": {
         "burn_addr": "MXJT53H5ZO7KWBYMCLZ4ZVWEF5JS4NLVHEII6OI3DCLI3KL26BRDTAFJKA",
-        "fee_addr": "NORHXZXC2PI2T4DXRKBAY7P2Y7BDV57P6RFFQNGQQAMLNMYFA5GMRZNP6A",
-        "staking_addr": "HU5NE3IZWUYO3WAJMKLAXPHXY7VMMLCSQJ7ZAWSU7QE56RIFE4STEFUZ74",
-        "staking_id": 98456467,
-        "verse_app_id": 98456066,
-        "verse_app_addr": "RSOCBFYKQAYBFZVIBSCDVJ4PVDJJNVMTTZ62YC2DMFBOFWVSGQVUEHLD6Y",
-        "verse_asset_id": 98456095,
-        "verse_project_id": "9d134e02-eb63-4944-8ad2-89f14cef7297",
+        "fee_addr": "IHONW5XLLSZAHHNIQSNU4UDJAPBJEPIIKZ4N5XCIVXY6EFVYWUUTWBQ3LA",
+        "staking_addr": "D563OYVONHDGJVZF7VS57FM347M2YVQ4XTQB5UQTOGFENIU6I6BMRG4A3E",
+        "staking_id": 11022,
+        "verse_app_id": 11008,
+        "verse_app_addr": "G2MPEHNTUDZQQKHRIDGEDW4PFPY5AOIA42B7NALMEPQUWX2VDCHSALYRHI",
+        "verse_asset_id": 11011,
+        "verse_project_id": "ac8b1992-2963-4910-a9a5-c3c37c49ef5f",
         "verse_decimals": 6,
-        "backing_id": 98456042,
-        "backing_addr": "7RSQXTFGHY4GLBBVQAHWKHVRA4JDEB65HKJSYPLLXOA3UBWCFFRR2KWF2Q",
+        "backing_id": 11006,
+        "backing_addr": "JYBE3J5RHMOJMSGCQ7HXLAONBNO7S2BZMH6FIYWHKAOKKWQEKUU5KITHWU",
         "backing_per_x_token": 1000000,
-        "locker_id": 98456525,
-        "locker_addr": "XIXLDMCKEHZEBRD25EP4MLWDK7F2I2R7P327QGEC4LVXTYGEKM7JFWKPI4"
+        "locker_id": 11028,
+        "locker_addr": "3Y33WUERSTEGMOH2B6JOZQZLUE5BOON4TK7JFR3MKTU5KA7EOEACJCIU5E"
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",
