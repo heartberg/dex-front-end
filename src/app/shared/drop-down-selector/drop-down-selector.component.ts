@@ -135,7 +135,7 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, Af
     setTimeout(() => {
       this.incomeData.find( (item: AssetViewModel) => item.assetId === ps.platform.verse_asset_id ? this.selected = item.name : null)
       console.log(this.selected);
-    }, 500)
+    }, 1000)
   }
 
   ngDoCheck() {

@@ -44,10 +44,16 @@ export class StakingUtils {
             if(usersStake > usersWeekStake) {
                 let rewardPool = globalState[stakingStateKeys.distribution_asset_amount_key]['i']
                 if(latestTimestemp > globalState[stakingStateKeys.current_end_epoch_key]['i']){
+                    console.log("start next period")
                     rewardPool = globalState[stakingStateKeys.weekly_dist_amount_key]['i'] + globalState[stakingStateKeys.unclaimed_key]['i']
                     claimableAmount = (((usersStake - usersWeekStake) * rewardPool) / globalState[stakingStateKeys.total_staked_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
                 } else {
-                    claimableAmount = (((usersStake - usersWeekStake) * rewardPool) / globalState[stakingStateKeys.week_total_stake_key]['i']) / Math.pow(10, ps.platform.verse_decimals)
+                    console.log("current period already started")
+                    let staked = globalState[stakingStateKeys.week_total_stake_key]['i']
+                    if (staked == 0) {
+                        staked = globalState[stakingStateKeys.total_staked_key]['i']
+                    }
+                    claimableAmount = (((usersStake - usersWeekStake) * rewardPool) / staked) / Math.pow(10, ps.platform.verse_decimals)
                 }
                 
             }
