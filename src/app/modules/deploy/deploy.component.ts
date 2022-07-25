@@ -12,6 +12,7 @@ import { AssetReqService } from 'src/app/services/APIs/assets-req.service';
 import { AssetViewModel } from 'src/app/models/assetViewModel';
 import { platform_settings as ps } from '../../blockchain/platform-conf';
 import { of } from 'rxjs';
+import { VerseApp } from 'src/app/blockchain/verse_application';
 interface member {
   name: string,
   role: string,
@@ -74,7 +75,7 @@ export class DeployComponent implements OnInit, DoCheck {
   ];
   purposeIsChecked: boolean = false;
   presaleIsChecked: boolean = false;
-  fee = environment.Y_FEE;
+  feeState: any;
 
   tokenLiquidityPercentage = 0;
   tokenPresalePercentage = 0;
@@ -156,7 +157,7 @@ export class DeployComponent implements OnInit, DoCheck {
 
   constructor(
     private walletProviderService: WalletsConnectService,
-    private deployedApp: DeployedApp,
+    private verseApp: VerseApp,
     private fb: FormBuilder,
     private deployLib: DeployLb,
     private assetService: AssetReqService,
@@ -214,9 +215,10 @@ export class DeployComponent implements OnInit, DoCheck {
 
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initializeForm();
     this.initFormExtra();
+    this.feeState = await this.verseApp.getFees()
   }
 
   @ViewChild('checkbox', { static: false})
@@ -672,7 +674,7 @@ export class DeployComponent implements OnInit, DoCheck {
     let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
     if(this.presaleIsChecked){
       initial_algo_liq = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000)
-      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (1 - this.fee))
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (10000 - this.feeState.presale_fee) / 10000)
       initial_token_liq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, decimals)
       if(this.isCheckedVested) {
         release = parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
@@ -694,7 +696,7 @@ export class DeployComponent implements OnInit, DoCheck {
       }
     } else {
       initial_algo_liq = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000)
-      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (1 - this.fee))
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (10000 - this.feeState.presale_fee) / 10000)
       initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
     }
 
@@ -731,7 +733,7 @@ export class DeployComponent implements OnInit, DoCheck {
       tradingStart: tradeStart,
       initialTokenLiq: initial_token_liq,
       initialAlgoLiqWithFee: initial_algo_liq_with_fee,
-      initialAlgoLiq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.fee),
+      initialAlgoLiq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.feeState.presale_fee / 10000),
       additionalFee: +this.deployFormGroup.get('feesGroup.fee')?.value * 100,
       additionalFeeAddress: this.deployFormGroup.get('feesGroup.address')?.value,
       poolStart: poolStart,

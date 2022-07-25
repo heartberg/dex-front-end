@@ -88,28 +88,20 @@ export class LockerApp {
     }
 
     async setupStandardLock(wallet: SessionWallet, settings: LockSettings) {
+        
         let suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
-        let globalState = StateToObj(await getGlobalState(ps.platform.locker_id), LockerGlobalKeys)
-        let fee = globalState[LockerGlobalKeys.fee_key]['i']
 
-        let payAmount = fee + 2 * algosdk.ALGORAND_MIN_TX_FEE + 100000
+        let payAmount = algosdk.ALGORAND_MIN_TX_FEE + 100000
         let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, payAmount))
         
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
-        let assets = [settings.assetId, ps.platform.verse_asset_id]
-        let accounts = [ps.platform.burn_addr, ps.platform.verse_app_addr]
-        let apps = [ps.platform.verse_app_id]
+        let assets = [settings.assetId]
         let args = [new Uint8Array(Buffer.from(LockerMethods.setup)), algosdk.encodeUint64(settings.lockTime)]
         if(settings.tokensPerPeriod) {
             args.push(algosdk.encodeUint64(settings.periodTime!), algosdk.encodeUint64(settings.tokensPerPeriod!))
         }
-        let setupTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, apps, assets, accounts))
+        let setupTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, undefined, assets, undefined))
 
-        suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
-
-        console.log(addr)
-        console.log(ps.platform.locker_addr)
         let assetTransfer = new Transaction(get_asa_xfer_txn(suggested, addr, ps.platform.locker_addr, settings.assetId, settings.amount))
         
         let grouped = [payTxn, setupTxn, assetTransfer]
@@ -122,27 +114,22 @@ export class LockerApp {
     async setupSmartLock(wallet: SessionWallet, settings: LockSettings) {
         let suggested = await getSuggested(10)
         const addr = wallet.getDefaultAccount()
-        let globalState = StateToObj(await getGlobalState(ps.platform.locker_id), LockerGlobalKeys)
-        let fee = globalState[LockerGlobalKeys.fee_key]['i']
 
-        let payAmount = fee + 2 * algosdk.ALGORAND_MIN_TX_FEE + 100000
+        let payAmount = algosdk.ALGORAND_MIN_TX_FEE + 100000
         let payTxn = new Transaction(get_pay_txn(suggested, addr, ps.platform.locker_addr, payAmount))
         
-        suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
-        suggested.flatFee = true
-        let assets = [settings.assetId, ps.platform.verse_asset_id]
-        let accounts = [ps.platform.burn_addr, ps.platform.verse_app_addr]
-        let apps = [ps.platform.verse_app_id, settings.assetContractId!]
+        let assets = [settings.assetId]
+        let apps = [settings.assetContractId!]
         let args = [new Uint8Array(Buffer.from(LockerMethods.smart_setup)), algosdk.encodeUint64(settings.amount) ,algosdk.encodeUint64(settings.lockTime)]
         if(settings.tokensPerPeriod) {
             args.push(algosdk.encodeUint64(settings.periodTime!), algosdk.encodeUint64(settings.tokensPerPeriod!))
         }
-        let setupTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, apps, assets, accounts))
+        let setupTxn = new Transaction(get_app_call_txn(suggested, addr, ps.platform.locker_id, args, apps, assets, undefined))
 
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
 
         args = [new Uint8Array(Buffer.from(DeployerMethod.SetupLock))]
-        accounts = [ps.platform.locker_addr]
+        let accounts = [ps.platform.locker_addr]
 
         console.log(accounts)
         console.log(addr)

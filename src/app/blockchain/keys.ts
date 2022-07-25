@@ -14,8 +14,26 @@ export enum verseStateKeys {
     extra_fee_time_key = "eft",
     distribution_id_key = "di",
     backing_id_key = "bi",
-    fee_addr_key = "ta",
-    burn_addr_key = "ba"
+    fee_id_key = "fid"
+}
+
+export enum feeAppStateKeys {
+    burn_addr = "ba",
+    fee_addr = "fa",
+    verse_buy_burn = "bb",
+    verse_sell_burn = "sb",
+    verse_transfer_burn = "trb",
+    verse_backing_fee = "vtb",
+    verse_buy_lp_fee = "vbtlp",
+    verse_sell_lp_fee = "vstlp",
+    deployer_verse_backing = "dvtb",
+    platform_fee = "fpl",
+    presale_fee = "prsf",
+    marketplace_fee = "fmp",
+    marketplace_royalty = "mpr",
+    marketplace_burn_verse = "mpbv",
+    voting_app_id = "vid",
+    open_for_voting = "ofv"
 }
 
 
@@ -50,12 +68,10 @@ export enum backingStateKeys {
     number_of_backing_tokens_key = "nbt",
     verse_app_id_key = "vid",
     verse_token_id_key = "vai",
-    burn_addr_key = "ba",
+    fee_id_key = "fid"
 }
 
 export enum smartStakingKeys {
-    burn_addr_key = "BA",
-
     token_id_key = "TK_ID",
     token_app_id_key = "TA",
     verse_token_id_key = "V_TK_ID",
@@ -67,6 +83,7 @@ export enum smartStakingKeys {
     unclaimed_key = "UC",
     period_time_key = "PT",
     next_claimable_time_key = "NCT"
+
 }
 
 export enum standardStakingKeys {
@@ -84,7 +101,7 @@ export enum standardStakingKeys {
 }
 
 export enum smartDistributionStateKeys {
-    burn_addr_key = "BA",
+    fee_app_id_key = "FA_ID",
 
     token_id_key = "TK_ID",
     token_app_id_key = "TA",
@@ -116,7 +133,7 @@ export enum standardDistributionKeys {
 }
 
 export enum stakingStateKeys {
-    burn_addr_key = "BA",
+    fee_app_id_key = "FA_ID",
 
     token_id_key = "TK_ID",
     token_app_id_key = "TA",

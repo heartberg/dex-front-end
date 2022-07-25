@@ -22,8 +22,6 @@ export const environment = {
   SWAP_APP_ID: 19,
   AUCTION_APP_ID: 21,
   STAKING_APP_ID: 24,
-  Y_FEE: 0.01,
-  VERSE_FEE: 200
 };
 
 /*

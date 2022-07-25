@@ -18,7 +18,7 @@ import { SessionWallet } from "algorand-session-wallet"
 import { Injectable } from "@angular/core";
 import { AssetViewModel } from "../models/assetViewModel"
 import { BlockchainTrackInfo } from "../modules/track/track.component";
-import { backingStateKeys, Method, verseStateKeys } from "./keys";
+import { backingStateKeys, feeAppStateKeys, Method, verseStateKeys } from "./keys";
 import { sign } from "crypto";
 import { getAppLocalStateByKey } from "../services/utils.algo";
 //import { showErrorToaster, showInfo } from "../Toaster";
@@ -81,16 +81,22 @@ export class VerseApp {
     }
 
     async buy(wallet: SessionWallet , algoAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
+        let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+        console.log(feeAddr)
         const suggested = await getSuggested(10)
         suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE
         suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from("buy")), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
+        const accounts = [burnAddr, feeAddr, ps.platform.backing_addr]
         const assets = [ps.platform.verse_asset_id]
+        const apps = [ps.platform.fee_app_id]
 
-        const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const buy = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
         const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.verse_app_addr, algoAmount))
 
         const grouped = [buy, pay]
@@ -104,16 +110,22 @@ export class VerseApp {
     }
 
     async sell(wallet: SessionWallet , tokenAmount: number, slippage: number, wantedReturn: number): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
+        let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+        console.log(feeAddr)
         const suggested = await getSuggested(10)
         suggested.fee = 6 * algosdk.ALGORAND_MIN_TX_FEE 
         suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-        const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
+        const accounts = [burnAddr, feeAddr, ps.platform.backing_addr]
         const assets = [ps.platform.verse_asset_id]
+        const apps = [ps.platform.fee_app_id]
 
-        const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const sell = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
         const [signed] = await wallet.signTxn([sell])
         const result = await sendWait([signed])
 
@@ -122,16 +134,21 @@ export class VerseApp {
 
 
     async transfer(wallet: SessionWallet , tokenAmount: number, to: string): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
+
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(tokenAmount)]
-        const accounts = [ps.platform.burn_addr, to]
+        const accounts = [burnAddr, to]
+        const apps = [ps.platform.fee_app_id]
         const assets = [ps.platform.verse_asset_id]
 
-        const send = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const send = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
         const [signed] = await wallet.signTxn([send])
         const result = await sendWait([signed])
 
@@ -140,20 +157,24 @@ export class VerseApp {
 
 
     async getBacking(wallet: SessionWallet , tokenAmount: number): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
         const suggested = await getSuggested(10)
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         var args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(tokenAmount)]
-        var accounts = [ps.platform.burn_addr, ps.platform.burn_addr]
+        var accounts = [burnAddr, burnAddr]
         var assets = [ps.platform.verse_asset_id]
+        var apps = [ps.platform.fee_app_id]
 
-        const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
 
         args = [new Uint8Array(Buffer.from(Method.GetBacking)), algosdk.encodeUint64(tokenAmount)]
         
-        const apps = [ps.platform.verse_app_id]
+        const appsBacking = [ps.platform.verse_app_id, ps.platform.fee_app_id]
         assets = []
         let backingState = StateToObj(await getGlobalState(ps.platform.backing_id), Method)
         for(let key in backingState){
@@ -166,7 +187,7 @@ export class VerseApp {
             }
         }
         
-        const backing = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, apps, assets, undefined))
+        const backing = new Transaction(get_app_call_txn(suggested, addr, ps.platform.backing_id, args, appsBacking, assets, undefined))
         const grouped = [transfer, backing]
         algosdk.assignGroupID(grouped)
         const [signedTransfer, signedBacking] = await wallet.signTxn(grouped)
@@ -343,21 +364,29 @@ export class VerseApp {
     }
 
     async stake(wallet: SessionWallet, amount: number): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
+        let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+        console.log(feeAddr)
+        
         const suggested = await getSuggested(10)
+        
         suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
         suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(amount)]
-        const accounts = [ps.platform.burn_addr, ps.platform.staking_addr]
+        const accounts = [burnAddr, ps.platform.staking_addr]
+        const apps = [ps.platform.fee_app_id]
         const assets = [ps.platform.verse_asset_id]
 
-        const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, undefined, assets, accounts))
+        const transfer = new Transaction(get_verse_app_call_txn(suggested, addr, args, apps, assets, accounts))
         
         suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
         const stakingArgs = [new Uint8Array(Buffer.from(Method.Stake)), algosdk.encodeUint64(amount)]
-        const apps = [ps.platform.verse_app_id]
-        const stake = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, stakingArgs, apps, undefined, undefined))
+        const appsStake = [ps.platform.verse_app_id, ps.platform.fee_app_id]
+        const stake = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, stakingArgs, appsStake, undefined, undefined))
 
         algosdk.assignGroupID([transfer, stake])
 
@@ -368,14 +397,18 @@ export class VerseApp {
     }
 
     async withdraw(wallet: SessionWallet, amount: number): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
+        
         const suggested = await getSuggested(10)
         suggested.flatFee = true
         const addr = wallet.getDefaultAccount()
         
         const args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk.encodeUint64(amount)]
-        const accounts = [ps.platform.burn_addr]
+        const accounts = [burnAddr]
         const assets = [ps.platform.verse_asset_id]
-        const apps = [ps.platform.verse_app_id]
+        const apps = [ps.platform.verse_app_id, ps.platform.fee_app_id]
 
         const withdraw = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, accounts))
 
@@ -389,6 +422,10 @@ export class VerseApp {
     }
 
     async claim(wallet: SessionWallet): Promise<boolean> {
+        let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+        console.log(burnAddr)
+
         const suggested = await getSuggested(10)
         suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
         suggested.flatFee = true
@@ -396,8 +433,8 @@ export class VerseApp {
         
         const args = [new Uint8Array(Buffer.from(Method.Claim))]
         const assets = [ps.platform.verse_asset_id]
-        const accounts = [ps.platform.burn_addr]
-        const apps = [ps.platform.verse_app_id]
+        const accounts = [burnAddr]
+        const apps = [ps.platform.verse_app_id, ps.platform.fee_app_id]
 
         const claim = new Transaction(get_app_call_txn(suggested, addr, ps.platform.staking_id, args, apps, assets, accounts))
         const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.staking_addr, 3000))
@@ -511,5 +548,28 @@ export class VerseApp {
         }
 
         return trackInfo
+    }
+
+    async getFees() {
+        let globalState = StateToObj(await getGlobalState(ps.platform.fee_app_id),feeAppStateKeys)
+        let feeState = {
+            burn_addr: algosdk.encodeAddress(globalState[feeAppStateKeys.burn_addr]['b']),
+            fee_addr: algosdk.encodeAddress(globalState[feeAppStateKeys.fee_addr]['b']),
+            verse_buy_burn: globalState[feeAppStateKeys.verse_buy_burn]['i'],
+            verse_sell_burn: globalState[feeAppStateKeys.verse_sell_burn]['i'],
+            verse_transfer_burn: globalState[feeAppStateKeys.verse_transfer_burn]['i'],
+            verse_backing_fee: globalState[feeAppStateKeys.verse_backing_fee]['i'],
+            verse_buy_lp_fee: globalState[feeAppStateKeys.verse_buy_lp_fee]['i'],
+            verse_sell_lp_fee: globalState[feeAppStateKeys.verse_sell_lp_fee]['i'],
+            deployer_verse_backing: globalState[feeAppStateKeys.deployer_verse_backing]['i'],
+            platform_fee: globalState[feeAppStateKeys.platform_fee]['i'],
+            presale_fee: globalState[feeAppStateKeys.presale_fee]['i'],
+            marketplace_fee: globalState[feeAppStateKeys.marketplace_fee]['i'],
+            marketplace_royalty: globalState[feeAppStateKeys.marketplace_royalty]['i'],
+            marketplace_burn_verse: globalState[feeAppStateKeys.marketplace_burn_verse]['i'],
+            voting_app_id: globalState[feeAppStateKeys.voting_app_id]['i'],
+            open_for_voting: globalState[feeAppStateKeys.open_for_voting]['i'],
+        }
+        return feeState
     }
 }

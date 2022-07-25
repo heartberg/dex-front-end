@@ -376,6 +376,7 @@ export class PopUpComponent implements OnInit, DoCheck {
     console.log(this.presaleData![0])
     console.log(this.presaleData![1])
     console.log(this.myPresaleRestartForm.value)
+    let feeState = await this.verseApp.getFees()
     let wallet = this._walletsConnectService.sessionWallet!
     if (formName === 'myPresaleRestartForm') {
       //this.makeRequest.next(this.myPresaleRestartForm);
@@ -424,7 +425,7 @@ export class PopUpComponent implements OnInit, DoCheck {
           creatorWallet: this.presaleData![1].creatorWallet,
           description: this.presaleData![1].description,
           initialAlgoLiquidity: algoInLiquidity,
-          initialAlgoLiquidityWithFee: Math.floor(algoInLiquidity / (1 - environment.Y_FEE)),
+          initialAlgoLiquidityWithFee: Math.floor(algoInLiquidity / (10000 - feeState.presale_fee) / 10000),
           initialTokenLiquidity: tokenInLiquidity,
           projectId: this.presaleData![1].projectId,
           projectImage: this.presaleData![1].projectImage,

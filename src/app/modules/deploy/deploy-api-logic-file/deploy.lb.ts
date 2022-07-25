@@ -19,6 +19,7 @@ import { ProjectViewModel } from 'src/app/models/projectViewModel';
 import { environment } from 'src/environments/environment';
 import { SmartProperties } from 'src/app/models/assetViewModel';
 import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
+import { VerseApp } from 'src/app/blockchain/verse_application';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +49,7 @@ export class DeployLb {
   constructor(
     private _deployService: deployService,
     private deployerBC: DeployedApp,
+    private verseApp: VerseApp,
     private wallet: WalletsConnectService,
     private _projectService: projectReqService
   ) {
@@ -698,7 +700,8 @@ export class DeployLb {
     return this._deployService.projectSetup(projectId)
   }
 
-  initializeApiObjWithPresale(form: any): void {
+  async initializeApiObjWithPresale(form: any): Promise<void> {
+    let feeState = await this.verseApp.getFees()
     let team = localStorage.getItem('teamArray');
     let finalTeam = JSON.parse(team!);
     //let finalTeam = undefined
@@ -709,7 +712,7 @@ export class DeployLb {
     let presaleEndTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0))
 
     let initialAlgoLiq = Math.floor(+form.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value * 1_000_000)
-    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (1 - environment.Y_FEE))
+    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (10000 - feeState.presale_fee) * 10000)
     
     let totalSupply = +form.get('tokenInfoGroup.totalSupply')?.value
     let stakingRewards = parseInt((new Date(form.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
@@ -756,7 +759,7 @@ export class DeployLb {
       telegram: form.get('telegram')?.value,
       discord: form.get('discord')?.value,
       website: form.get('website')?.value,
-      initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * environment.Y_FEE),
+      initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * feeState.presale_fee / 10000),
       initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
       initialTokenLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
 
@@ -792,7 +795,8 @@ export class DeployLb {
     console.log(this.presaleObj)
   }
 
-  initializeApiObjWithoutPresale(form: any): void {
+  async initializeApiObjWithoutPresale(form: any): Promise<void> {
+    let feeState = await this.verseApp.getFees()
     let team = localStorage.getItem('teamArray');
     let finalTeam = JSON.parse(team!);
     let smartProperties: SmartProperties | undefined;
@@ -815,7 +819,7 @@ export class DeployLb {
     }
 
     let initialAlgoLiq = Math.floor(+form.get('liquidity.algoToLiq')?.value * 1_000_000)
-    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (1 - environment.Y_FEE))
+    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (10000 - feeState.presale_fee) * 10000)
     
     let totalSupply = +form.get('tokenInfoGroup.totalSupply')?.value
     let stakingRewards = parseInt((new Date(form.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))

@@ -430,11 +430,15 @@
       <span class="thic-gray-text">Buying Fee ({{totalBuyingFee / 100}}%)</span>
       <div class="propery-pair">
         <span>Buy Burn:</span>
-        <span class="thin-gray-text">{{ selectedOption!.smartProperties!.buyBurn / 100}}%</span>
+        <span class="thin-gray-text">{{ buyBurn / 100}}%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Buy LP Tax:</span>
+        <span class="thin-gray-text">{{ buyLP / 100}}%</span>
       </div>
       <div class="propery-pair">
         <span>Backing Tax:</span>
-        <span class="thin-gray-text">{{ selectedOption!.smartProperties!.backing / 100}}%</span>
+        <span class="thin-gray-text">{{ toBacking / 100}}%</span>
       </div>
       <div class="propery-pair" *ngIf="hasAdditionalFee">
         <span>{{selectedOption!.smartProperties!.additionalFeePurpose!}} Fee:</span>
@@ -443,15 +447,15 @@
       <span class="thic-gray-text">Selling Fee ({{totalSellingFee / 100}}%)</span>
       <div class="propery-pair">
         <span>Sell Burn:</span>
-        <span class="thin-gray-text">{{ selectedOption!.smartProperties!.sellBurn / 100}}%</span>
+        <span class="thin-gray-text">{{ sellBurn / 100}}%</span>
+      </div>
+      <div class="propery-pair">
+        <span>Sell LP Tax:</span>
+        <span class="thin-gray-text">{{ sellLP / 100}}%</span>
       </div>
       <div class="propery-pair">
         <span>Backing Tax:</span>
-        <span class="thin-gray-text">{{ selectedOption!.smartProperties!.backing / 100}}%</span>
-      </div>
-      <div class="propery-pair">
-        <span>Rising Pricefloor:</span>
-        <span class="thin-gray-text">{{ selectedOption!.smartProperties!.risingPriceFloor / 100}}%</span>
+        <span class="thin-gray-text">{{ toBacking / 100}}%</span>
       </div>
       <div class="propery-pair" *ngIf="hasAdditionalFee">
         <span>{{selectedOption!.smartProperties!.additionalFeePurpose!}} Fee:</span>

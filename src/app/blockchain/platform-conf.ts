@@ -31,13 +31,10 @@ type DevConf = {
 };
 
 type Platform = {
-    burn_addr: string,
-    burn_lsig: LogicSig,
-    fee_addr: string,
+    fee_app_id: number,
     staking_addr: string,
     staking_id: number,
     storing_id: number,
-    distribution_id: number,
     verse_app_id: number,
     verse_app_addr: string,
     verse_asset_id: number,
@@ -126,7 +123,12 @@ type BlockchainInformation = {
     totalsupply: number,
     totalBacking: number,
     totalBorrowedAlgo: number,
-    maxBuy: number
+    maxBuy: number,
+    buyBurn?: number,
+    sellBurn?: number,
+    buyToLPFee?: number,
+    sellToLPFee?: number,
+    backingFee?: number,
 }
 
 const ALGO_VIEWMODEL: AssetViewModel = {

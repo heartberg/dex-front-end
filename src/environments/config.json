@@ -17,8 +17,7 @@
     },
     "explorer":"algoscan.app",
     "platform": {
-        "burn_addr": "MXJT53H5ZO7KWBYMCLZ4ZVWEF5JS4NLVHEII6OI3DCLI3KL26BRDTAFJKA",
-        "fee_addr": "NORHXZXC2PI2T4DXRKBAY7P2Y7BDV57P6RFFQNGQQAMLNMYFA5GMRZNP6A",
+        "fee_app_id": 1212,
         "staking_addr": "HU5NE3IZWUYO3WAJMKLAXPHXY7VMMLCSQJ7ZAWSU7QE56RIFE4STEFUZ74",
         "staking_id": 98456467,
         "verse_app_id": 98456066,

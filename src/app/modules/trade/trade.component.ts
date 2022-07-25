@@ -50,6 +50,12 @@ export class TradeComponent implements OnInit, DoCheck {
 
   selectedOption: AssetViewModel | undefined;
 
+  buyBurn: number = 0;
+  sellBurn: number = 0;
+  buyLP: number = 0;
+  sellLP: number = 0;
+  toBacking: any;
+
   isOptedIn: boolean = true;
   isShowAll: boolean = true;
   isPopUpOpen: boolean = false;
@@ -76,6 +82,8 @@ export class TradeComponent implements OnInit, DoCheck {
 
   blockchainInfo: BlockchainInformation | undefined;
   deployedAppSettings: DeployedAppSettings | undefined;
+  feeState: any;
+  deployedTokenFees: any;
 
   buysAndSells: TokenEntryViewModel[] | undefined;
   // your transactions
@@ -350,6 +358,7 @@ export class TradeComponent implements OnInit, DoCheck {
     this.getAllBuysAndSells()
     this.getPrice()
     this.updateHoldingOfSelectedAsset()
+    this.feeState = await this.verseApp.getFees()
     if(this.autoSlippage){
       this.getAutoSlippage()
     }
@@ -571,19 +580,28 @@ export class TradeComponent implements OnInit, DoCheck {
   }
 
   getAutoSlippage() {
-    let accumulatedFees = this.selectedOption!.smartProperties!.backing + +environment.Y_FEE! * 10000
+    let accumulatedFees = this.selectedOption!.smartProperties!.backing + this.feeState.platform_fee
     if(this.selectedOption!.smartProperties!.additionalFee) {
       accumulatedFees += this.selectedOption!.smartProperties!.additionalFee
     }
     //console.log(accumulatedFees)
     if(this.isBuy){
-      accumulatedFees += this.selectedOption!.smartProperties!.buyBurn
+      if(this.selectedOption?.assetId! == ps.platform.verse_asset_id) {
+        accumulatedFees += this.feeState.verse_buy_burn + this.feeState.verse_buy_lp_fee
+      } else {
+        accumulatedFees += this.blockchainInfo!.buyBurn! + this.blockchainInfo!.buyToLPFee!
+      }
     } else{
-      accumulatedFees += this.selectedOption!.smartProperties!.sellBurn + this.selectedOption!.smartProperties!.risingPriceFloor
+      if(this.selectedOption?.assetId! == ps.platform.verse_asset_id) {
+        accumulatedFees += this.feeState.verse_sell_burn + this.feeState.verse_sell_lp_fee
+      } else {
+        accumulatedFees += this.blockchainInfo!.sellBurn! + this.blockchainInfo!.sellToLPFee!
+      }
+      
     }
 
     if (this.selectedOption!.assetId != ps.platform.verse_asset_id){
-      accumulatedFees += +environment.VERSE_FEE!
+      accumulatedFees += this.feeState.deployer_verse_backing
     }
     // + 200 to give an extra 2% for slippage
     this.slippage = accumulatedFees + 200
@@ -903,8 +921,21 @@ export class TradeComponent implements OnInit, DoCheck {
   }
 
   getTotalFees() {
-    this.totalBuyingFee = this.selectedOption!.smartProperties!.buyBurn + this.selectedOption!.smartProperties!.backing
-    this.totalSellingFee = this.selectedOption!.smartProperties!.sellBurn + this.selectedOption!.smartProperties!.backing + this.selectedOption!.smartProperties!.risingPriceFloor
+    if(this.selectedOption!.assetId == ps.platform.verse_asset_id) {
+      this.buyBurn = this.feeState.verse_buy_burn
+      this.sellBurn = this.feeState.verse_sell_burn
+      this.buyLP = this.feeState.verse_buy_lp_fee
+      this.sellLP = this.feeState.verse_sell_lp_fee
+      this.toBacking = this.feeState.verse_backing_fee
+    } else {
+      this.buyBurn = this.blockchainInfo?.buyBurn!
+      this.sellBurn = this.blockchainInfo?.sellBurn!
+      this.buyLP = this.blockchainInfo?.buyToLPFee!
+      this.sellLP = this.blockchainInfo?.sellToLPFee!
+      this.toBacking = this.blockchainInfo?.backingFee!
+    }
+    this.totalBuyingFee = this.buyBurn + this.buyLP + this.toBacking
+    this.totalSellingFee = this.sellBurn + this.sellLP + this.toBacking
     if(this.selectedOption!.smartProperties!.additionalFee) {
       this.totalBuyingFee += this.selectedOption!.smartProperties!.additionalFee
       this.totalSellingFee += this.selectedOption!.smartProperties!.additionalFee

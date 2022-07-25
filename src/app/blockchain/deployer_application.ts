@@ -28,7 +28,7 @@ import { AsaSettings } from "../modules/deploy/deploy.component";
 import SuggestedParamsRequest from "algosdk/dist/types/src/client/v2/algod/suggestedParams";
 import { url } from "inspector";
 import { StakingModel } from "../models/stakingModel";
-import { Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
+import { feeAppStateKeys, Method, smartDistributionStateKeys, stakingStateKeys, standardDistributionKeys, standardStakingKeys } from "./keys";
 import { start } from "repl";
 import { SIGTTIN } from "constants";
 import { pathToFileURL } from "url";
@@ -44,7 +44,8 @@ export enum StateKeys {
   buy_burn_key = "bb",
   sell_burn_key = "sb",
   transfer_burn_key = "trb",
-  to_lp_key = "lp",
+  buy_to_lp_key = "blp",
+  sell_to_lp_key = "slp",
   to_backing_key = "tb",
   max_buy_key = "mb",
   burn_addr_key = "ba",
@@ -117,13 +118,19 @@ export class DeployedApp {
   }
 
   async deploy(wallet: SessionWallet, settings: DeployedAppSettings) {
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     this.settings = settings;
     const suggested = await getSuggested(30)
     // console.log(suggested)
     // console.log('wallet', wallet)
     const addr = wallet.getDefaultAccount()
     // console.log('addr', addr)
-    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr]
+    const accounts = [burnAddr, feeAddr]
+
     const args = [algosdk.encodeUint64(this.settings.totalSupply), algosdk.encodeUint64(this.settings.buyBurn), algosdk.encodeUint64(this.settings.sellBurn),
                   algosdk.encodeUint64(this.settings.transferBurn), algosdk.encodeUint64(this.settings.toLp), algosdk.encodeUint64(this.settings.toBacking),
                   algosdk.encodeUint64(this.settings.maxBuy)]
@@ -139,7 +146,7 @@ export class DeployedApp {
     }
 
     const assets = [ps.platform.verse_asset_id]
-    const apps = [ps.platform.verse_app_id, ps.platform.backing_id, ps.platform.locker_id]
+    const apps = [ps.platform.verse_app_id, ps.platform.backing_id, ps.platform.locker_id, ps.platform.fee_app_id]
 
     const approval = await (await fetch('../../assets/contracts/deployer_token_approval.teal')).text()
     //// console.log('approval', approval)
@@ -151,7 +158,7 @@ export class DeployedApp {
         approvalProgram: await compileProgram(approval),
         clearProgram: await compileProgram(clear),
         numGlobalInts: 34,
-        numGlobalByteSlices: 3,
+        numGlobalByteSlices: 1,
         numLocalInts: 4,
         numLocalByteSlices: 0,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
@@ -207,12 +214,15 @@ export class DeployedApp {
   async payAndOptInBurn(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
     let client = getAlgodClient()
     this.settings = settings;
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
     const suggested = await getSuggested(30)
     const addr = wallet.getDefaultAccount()
 
-    const pay = new Transaction(get_pay_txn(suggested, addr, ps.platform.burn_addr, 101_000))
+    const pay = new Transaction(get_pay_txn(suggested, addr, burnAddr, 101_000))
 
-    const optIn = new Transaction(get_asa_optin_txn(suggested, ps.platform.burn_addr, this.settings.assetId))
+    const optIn = new Transaction(get_asa_optin_txn(suggested, burnAddr, this.settings.assetId))
 
     const grouped = [pay, optIn]
 
@@ -234,6 +244,11 @@ export class DeployedApp {
 
   async setupNoPresale(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings;
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     const suggested = await getSuggested(30)
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
@@ -242,20 +257,21 @@ export class DeployedApp {
     let algoAmountToSend = this.settings.initialAlgoLiqWithFee
     if(this.settings.rewardsPerInterval) {
       suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
-      accounts = [ps.platform.fee_addr, ps.platform.burn_addr, getApplicationAddress(this.settings.stakingContractId!)]
+      accounts = [feeAddr, burnAddr, getApplicationAddress(this.settings.stakingContractId!)]
       if(settings.poolRewards! >= Math.floor(0.03 * settings.totalSupply)) {
         algoAmountToSend = this.settings.initialAlgoLiq
       }
     } else {
       suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
-      accounts = [ps.platform.fee_addr, ps.platform.burn_addr]
+      accounts = [feeAddr, burnAddr]
     }
 
     suggested.flatFee = true
     
     let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initialTokenLiq), algosdk.encodeUint64(this.settings.tradingStart), algosdk.encodeUint64(this.settings.extraFeeTime)]
     let assets = [this.settings.assetId]
-    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
+    let apps = [ps.platform.fee_app_id]
+    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, apps, assets, accounts))
 
     // console.log(this.settings.initial_algo_liq_with_fee)
     suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
@@ -291,6 +307,11 @@ export class DeployedApp {
 
   async setupWithPresale(wallet: SessionWallet, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings;
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     const suggested = await getSuggested(30)
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
@@ -298,10 +319,10 @@ export class DeployedApp {
     let accounts = []
     if(this.settings.rewardsPerInterval) {
       suggested.fee = 4 * algosdk.ALGORAND_MIN_TX_FEE
-      accounts = [ps.platform.fee_addr, ps.platform.burn_addr, getApplicationAddress(this.settings.stakingContractId!)]
+      accounts = [feeAddr, burnAddr, getApplicationAddress(this.settings.stakingContractId!)]
     } else {
       suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
-      accounts = [ps.platform.fee_addr, ps.platform.burn_addr]
+      accounts = [feeAddr, burnAddr]
     }
 
     let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(this.settings.initialTokenLiq), algosdk.encodeUint64(this.settings.tradingStart), 
@@ -313,7 +334,8 @@ export class DeployedApp {
     }
 
     let assets = [this.settings.assetId]
-    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
+    let apps = [ps.platform.fee_app_id]
+    const setup = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, apps, assets, accounts))
 
     suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
     const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, this.settings.initialAlgoLiqWithFee))
@@ -397,6 +419,9 @@ export class DeployedApp {
   async setupSmartStaking(wallet: SessionWallet, contractId: number, assetId: number, assetContractId: number, rewardsPerInterval: number, 
     totalRewards: number, start: number, periodTime: number) {
       let addr = wallet.getDefaultAccount()
+      let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+      let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+      console.log(burnAddr)
       let suggested = await getSuggested(10)
       suggested.flatFee = true
 
@@ -404,7 +429,7 @@ export class DeployedApp {
 
       let assets = [assetId, ps.platform.verse_asset_id]
       let apps = [assetContractId, ps.platform.staking_id]
-      let accounts = [ps.platform.burn_addr]
+      let accounts = [burnAddr]
       let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
                   algosdk.encodeUint64(periodTime)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
@@ -452,13 +477,16 @@ export class DeployedApp {
   async setupSmartDistributionStaking(wallet: SessionWallet, contractId: number, assetId: number, assetContractId: number, rewardsPerInterval: number, 
     totalRewards: number, start: number, periodTime: number) {
       let addr = wallet.getDefaultAccount()
+      let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+      let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+      console.log(burnAddr)
       let suggested = await getSuggested(10)
 
       let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 200000))
 
       let assets = [assetId]
-      let apps = [assetContractId]
-      let accounts = [ps.platform.burn_addr]
+      let apps = [assetContractId, ps.platform.fee_app_id]
+      let accounts = [burnAddr]
       let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(totalRewards), algosdk.encodeUint64(rewardsPerInterval), algosdk.encodeUint64(start),
                   algosdk.encodeUint64(periodTime)]
       suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
@@ -584,13 +612,19 @@ export class DeployedApp {
 
     async claimStaking(wallet: SessionWallet, contractId: number, assetId: number, smartAssetContractId?: number) {
       let addr = wallet.getDefaultAccount()
+
+      let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+      let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+      console.log(burnAddr)
+
       let suggested = await getSuggested(10)
 
       let assets = [assetId, ps.platform.verse_asset_id]
       let args = [new Uint8Array(Buffer.from(DeployerMethod.ClaimStaking))]
 
       if(smartAssetContractId){
-        let apps = [smartAssetContractId, ps.platform.staking_id]
+        let apps = [smartAssetContractId, ps.platform.staking_id, ps.platform.fee_app_id]
+        let accounts = [burnAddr]
         let txn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, undefined))
 
         let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 2 * algosdk.ALGORAND_MIN_TX_FEE))
@@ -643,7 +677,11 @@ export class DeployedApp {
   }
 
   async claimPresale(wallet: SessionWallet, contractId: number): Promise<any> {
-
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
     let client: Algodv2 = getAlgodClient()
     let appInfo = await client.getApplicationByID(contractId).do()
@@ -655,9 +693,10 @@ export class DeployedApp {
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.ClaimPresale))]
     const assets = [globalState[StateKeys.asset_id_key]['i']]
-    const accounts = [ps.platform.burn_addr, appInfo['params']['creator'], ps.platform.fee_addr]
+    const accounts = [burnAddr, appInfo['params']['creator'], feeAddr]
+    const apps = [ps.platform.fee_app_id]
 
-    const claim = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
+    const claim = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
 
     const signedClaim = await wallet.signTxn([claim])
     const result = await sendWait(signedClaim)
@@ -666,7 +705,12 @@ export class DeployedApp {
   }
 
   async resetupPresaleToFairLaunch(wallet: SessionWallet, tradingStart: number, tokenLiq: number, algoLiq: number, contractId: number, assetId: number ): Promise<any> {
-    
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let presaleFee = feeGlobalState[feeAppStateKeys.presale_fee]['i']
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
     console.log(globalState)
     let extraFeeTime = globalState[StateKeys.extra_fee_time_key]['i'] - globalState[StateKeys.trading_start_key]['i']
@@ -683,14 +727,15 @@ export class DeployedApp {
     }
     const addr = wallet.getDefaultAccount()
     const assets = [globalState[StateKeys.asset_id_key]['i']]
-    const accounts = [ps.platform.fee_addr]
+    const accounts = [feeAddr]
+    const apps = [ps.platform.fee_app_id]
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Resetup)), algosdk.encodeUint64(tradingStart), algosdk.encodeUint64(tokenLiq), algosdk.encodeUint64(extraFeeTime)]
 
-    const resetup = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
+    const resetup = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
 
     if (algoLiq > initialAlgoLiq) {
       suggested.fee = algosdk.ALGORAND_MIN_TX_FEE
-      let addedLiq = Math.floor((algoLiq - initialAlgoLiq) / (1 - environment.Y_FEE))
+      let addedLiq = Math.floor((algoLiq - initialAlgoLiq) / (10000 - presaleFee) * 10000)
       const pay = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), addedLiq))
       algosdk.assignGroupID([pay, resetup])
       const [signedPay, signedResetup] = await wallet.signTxn([pay, resetup])
@@ -723,6 +768,13 @@ export class DeployedApp {
       let initialAlgoLiq = globalState[StateKeys.algo_liq_key]['i']
       let initialTokenLiq = globalState[StateKeys.token_liq_key]['i']
       
+      let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+      let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+      console.log(burnAddr)
+      let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+      console.log(feeAddr)
+      let presaleFee = feeGlobalState[feeAppStateKeys.presale_fee]['i']
+
       const suggestedExtraFee = await getSuggested(30)
       suggestedExtraFee.fee = algosdk.ALGORAND_MIN_TX_FEE
       suggestedExtraFee.flatFee = true
@@ -731,7 +783,7 @@ export class DeployedApp {
 
       let payTxn = null;
       if(algoLiquidity > initialAlgoLiq){
-        let addedLiq = Math.floor((algoLiquidity - initialAlgoLiq) / (1 - environment.Y_FEE))
+        let addedLiq = Math.floor((algoLiquidity - initialAlgoLiq) / (10000 - presaleFee) * 10000)
         payTxn = new Transaction(get_pay_txn(suggestedExtraFee, addr, getApplicationAddress(contractId), addedLiq))
         suggestedExtraFee.fee += algosdk.ALGORAND_MIN_TX_FEE
       }
@@ -740,7 +792,8 @@ export class DeployedApp {
         suggestedExtraFee.fee += algosdk.ALGORAND_MIN_TX_FEE
       }
 
-      const accs = [ps.platform.fee_addr]
+      const accs = [feeAddr]
+      const apps = [ps.platform.fee_app_id]
       const args = [new Uint8Array(Buffer.from(DeployerMethod.Resetup)), algosdk.encodeUint64(softCap), algosdk.encodeUint64(hardCap), 
         algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd), algosdk.encodeUint64(walletCap),
         algosdk.encodeUint64(toLiq), algosdk.encodeUint64(tradingStart), algosdk.encodeUint64(presaleTokenAmount), algosdk.encodeUint64(extraFeeTime)]
@@ -750,7 +803,7 @@ export class DeployedApp {
         args.push(algosdk.encodeUint64(release), algosdk.encodeUint64(releaseInterval), algosdk.encodeUint64(releaseIntervalNumbers))
       }
       console.log(args)
-      const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, contractId, args, undefined, assets, accs))
+      const resetup = new Transaction(get_app_call_txn(suggestedExtraFee, addr, contractId, args, apps, assets, accs))
       
       let result;
       if(payTxn) {
@@ -809,15 +862,20 @@ export class DeployedApp {
   // trade page
   async buy(wallet: SessionWallet, algoAmount: number, slippage: number, wantedReturn: number, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     const suggested = await getSuggested(30)
     suggested.fee = 5 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Buy)), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.verse_app_addr]
+    const accounts = [burnAddr, feeAddr, ps.platform.verse_app_addr]
     const assets = [this.settings.assetId, ps.platform.verse_asset_id]
-    const apps = [ps.platform.verse_app_id]
+    const apps = [ps.platform.verse_app_id, ps.platform.fee_app_id]
 
     const buy = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, apps, assets, accounts))
     const pay = new Transaction(get_pay_txn(suggested, addr, this.settings.contractAddress, algoAmount))
@@ -834,16 +892,22 @@ export class DeployedApp {
 
   async sell(wallet: SessionWallet, tokenAmount: number, slippage: number, wantedReturn: number, settings: DeployedAppSettings): Promise<any> {
     this.settings = settings
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     const suggested = await getSuggested(30)
     suggested.fee = 6 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Sell)), algosdk.encodeUint64(tokenAmount), algosdk.encodeUint64(slippage), algosdk.encodeUint64(wantedReturn)]
-    const accounts = [ps.platform.burn_addr, ps.platform.fee_addr, ps.platform.backing_addr]
+    const accounts = [burnAddr, feeAddr, ps.platform.backing_addr]
     const assets = [this.settings.assetId, ps.platform.verse_asset_id]
+    const apps = [ps.platform.fee_app_id]
 
-    const sell = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, undefined, assets, accounts))
+    const sell = new Transaction(get_app_call_txn(suggested, addr, this.settings.contractId, args, apps, assets, accounts))
     const [signed] = await wallet.signTxn([sell])
     const result = await sendWait([signed])
 
@@ -852,6 +916,9 @@ export class DeployedApp {
   // #trade page
   // transfer page
   async transfer(wallet: SessionWallet, tokenAmount: number, to: string, assetId: number, contractId: number): Promise<any> {
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
@@ -859,10 +926,11 @@ export class DeployedApp {
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.Transfer)), algosdk.encodeUint64(tokenAmount)]
 
-    const accounts = [ps.platform.burn_addr, to]
+    const accounts = [burnAddr, to]
+    const apps = [ps.platform.fee_app_id]
     const assets = [assetId]
 
-    const send = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
+    const send = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
     const [signed] = await wallet.signTxn([send])
     const result = await sendWait([signed])
 
@@ -872,17 +940,20 @@ export class DeployedApp {
   // trade and token page
   async getBacking(wallet: SessionWallet, tokenAmount: number, contractId: number): Promise<any> {
     let globalState = StateToObj(await getGlobalState(contractId), StateKeys)
-    
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
     const suggested = await getSuggested(30)
     suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
     suggested.flatFee = true
     const addr = wallet.getDefaultAccount()
 
     const args = [new Uint8Array(Buffer.from(DeployerMethod.GetBacking)), algosdk.encodeUint64(tokenAmount)]
-    const accounts = [ps.platform.burn_addr]
+    const accounts = [burnAddr]
+    const apps = [ps.platform.fee_app_id]
     const assets = [globalState[StateKeys.asset_id_key]['i']]
 
-    const backing = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
+    const backing = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
     const [signed] = await wallet.signTxn([backing])
     const result = await sendWait([signed])
 
@@ -952,6 +1023,11 @@ export class DeployedApp {
     let totalBacking = (appInfo['amount'] - appInfo['min-balance'] - algoLiquidity + appState[StateKeys.total_borrowed_key]['i']) / Math.pow(10, 6)
     let totalBorrowedAlgo = appState[StateKeys.total_borrowed_key]['i']
     let maxBuy = appState[StateKeys.max_buy_key]['i']
+    let buyBurn = appState[StateKeys.buy_burn_key]['i']
+    let sellBurn = appState[StateKeys.sell_burn_key]['i']
+    let buyToLPFee = appState[StateKeys.buy_to_lp_key]['i']
+    let sellToLPFee = appState[StateKeys.sell_to_lp_key]['i']
+    let backingFee = appState[StateKeys.to_backing_key]['i']
 
     return {
         algoLiquidity: algoLiquidity,
@@ -959,7 +1035,12 @@ export class DeployedApp {
         totalsupply: totalSupply,
         totalBacking: totalBacking,
         totalBorrowedAlgo: totalBorrowedAlgo,
-        maxBuy: maxBuy
+        maxBuy: maxBuy,
+        buyBurn: buyBurn,
+        sellBurn: sellBurn,
+        buyToLPFee: buyToLPFee,
+        sellToLPFee: sellToLPFee,
+        backingFee: backingFee
     }
   }
 
@@ -1028,7 +1109,6 @@ export class DeployedApp {
   async getPresaleInfo(contractId: number): Promise<PresaleBlockchainInformation> {
     let client: Algodv2 = getAlgodClient()
     let globalState: any = await this.getContractGlobalState(contractId)
-    let appAccInfo: any = await client.accountInformation(getApplicationAddress(contractId)).do()
     let presaleInfo: PresaleBlockchainInformation;
     let saleEnd = globalState[StateKeys.presale_end_key]['i']
     let saleStart = globalState[StateKeys.presale_start_key]['i']
@@ -1285,6 +1365,10 @@ export class DeployedApp {
 
   async stakeDistributionPool(wallet: SessionWallet, stakeAmount: number, contractId: number, isSmartPool: boolean) {
     let addr = wallet.getDefaultAccount()
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    contractId.toLocaleString(burnAddr)
+
     let suggested = await getSuggested(30)
     if(isSmartPool) {
       let globalState = StateToObj(await getGlobalState(contractId), smartDistributionStateKeys)
@@ -1295,9 +1379,10 @@ export class DeployedApp {
       suggested.fee = 3 * algosdk.ALGORAND_MIN_TX_FEE
       suggested.flatFee = true
       args = [new Uint8Array(Buffer.from(Method.Transfer)), algosdk.encodeUint64(stakeAmount)]
-      let accounts = [ps.platform.burn_addr, getApplicationAddress(contractId)]
+      let accounts = [burnAddr, getApplicationAddress(contractId)]
+      apps = [ps.platform.fee_app_id]
       let assets = [globalState[smartDistributionStateKeys.token_id_key]['i']]
-      let transferToStakeTxn = new Transaction(get_app_call_txn(suggested, addr, globalState[smartDistributionStateKeys.token_app_id_key]['i'], args, undefined, assets, accounts))
+      let transferToStakeTxn = new Transaction(get_app_call_txn(suggested, addr, globalState[smartDistributionStateKeys.token_app_id_key]['i'], args, apps, assets, accounts))
       
       let grouped = [transferToStakeTxn, stakeTxn]
       algosdk.assignGroupID(grouped)
@@ -1325,15 +1410,18 @@ export class DeployedApp {
 
   async claimDistributionPool(wallet: SessionWallet, contractId: number, assetSmartContract?: number) {
     let addr = wallet.getDefaultAccount()
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+    console.log(burnAddr)
     let suggested = await getSuggested(30)
     if(assetSmartContract) {
       let globalState = StateToObj(await getGlobalState(contractId), smartDistributionStateKeys)
       let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 3000))
 
       let args = [new Uint8Array(Buffer.from(Method.Claim))]
-      let accounts = [ps.platform.burn_addr]
+      let accounts = [burnAddr]
       let assets = [globalState[smartDistributionStateKeys.token_id_key]['i']]
-      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i']]
+      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i'], ps.platform.fee_app_id]
       let claimTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
 
       let grouped = [payTxn, claimTxn]
@@ -1359,13 +1447,16 @@ export class DeployedApp {
     let addr = wallet.getDefaultAccount()
     let suggested = await getSuggested(30)
     if(isSmartPool) {
+      let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+      let burnAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.burn_addr]['b'])
+      console.log(burnAddr)
       let globalState = StateToObj(await getGlobalState(contractId), smartDistributionStateKeys)
       let payTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 3000))
 
       let args = [new Uint8Array(Buffer.from(Method.Withdraw)), algosdk.encodeUint64(withdrawAmount)]
-      let accounts = [ps.platform.burn_addr]
+      let accounts = [burnAddr]
       let assets = [globalState[smartDistributionStateKeys.token_id_key]['i']]
-      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i']]
+      let apps = [globalState[smartDistributionStateKeys.token_app_id_key]['i'], ps.platform.fee_app_id]
       let withdrawTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
 
       let grouped = [payTxn, withdrawTxn]
@@ -1393,6 +1484,7 @@ export class DeployedApp {
     const clear = await (await fetch('../../assets/contracts/asa_presale_clear.teal')).text()
 
     let args = [algosdk.encodeUint64(presaleStart), algosdk.encodeUint64(presaleEnd)]
+    let apps = [ps.platform.fee_app_id]
 
     let suggested = await getSuggested(10)
     const createApp = algosdk.makeApplicationCreateTxnFromObject({
@@ -1406,7 +1498,8 @@ export class DeployedApp {
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         note: new Uint8Array(Buffer.from("Deploy App")),
         suggestedParams: suggested,
-        appArgs: args
+        appArgs: args,
+        foreignApps: apps
     })
 
     const [signedTxns] = await wallet.signTxn([createApp])
@@ -1422,6 +1515,9 @@ export class DeployedApp {
     stakingId: number | undefined, stakingAmount: number | undefined, periodTime: number | undefined, stakingStart: number | undefined, periodDistributionAmount: number | undefined, 
     vestingRelease: number | undefined, vestingIntervalLength: number | undefined, vestingIntervalNumbers: number | undefined) {
     let addr = wallet.getDefaultAccount()
+    let feeGlobalState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+    let feeAddr = algosdk.encodeAddress(feeGlobalState[feeAppStateKeys.fee_addr]['b'])
+    console.log(feeAddr)
     let suggested = await getSuggested(10)
     let args = [new Uint8Array(Buffer.from(DeployerMethod.Setup)), algosdk.encodeUint64(hardCap), algosdk.encodeUint64(softCap), algosdk.encodeUint64(walletCap)]
     
@@ -1429,13 +1525,14 @@ export class DeployedApp {
       args.push(algosdk.encodeUint64(vestingRelease), algosdk.encodeUint64(vestingIntervalLength), algosdk.encodeUint64(vestingIntervalNumbers))
     }
 
-    let accounts = [ps.platform.fee_addr]
+    let accounts = [feeAddr]
+    let apps = [ps.platform.fee_app_id]
     let assets = [assetId]
 
     let paymentTxn = new Transaction(get_pay_txn(suggested, addr, getApplicationAddress(contractId), 200000))
     
     suggested.fee = 2 * algosdk.ALGORAND_MIN_TX_FEE
-    let presaleSetupTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, undefined, assets, accounts))
+    let presaleSetupTxn = new Transaction(get_app_call_txn(suggested, addr, contractId, args, apps, assets, accounts))
     
     suggested.fee = 1 * algosdk.ALGORAND_MIN_TX_FEE
     let assetToPresaleTxn = new Transaction(get_asa_xfer_txn(suggested, addr, getApplicationAddress(contractId), assetId, presaleTokenAmount))
