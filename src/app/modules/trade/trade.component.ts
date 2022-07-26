@@ -314,6 +314,11 @@ export class TradeComponent implements OnInit, DoCheck {
     const wallet = localStorage.getItem('wallet')!;
     console.log(wallet)
     if(assetId == 0){
+      if(index == 1) {
+        this.isBuy = true
+      } else {
+        this.isBuy = false
+      }
       if(wallet){
         let client: Algodv2 = getAlgodClient();
         let accInfo = await client.accountInformation(wallet).do();
@@ -336,10 +341,12 @@ export class TradeComponent implements OnInit, DoCheck {
 
     } else {
       if(index == 1) {
+        this.isBuy = false
         this.selectedOption = this.assetArr.find((el) => {
           return el.assetId === assetId;
         });
       } else {
+        this.isBuy = true
         this.selectedOption = this.assetArrSecond.find((el) => {
           return el.assetId === assetId;
         });
