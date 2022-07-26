@@ -181,8 +181,12 @@
                   <span>{{(projectData!.asset!.smartProperties!.sendBurn / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex">
-                  <h6>Rising Pricefloor:</h6>
-                  <span>{{(projectData!.asset!.smartProperties!.risingPriceFloor / 100).toFixed(2)}}%</span>
+                  <h6>Buy LP Tax:</h6>
+                  <span>{{(projectData!.asset!.smartProperties!.buyRisingPriceFloor / 100).toFixed(2)}}%</span>
+                </div>
+                <div class="d-flex">
+                  <h6>Sell LP Tax:</h6>
+                  <span>{{(projectData!.asset!.smartProperties!.sellRisingPriceFloor / 100).toFixed(2)}}%</span>
                 </div>
                 <div class="d-flex" *ngIf="projectData.asset.smartProperties!.additionalFee">
                   <h6>Additional Fee:</h6>

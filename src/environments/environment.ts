@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   baseUrl: 'https://versepad.azurewebsites.net',
-  // baseUrl: 'http://localhost:5000',
+  //baseUrl: 'http://localhost:5000',
 
   ALGOD_TESTNET_URL:"https://testnet-algorand.api.purestake.io/ps2",
   ALGOD_TESTNET_TOKEN:"Z4lUOOfIOm8thZUeUK9n349ImUCpiCC190RtGnm6",

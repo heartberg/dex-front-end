@@ -132,7 +132,7 @@ export class DeployedApp {
     const accounts = [burnAddr, feeAddr]
 
     const args = [algosdk.encodeUint64(this.settings.totalSupply), algosdk.encodeUint64(this.settings.buyBurn), algosdk.encodeUint64(this.settings.sellBurn),
-                  algosdk.encodeUint64(this.settings.transferBurn), algosdk.encodeUint64(this.settings.toLp), algosdk.encodeUint64(this.settings.toBacking),
+                  algosdk.encodeUint64(this.settings.transferBurn), algosdk.encodeUint64(this.settings.buyToLp), algosdk.encodeUint64(this.settings.sellToLp), algosdk.encodeUint64(this.settings.toBacking),
                   algosdk.encodeUint64(this.settings.maxBuy)]
     
     if(settings.additionalFee) {

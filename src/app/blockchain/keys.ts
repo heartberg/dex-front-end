@@ -6,8 +6,6 @@ export enum verseStateKeys {
     burn_key = "b",
     transfer_burn_key = "trb",
     flat_fee_key = "ff",
-    to_lp_key = "lp",
-    to_backing_key = "tb",
     max_buy_key = "mb",
     asset_id_key = "asa",
     trading_start_key = "t",

@@ -354,11 +354,11 @@ export class TradeComponent implements OnInit, DoCheck {
     if(this.selectedOption?.smartProperties?.additionalFee){
       this.hasAdditionalFee = true;
     }
+    this.feeState = await this.verseApp.getFees()
     this.getTotalFees()
     this.getAllBuysAndSells()
     this.getPrice()
     this.updateHoldingOfSelectedAsset()
-    this.feeState = await this.verseApp.getFees()
     if(this.autoSlippage){
       this.getAutoSlippage()
     }
@@ -512,7 +512,8 @@ export class TradeComponent implements OnInit, DoCheck {
       sellBurn: model.smartProperties!.sellBurn,
       tradingStart: model.smartProperties!.tradingStart,
       toBacking: model.smartProperties!.backing,
-      toLp: model.smartProperties!.risingPriceFloor,
+      buyToLp: model.smartProperties!.buyRisingPriceFloor,
+      sellToLp: model.smartProperties!.sellRisingPriceFloor,
       transferBurn: model.smartProperties!.sendBurn,
       url: "",
       initialAlgoLiq: 0,
@@ -921,6 +922,7 @@ export class TradeComponent implements OnInit, DoCheck {
   }
 
   getTotalFees() {
+    console.log(this.selectedOption)
     if(this.selectedOption!.assetId == ps.platform.verse_asset_id) {
       this.buyBurn = this.feeState.verse_buy_burn
       this.sellBurn = this.feeState.verse_sell_burn

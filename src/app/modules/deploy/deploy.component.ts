@@ -574,7 +574,8 @@ export class DeployComponent implements OnInit, DoCheck {
         maxBuy: '',
       }),
       feesGroup: this.fb.group({
-        risingPriceFloor: '',
+        buyRisingPriceFloor: '',
+        sellRisingPriceFloor: '',
         backing: '',
         buyBurn: '',
         sellBurn: '',
@@ -663,6 +664,7 @@ export class DeployComponent implements OnInit, DoCheck {
   }
 
   blockchainObjInitialize(): DeployedAppSettings {
+    console.log(this.feeState)
     let initial_algo_liq_with_fee;
     let initial_algo_liq;
     let initial_token_liq;
@@ -674,7 +676,7 @@ export class DeployComponent implements OnInit, DoCheck {
     let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
     if(this.presaleIsChecked){
       initial_algo_liq = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000)
-      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (10000 - this.feeState.presale_fee) / 10000)
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq * (1 + (this.feeState.presale_fee / 10000)))
       initial_token_liq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, decimals)
       if(this.isCheckedVested) {
         release = parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
@@ -696,7 +698,7 @@ export class DeployComponent implements OnInit, DoCheck {
       }
     } else {
       initial_algo_liq = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000)
-      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (10000 - this.feeState.presale_fee) / 10000)
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq * (1 + (this.feeState.presale_fee / 10000)))
       initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
     }
 
@@ -723,7 +725,8 @@ export class DeployComponent implements OnInit, DoCheck {
       buyBurn: +this.deployFormGroup.get('feesGroup.buyBurn')?.value * 100,
       sellBurn: +this.deployFormGroup.get('feesGroup.sellBurn')?.value * 100,
       transferBurn: +this.deployFormGroup.get('feesGroup.sendBurn')?.value * 100,
-      toLp: +this.deployFormGroup.get('feesGroup.risingPriceFloor')?.value * 100,
+      buyToLp: +this.deployFormGroup.get('feesGroup.buyRisingPriceFloor')?.value * 100,
+      sellToLp: +this.deployFormGroup.get('feesGroup.sellRisingPriceFloor')?.value * 100,
       toBacking: +this.deployFormGroup.get('feesGroup.backing')?.value * 100,
       maxBuy: +this.deployFormGroup.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
       name: this.deployFormGroup.get('tokenInfoGroup.tokenName')?.value,
@@ -733,7 +736,7 @@ export class DeployComponent implements OnInit, DoCheck {
       tradingStart: tradeStart,
       initialTokenLiq: initial_token_liq,
       initialAlgoLiqWithFee: initial_algo_liq_with_fee,
-      initialAlgoLiq: initial_algo_liq_with_fee - Math.floor(initial_algo_liq_with_fee * this.feeState.presale_fee / 10000),
+      initialAlgoLiq: initial_algo_liq,
       additionalFee: +this.deployFormGroup.get('feesGroup.fee')?.value * 100,
       additionalFeeAddress: this.deployFormGroup.get('feesGroup.address')?.value,
       poolStart: poolStart,
@@ -743,6 +746,7 @@ export class DeployComponent implements OnInit, DoCheck {
       poolDuration: poolDuration,
       presaleSettings: presaleSettings
     } || null
+
   }
 
   async smartAsaDeploy() {

@@ -674,7 +674,8 @@ export class DeployLb {
       name: projectView.asset.name,
       sellBurn: projectView.asset.smartProperties!.sellBurn,
       toBacking: projectView.asset.smartProperties!.backing,
-      toLp: projectView.asset.smartProperties!.risingPriceFloor,
+      buyToLp: projectView.asset.smartProperties!.buyRisingPriceFloor,
+      sellToLp: projectView.asset.smartProperties!.sellRisingPriceFloor,
       totalSupply: projectView.asset.totalSupply,
       tradingStart: projectView.asset.smartProperties!.tradingStart,
       transferBurn: projectView.asset.smartProperties!.sendBurn,
@@ -712,7 +713,7 @@ export class DeployLb {
     let presaleEndTime = parseInt((new Date(form.get('createPresaleOptionGroup.presaleSettings.presaleEnd')?.value).getTime() / 1000).toFixed(0))
 
     let initialAlgoLiq = Math.floor(+form.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value * 1_000_000)
-    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (10000 - feeState.presale_fee) * 10000)
+    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / ( 1 - (feeState.presale_fee / 10000)))
     
     let totalSupply = +form.get('tokenInfoGroup.totalSupply')?.value
     let stakingRewards = parseInt((new Date(form.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))
@@ -721,11 +722,12 @@ export class DeployLb {
     }
 
     let smartProperties: SmartProperties | undefined;
-    if (form.get('feesGroup.risingPriceFloor').value != null) {
+    if (form.get('feesGroup.buyRisingPriceFloor').value != null) {
       smartProperties = {
         maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
         tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
-        risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+        buyRisingPriceFloor: form.get('feesGroup.buyRisingPriceFloor')?.value * 100,
+        sellRisingPriceFloor: form.get('feesGroup.sellRisingPriceFloor')?.value * 100,
         backing: form.get('feesGroup.backing')?.value * 100,
         buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
         sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
@@ -759,7 +761,7 @@ export class DeployLb {
       telegram: form.get('telegram')?.value,
       discord: form.get('discord')?.value,
       website: form.get('website')?.value,
-      initialAlgoLiquidity: initialAlgoLiquidityWithFee - Math.floor(initialAlgoLiquidityWithFee * feeState.presale_fee / 10000),
+      initialAlgoLiquidity: initialAlgoLiq,
       initialAlgoLiquidityWithFee: initialAlgoLiquidityWithFee,
       initialTokenLiquidity: +form.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, +form.get('tokenInfoGroup.decimals')?.value),
 
@@ -800,11 +802,12 @@ export class DeployLb {
     let team = localStorage.getItem('teamArray');
     let finalTeam = JSON.parse(team!);
     let smartProperties: SmartProperties | undefined;
-    if (form.get('feesGroup.risingPriceFloor').value != null) {
+    if (form.get('feesGroup.buyRisingPriceFloor').value != null) {
       smartProperties = {
         maxBuy: form.get('tokenInfoGroup.maxBuy')?.value * 1_000_000,
         tradingStart: parseInt((new Date(form.get('tradingStart')?.value).getTime() / 1000).toFixed(0)),
-        risingPriceFloor: form.get('feesGroup.risingPriceFloor')?.value * 100,
+        buyRisingPriceFloor: form.get('feesGroup.buyRisingPriceFloor')?.value * 100,
+        sellRisingPriceFloor: form.get('feesGroup.sellRisingPriceFloor')?.value * 100,
         backing: form.get('feesGroup.backing')?.value * 100,
         buyBurn: form.get('feesGroup.buyBurn')?.value * 100,
         sellBurn: form.get('feesGroup.sellBurn')?.value * 100,
@@ -819,7 +822,7 @@ export class DeployLb {
     }
 
     let initialAlgoLiq = Math.floor(+form.get('liquidity.algoToLiq')?.value * 1_000_000)
-    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / (10000 - feeState.presale_fee) * 10000)
+    let initialAlgoLiquidityWithFee = Math.floor(initialAlgoLiq / ( 1 - (feeState.presale_fee / 10000)))
     
     let totalSupply = +form.get('tokenInfoGroup.totalSupply')?.value
     let stakingRewards = parseInt((new Date(form.get('stakingGroup.poolStart')?.value).getTime() / 1000).toFixed(0))

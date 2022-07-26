@@ -476,7 +476,7 @@ export class VerseApp {
 
     async getViewModel() : Promise<AssetViewModel>{
         let state: any = await this.getContractGlobalState()
-
+        let feeState: any = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
         let verse: AssetViewModel = {
             assetId: ps.platform.verse_asset_id,
             name: "Verse",
@@ -488,11 +488,12 @@ export class VerseApp {
             projectId: ps.platform.verse_project_id,
             isFavorite: true,
             smartProperties: {
-                risingPriceFloor: state[verseStateKeys.to_lp_key]['i'],
-                backing: state[verseStateKeys.to_backing_key]['i'],
-                buyBurn: state[verseStateKeys.burn_key]['i'],
-                sellBurn: state[verseStateKeys.burn_key]['i'],
-                sendBurn: state[verseStateKeys.transfer_burn_key]['i'],
+                buyRisingPriceFloor: feeState[feeAppStateKeys.verse_buy_lp_fee]['i'],
+                sellRisingPriceFloor: feeState[feeAppStateKeys.verse_sell_lp_fee]['i'],
+                backing: feeState[feeAppStateKeys.verse_backing_fee]['i'],
+                buyBurn: feeState[feeAppStateKeys.verse_buy_burn]['i'],
+                sellBurn: feeState[feeAppStateKeys.verse_sell_burn]['i'],
+                sendBurn: feeState[feeAppStateKeys.verse_transfer_burn]['i'],
                 contractId: ps.platform.verse_app_id,
                 contractAddress: ps.platform.verse_app_addr,
                 maxBuy: state[verseStateKeys.max_buy_key]['i'],
@@ -552,6 +553,7 @@ export class VerseApp {
 
     async getFees() {
         let globalState = StateToObj(await getGlobalState(ps.platform.fee_app_id),feeAppStateKeys)
+        console.log(globalState)
         let feeState = {
             burn_addr: algosdk.encodeAddress(globalState[feeAppStateKeys.burn_addr]['b']),
             fee_addr: algosdk.encodeAddress(globalState[feeAppStateKeys.fee_addr]['b']),

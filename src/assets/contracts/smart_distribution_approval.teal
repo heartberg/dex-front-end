@@ -113,7 +113,7 @@ assert
 txn Sender
 txna ApplicationArgs 1
 btoi
-callsub sendtokens_1
+callsub sendtokens_2
 txn Sender
 byte "TA"
 txn Sender
@@ -133,7 +133,8 @@ app_global_put
 int 1
 return
 main_l17:
-txna Applications 1
+byte "TA"
+app_global_get
 byte "trb"
 app_global_get_ex
 store 3
@@ -180,25 +181,26 @@ btoi
 int 10000
 load 2
 -
-callsub calculatefraction_0
-store 1
+callsub calculatefraction_1
+store 5
 txn Sender
 byte "TA"
 txn Sender
 byte "TA"
 app_local_get
-load 1
+load 5
 +
 app_local_put
 byte "TS"
 byte "TS"
 app_global_get
-load 1
+load 5
 +
 app_global_put
 int 1
 return
 main_l18:
+callsub checkExternalStates_0
 byte "TK_ID"
 app_global_get
 txna Assets 0
@@ -214,8 +216,7 @@ int 2
 ==
 assert
 txna Accounts 1
-byte "BA"
-app_global_get
+load 0
 ==
 assert
 gtxn 0 TypeEnum
@@ -273,20 +274,20 @@ pop
 swap
 !
 assert
-store 1
+store 5
 txn Sender
-load 1
-callsub sendtokens_1
+load 5
+callsub sendtokens_2
 byte "UC"
 byte "UC"
 app_global_get
-load 1
+load 5
 -
 app_global_put
 byte "RP"
 byte "RP"
 app_global_get
-load 1
+load 5
 -
 app_global_put
 b main_l20
@@ -296,14 +297,14 @@ app_global_get
 byte "PDA"
 app_global_get
 +
-store 0
+store 4
 byte "RP"
 app_global_get
-load 0
+load 4
 <
 bnz main_l25
 byte "UC"
-load 0
+load 4
 app_global_put
 main_l24:
 byte "DTA"
@@ -321,6 +322,7 @@ b main_l19
 main_l25:
 byte "UC"
 byte "RP"
+app_global_get
 app_global_put
 b main_l24
 main_l26:
@@ -396,8 +398,8 @@ app_global_put
 byte "TA"
 txna Applications 1
 app_global_put
-byte "BA"
-txna Accounts 1
+byte "FA_ID"
+txna Applications 2
 app_global_put
 byte "RP"
 txna ApplicationArgs 1
@@ -444,12 +446,32 @@ app_global_put
 int 1
 return
 
+// checkExternalStates
+checkExternalStates_0:
+byte "FA_ID"
+app_global_get
+byte "ba"
+app_global_get_ex
+store 1
+store 0
+byte "TA"
+app_global_get
+byte "trb"
+app_global_get_ex
+store 3
+store 2
+load 3
+assert
+load 1
+assert
+retsub
+
 // calculate_fraction
-calculatefraction_0:
-store 5
-store 4
-load 4
-load 5
+calculatefraction_1:
+store 7
+store 6
+load 6
+load 7
 mulw
 int 0
 int 10000
@@ -462,9 +484,9 @@ assert
 retsub
 
 // send_tokens
-sendtokens_1:
-store 7
-store 6
+sendtokens_2:
+store 9
+store 8
 itxn_begin
 int appl
 itxn_field TypeEnum
@@ -476,13 +498,12 @@ app_global_get
 itxn_field ApplicationID
 byte "transfer"
 itxn_field ApplicationArgs
-load 7
+load 9
 itob
 itxn_field ApplicationArgs
-byte "BA"
-app_global_get
+load 0
 itxn_field Accounts
-load 6
+load 8
 itxn_field Accounts
 int 3
 global MinTxnFee

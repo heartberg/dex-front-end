@@ -3,7 +3,8 @@ import { smartDistributionStateKeys } from "../blockchain/keys"
 export interface SmartProperties {
     contractId: number
     contractAddress: string
-    risingPriceFloor: number
+    buyRisingPriceFloor: number
+    sellRisingPriceFloor: number
     backing: number
     buyBurn: number
     sellBurn: number

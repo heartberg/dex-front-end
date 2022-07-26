@@ -236,17 +236,17 @@ export class DropDownSelectorComponent implements OnInit, DoCheck, OnChanges, Af
   //switcher
   returnAddress(acc: string) {
     console.log(acc);
-    let finalAcc;
+    let finalAcc: string | undefined;
     if (localStorage.getItem('wallet')) {
       acc = localStorage.getItem('wallet')!;
-      finalAcc = JSON.parse(acc);
+      finalAcc = acc;
       console.log(finalAcc, 
         '22222222222')
     }
     let start: string = '';
     let last: string = ''
-    start = finalAcc.substring(0,3);
-    last = finalAcc.substring(acc.length, acc.length - 3);
+    start = finalAcc!.substring(0,3);
+    last = finalAcc!.substring(acc.length, acc.length - 3);
     let final = start + '...' + last;
     console.log(final);
     return final

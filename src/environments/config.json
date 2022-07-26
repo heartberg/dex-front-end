@@ -1,10 +1,10 @@
 {
     "domain": "Vexpad",
     "algod":{
-        "server":"https://node.testnet.algoexplorerapi.io",
-        "port":"",
-        "token":"",
-        "network": "TestNet"
+        "server":"http://localhost",
+        "port":"4001",
+        "token":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "network": "LocalNet"
     },
     "indexer": {
         "server":"http://localhost",
@@ -17,19 +17,19 @@
     },
     "explorer":"algoscan.app",
     "platform": {
-        "fee_app_id": 1212,
-        "staking_addr": "HU5NE3IZWUYO3WAJMKLAXPHXY7VMMLCSQJ7ZAWSU7QE56RIFE4STEFUZ74",
-        "staking_id": 98456467,
-        "verse_app_id": 98456066,
-        "verse_app_addr": "RSOCBFYKQAYBFZVIBSCDVJ4PVDJJNVMTTZ62YC2DMFBOFWVSGQVUEHLD6Y",
-        "verse_asset_id": 98456095,
-        "verse_project_id": "9d134e02-eb63-4944-8ad2-89f14cef7297",
+        "fee_app_id": 14752,
+        "staking_addr": "IAFGN4NO5NMSWBC6H55OJIAMO2WH7JK26FI7I37XH3G7XZAH3ZKFB3ZVAM",
+        "staking_id": 14769,
+        "verse_app_id": 14755,
+        "verse_app_addr": "JOU6LD33KANHPHYGNLJSAH2LVPZFBUMWCVL33QBNLJ7TI63MLF32QENQ2Y",
+        "verse_asset_id": 14758,
+        "verse_project_id": "74b94838-4310-49f2-9d0d-3f2a6bf9aea1",
         "verse_decimals": 6,
-        "backing_id": 98456042,
-        "backing_addr": "7RSQXTFGHY4GLBBVQAHWKHVRA4JDEB65HKJSYPLLXOA3UBWCFFRR2KWF2Q",
+        "backing_id": 14750,
+        "backing_addr": "BF3DCMZ2DIKOBAY3TQWF2KZRGD767HZZMWWQFUC7B7SIEFMAXBOSAYLCGM",
         "backing_per_x_token": 1000000,
-        "locker_id": 98456525,
-        "locker_addr": "XIXLDMCKEHZEBRD25EP4MLWDK7F2I2R7P327QGEC4LVXTYGEKM7JFWKPI4"
+        "locker_id": 14775,
+        "locker_addr": "J2UH6PUOKFGTSAGBWSKN3V6UB7KBL3UOFNOHBIBPDEI7OEEMKIDFN6YROQ"
     },
     "contracts":{
         "approval":"deployer_token_approval.teal",

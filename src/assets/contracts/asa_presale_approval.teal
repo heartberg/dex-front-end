@@ -1,6 +1,6 @@
 #pragma version 6
 intcblock 0 1 4 2
-bytecblock 0x7072 0x7063 0x706863 0x7076696e 0x7065 0x617361 0x707461 0x6376 0x707363 0x7066 0x707763 0x707672 0x7076696c 0x7073 0x7365747570 0x6661 0x66 0x646c
+bytecblock 0x7072 0x7063 0x706863 0x7076696e 0x7065 0x617361 0x707461 0x6376 0x707363 0x7066 0x707763 0x707672 0x7076696c 0x7073 0x666964 0x7365747570 0x646c
 txn ApplicationID
 intc_0 // 0
 ==
@@ -30,7 +30,7 @@ pushbytes 0x636c61696d5f70726573616c65 // "claim_presale"
 ==
 bnz main_l21
 txna ApplicationArgs 0
-bytec 14 // "setup"
+bytec 15 // "setup"
 ==
 bnz main_l15
 txna ApplicationArgs 0
@@ -238,13 +238,7 @@ assert
 bytec 5 // "asa"
 txna Assets 0
 app_global_put
-bytec 15 // "fa"
-txna Accounts 1
-app_global_put
-bytec 16 // "f"
-pushint 100 // 100
-app_global_put
-bytec 17 // "dl"
+bytec 16 // "dl"
 intc_0 // 0
 app_global_put
 txna Assets 0
@@ -356,7 +350,7 @@ txn GroupIndex
 pushint 3 // 3
 -
 gtxnsa ApplicationArgs 0
-bytec 14 // "setup"
+bytec 15 // "setup"
 ==
 assert
 txn GroupIndex
@@ -385,7 +379,7 @@ intc_3 // 2
 gtxns AssetAmount
 <=
 bz main_l16
-bytec 17 // "dl"
+bytec 16 // "dl"
 intc_1 // 1
 app_global_put
 b main_l16
@@ -525,6 +519,22 @@ intc_0 // 0
 app_local_put
 b main_l23
 main_l29:
+bytec 14 // "fid"
+app_global_get
+pushbytes 0x707266 // "prf"
+app_global_get_ex
+store 7
+store 6
+bytec 14 // "fid"
+app_global_get
+pushbytes 0x6661 // "fa"
+app_global_get_ex
+store 9
+store 8
+load 7
+assert
+load 9
+assert
 txn Fee
 intc_2 // 4
 global MinTxnFee
@@ -533,8 +543,7 @@ global MinTxnFee
 assert
 bytec_0 // "pr"
 app_global_get
-bytec 16 // "f"
-app_global_get
+load 6
 callsub calculateFraction_0
 store 2
 bytec_0 // "pr"
@@ -545,8 +554,7 @@ store 1
 global CreatorAddress
 load 1
 callsub sendAlgo_2
-bytec 15 // "fa"
-app_global_get
+load 8
 load 2
 callsub sendAlgo_2
 bytec_2 // "phc"
@@ -682,6 +690,9 @@ app_global_put
 bytec 12 // "pvil"
 intc_0 // 0
 app_global_put
+bytec 14 // "fid"
+txna Applications 1
+app_global_put
 txna ApplicationArgs 1
 btoi
 txna ApplicationArgs 0
@@ -709,10 +720,10 @@ return
 
 // calculateFraction
 calculateFraction_0:
-store 7
-store 6
-load 6
-load 7
+store 11
+store 10
+load 10
+load 11
 mulw
 intc_0 // 0
 pushint 10000 // 10000
@@ -726,9 +737,9 @@ retsub
 
 // get_app_address
 getappaddress_1:
-store 8
+store 12
 pushbytes 0x6170704944 // "appID"
-load 8
+load 12
 itob
 concat
 sha512_256
@@ -736,16 +747,16 @@ retsub
 
 // sendAlgo
 sendAlgo_2:
-store 10
-store 9
+store 14
+store 13
 itxn_begin
 intc_1 // pay
 itxn_field TypeEnum
 global CurrentApplicationAddress
 itxn_field Sender
-load 9
+load 13
 itxn_field Receiver
-load 10
+load 14
 itxn_field Amount
 intc_0 // 0
 itxn_field Fee
@@ -754,8 +765,8 @@ retsub
 
 // sendTokens
 sendTokens_3:
-store 12
-store 11
+store 16
+store 15
 itxn_begin
 intc_2 // axfer
 itxn_field TypeEnum
@@ -764,9 +775,9 @@ itxn_field Sender
 bytec 5 // "asa"
 app_global_get
 itxn_field XferAsset
-load 12
+load 16
 itxn_field AssetAmount
-load 11
+load 15
 itxn_field AssetReceiver
 intc_0 // 0
 itxn_field Fee
@@ -775,19 +786,19 @@ retsub
 
 // optin_asset
 optinasset_4:
-store 13
+store 17
 global CurrentApplicationAddress
-load 13
+load 17
 asset_holding_get AssetBalance
-store 15
-store 14
-load 15
+store 19
+store 18
+load 19
 !
 bz optinasset_4_l2
 itxn_begin
 intc_2 // axfer
 itxn_field TypeEnum
-load 13
+load 17
 itxn_field XferAsset
 global CurrentApplicationAddress
 itxn_field AssetReceiver

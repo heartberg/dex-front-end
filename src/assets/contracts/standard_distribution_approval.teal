@@ -252,6 +252,7 @@ b main_l19
 main_l25:
 byte "UC"
 byte "RP"
+app_global_get
 app_global_put
 b main_l24
 main_l26:
@@ -327,7 +328,10 @@ byte "TK_ID"
 txna Assets 0
 app_global_put
 byte "RP"
-gtxn 1 AssetAmount
+txn GroupIndex
+int 1
++
+gtxns AssetAmount
 app_global_put
 byte "PDA"
 txna ApplicationArgs 1
@@ -348,7 +352,8 @@ byte "UC"
 int 0
 app_global_put
 byte "DTA"
-int 0
+txna ApplicationArgs 1
+btoi
 app_global_put
 itxn_begin
 int axfer
