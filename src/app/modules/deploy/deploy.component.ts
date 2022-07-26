@@ -676,7 +676,7 @@ export class DeployComponent implements OnInit, DoCheck {
     let decimals = +this.deployFormGroup.get('tokenInfoGroup.decimals')?.value
     if(this.presaleIsChecked){
       initial_algo_liq = Math.floor(+this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.algoToLiquidity')?.value  * 1_000_000)
-      initial_algo_liq_with_fee = Math.floor(initial_algo_liq * (1 + (this.feeState.presale_fee / 10000)))
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (1 - (this.feeState.presale_fee / 10000)))
       initial_token_liq = +this.deployFormGroup.get('createPresaleOptionGroup.presaleLiquidity.tokensInLiquidity')?.value * Math.pow(10, decimals)
       if(this.isCheckedVested) {
         release = parseInt((new Date(this.deployFormGroup.get('createPresaleOptionGroup.vestedReleaseSettings.release')?.value).getTime() / 1000).toFixed(0))
@@ -698,7 +698,7 @@ export class DeployComponent implements OnInit, DoCheck {
       }
     } else {
       initial_algo_liq = Math.floor(+this.deployFormGroup.get('liquidity.algoToLiq')?.value  * 1_000_000)
-      initial_algo_liq_with_fee = Math.floor(initial_algo_liq * (1 + (this.feeState.presale_fee / 10000)))
+      initial_algo_liq_with_fee = Math.floor(initial_algo_liq / (1 - (this.feeState.presale_fee / 10000)))
       initial_token_liq = +this.deployFormGroup.get('liquidity.tokensToLiq')?.value * Math.pow(10, decimals)
     }
 

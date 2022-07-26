@@ -81,7 +81,7 @@ export class WalletsConnectService {
     // } else {
     //   return
     // }
-
+    localStorage.setItem('algo', JSON.stringify(0))
     this.router.navigateByUrl('/home', { skipLocationChange: true }).then(() => {
       this.router.navigate(['home']);
     });
