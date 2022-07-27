@@ -464,13 +464,27 @@ export class VerseApp {
         let totalBorrowedAlgo = backingState[backingStateKeys.total_algo_borrowed_key]['i']
         let maxBuy = verseState[verseStateKeys.max_buy_key]['i']
 
+        let feeState = StateToObj(await getGlobalState(ps.platform.fee_app_id), feeAppStateKeys)
+        let verseBuyBurn = feeState[feeAppStateKeys.verse_buy_burn]['i']
+        let verseSellBurn = feeState[feeAppStateKeys.verse_sell_burn]['i']
+        let verseBuyLP = feeState[feeAppStateKeys.verse_buy_lp_fee]['i']
+        let verseSellLP = feeState[feeAppStateKeys.verse_sell_lp_fee]['i']
+        let verseSendBurn = feeState[feeAppStateKeys.verse_transfer_burn]['i']
+        let verseBackingFee = feeState[feeAppStateKeys.verse_backing_fee]['i']
+
         return {
             algoLiquidity: algoLiquidity,
             tokenLiquidity: tokenLiquidity,
             totalsupply: totalSupply,
             totalBacking: totalBacking,
             totalBorrowedAlgo: totalBorrowedAlgo,
-            maxBuy: maxBuy
+            maxBuy: maxBuy,
+            buyBurn: verseBuyBurn,
+            sellBurn: verseSellBurn,
+            buyToLPFee: verseBuyLP,
+            sellToLPFee: verseSellLP,
+            backingFee: verseBackingFee,
+            sendBurn: verseSendBurn
         }
     }
 

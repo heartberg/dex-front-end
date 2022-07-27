@@ -99,7 +99,7 @@ export class TokenDetailComponent implements OnInit, DoCheck {
     await this.getSmartToolData()
     console.log(this.smartToolData)
     this.isPopUpOpen = true;
-    if(this.smartToolData.contractId == ps.platform.verse_asset_id) {
+    if(this.smartToolData.contractId == ps.platform.verse_app_id) {
       this.isVerseBorrow = true;
       this.isVerseBacking = false;
       this.isBorrow = false;

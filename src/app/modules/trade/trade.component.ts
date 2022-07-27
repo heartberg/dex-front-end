@@ -97,7 +97,7 @@ export class TradeComponent implements OnInit, DoCheck {
   // trade popup situations
   isTradeLend: boolean = false;
   isTradeBacking: boolean = false;
-  isTradeLendVerse: boolean = false;
+  isTradeLendVerse: boolean = true;
   isTradeBackingVerse: boolean = false;
   // trade popup situations
 
@@ -352,8 +352,12 @@ export class TradeComponent implements OnInit, DoCheck {
         });
       }
       if(assetId == ps.platform.verse_asset_id){
+        this.isTradeLendVerse = true;
+        this.isTradeLend = false;
         this.blockchainInfo = await this.verseApp.getBlockchainInformation()
       } else {
+        this.isTradeLendVerse = false;
+        this.isTradeLend = true;
         this.deployedAppSettings = this.mapViewModelToAppSettings(this.selectedOption!)
         this.blockchainInfo = await this.deployedApp.getBlockchainInformation(this.deployedAppSettings.contractId!)
       }

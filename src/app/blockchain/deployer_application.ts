@@ -1028,6 +1028,7 @@ export class DeployedApp {
     let buyToLPFee = appState[StateKeys.buy_to_lp_key]['i']
     let sellToLPFee = appState[StateKeys.sell_to_lp_key]['i']
     let backingFee = appState[StateKeys.to_backing_key]['i']
+    let sendBurn = appState[StateKeys.transfer_burn_key]['i']
 
     return {
         algoLiquidity: algoLiquidity,

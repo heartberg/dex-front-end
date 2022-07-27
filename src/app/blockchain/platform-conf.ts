@@ -130,6 +130,7 @@ type BlockchainInformation = {
     buyToLPFee?: number,
     sellToLPFee?: number,
     backingFee?: number,
+    sendBurn?: number
 }
 
 const ALGO_VIEWMODEL: AssetViewModel = {
